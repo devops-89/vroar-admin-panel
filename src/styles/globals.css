@@ -1,42 +1,57 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+  background-image: url("https://vroar-bucket.s3.us-west-1.amazonaws.com/background/main_bg.png");
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
   padding: 0;
+  background-position: 50% 50%, 0 0;
+  background-size: 3.125rem, auto;
+
+  overflow-x: hidden;
+  background-color: transparent;
+}
+
+body {
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+::-webkit-scrollbar {
+  width: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+.d-flex {
+  display: flex;
+}
+
+.d-none {
+  display: none;
+}
+
+.custom-description p {
+  margin-bottom: 8px; /* Space between paragraphs */
+}
+
+.custom-description ul {
+  list-style-type: disc;
+  padding-left: 15px;
+}
+.custom-description ol {
+  list-style-type: decimal;
+  padding-left: 3px;
+}
+
+.custom-description li {
+  margin-bottom: 2px; /* Space between list items */
+  font-size: 12px;
+}
+
+.custom-description h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.custom-description h2 {
+  font-size: 20px;
+  margin-bottom: 18px;
+}
+.quill {
+  height: 200px;
 }
