@@ -15,7 +15,7 @@ import { COLORS, METADATA_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { AddCircle } from "@mui/icons-material";
 import { Box, Button, Card, Stack, Tab, Tabs, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 const Metadata = () => {

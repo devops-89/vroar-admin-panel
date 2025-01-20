@@ -36,7 +36,7 @@ const CustomCard = () => {
           ]}
         />
         <Box sx={{ mt: 2 }}>
-          <CustomTable />
+          <CustomTable button={true} />
         </Box>
         <Box sx={{ mt: 2 }}>
           <StudentTable />

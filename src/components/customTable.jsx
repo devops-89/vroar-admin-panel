@@ -5,11 +5,11 @@ import { DownloadForOffline, FilterList, SwapVert } from "@mui/icons-material";
 import { Button, Grid2, Stack, TextField } from "@mui/material";
 import React from "react";
 
-const CustomTable = () => {
+const CustomTable = ({ button }) => {
   return (
     <div>
       <Grid2 container alignItems={"center"} spacing={2}>
-        <Grid2 size={7}>
+        <Grid2 size={!button ? 9 : 7}>
           <TextField label="Search" fullWidth sx={{ ...loginTextField }} />
         </Grid2>
         <Grid2 size={1.5}>
@@ -44,22 +44,24 @@ const CustomTable = () => {
             Filter
           </Button>
         </Grid2>
-        <Grid2 size={2}>
-          <Button
-            startIcon={<DownloadForOffline />}
-            sx={{
-              height: "58px",
-              color: COLORS.BLACK,
-              fontFamily: roboto.style,
-              fontWeight: 400,
-              textTransform: "inherit",
-              backgroundColor: COLORS.primary,
-            }}
-            fullWidth
-          >
-            Export
-          </Button>
-        </Grid2>
+        {button && (
+          <Grid2 size={2}>
+            <Button
+              startIcon={<DownloadForOffline />}
+              sx={{
+                height: "58px",
+                color: COLORS.WHITE,
+                fontFamily: roboto.style,
+                fontWeight: 400,
+                textTransform: "inherit",
+                backgroundColor: COLORS.PRIMARY,
+              }}
+              fullWidth
+            >
+              Export
+            </Button>
+          </Grid2>
+        )}
       </Grid2>
     </div>
   );

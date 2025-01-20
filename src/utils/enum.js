@@ -301,3 +301,12 @@ export const METADATA_TYPE = {
   STRENGTHS: "STRENGTHS",
   SOFT_SKILLS: "SOFT SKILLS",
 };
+
+export const CONTENT_TYPE = {
+  ARTICLE_PDF: "Article PDF",
+  ARTICLE_WRITEUP: "Article writeup",
+  NATIVE_VIDEO_LINK: "Native video link",
+  YOUTUBE_VIDEO_LINK: "Youtube video link",
+  JOURNAL_LINK: "Journal Link",
+  ASSIGNMENT: "Assignment",
+};

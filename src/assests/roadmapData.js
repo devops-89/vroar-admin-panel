@@ -1,4 +1,4 @@
-import { METADATA_TYPE, USER_STATUS } from "@/utils/enum";
+import { CONTENT_TYPE, METADATA_TYPE, USER_STATUS } from "@/utils/enum";
 
 export const metaDataHeader = [
   {
@@ -9,6 +9,24 @@ export const metaDataHeader = [
   },
   {
     label: "Status",
+  },
+  {
+    label: "Action",
+  },
+];
+
+export const CONTENT_HEADER = [
+  {
+    label: "Name",
+  },
+  {
+    label: "ID",
+  },
+  {
+    label: "Type",
+  },
+  {
+    label: "Tags",
   },
   {
     label: "Action",
@@ -144,5 +162,65 @@ export const SOFTSKILLSDATA = [
     id: "005",
     status: USER_STATUS.ACTIVE,
     metadataType: METADATA_TYPE.SOFT_SKILLS,
+  },
+];
+
+export const CONTENT_DATA = [
+  {
+    name: "Algebra basics",
+    id: 201,
+    type: CONTENT_TYPE.ARTICLE_PDF,
+    tags: ["Mathematics", "Algebra"],
+  },
+  {
+    name: "World War ll Overview",
+    id: 202,
+    type: CONTENT_TYPE.ARTICLE_WRITEUP,
+    tags: ["History", "World War II"],
+  },
+  {
+    name: "Human Body Systems",
+    id: 203,
+    type: CONTENT_TYPE.NATIVE_VIDEO_LINK,
+    tags: ["Biology", "Anatomy"],
+  },
+  {
+    name: "Environmental Science",
+    id: 204,
+    type: CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
+    tags: ["Science", "Environment"],
+  },
+  {
+    name: "Physics Experiments",
+    id: 205,
+    type: CONTENT_TYPE.JOURNAL_LINK,
+    tags: ["Physics", "Experiments"],
+  },
+  {
+    name: "English Homework",
+    id: 206,
+    type: CONTENT_TYPE.ASSIGNMENT,
+    tags: ["English", "Literature"],
+  },
+];
+
+export const CONTENT_TYPE_DATA = [
+  {
+    label: CONTENT_TYPE.ARTICLE_PDF,
+  },
+  {
+    label: CONTENT_TYPE.ARTICLE_WRITEUP,
+  },
+  {
+    label: CONTENT_TYPE.ASSIGNMENT,
+  },
+  {
+    label: CONTENT_TYPE.JOURNAL_LINK,
+  },
+  {
+    label: CONTENT_TYPE.NATIVE_VIDEO_LINK,
+  },
+  {
+    label: CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
   },
 ];

@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
-
+import { FaRegEdit } from "react-icons/fa";
 const RoadmapTable = ({ tableHeader, tableData }) => {
   const dispatch = useDispatch();
   const editMetaData = (value) => {
@@ -70,7 +70,7 @@ const RoadmapTable = ({ tableHeader, tableData }) => {
                 </TableCell>
                 <TableCell>
                   <IconButton onClick={() => editMetaData(val)}>
-                    <Edit sx={{ fontSize: 20 }} htmlColor={COLORS.BLACK} />
+                    <FaRegEdit style={{ fill: COLORS.BLACK }} />
                   </IconButton>
                   <IconButton onClick={() => deleteModal(val)}>
                     <Delete sx={{ fontSize: 20 }} htmlColor={COLORS.BLACK} />
