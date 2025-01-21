@@ -2,6 +2,7 @@ import {
   GENDER_DATA,
   GRADE,
   METADATA_TYPE,
+  QUIZ_TYPE,
   RELATIONSHIP_DATA,
 } from "@/utils/enum";
 
@@ -139,5 +140,14 @@ export const data = {
     {
       label: METADATA_TYPE.SOFT_SKILLS,
     },
+  ],
+
+  QUIZ_TYPE_DATA: [
+    {
+      label: QUIZ_TYPE.OBJECTIVE_QUIZ,
+    },
+    {
+      label:QUIZ_TYPE.SUBJECTIVE_QUIZ
+    }
   ],
 };

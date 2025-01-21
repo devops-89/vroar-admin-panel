@@ -21,7 +21,7 @@ export const loginTextField = {
       borderColor: COLORS.BLACK,
     },
     "&.Mui-focused fieldset": {
-      border: "1px solid #000",
+      border: "1px solid #000 !important",
     },
   },
 

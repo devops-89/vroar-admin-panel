@@ -310,3 +310,8 @@ export const CONTENT_TYPE = {
   JOURNAL_LINK: "Journal Link",
   ASSIGNMENT: "Assignment",
 };
+
+export const QUIZ_TYPE = {
+  OBJECTIVE_QUIZ: "Objective Quiz",
+  SUBJECTIVE_QUIZ: "Subjective Quiz",
+};

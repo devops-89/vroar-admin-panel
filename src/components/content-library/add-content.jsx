@@ -1,6 +1,6 @@
 import { CONTENT_TYPE_DATA } from "@/assests/roadmapData";
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS, CONTENT_TYPE, ToastStatus } from "@/utils/enum";
+import { COLORS, CONTENT_TYPE, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddContentValidationSchema } from "@/utils/validationSchema";
@@ -13,7 +13,6 @@ import {
   FormControlLabel,
   FormHelperText,
   Stack,
-  styled,
   TextField,
   Typography,
 } from "@mui/material";
@@ -23,6 +22,9 @@ import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import ToastBar from "../toastBar";
 import { useRouter } from "next/router";
+import { data } from "@/assests/data";
+import ObjectiveQuiz from "./objective-quiz";
+import SubjectiveQuiz from "./subjectiveQuiz";
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -42,9 +44,28 @@ const AddContent = () => {
   const [showFile, setShowFile] = useState(false);
   const [showLink, setShowLink] = useState(false);
   const dispatch = useDispatch();
-  const [isEnableQuiz, setIsEnableQuiz] = useState(false);
-  const quizHandler = (e) => {
-    setIsEnableQuiz(e.target.checked);
+  const [isQuizEnabled, setIsQuizEnabled] = useState(false);
+
+  const initialValues = {
+    contentType: "",
+    career: "",
+    industry: "",
+    strengths: "",
+    softSkills: "",
+    contentName: "",
+    isQuizEnabled: false,
+
+    quizType: "",
+  };
+
+  const [state, setState] = useState(initialValues);
+
+  const [errors, setErrors] = useState(initialValues);
+
+  const inputHandler = (e) => {
+    const { id, value } = e.target;
+
+    setState({ ...state, [id]: value });
   };
 
   const formik = useFormik({
@@ -55,12 +76,20 @@ const AddContent = () => {
       strengths: "",
       softSkills: "",
       contentName: "",
+      isQuizEnabled: false,
+
+      quizType: "",
     },
-    validationSchema: AddContentValidationSchema,
+    validationSchema: AddContentValidationSchema(isQuizEnabled),
     onSubmit: (values) => {
-      submitHandler(values);
+      console.log("test", values);
     },
   });
+
+  const quizHandler = (e) => {
+    formik.values.isQuizEnabled = e.target.checked;
+    setIsQuizEnabled(e.target.checked);
+  };
 
   const contentTypeHandler = (e, newValue) => {
     setContent(newValue);
@@ -116,6 +145,16 @@ const AddContent = () => {
       formik.errors.softSkills = "Please Select Valid Career";
     }
   };
+  const [quizType, setQuizType] = useState(null);
+  const quizTypeHandler = (e, newValue) => {
+    setQuizType(newValue);
+    if (newValue) {
+      formik.values.quizType = newValue.label;
+      formik.errors.quizType = "";
+    } else {
+      formik.errors.quizType = "Please Select Quiz Type";
+    }
+  };
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -136,24 +175,15 @@ const AddContent = () => {
     }
   };
 
-  const router = useRouter();
-
-  const submitHandler = (values) => {
-    console.log("test", isEnableQuiz);
-    if (isEnableQuiz) {
-      router.push(
-        "/roadmap-management/content-library/add-new-content/enable-quiz"
-      );
-      console.log("eeee", values);
-    } else {
-      alert("api call");
-    }
-  };
-
   return (
     <Box mt={3}>
-      <form onSubmit={formik.handleSubmit}>
-        <Stack alignItems={"start"} spacing={2} width={"100%"}>
+      <form action="" onSubmit={formik.handleSubmit}>
+        <Stack
+          alignItems={"start"}
+          justifyContent={"flex-end"}
+          spacing={2}
+          width={"100%"}
+        >
           <Autocomplete
             renderInput={(params) => (
               <TextField
@@ -161,13 +191,8 @@ const AddContent = () => {
                 label="Select Content Type"
                 fullWidth
                 sx={{ ...loginTextField }}
-                error={
-                  formik.touched.contentType &&
-                  Boolean(formik.errors.contentType)
-                }
-                helperText={
-                  formik.touched.contentType && formik.errors.contentType
-                }
+                error={Boolean(errors.contentType)}
+                helperText={errors.contentType}
               />
             )}
             fullWidth
@@ -229,7 +254,7 @@ const AddContent = () => {
               label="Insert Link "
               fullWidth
               sx={{ ...loginTextField }}
-              onChange={formik.handleChange}
+              onChange={inputHandler}
               id="contentLink"
             />
           )}
@@ -241,8 +266,8 @@ const AddContent = () => {
                 label="Career"
                 fullWidth
                 sx={{ ...loginTextField }}
-                error={formik.touched.career && Boolean(formik.errors.career)}
-                helperText={formik.touched.career && formik.errors.career}
+                error={Boolean(errors.career)}
+                helperText={errors.career}
               />
             )}
             onChange={careerHandler}
@@ -265,10 +290,8 @@ const AddContent = () => {
                 label="Industry"
                 fullWidth
                 sx={{ ...loginTextField }}
-                error={
-                  formik.touched.industry && Boolean(formik.errors.industry)
-                }
-                helperText={formik.touched.industry && formik.errors.industry}
+                error={Boolean(errors.industry)}
+                helperText={errors.industry}
               />
             )}
             fullWidth
@@ -291,10 +314,8 @@ const AddContent = () => {
                 label="Strengths"
                 fullWidth
                 sx={{ ...loginTextField }}
-                error={
-                  formik.touched.strengths && Boolean(formik.errors.strengths)
-                }
-                helperText={formik.touched.strengths && formik.errors.strengths}
+                error={Boolean(errors.strengths)}
+                helperText={errors.strengths}
               />
             )}
             fullWidth
@@ -317,12 +338,8 @@ const AddContent = () => {
                 label="Soft Skills"
                 fullWidth
                 sx={{ ...loginTextField }}
-                error={
-                  formik.touched.softSkills && Boolean(formik.errors.softSkills)
-                }
-                helperText={
-                  formik.touched.softSkills && formik.errors.softSkills
-                }
+                error={Boolean(errors.softSkills)}
+                helperText={errors.softSkills}
               />
             )}
             fullWidth
@@ -343,7 +360,7 @@ const AddContent = () => {
             fullWidth
             sx={{ ...loginTextField }}
             id="contentName"
-            onChange={formik.handleChange}
+            onChange={inputHandler}
             error={
               formik.touched.contentName && Boolean(formik.errors.contentName)
             }
@@ -362,20 +379,57 @@ const AddContent = () => {
               },
             }}
           />
-        </Stack>
-        <Box sx={{ textAlign: "end" }}>
+          {isQuizEnabled && (
+            <Autocomplete
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Quiz Type"
+                  sx={{ ...loginTextField, mt: 1 }}
+                  error={Boolean(errors.quizType)}
+                  helperText={errors.quizType}
+                  fullWidth
+                />
+              )}
+              renderOption={(props, options) => (
+                <Box {...props}>
+                  <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                    {options.label}
+                  </Typography>
+                </Box>
+              )}
+              options={data.QUIZ_TYPE_DATA}
+              getOptionLabel={(option) => option.label}
+              onChange={quizTypeHandler}
+              value={quizType}
+              fullWidth
+            />
+          )}
+
+          {formik.values.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && (
+            <ObjectiveQuiz />
+          )}
+
+          {formik.values.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
+            <SubjectiveQuiz />
+          )}
+
           <Button
             sx={{
               backgroundColor: COLORS.PRIMARY,
               width: 150,
               color: COLORS.WHITE,
+              mt: 2,
+              justifySelf: "flex-end",
+              alignSelf: "flex-end",
             }}
             type="submit"
           >
             Save
           </Button>
-        </Box>
+        </Stack>
       </form>
+
       <ToastBar />
     </Box>
   );
