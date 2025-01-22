@@ -147,7 +147,36 @@ export const data = {
       label: QUIZ_TYPE.OBJECTIVE_QUIZ,
     },
     {
-      label:QUIZ_TYPE.SUBJECTIVE_QUIZ
-    }
+      label: QUIZ_TYPE.SUBJECTIVE_QUIZ,
+    },
+  ],
+  NOTIFICATION_HEADER: [
+    {
+      label: "Event Name",
+    },
+    {
+      label: "Speaker Name",
+    },
+    {
+      label: "Start Date",
+    },
+    {
+      label: "End Date",
+    },
+    {
+      label: "Status",
+    },
+    {
+      label: "Action",
+    },
+  ],
+  NOTIFICATION_DATA: [
+    {
+      name: "Understanding Algebra",
+      speaker_name: "Prof. Jane Doe",
+      startDate: 1737800687,
+      endDate: 1738232687,
+      // status:
+    },
   ],
 };

@@ -16,8 +16,8 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { data } from "../../data";
 import { loginTextField } from "@/utils/styles";
-import { useFormik } from "formik";
 import { AddMetaDataValiationSchema } from "@/utils/validationSchema";
+import { metaDataController } from "@/api/metaDataController";
 
 const AddMetaData = () => {
   const dispatch = useDispatch();
@@ -26,26 +26,58 @@ const AddMetaData = () => {
     dispatch(hideModal());
   };
 
-  const formik = useFormik({
-    initialValues: {
-      metadataType: "",
-      name: "",
-    },
-    validationSchema: AddMetaDataValiationSchema,
-    onSubmit: (values) => {
-      console.log("test", values);
-    },
-  });
+  const initialState = {
+    metadataType: null,
+    name: "",
+  };
 
-  const [metaDataType, setMetaDataType] = useState(null);
+  const [state, setState] = useState(initialState);
+  const [errors, setErrors] = useState({});
 
+  const inputHandler = (e) => {
+    const { id, value } = e.target;
+    setState({ ...state, [id]: value });
+    setErrors({ ...errors, [id]: "" });
+  };
+  const [metaDataType, setmetaDataType] = useState(null);
   const metaSelectHandler = (e, newValue) => {
-    setMetaDataType(newValue);
-    if (newValue) {
-      formik.values.metadataType = newValue.label;
-      formik.errors.metadataType = "";
-    } else {
-      formik.errors.metadataType = "Please Select MetaData Type";
+    setmetaDataType(newValue);
+    setState({ ...state, metadataType: newValue.label });
+    setErrors({ ...errors, metadataType: "" });
+  };
+
+  const validateForm = async () => {
+    try {
+      await AddMetaDataValiationSchema.validate(state, { abortEarly: false });
+      setErrors({});
+      return true;
+    } catch (validationErrors) {
+      const formErrors = {};
+      validationErrors.inner.forEach((error) => {
+        formErrors[error.path] = error.message;
+      });
+
+      setErrors(formErrors);
+      return false;
+    }
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    const isValid = await validateForm();
+    if (isValid) {
+      let body = {
+        name: state.name,
+        type: state.metadataType,
+      };
+      metaDataController
+        .addMetaData(body)
+        .then((res) => {
+          console.log("res", res);
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     }
   };
 
@@ -65,7 +97,7 @@ const AddMetaData = () => {
           <Close htmlColor={COLORS.PRIMARY} />
         </IconButton>
       </Stack>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={submitHandler}>
         <FormControl fullWidth sx={{ mt: 2 }}>
           <Autocomplete
             renderInput={(params) => (
@@ -75,13 +107,8 @@ const AddMetaData = () => {
                 label="Select Metadata Type"
                 sx={{ ...loginTextField }}
                 id="metadataType"
-                error={
-                  formik.touched.metadataType &&
-                  Boolean(formik.errors.metadataType)
-                }
-                helperText={
-                  formik.touched.metadataType && formik.errors.metadataType
-                }
+                error={Boolean(errors.metadataType)}
+                helperText={errors.metadataType}
               />
             )}
             options={data.METATDATA}
@@ -95,15 +122,15 @@ const AddMetaData = () => {
             )}
             onChange={metaSelectHandler}
             value={metaDataType}
-            id="metadataType"
           />
           <TextField
             sx={{ ...loginTextField, mt: 2 }}
             label="Enter Free Text"
             id="name"
-            onChange={formik.handleChange}
-            error={formik.touched.name && Boolean(formik.errors.name)}
-            helperText={formik.touched.name && formik.errors.name}
+            value={state.name}
+            onChange={inputHandler}
+            error={Boolean(errors.name)}
+            helperText={errors.name}
           />
           <Button
             sx={{
@@ -114,7 +141,7 @@ const AddMetaData = () => {
             }}
             type="submit"
           >
-            save
+            Save
           </Button>
         </FormControl>
       </form>

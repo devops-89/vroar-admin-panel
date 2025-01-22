@@ -48,6 +48,22 @@ userSecuredApi.interceptors.request.use((config) => {
 const publicApi = Axios.create({
   baseURL: `${serverApiUrl.admin}`,
 });
+
+const contentPublicApi = Axios.create({
+  baseURL: `${serverApiUrl.content}`,
+});
+
+const contentSecuredApi = Axios.create({
+  baseURL: `${serverApiUrl.content}`,
+});
+
+contentSecuredApi.interceptors.request.use((config) => {
+  const login_token = localStorage.getItem("accessToken");
+  config.headers.accessToken = login_token;
+
+  return config;
+});
+
 const expiredToken = (error) => {
   if (error.response) {
     if (error.response.status === 401) {
@@ -76,4 +92,7 @@ export default {
   authenticationSecuredApi,
   internshipSecuredApi,
   authenticationStripeCustomerURL,
+  contentPublicApi,
+  contentSecuredApi,
 };
+

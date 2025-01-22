@@ -61,6 +61,7 @@ export const SIDEBARADATA = [
     subModules: [
       {
         label: "Ad List",
+        url: "/notification-management/ad-list",
       },
       {
         label: "View Notifications",

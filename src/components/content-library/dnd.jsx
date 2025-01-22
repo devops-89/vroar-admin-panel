@@ -36,9 +36,9 @@ const SortableItem = ({
     transition,
     marginBottom: "10px",
     padding: "16px",
-    backgroundColor: "#EEEFF3",
+    backgroundColor: "#ffffff",
     borderRadius: "8px",
-    // boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
   };
 
   const isOpen = openIndex === index;
@@ -87,7 +87,7 @@ const SortableItem = ({
             "& .MuiOutlinedInput-root": {
               backgroundColor: COLORS.WHITE,
               "&.Mui-focused fieldset": {
-                borderColor: COLORS.BLACK,
+                border: "1px solid #000",
               },
             },
           }}

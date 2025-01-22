@@ -3,6 +3,7 @@ import { loginTextField } from "@/utils/styles";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Delete, DragIndicator } from "@mui/icons-material";
 import {
+  Box,
   Checkbox,
   FormControlLabel,
   IconButton,
@@ -57,24 +58,43 @@ const OptionBox = () => {
   };
   return (
     <div>
-      <DndContext
+      {/* <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
         <SortableContext items={optionArray}></SortableContext>
-      </DndContext>
+      </DndContext> */}
 
       {optionArray.map((item, index) => (
-        <SortableOption
-          key={item}
-          id={item}
-          index={index}
-          onDelete={handleDelete}
-          canDelete={optionArray.length > 1}
-          isDragging={isDragging}
-        />
+        <Box>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            spacing={2}
+            sx={{ mb: 2 }}
+          >
+            <FormControlLabel
+              control={<Checkbox sx={{ borderRadius: "50%" }} />}
+            />
+            <TextField
+              label={`OPTION ${index + 1}`}
+              fullWidth
+              sx={{
+                ...loginTextField,
+                mt: 2,
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: COLORS.WHITE,
+                  borderRadius: 2,
+                  "&.Mui-focused fieldset": {
+                    border: "1px solid #000",
+                  },
+                },
+              }}
+            />
+          </Stack>
+        </Box>
       ))}
     </div>
   );

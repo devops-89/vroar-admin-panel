@@ -1,5 +1,10 @@
-import { CONTENT_TYPE, METADATA_TYPE, USER_STATUS } from "@/utils/enum";
-
+import {
+  CONTENT_TYPE,
+  METADATA_TYPE,
+  ROADMAP_STATUS,
+  USER_STATUS,
+} from "@/utils/enum";
+import avatar from "@/icons/avatar.png";
 export const metaDataHeader = [
   {
     label: "Name",
@@ -27,6 +32,34 @@ export const CONTENT_HEADER = [
   },
   {
     label: "Tags",
+  },
+  {
+    label: "Action",
+  },
+];
+
+export const ROADMAP_HEADER = [
+  {
+    label: "Student Name",
+    sort: true,
+  },
+  {
+    label: "Name",
+  },
+  {
+    label: "Tenure",
+  },
+  {
+    label: "No. of Levels",
+  },
+  {
+    label: "Tags",
+  },
+  {
+    label: "Created On",
+  },
+  {
+    label: "Roadmap Status",
   },
   {
     label: "Action",
@@ -222,5 +255,48 @@ export const CONTENT_TYPE_DATA = [
   },
   {
     label: CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
+  },
+];
+
+export const ROADMAP_DATA = [
+  {
+    img: avatar,
+    name: "John Doe",
+    roadmap_name: "Data Science",
+    tenure: "12 months",
+    number_Of_Levels: "8",
+    tags: ["Biology", "Chemistry", "Physics"],
+    createdOn: 1737541487,
+    roadmap_status: ROADMAP_STATUS.PUBLISHED,
+  },
+  {
+    img: avatar,
+    name: "John Doe",
+    roadmap_name: "Literature Journey",
+    tenure: "8 months",
+    number_Of_Levels: "9",
+    tags: ["Ancient", "Medieval", "Modern"],
+    createdOn: 1737541487,
+    roadmap_status: ROADMAP_STATUS.PENDING_APPROVAL,
+  },
+  {
+    img: avatar,
+    name: "John Doe",
+    roadmap_name: "Web Development",
+    tenure: "6 months",
+    number_Of_Levels: "10",
+    tags: ["Algebra", "Geometry", "Trigonometry"],
+    createdOn: 1737541487,
+    roadmap_status: ROADMAP_STATUS.PUBLISHED,
+  },
+  {
+    img: avatar,
+    name: "John Doe",
+    roadmap_name: "Computer Basics",
+    tenure: "7 months",
+    number_Of_Levels: "10",
+    tags: ["Reading", "Writing", "Analysis"],
+    createdOn: 1737541487,
+    roadmap_status: ROADMAP_STATUS.PUBLISHED,
   },
 ];

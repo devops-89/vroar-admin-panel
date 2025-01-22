@@ -4,7 +4,7 @@ import { COLORS, CONTENT_TYPE, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddContentValidationSchema } from "@/utils/validationSchema";
-import { AttachFile, CloudUpload } from "@mui/icons-material";
+import { AttachFile, ErrorSharp } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -16,13 +16,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useFormik } from "formik";
 
-import React, { useRef, useState } from "react";
+import { data } from "@/assests/data";
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import ToastBar from "../toastBar";
-import { useRouter } from "next/router";
-import { data } from "@/assests/data";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
 const contentTypeConfig = {
@@ -60,34 +58,17 @@ const AddContent = () => {
 
   const [state, setState] = useState(initialValues);
 
-  const [errors, setErrors] = useState(initialValues);
+  const [errors, setErrors] = useState({});
 
   const inputHandler = (e) => {
     const { id, value } = e.target;
 
     setState({ ...state, [id]: value });
+    setErrors({ ...errors, [id]: "" });
   };
 
-  const formik = useFormik({
-    initialValues: {
-      contentType: "",
-      career: "",
-      industry: "",
-      strengths: "",
-      softSkills: "",
-      contentName: "",
-      isQuizEnabled: false,
-
-      quizType: "",
-    },
-    validationSchema: AddContentValidationSchema(isQuizEnabled),
-    onSubmit: (values) => {
-      console.log("test", values);
-    },
-  });
-
   const quizHandler = (e) => {
-    formik.values.isQuizEnabled = e.target.checked;
+    setState({ ...state, isQuizEnabled: e.target.checked });
     setIsQuizEnabled(e.target.checked);
   };
 
@@ -99,60 +80,59 @@ const AddContent = () => {
         contentTypeConfig[newValue.label] || {};
       setShowFile(showFile);
       setShowLink(showLink);
-
-      formik.values.contentType = newValue.label;
-      formik.errors.contentType = "";
+      setState({ ...state, contentType: newValue.label });
+      setErrors({ ...errors, contentType: "" });
     } else {
       setShowFile(false);
       setShowLink(false);
 
-      formik.errors.contentType = "Please Select content type";
+      setErrors({ ...errors, contentType: "" });
     }
   };
   const careerHandler = (e, newValue) => {
     setCareer(newValue);
     if (newValue) {
-      formik.values.career = newValue.label;
-      formik.errors.career = "";
+      setState({ ...state, career: newValue.label });
+      setErrors({ ...errors, career: "" });
     } else {
-      formik.errors.career = "Please Select Valid Career";
+      setErrors({ ...errors, career: "" });
     }
   };
   const industryHandler = (e, newValue) => {
     setIndustry(newValue);
     if (newValue) {
-      formik.values.industry = newValue.label;
-      formik.errors.industry = "";
+      setState({ ...state, industry: newValue.label });
+      setErrors({ ...errors, industry: "" });
     } else {
-      formik.errors.industry = "Please Select Valid Career";
+      setErrors({ ...ErrorSharp, industry: "Please Select Valid Career" });
     }
   };
   const strengthHandler = (e, newValue) => {
     setStrengths(newValue);
     if (newValue) {
-      formik.values.strengths = newValue.label;
-      formik.errors.strengths = "";
+      setState({ ...state, strengths: newValue.label });
+      setErrors({ ...errors, strengths: "" });
     } else {
-      formik.errors.strengths = "Please Select Valid Career";
+      setErrors({ ...errors, strengths: "Please Select Valid Strengths" });
     }
   };
   const softSkillsHandler = (e, newValue) => {
     setSoftSkills(newValue);
     if (newValue) {
-      formik.values.softSkills = newValue.label;
-      formik.errors.softSkills = "";
+      setState({ ...state, softSkills: newValue.label });
+      setErrors({ ...errors, softSkills: "" });
     } else {
-      formik.errors.softSkills = "Please Select Valid Career";
+      setErrors({ ...errors, softSkills: "Please Select Valid Soft skills" });
     }
   };
   const [quizType, setQuizType] = useState(null);
   const quizTypeHandler = (e, newValue) => {
     setQuizType(newValue);
     if (newValue) {
-      formik.values.quizType = newValue.label;
-      formik.errors.quizType = "";
+      setState({ ...state, quizType: newValue.label });
+      setErrors({ ...errors, quizType: "" });
     } else {
-      formik.errors.quizType = "Please Select Quiz Type";
+      setErrors({ ...errors, quizType: "Please Select Quiz Type" });
     }
   };
 
@@ -175,9 +155,17 @@ const AddContent = () => {
     }
   };
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    if (AddContentValidationSchema({ state, setErrors, errors })) {
+      console.log("state", state);
+    } else {
+      console.log("errror");
+    }
+  };
   return (
     <Box mt={3}>
-      <form action="" onSubmit={formik.handleSubmit}>
+      <form action="" onSubmit={submitHandler}>
         <Stack
           alignItems={"start"}
           justifyContent={"flex-end"}
@@ -361,10 +349,8 @@ const AddContent = () => {
             sx={{ ...loginTextField }}
             id="contentName"
             onChange={inputHandler}
-            error={
-              formik.touched.contentName && Boolean(formik.errors.contentName)
-            }
-            helperText={formik.touched.contentName && formik.errors.contentName}
+            error={Boolean(errors.contentName)}
+            helperText={errors.contentName}
           />
           <FormControlLabel
             label={
@@ -406,12 +392,12 @@ const AddContent = () => {
             />
           )}
 
-          {formik.values.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && (
-            <ObjectiveQuiz />
-          )}
+          {state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && <ObjectiveQuiz />}
 
-          {formik.values.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
-            <SubjectiveQuiz />
+          {state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
+            <Box sx={{width:"100%"}}>
+              <SubjectiveQuiz />
+            </Box>
           )}
 
           <Button

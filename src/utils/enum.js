@@ -34,6 +34,8 @@ export const COLORS = {
   PROGRESS75: "#B2DFDB",
   RED: "#C62828",
   TRANSPARENT: "transparent",
+  DANGER_BOX: "#FFCDD2",
+  DANGER: "#C62828",
 };
 
 export const USER_GROUP = {
@@ -192,6 +194,12 @@ export const ROADMAP_STATUS = {
   ROADMAP_REQUESTED: "Roadmap Requested",
   PAYMENT_DONE: "Payment Done",
   SIGNED_UP: "Signed Up",
+  PUBLISHED: "Published",
+  PENDING_APPROVAL: "Pending Approval",
+  UPCOMING: "Upcoming",
+  In_PROGRESS: "In Progress",
+  COMPLETED: "Completed",
+  CANCELLED: "Cancelled",
 };
 
 export const RELATIONSHIP_DATA = {
@@ -314,4 +322,10 @@ export const CONTENT_TYPE = {
 export const QUIZ_TYPE = {
   OBJECTIVE_QUIZ: "Objective Quiz",
   SUBJECTIVE_QUIZ: "Subjective Quiz",
+};
+
+export const ROADMAP_TENURE = {
+  6: "6 Months",
+  8: "8 Months",
+  12: "12 Months",
 };
