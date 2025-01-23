@@ -27,42 +27,42 @@ export const AddMetaDataValiationSchema = Yup.object({
   name: Yup.string().required("Please Enter MetaData Name"),
 });
 
-export const AddContentValidationSchema = (isQuizEnabled) =>
-  Yup.object({
-    contentType: Yup.string().required("Please Select Content Type"),
-    career: Yup.string().required("Please Select Valid Career"),
-    industry: Yup.string().required("Please Select Valid Industry"),
-    strengths: Yup.string().required("Please Select Valid Strengths"),
-    softSkills: Yup.string().required("Please Select Valid Soft Skills"),
-    contentName: Yup.string().required("Please Enter Content Name"),
-    ...(isQuizEnabled && {
-      quizType: Yup.string().required("Please Select Quiz Type"),
-    }),
-  });
-// export const AddContentValidationSchema = ({ state, errors, setErrors }) => {
-//   const { contentType, career, industry, strengths, softSkills, contentName } =
-//     state;
+// export const AddContentValidationSchema = (isQuizEnabled) =>
+//   Yup.object({
+//     contentType: Yup.string().required("Please Select Content Type"),
+//     career: Yup.string().required("Please Select Valid Career"),
+//     industry: Yup.string().required("Please Select Valid Industry"),
+//     strengths: Yup.string().required("Please Select Valid Strengths"),
+//     softSkills: Yup.string().required("Please Select Valid Soft Skills"),
+//     contentName: Yup.string().required("Please Enter Content Name"),
+//     ...(isQuizEnabled && {
+//       quizType: Yup.string().required("Please Select Quiz Type"),
+//     }),
+//   });
+export const AddContentValidationSchema = ({ state, errors, setErrors }) => {
+  const { contentType, career, industry, strengths, softSkills, contentName } =
+    state;
 
-//   if (
-//     contentType === "" ||
-//     career === "" ||
-//     industry === "" ||
-//     strengths === "" ||
-//     softSkills === "" ||
-//     contentName === ""
-//   ) {
-//     setErrors({
-//       ...errors,
-//       contentType: contentType === "" && "Please Select Content Type",
-//       career: career === "" && "Please Select Career",
-//       industry: industry === "" && "Please Select Industry",
-//       strengths: "Please Select Strengths",
-//       softSkills: "Please Select Soft Skills",
-//       contentName: "Please Enter Content Name",
-//       quizType: "Please Select Quiz Type",
-//     });
-//     return false;
-//   } else {
-//     return true;
-//   }
-// };
+  if (
+    contentType === "" ||
+    career === "" ||
+    industry === "" ||
+    strengths === "" ||
+    softSkills === "" ||
+    contentName === ""
+  ) {
+    setErrors({
+      ...errors,
+      contentType: contentType === "" && "Please Select Content Type",
+      career: career === "" && "Please Select Career",
+      industry: industry === "" && "Please Select Industry",
+      strengths: "Please Select Strengths",
+      softSkills: "Please Select Soft Skills",
+      contentName: "Please Enter Content Name",
+      quizType: "Please Select Quiz Type",
+    });
+    return false;
+  } else {
+    return true;
+  }
+};

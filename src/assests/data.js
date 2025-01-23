@@ -4,6 +4,7 @@ import {
   METADATA_TYPE,
   QUIZ_TYPE,
   RELATIONSHIP_DATA,
+  ROADMAP_TENURE,
 } from "@/utils/enum";
 
 export const data = {
@@ -177,6 +178,22 @@ export const data = {
       startDate: 1737800687,
       endDate: 1738232687,
       // status:
+    },
+  ],
+  roadmap_tenure: [
+    {
+      label: ROADMAP_TENURE[6],
+    },
+    {
+      label: ROADMAP_TENURE[8],
+    },
+    {
+      label: ROADMAP_TENURE[12],
+    },
+  ],
+  MONTH_6: [
+    {
+      label: 5,
     },
   ],
 };

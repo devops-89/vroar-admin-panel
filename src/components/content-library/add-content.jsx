@@ -1,15 +1,22 @@
-import { CONTENT_TYPE_DATA } from "@/assests/roadmapData";
+import {
+  CAREERDATA,
+  CONTENT_TYPE_DATA,
+  INDUSTRYDATA,
+  SOFTSKILLSDATA,
+  STRENGTHDATA,
+} from "@/assests/roadmapData";
 import { setToast } from "@/redux/reducers/toast";
 import { COLORS, CONTENT_TYPE, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddContentValidationSchema } from "@/utils/validationSchema";
-import { AttachFile, ErrorSharp } from "@mui/icons-material";
+import { AttachFile, Close, ErrorSharp } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
   Button,
   Checkbox,
+  Chip,
   FormControlLabel,
   FormHelperText,
   Stack,
@@ -34,10 +41,10 @@ const contentTypeConfig = {
 const AddContent = () => {
   const inputRef = useRef();
   const [content, setContent] = useState(null);
-  const [career, setCareer] = useState(null);
-  const [industry, setIndustry] = useState(null);
-  const [strengths, setStrengths] = useState(null);
-  const [softSkills, setSoftSkills] = useState(null);
+  const [career, setCareer] = useState([]);
+  const [industry, setIndustry] = useState([]);
+  const [strengths, setStrengths] = useState([]);
+  const [softSkills, setSoftSkills] = useState([]);
   const [file, setFile] = useState(null);
   const [showFile, setShowFile] = useState(false);
   const [showLink, setShowLink] = useState(false);
@@ -261,15 +268,40 @@ const AddContent = () => {
             onChange={careerHandler}
             value={career}
             fullWidth
-            options={CONTENT_TYPE_DATA}
-            getOptionLabel={(option) => option.label}
+            options={CAREERDATA}
+            getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
               <Box {...props}>
                 <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                  {option.label}
+                  {option.name}
                 </Typography>
               </Box>
             )}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => {
+                const { key, ...tagProps } = getTagProps({ index });
+                return (
+                  <Chip
+                    label={option.name}
+                    key={key}
+                    {...tagProps}
+                    sx={{
+                      "& ": {
+                        backgroundColor: COLORS.PENDING,
+                        color: COLORS.PENDING_TEXT,
+                      },
+                      "& svg": {
+                        color: `${COLORS.PENDING_TEXT} !important`,
+                        fontSize: "20px !important",
+                      },
+                    }}
+                    deleteIcon={<Close />}
+                  />
+                );
+              })
+            }
+            multiple
+            filterSelectedOptions
           />
           <Autocomplete
             renderInput={(params) => (
@@ -285,15 +317,40 @@ const AddContent = () => {
             fullWidth
             onChange={industryHandler}
             value={industry}
-            options={CONTENT_TYPE_DATA}
-            getOptionLabel={(option) => option.label}
+            options={INDUSTRYDATA}
+            getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
               <Box {...props}>
                 <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                  {option.label}
+                  {option.name}
                 </Typography>
               </Box>
             )}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => {
+                const { key, ...tagProps } = getTagProps({ index });
+                return (
+                  <Chip
+                    label={option.name}
+                    key={key}
+                    {...tagProps}
+                    sx={{
+                      "& ": {
+                        backgroundColor: COLORS.DONE,
+                        color: COLORS.DONE_TEXT,
+                      },
+                      "& svg": {
+                        color: `${COLORS.DONE_TEXT} !important`,
+                        fontSize: "20px !important",
+                      },
+                    }}
+                    deleteIcon={<Close />}
+                  />
+                );
+              })
+            }
+            multiple
+            filterSelectedOptions
           />
           <Autocomplete
             renderInput={(params) => (
@@ -309,15 +366,40 @@ const AddContent = () => {
             fullWidth
             onChange={strengthHandler}
             value={strengths}
-            options={CONTENT_TYPE_DATA}
-            getOptionLabel={(option) => option.label}
+            options={STRENGTHDATA}
+            getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
               <Box {...props}>
                 <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                  {option.label}
+                  {option.name}
                 </Typography>
               </Box>
             )}
+            multiple
+            filterSelectedOptions
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => {
+                const { key, ...tagProps } = getTagProps({ index });
+                return (
+                  <Chip
+                    label={option.name}
+                    key={key}
+                    {...tagProps}
+                    sx={{
+                      "& ": {
+                        backgroundColor: COLORS.SIGNED_UP,
+                        color: COLORS.SIGNED_UP_TEXT,
+                      },
+                      "& svg": {
+                        color: `${COLORS.SIGNED_UP_TEXT} !important`,
+                        fontSize: "20px !important",
+                      },
+                    }}
+                    deleteIcon={<Close />}
+                  />
+                );
+              })
+            }
           />
           <Autocomplete
             renderInput={(params) => (
@@ -333,15 +415,40 @@ const AddContent = () => {
             fullWidth
             onChange={softSkillsHandler}
             value={softSkills}
-            options={CONTENT_TYPE_DATA}
-            getOptionLabel={(option) => option.label}
+            options={SOFTSKILLSDATA}
+            getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
               <Box {...props}>
                 <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                  {option.label}
+                  {option.name}
                 </Typography>
               </Box>
             )}
+            multiple
+            filterSelectedOptions
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => {
+                const { key, ...tagProps } = getTagProps({ index });
+                return (
+                  <Chip
+                    label={option.name}
+                    key={key}
+                    {...tagProps}
+                    sx={{
+                      "& ": {
+                        backgroundColor: COLORS.PURPLE,
+                        color: COLORS.PURPLE_TEXT,
+                      },
+                      "& svg": {
+                        color: `${COLORS.PURPLE_TEXT} !important`,
+                        fontSize: "20px !important",
+                      },
+                    }}
+                    deleteIcon={<Close />}
+                  />
+                );
+              })
+            }
           />
           <TextField
             label="Add Name"
@@ -392,10 +499,12 @@ const AddContent = () => {
             />
           )}
 
-          {state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && <ObjectiveQuiz />}
+          {state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && isQuizEnabled && (
+            <ObjectiveQuiz />
+          )}
 
-          {state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
-            <Box sx={{width:"100%"}}>
+          {state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && isQuizEnabled && (
+            <Box sx={{ width: "100%" }}>
               <SubjectiveQuiz />
             </Box>
           )}

@@ -1,3 +1,4 @@
+import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
 import AddMetaData from "@/assests/modalCalling/metaData/addMetaData";
 import {
@@ -15,34 +16,61 @@ import { COLORS, METADATA_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { AddCircle } from "@mui/icons-material";
 import { Box, Button, Card, Stack, Tab, Tabs, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 const Metadata = () => {
   const [value, setValue] = useState(0);
   const dispatch = useDispatch();
   const [metaData, setMetaData] = useState(CAREERDATA);
+  const [metaDataType, setMetaDataType] = useState(METADATA_TYPE.CAREER);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
   const tabChangeHandler = (e, newValue) => {
     setValue(newValue);
     const text = e.target.textContent;
     if (text === METADATA_TYPE.CAREER) {
       setMetaData(CAREERDATA);
+      setMetaDataType(METADATA_TYPE.CAREER);
     }
     if (text === METADATA_TYPE.INDUSTRY) {
       setMetaData(INDUSTRYDATA);
+      setMetaDataType(METADATA_TYPE.INDUSTRY);
     }
     if (text === METADATA_TYPE.SOFT_SKILLS) {
       setMetaData(SOFTSKILLSDATA);
+      setMetaDataType(METADATA_TYPE.SOFT_SKILLS);
     }
 
     if (text === METADATA_TYPE.STRENGTHS) {
       setMetaData(STRENGTHDATA);
+      setMetaDataType(METADATA_TYPE.STRENGTHS);
     }
+  };
+
+  const getMetaData = (body) => {
+    metaDataController
+      .getMetaData(body)
+      .then((res) => {
+        console.log("res", res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const addMetaData = () => {
     dispatch(showModal(<AddMetaData />));
   };
+
+  useEffect(() => {
+    let body = {
+      page: page,
+      pageSize: pageSize,
+      type: metaDataType,
+    };
+    getMetaData(body);
+  }, []);
 
   return (
     <div>

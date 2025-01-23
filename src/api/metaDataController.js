@@ -12,4 +12,20 @@ export const metaDataController = {
       throw error;
     }
   },
+  getMetaData: async (params = {}) => {
+    if (params.page === 0) {
+      params.page = 1;
+    }
+    try {
+      const queryString = new URLSearchParams(params).toString();
+
+      const result = await contentSecuredApi.contentSecuredApi.get(
+        `/api/metadata/getMetadata?${queryString}`
+      );
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

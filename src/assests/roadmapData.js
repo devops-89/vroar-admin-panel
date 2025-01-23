@@ -265,7 +265,24 @@ export const ROADMAP_DATA = [
     roadmap_name: "Data Science",
     tenure: "12 months",
     number_Of_Levels: "8",
-    tags: ["Biology", "Chemistry", "Physics"],
+    tags: [
+      {
+        tag: METADATA_TYPE.CAREER,
+        count: CAREERDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.INDUSTRY,
+        count: INDUSTRYDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.SOFT_SKILLS,
+        count: SOFTSKILLSDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.STRENGTHS,
+        count: STRENGTHDATA.length,
+      },
+    ],
     createdOn: 1737541487,
     roadmap_status: ROADMAP_STATUS.PUBLISHED,
   },
@@ -275,7 +292,24 @@ export const ROADMAP_DATA = [
     roadmap_name: "Literature Journey",
     tenure: "8 months",
     number_Of_Levels: "9",
-    tags: ["Ancient", "Medieval", "Modern"],
+    tags: [
+      {
+        tag: METADATA_TYPE.CAREER,
+        count: CAREERDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.INDUSTRY,
+        count: INDUSTRYDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.SOFT_SKILLS,
+        count: SOFTSKILLSDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.STRENGTHS,
+        count: STRENGTHDATA.length,
+      },
+    ],
     createdOn: 1737541487,
     roadmap_status: ROADMAP_STATUS.PENDING_APPROVAL,
   },
@@ -285,7 +319,24 @@ export const ROADMAP_DATA = [
     roadmap_name: "Web Development",
     tenure: "6 months",
     number_Of_Levels: "10",
-    tags: ["Algebra", "Geometry", "Trigonometry"],
+    tags: [
+      {
+        tag: METADATA_TYPE.CAREER,
+        count: CAREERDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.INDUSTRY,
+        count: INDUSTRYDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.SOFT_SKILLS,
+        count: SOFTSKILLSDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.STRENGTHS,
+        count: STRENGTHDATA.length,
+      },
+    ],
     createdOn: 1737541487,
     roadmap_status: ROADMAP_STATUS.PUBLISHED,
   },
@@ -295,7 +346,24 @@ export const ROADMAP_DATA = [
     roadmap_name: "Computer Basics",
     tenure: "7 months",
     number_Of_Levels: "10",
-    tags: ["Reading", "Writing", "Analysis"],
+    tags: [
+      {
+        tag: METADATA_TYPE.CAREER,
+        count: CAREERDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.INDUSTRY,
+        count: INDUSTRYDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.SOFT_SKILLS,
+        count: SOFTSKILLSDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.STRENGTHS,
+        count: STRENGTHDATA.length,
+      },
+    ],
     createdOn: 1737541487,
     roadmap_status: ROADMAP_STATUS.PUBLISHED,
   },

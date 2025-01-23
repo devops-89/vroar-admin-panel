@@ -1,5 +1,5 @@
 import { hideModal } from "@/redux/reducers/modal";
-import { COLORS } from "@/utils/enum";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Close } from "@mui/icons-material";
 import {
@@ -18,6 +18,8 @@ import { data } from "../../data";
 import { loginTextField } from "@/utils/styles";
 import { AddMetaDataValiationSchema } from "@/utils/validationSchema";
 import { metaDataController } from "@/api/metaDataController";
+import { setToast } from "@/redux/reducers/toast";
+import Loading from "react-loading";
 
 const AddMetaData = () => {
   const dispatch = useDispatch();
@@ -33,7 +35,7 @@ const AddMetaData = () => {
 
   const [state, setState] = useState(initialState);
   const [errors, setErrors] = useState({});
-
+  const [loading, setLoading] = useState(false);
   const inputHandler = (e) => {
     const { id, value } = e.target;
     setState({ ...state, [id]: value });
@@ -66,6 +68,7 @@ const AddMetaData = () => {
     e.preventDefault();
     const isValid = await validateForm();
     if (isValid) {
+      setLoading(true);
       let body = {
         name: state.name,
         type: state.metadataType,
@@ -73,10 +76,27 @@ const AddMetaData = () => {
       metaDataController
         .addMetaData(body)
         .then((res) => {
-          console.log("res", res);
+          dispatch(
+            setToast({
+              open: true,
+              message: res.data.message,
+              severity: ToastStatus.SUCCESS,
+            })
+          );
+          setLoading(false);
+          dispatch(hideModal());
         })
         .catch((err) => {
-          console.log("err", err);
+          let errMessage =
+            (err.response && err.response.data.message) || err.message;
+          dispatch(
+            setToast({
+              open: true,
+              message: errMessage,
+              severity: ToastStatus.ERROR,
+            })
+          );
+          setLoading(false);
         });
     }
   };
@@ -140,8 +160,18 @@ const AddMetaData = () => {
               fontFamily: roboto.style,
             }}
             type="submit"
+            disabled={loading}
           >
-            Save
+            {loading ? (
+              <Loading
+                type="bars"
+                color={COLORS.BLACK}
+                width={20}
+                height={20}
+              />
+            ) : (
+              "Save"
+            )}
           </Button>
         </FormControl>
       </form>
