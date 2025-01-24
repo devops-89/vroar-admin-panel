@@ -4,12 +4,15 @@ import CustomTable from "@/components/customTable";
 import Wrapper from "@/components/wrapper";
 import { COLORS, METADATA_TYPE, ROADMAP_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { AddCircle } from "@mui/icons-material";
+import { AddCircle, Remove } from "@mui/icons-material";
 import {
   Avatar,
   Box,
   Button,
   Card,
+  Chip,
+  Collapse,
+  IconButton,
   Stack,
   Table,
   TableBody,
@@ -23,13 +26,19 @@ import {
 import moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 
 const Roadmap = () => {
   const router = useRouter();
 
   const addRoadmap = () => {
     router.push("/roadmap-management/create-roadmap");
+  };
+
+  const [open, setOpen] = useState(null);
+
+  const handleToggle = (index) => {
+    setOpen((prev) => (prev === index ? null : index));
   };
 
   return (
@@ -77,7 +86,7 @@ const Roadmap = () => {
                   <TableRow>
                     {ROADMAP_HEADER.map((val, i) =>
                       val.sort ? (
-                        <TableCell align="center" key={i} sx={{width:130}}> 
+                        <TableCell align="center" key={i} sx={{ width: 130 }}>
                           <TableSortLabel
                             sx={{
                               "& .MuiTableSortLabel-icon": {
@@ -96,7 +105,7 @@ const Roadmap = () => {
                           </TableSortLabel>
                         </TableCell>
                       ) : (
-                        <TableCell key={i} align="center" >
+                        <TableCell key={i} align="center">
                           <Typography
                             sx={{ fontFamily: roboto.style, fontSize: 14 }}
                           >
@@ -120,7 +129,7 @@ const Roadmap = () => {
                             <Image src={val.img} alt="" width={30} />
                           </Avatar>
                           <Typography
-                            sx={{ fontSize: 14, fontFamily: roboto.style }}
+                            sx={{ fontSize: 13, fontFamily: roboto.style }}
                           >
                             {val.name}
                           </Typography>
@@ -128,7 +137,7 @@ const Roadmap = () => {
                       </TableCell>
                       <TableCell align="center">
                         <Typography
-                          sx={{ fontSize: 14, fontFamily: roboto.style }}
+                          sx={{ fontSize: 13, fontFamily: roboto.style }}
                         >
                           {val.roadmap_name}
                         </Typography>
@@ -151,44 +160,99 @@ const Roadmap = () => {
                         <Stack
                           direction={"row"}
                           alignItems={"center"}
-                          flexWrap={"wrap"}
                           spacing={1}
-                          justifyContent={"center"}
                         >
-                          {val.tags.map((item, i) => (
-                            <Typography
+                          {val.tags.slice(0, 2).map((item) => (
+                            <React.Fragment key={item.tag}>
+                              <Chip
+                                label={
+                                  <Typography
+                                    sx={{
+                                      fontSize: 12,
+                                      fontFamily: roboto.style,
+                                    }}
+                                  >
+                                    {item.tag} ({item.count})
+                                  </Typography>
+                                }
+                                sx={{
+                                  backgroundColor:
+                                    item.tag === METADATA_TYPE.CAREER
+                                      ? COLORS.PENDING
+                                      : item.tag === METADATA_TYPE.INDUSTRY
+                                      ? COLORS.DONE
+                                      : item.tag === METADATA_TYPE.SOFT_SKILLS
+                                      ? COLORS.SIGNED_UP
+                                      : COLORS.PURPLE,
+                                  color:
+                                    item.tag === METADATA_TYPE.CAREER
+                                      ? COLORS.PENDING_TEXT
+                                      : item.tag === METADATA_TYPE.INDUSTRY
+                                      ? COLORS.DONE_TEXT
+                                      : item.tag === METADATA_TYPE.SOFT_SKILLS
+                                      ? COLORS.SIGNED_UP_TEXT
+                                      : COLORS.PURPLE_TEXT,
+                                  mb: 1,
+                                }}
+                              />
+                            </React.Fragment>
+                          ))}
+                          {val.tags.length > 1 && (
+                            <IconButton
                               sx={{
                                 fontSize: 12,
-                                fontFamily: roboto.style,
-                                width: 100,
+                                color: COLORS.BLACK,
+                                width: 25,
+                                height: 25,
+                              }}
+                              onClick={() => handleToggle(i)}
+                            >
+                              {open === i ? (
+                                <Remove sx={{ fontSize: 12 }} />
+                              ) : (
+                                `
+                             +${val.tags.length - 2}
+                             `
+                              )}
+                            </IconButton>
+                          )}
+                        </Stack>
+                        <Collapse in={open === i} sx={{ mt: 1 }}>
+                          {val.tags.slice(2).map((tag, idx) => (
+                            <Chip
+                              label={
+                                <Typography
+                                  sx={{
+                                    fontSize: 12,
+                                    fontFamily: roboto.style,
+                                  }}
+                                >
+                                  {tag.tag} ({tag.count})
+                                </Typography>
+                              }
+                              sx={{
                                 backgroundColor:
-                                  item.tag === METADATA_TYPE.CAREER
+                                  tag.tag === METADATA_TYPE.CAREER
                                     ? COLORS.PENDING
-                                    : item.tag === METADATA_TYPE.INDUSTRY
+                                    : tag.tag === METADATA_TYPE.INDUSTRY
                                     ? COLORS.DONE
-                                    : item.tag === METADATA_TYPE.SOFT_SKILLS
+                                    : tag.tag === METADATA_TYPE.SOFT_SKILLS
                                     ? COLORS.SIGNED_UP
                                     : COLORS.PURPLE,
-                                textAlign: "center",
-                                borderRadius: 3,
                                 color:
-                                  item.tag === METADATA_TYPE.CAREER
+                                  tag.tag === METADATA_TYPE.CAREER
                                     ? COLORS.PENDING_TEXT
-                                    : item.tag === METADATA_TYPE.INDUSTRY
+                                    : tag.tag === METADATA_TYPE.INDUSTRY
                                     ? COLORS.DONE_TEXT
-                                    : item.tag === METADATA_TYPE.SOFT_SKILLS
+                                    : tag.tag === METADATA_TYPE.SOFT_SKILLS
                                     ? COLORS.SIGNED_UP_TEXT
                                     : COLORS.PURPLE_TEXT,
-                                p: 0.7,
-                                mb:"10px !important"
+                                mb: 1,
                               }}
-                              key={i}
-                            >
-                              {item.tag} ({item.count})
-                            </Typography>
+                            />
                           ))}
-                        </Stack>
-                      </TableCell>
+                        </Collapse>
+                      </TableCell>{" "}
                       <TableCell align="center">
                         <Typography
                           sx={{ fontSize: 12, fontFamily: roboto.style }}
@@ -197,21 +261,15 @@ const Roadmap = () => {
                         </Typography>
                       </TableCell>
                       <TableCell align="center">
-                        <Box
+                        <Chip
+                          label={
+                            <Typography
+                              sx={{ fontSize: 12, fontFamily: roboto.style }}
+                            >
+                              {val.roadmap_status}
+                            </Typography>
+                          }
                           sx={{
-                            fontSize: 11,
-                            fontFamily: roboto.style,
-                            backgroundColor:
-                              val.roadmap_status ===
-                              ROADMAP_STATUS.PENDING_APPROVAL
-                                ? COLORS.PENDING
-                                : ROADMAP_STATUS.PUBLISHED ===
-                                  val.roadmap_status
-                                ? COLORS.DONE
-                                : "",
-                            p: 0.7,
-                            borderRadius: 3,
-                            textAlign: "center",
                             color:
                               val.roadmap_status ===
                               ROADMAP_STATUS.PENDING_APPROVAL
@@ -220,10 +278,16 @@ const Roadmap = () => {
                                   val.roadmap_status
                                 ? COLORS.DONE_TEXT
                                 : "",
+                            backgroundColor:
+                              val.roadmap_status ===
+                              ROADMAP_STATUS.PENDING_APPROVAL
+                                ? COLORS.PENDING
+                                : ROADMAP_STATUS.PUBLISHED ===
+                                  val.roadmap_status
+                                ? COLORS.DONE
+                                : "",
                           }}
-                        >
-                          {val.roadmap_status}
-                        </Box>
+                        />
                       </TableCell>
                       <TableCell>
                         <Button sx={{ fontSize: 10 }}>View Roadmap</Button>

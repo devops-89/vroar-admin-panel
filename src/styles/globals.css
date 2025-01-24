@@ -55,3 +55,7 @@ body {
 .quill {
   height: 200px;
 }
+
+.m-auto {
+  margin: auto;
+}

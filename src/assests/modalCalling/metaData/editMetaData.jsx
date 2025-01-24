@@ -18,28 +18,46 @@ import { data } from "../../data";
 import { loginTextField } from "@/utils/styles";
 import { useFormik } from "formik";
 import { AddMetaDataValiationSchema } from "@/utils/validationSchema";
+import { metaDataController } from "@/api/metaDataController";
+import Loading from "react-loading";
 
-const EditMetaData = ({ value }) => {
-  console.log("test", value);
+const EditMetaData = ({ value, getMetaData, metaDataBody }) => {
   const dispatch = useDispatch();
-
+  // console.log("esese", value);
   const closeModal = () => {
     dispatch(hideModal());
   };
 
+  const [loading, setLoading] = useState(false);
+
   const formik = useFormik({
     initialValues: {
-      metadataType: value.metadataType,
+      metadataType: value.type,
       name: value.name,
     },
     validationSchema: AddMetaDataValiationSchema,
     onSubmit: (values) => {
-      console.log("test", values);
+      let body = {
+        type: values.metadataType,
+        name: values.name,
+      };
+      setLoading(true);
+      metaDataController
+        .editMetaData({ data: body, id: value.id })
+        .then((res) => {
+          console.log("esr", res);
+          setLoading(false);
+          dispatch(closeModal());
+        })
+        .catch((err) => {
+          console.log("err", err);
+          setLoading(false);
+        });
     },
   });
 
   const [metaDataType, setMetaDataType] = useState({
-    label: value.metadataType,
+    label: value.type,
   });
 
   const metaSelectHandler = (e, newValue) => {
@@ -120,6 +138,7 @@ const EditMetaData = ({ value }) => {
                   border: `1px solid ${COLORS.PRIMARY}`,
                 }}
                 fullWidth
+                onClick={closeModal}
               >
                 Discard
               </Button>
@@ -133,7 +152,16 @@ const EditMetaData = ({ value }) => {
                 type="submit"
                 fullWidth
               >
-                save
+                {loading ? (
+                  <Loading
+                    type="bars"
+                    width={20}
+                    height={20}
+                    className="m-auto"
+                  />
+                ) : (
+                  "save"
+                )}
               </Button>
             </Stack>
           </FormControl>

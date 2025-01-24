@@ -21,7 +21,8 @@ import { metaDataController } from "@/api/metaDataController";
 import { setToast } from "@/redux/reducers/toast";
 import Loading from "react-loading";
 
-const AddMetaData = () => {
+const AddMetaData = ({ getMetaData, metaDataBody }) => {
+  console.log(metaDataBody)
   const dispatch = useDispatch();
 
   const closeModal = () => {
@@ -83,6 +84,7 @@ const AddMetaData = () => {
               severity: ToastStatus.SUCCESS,
             })
           );
+          getMetaData(metaDataBody);
           setLoading(false);
           dispatch(hideModal());
         })

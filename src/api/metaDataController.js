@@ -28,4 +28,23 @@ export const metaDataController = {
       throw error;
     }
   },
+  editMetaData: async ({ data, id }) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        `/api/metadata/updateMetadata/${id}`,
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // getContentLibrary: async (data) => {
+  //   try {
+  //     let result =await 
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // },
 };

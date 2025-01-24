@@ -6,7 +6,7 @@ import { FilterList, SwapVert } from "@mui/icons-material";
 import { Box, Button, Grid2, TextField } from "@mui/material";
 import RoadmapTable from "./roadmaptable";
 
-const MetaData = ({  tableData }) => {
+const MetaData = ({ tableData, editMetaData, statusHandler }) => {
   return (
     <div>
       <Grid2 container spacing={2}>
@@ -44,7 +44,12 @@ const MetaData = ({  tableData }) => {
         </Grid2>
       </Grid2>
       <Box sx={{ mt: 1 }}>
-        <RoadmapTable tableHeader={metaDataHeader} tableData={tableData} />
+        <RoadmapTable
+          tableHeader={metaDataHeader}
+          tableData={tableData}
+          editMetaData={editMetaData}
+          statusHandler={statusHandler}
+        />
       </Box>
     </div>
   );

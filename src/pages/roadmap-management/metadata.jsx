@@ -1,6 +1,7 @@
 import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
 import AddMetaData from "@/assests/modalCalling/metaData/addMetaData";
+import EditMetaData from "@/assests/modalCalling/metaData/editMetaData";
 import {
   CAREERDATA,
   INDUSTRYDATA,
@@ -12,65 +13,112 @@ import MetaData from "@/components/roadmap/metaData";
 import TabPanel from "@/components/tabPanel";
 import Wrapper from "@/components/wrapper";
 import { showModal } from "@/redux/reducers/modal";
-import { COLORS, METADATA_TYPE } from "@/utils/enum";
+import { COLORS, METADATA_TYPE, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { AddCircle } from "@mui/icons-material";
 import { Box, Button, Card, Stack, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
 const Metadata = () => {
   const [value, setValue] = useState(0);
   const dispatch = useDispatch();
-  const [metaData, setMetaData] = useState(CAREERDATA);
+  const [metaData, setMetaData] = useState(null);
   const [metaDataType, setMetaDataType] = useState(METADATA_TYPE.CAREER);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [loading, setLoading] = useState(true);
+  let body = {
+    page: page,
+    pageSize: pageSize,
+    type: metaDataType,
+  };
   const tabChangeHandler = (e, newValue) => {
     setValue(newValue);
     const text = e.target.textContent;
     if (text === METADATA_TYPE.CAREER) {
-      setMetaData(CAREERDATA);
       setMetaDataType(METADATA_TYPE.CAREER);
+      setLoading(true);
+      body.type = METADATA_TYPE.CAREER;
     }
     if (text === METADATA_TYPE.INDUSTRY) {
-      setMetaData(INDUSTRYDATA);
+      body.type = METADATA_TYPE.INDUSTRY;
+      setLoading(true);
       setMetaDataType(METADATA_TYPE.INDUSTRY);
     }
     if (text === METADATA_TYPE.SOFT_SKILLS) {
-      setMetaData(SOFTSKILLSDATA);
+      body.type = METADATA_TYPE.SOFT_SKILLS;
+      setLoading(true);
       setMetaDataType(METADATA_TYPE.SOFT_SKILLS);
     }
 
     if (text === METADATA_TYPE.STRENGTHS) {
-      setMetaData(STRENGTHDATA);
+      body.type = METADATA_TYPE.STRENGTHS;
+      setLoading(true);
       setMetaDataType(METADATA_TYPE.STRENGTHS);
     }
+    getMetaData(body);
   };
 
   const getMetaData = (body) => {
     metaDataController
       .getMetaData(body)
       .then((res) => {
-        console.log("res", res);
+        const response = res.data.data;
+        setMetaData(response);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setLoading(true);
       });
   };
 
   const addMetaData = () => {
-    dispatch(showModal(<AddMetaData />));
+    dispatch(
+      showModal(<AddMetaData getMetaData={getMetaData} metaDataBody={body} />)
+    );
+  };
+  const editMetaData = (value) => {
+    dispatch(
+      showModal(
+        <EditMetaData
+          value={value}
+          getMetaData={getMetaData}
+          metaDataBody={body}
+        />
+      )
+    );
+  };
+
+  const statusHandler = (e) => {
+    let { checked, value } = e.target;
+
+    let newData = {
+      status: checked ? USER_STATUS.ACTIVE : USER_STATUS.InActive,
+      type: metaDataType,
+    };
+
+    metaDataController
+      .editMetaData({
+        id: value,
+        data: newData,
+      })
+      .then((res) => {
+        console.log("res", res);
+        getMetaData(body);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
   };
 
   useEffect(() => {
-    let body = {
-      page: page,
-      pageSize: pageSize,
-      type: metaDataType,
-    };
     getMetaData(body);
   }, []);
+
+  // console.log("tst", metaData?.docs);
 
   return (
     <div>
@@ -140,7 +188,23 @@ const Metadata = () => {
           <Box sx={{ mt: 2 }}>
             {data.METATDATA.map((_, i) => (
               <TabPanel value={value} index={i}>
-                <MetaData tableData={metaData} />
+                {loading ? (
+                  <Box sx={{ textAlign: "center" }}>
+                    <Loading
+                      type="bars"
+                      color={COLORS.BLACK}
+                      width={20}
+                      height={20}
+                      className="m-auto"
+                    />
+                  </Box>
+                ) : (
+                  <MetaData
+                    tableData={metaData?.docs}
+                    editMetaData={editMetaData}
+                    statusHandler={statusHandler}
+                  />
+                )}
               </TabPanel>
             ))}
           </Box>

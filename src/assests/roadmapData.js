@@ -7,10 +7,19 @@ import {
 import avatar from "@/icons/avatar.png";
 export const metaDataHeader = [
   {
-    label: "Name",
+    label: " Tag Name",
   },
   {
     label: "ID",
+  },
+  {
+    label: "Created By",
+  },
+  {
+    label: "Created On",
+  },
+  {
+    label: "Updated On",
   },
   {
     label: "Status",
@@ -26,6 +35,9 @@ export const CONTENT_HEADER = [
   },
   {
     label: "ID",
+  },
+  {
+    label: "Created At",
   },
   {
     label: "Type",
@@ -203,37 +215,91 @@ export const CONTENT_DATA = [
     name: "Algebra basics",
     id: 201,
     type: CONTENT_TYPE.ARTICLE_PDF,
-    tags: ["Mathematics", "Algebra"],
+    tags: [
+      METADATA_TYPE.CAREER,
+
+      METADATA_TYPE.INDUSTRY,
+
+      METADATA_TYPE.SOFT_SKILLS,
+
+      METADATA_TYPE.STRENGTHS,
+    ],
+    createdAt: 1738231220,
   },
   {
     name: "World War ll Overview",
     id: 202,
     type: CONTENT_TYPE.ARTICLE_WRITEUP,
-    tags: ["History", "World War II"],
+    tags: [
+      METADATA_TYPE.CAREER,
+
+      METADATA_TYPE.INDUSTRY,
+
+      METADATA_TYPE.SOFT_SKILLS,
+
+      METADATA_TYPE.STRENGTHS,
+    ],
+    createdAt: 1738231220,
   },
   {
     name: "Human Body Systems",
     id: 203,
     type: CONTENT_TYPE.NATIVE_VIDEO_LINK,
-    tags: ["Biology", "Anatomy"],
+    tags: [
+      METADATA_TYPE.CAREER,
+
+      METADATA_TYPE.INDUSTRY,
+
+      METADATA_TYPE.SOFT_SKILLS,
+
+      METADATA_TYPE.STRENGTHS,
+    ],
+    createdAt: 1738231220,
   },
   {
     name: "Environmental Science",
     id: 204,
     type: CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
-    tags: ["Science", "Environment"],
+    tags: [
+      METADATA_TYPE.CAREER,
+
+      METADATA_TYPE.INDUSTRY,
+
+      METADATA_TYPE.SOFT_SKILLS,
+
+      METADATA_TYPE.STRENGTHS,
+    ],
+    createdAt: 1738231220,
   },
   {
     name: "Physics Experiments",
     id: 205,
     type: CONTENT_TYPE.JOURNAL_LINK,
-    tags: ["Physics", "Experiments"],
+    tags: [
+      METADATA_TYPE.CAREER,
+
+      METADATA_TYPE.INDUSTRY,
+
+      METADATA_TYPE.SOFT_SKILLS,
+
+      METADATA_TYPE.STRENGTHS,
+    ],
+    createdAt: 1738231220,
   },
   {
     name: "English Homework",
     id: 206,
     type: CONTENT_TYPE.ASSIGNMENT,
-    tags: ["English", "Literature"],
+    tags: [
+      METADATA_TYPE.CAREER,
+
+      METADATA_TYPE.INDUSTRY,
+
+      METADATA_TYPE.SOFT_SKILLS,
+
+      METADATA_TYPE.STRENGTHS,
+    ],
+    createdAt: 1738231220,
   },
 ];
 
