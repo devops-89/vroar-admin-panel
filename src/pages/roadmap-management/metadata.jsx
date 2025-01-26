@@ -16,8 +16,18 @@ import { showModal } from "@/redux/reducers/modal";
 import { COLORS, METADATA_TYPE, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { AddCircle } from "@mui/icons-material";
-import { Box, Button, Card, Stack, Tab, Tabs, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  Stack,
+  Tab,
+  TablePagination,
+  Tabs,
+  Typography,
+} from "@mui/material";
+import { debounce } from "lodash";
+import { useCallback, useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
@@ -29,6 +39,7 @@ const Metadata = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   let body = {
     page: page,
     pageSize: pageSize,
@@ -75,6 +86,39 @@ const Metadata = () => {
       });
   };
 
+  const debouncedSearchMetaData = useCallback(
+    debounce((body) => {
+      getMetaData(body);
+    }, 500),
+    []
+  );
+
+  const searchHandler = (e) => {
+    setSearch(e.target.value);
+    if (e.target.value) {
+      body.search = e.target.value;
+    }
+    debouncedSearchMetaData(body);
+  };
+  const pageChangeHandler = (e, newPage) => {
+    setLoading(true);
+    setPage(newPage);
+    if (newPage) {
+      body.page = newPage + 1;
+    }
+
+    getMetaData(body);
+  };
+
+  const pageSizeHandler = (e) => {
+    setLoading(true);
+    setPageSize(e.target.value);
+    if (e.target.value) {
+      body.pageSize = e.target.value;
+    }
+    getMetaData(body);
+  };
+
   const addMetaData = () => {
     dispatch(
       showModal(<AddMetaData getMetaData={getMetaData} metaDataBody={body} />)
@@ -106,7 +150,6 @@ const Metadata = () => {
         data: newData,
       })
       .then((res) => {
-        console.log("res", res);
         getMetaData(body);
       })
       .catch((err) => {
@@ -117,8 +160,6 @@ const Metadata = () => {
   useEffect(() => {
     getMetaData(body);
   }, []);
-
-  // console.log("tst", metaData?.docs);
 
   return (
     <div>
@@ -188,23 +229,17 @@ const Metadata = () => {
           <Box sx={{ mt: 2 }}>
             {data.METATDATA.map((_, i) => (
               <TabPanel value={value} index={i}>
-                {loading ? (
-                  <Box sx={{ textAlign: "center" }}>
-                    <Loading
-                      type="bars"
-                      color={COLORS.BLACK}
-                      width={20}
-                      height={20}
-                      className="m-auto"
-                    />
-                  </Box>
-                ) : (
-                  <MetaData
-                    tableData={metaData?.docs}
-                    editMetaData={editMetaData}
-                    statusHandler={statusHandler}
-                  />
-                )}
+                <MetaData
+                  tableData={metaData}
+                  editMetaData={editMetaData}
+                  statusHandler={statusHandler}
+                  onSearch={searchHandler}
+                  loading={loading}
+                  page={page}
+                  pageSize={pageSize}
+                  pageChangeHandler={pageChangeHandler}
+                  pageSizeHandler={pageSizeHandler}
+                />
               </TabPanel>
             ))}
           </Box>

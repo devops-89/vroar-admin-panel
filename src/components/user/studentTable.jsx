@@ -5,6 +5,7 @@ import { roboto } from "@/utils/fonts";
 import {
   Avatar,
   Button,
+  Chip,
   Stack,
   Switch,
   Table,
@@ -30,7 +31,7 @@ const StudentTable = () => {
   return (
     <div>
       <TableContainer>
-        <Table >
+        <Table>
           <TableHead sx={{ backgroundColor: "#d7d7d7" }}>
             <TableRow>
               {tableHeader.map((val, i) =>
@@ -102,7 +103,7 @@ const StudentTable = () => {
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
-                  <Typography
+                  {/* <Typography
                     sx={{
                       fontSize: 14,
                       fontFamily: roboto.style,
@@ -127,7 +128,30 @@ const StudentTable = () => {
                     }}
                   >
                     {val.roadMapStatus}
-                  </Typography>
+                  </Typography> */}
+                  <Chip
+                    label={
+                      <Typography
+                        sx={{ fontSize: 14, fontFamily: roboto.style }}
+                      >
+                        {val.roadMapStatus}
+                      </Typography>
+                    }
+                    sx={{
+                      color:
+                        val.roadMapStatus === ROADMAP_STATUS.ROADMAP_REQUESTED
+                          ? COLORS.PENDING_TEXT
+                          : val.roadMapStatus === ROADMAP_STATUS.PAYMENT_DONE
+                          ? COLORS.DONE_TEXT
+                          : COLORS.SIGNED_UP_TEXT,
+                      backgroundColor:
+                        val.roadMapStatus === ROADMAP_STATUS.ROADMAP_REQUESTED
+                          ? COLORS.PENDING
+                          : val.roadMapStatus === ROADMAP_STATUS.PAYMENT_DONE
+                          ? COLORS.DONE
+                          : COLORS.SIGNED_UP,
+                    }}
+                  />
                 </TableCell>
                 <TableCell align="center">
                   {/* <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>

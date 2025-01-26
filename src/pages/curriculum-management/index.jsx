@@ -1,5 +1,7 @@
 import { internshipController } from "@/api/internship";
 import CollapsableTable from "@/components/collapsabeTable";
+import CurriculumTable from "@/components/curriculum-management/curriculumTable";
+import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import TabPanel from "@/components/tabPanel";
 import ToastBar from "@/components/toastBar";
 import Wrapper from "@/components/wrapper";
@@ -7,7 +9,7 @@ import { setToast } from "@/redux/reducers/toast";
 import { COLORS, ToastStatus, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
-import { TextSnippet, Add } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -21,7 +23,7 @@ import {
 } from "@mui/material";
 import { debounce } from "lodash";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 const status = [
@@ -68,9 +70,10 @@ const Curriculum = () => {
       });
   };
 
-  const addCurriculumModal=()=>{
-    router.push("/curriculum-management/add-curriculum")
-  }
+  // const addCurriculumModal = () => {
+  //   alert("Add Curriculum");
+  //   router.push("/curriculum-management/add-curriculum");
+  // };
 
   const changeStatusHandler = ({ id, status }) => {
     setListLoading(true);
@@ -168,23 +171,18 @@ const Curriculum = () => {
               justifyContent={"space-between"}
               px={2}
             >
-              <Stack direction={"row"} alignItems={"center"} spacing={2}>
-                {/* <Box
-                sx={{
-                  background: colors.linearGradient,
-                  width: 20,
-                  height: 20,
-                }}
-              ></Box> */}
-                <TextSnippet />
-                <Typography
-                  fontSize={18}
-                  fontWeight={600}
-                  fontFamily={roboto.style}
-                >
-                  Curriculum
-                </Typography>
-              </Stack>
+              <PageBreadCrumbs
+                data={[
+                  {
+                    label: "Curriculum Management",
+                    url: "/curriculum-management",
+                  },
+                  {
+                    label: "View Curriculum",
+                    url: "/curriculum-management",
+                  },
+                ]}
+              />
               <Tabs
                 sx={{
                   "& .MuiTab-root": {
@@ -219,6 +217,7 @@ const Curriculum = () => {
                   />
                 ))}
               </Tabs>
+
               <Button
                 sx={{
                   background: COLORS.LinearGradient,
@@ -227,7 +226,9 @@ const Curriculum = () => {
                   fontWeight: 500,
                 }}
                 startIcon={<Add />}
-                onClick={addCurriculumModal}
+                onClick={() =>
+                  router.push("/curriculum-management/add-curriculum")
+                }
               >
                 Add Curriculum
               </Button>
@@ -248,30 +249,26 @@ const Curriculum = () => {
                     <Box textAlign={"center"}>
                       <Loading
                         type="bars"
-                        style={{ margin: "auto", width: 30 }}
                         width={20}
                         height={20}
-                        color="#000"
+                        color={COLORS.BLACK}
+                        className="m-auto"
                       />
                     </Box>
                   ) : data?.docs.length ? (
-                    <CollapsableTable
-                      data={data}
-                      statusChangeHandler={changeStatusHandler}
-                      setId={setId}
-                      id={id}
-                    />
+                    <CurriculumTable />
                   ) : (
-                    <Typography
-                      sx={{
-                        fontSize: 14,
-                        textAlign: "center",
-                        fontWeight: 600,
-                        fontFamily: roboto.style,
-                      }}
-                    >
-                      No Curriculum Found
-                    </Typography>
+                    // <Typography
+                    //   sx={{
+                    //     fontSize: 14,
+                    //     textAlign: "center",
+                    //     fontWeight: 600,
+                    //     fontFamily: roboto.style,
+                    //   }}
+                    // >
+                    //   No Curriculum Found
+                    // </Typography>
+                    <CurriculumTable />
                   )}
                 </TabPanel>
               ))}

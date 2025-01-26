@@ -30,6 +30,8 @@ import { useDispatch } from "react-redux";
 import ToastBar from "../toastBar";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
+import { metaDataController } from "@/api/metaDataController";
+import Loading from "react-loading";
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -53,15 +55,17 @@ const AddContent = () => {
 
   const initialValues = {
     contentType: "",
-    career: "",
-    industry: "",
-    strengths: "",
-    softSkills: "",
+    career: [],
+    industry: [],
+    strengths: [],
+    softSkills: [],
     contentName: "",
     isQuizEnabled: false,
-
+    contentLink: "",
     quizType: "",
   };
+
+  const [loading, setLoading] = useState(false);
 
   const [state, setState] = useState(initialValues);
 
@@ -88,6 +92,7 @@ const AddContent = () => {
       setShowFile(showFile);
       setShowLink(showLink);
       setState({ ...state, contentType: newValue.label });
+
       setErrors({ ...errors, contentType: "" });
     } else {
       setShowFile(false);
@@ -99,7 +104,7 @@ const AddContent = () => {
   const careerHandler = (e, newValue) => {
     setCareer(newValue);
     if (newValue) {
-      setState({ ...state, career: newValue.label });
+      setState({ ...state, career: newValue.map((val) => val.id) });
       setErrors({ ...errors, career: "" });
     } else {
       setErrors({ ...errors, career: "" });
@@ -108,7 +113,7 @@ const AddContent = () => {
   const industryHandler = (e, newValue) => {
     setIndustry(newValue);
     if (newValue) {
-      setState({ ...state, industry: newValue.label });
+      setState({ ...state, industry: newValue.map((val) => val.id) });
       setErrors({ ...errors, industry: "" });
     } else {
       setErrors({ ...ErrorSharp, industry: "Please Select Valid Career" });
@@ -117,7 +122,7 @@ const AddContent = () => {
   const strengthHandler = (e, newValue) => {
     setStrengths(newValue);
     if (newValue) {
-      setState({ ...state, strengths: newValue.label });
+      setState({ ...state, strengths: newValue.map((val) => val.id) });
       setErrors({ ...errors, strengths: "" });
     } else {
       setErrors({ ...errors, strengths: "Please Select Valid Strengths" });
@@ -126,7 +131,7 @@ const AddContent = () => {
   const softSkillsHandler = (e, newValue) => {
     setSoftSkills(newValue);
     if (newValue) {
-      setState({ ...state, softSkills: newValue.label });
+      setState({ ...state, softSkills: newValue.map((val) => val.id) });
       setErrors({ ...errors, softSkills: "" });
     } else {
       setErrors({ ...errors, softSkills: "Please Select Valid Soft skills" });
@@ -148,7 +153,8 @@ const AddContent = () => {
     if (selectedFile) {
       if (selectedFile.type === "application/pdf") {
         setFile(selectedFile);
-        console.log("File selected:", selectedFile);
+        const link = URL.createObjectURL(selectedFile);
+        setState({ ...state, contentLink: link });
         setFile(selectedFile);
       } else {
         dispatch(
@@ -165,9 +171,32 @@ const AddContent = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     if (AddContentValidationSchema({ state, setErrors, errors })) {
-      console.log("state", state);
+      setLoading(true);
+      let body = {
+        name: state.contentName,
+        contentType: state.contentType,
+        contentLink: state.contentLink,
+        description: state.description,
+        metadataTags: [
+          ...(Array.isArray(state.career) ? state.career : []),
+          ...(Array.isArray(state.industry) ? state.industry : []),
+          ...(Array.isArray(state.strengths) ? state.strengths : []),
+          ...(Array.isArray(state.softSkills) ? state.softSkills : []),
+        ],
+      };
+
+      metaDataController
+        .addContentLibrary(body)
+        .then((res) => {
+          console.log("res", res);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log("err", err);
+          setLoading(false);
+        });
     } else {
-      console.log("errror");
+      console.log("error");
     }
   };
   return (
@@ -253,6 +282,17 @@ const AddContent = () => {
               id="contentLink"
             />
           )}
+
+          <TextField
+            sx={{ ...loginTextField }}
+            label="Description"
+            multiline
+            fullWidth
+            id="description"
+            onChange={inputHandler}
+            error={Boolean(errors.description)}
+            helperText={errors.description}
+          />
 
           <Autocomplete
             renderInput={(params) => (
@@ -520,7 +560,16 @@ const AddContent = () => {
             }}
             type="submit"
           >
-            Save
+            {loading ? (
+              <Loading
+                type="bars"
+                color={COLORS.BLACK}
+                width={20}
+                height={20}
+              />
+            ) : (
+              "Save"
+            )}
           </Button>
         </Stack>
       </form>

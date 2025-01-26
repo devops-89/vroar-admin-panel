@@ -5,6 +5,7 @@ import {
   QUIZ_TYPE,
   RELATIONSHIP_DATA,
   ROADMAP_TENURE,
+  USER_STATUS,
 } from "@/utils/enum";
 
 export const data = {
@@ -194,6 +195,68 @@ export const data = {
   MONTH_6: [
     {
       label: 5,
+    },
+  ],
+
+  CURRICULUM_HEADER: [
+    {
+      label: "Curriculum Name",
+    },
+    {
+      label: "No Of Sessions",
+    },
+    {
+      label: "Status",
+    },
+    {
+      label: "Created On",
+    },
+    {
+      label: "Actions",
+    },
+  ],
+  CURRICULUM_DATA: [
+    {
+      name: "Quality Assurance Course",
+      noOfSessions: 5,
+      status: USER_STATUS.ACTIVE,
+      createdOn: 1737392049,
+      modules: [
+        {
+          moduleTitle: "Basic Testing Knowledge",
+          url: "",
+        },
+      ],
+    },
+    {
+      name: "Quality Assurance Course",
+      noOfSessions: 5,
+      status: USER_STATUS.ACTIVE,
+      createdOn: 1737392049,
+    },
+    {
+      name: "Quality Assurance Course",
+      noOfSessions: 5,
+      status: USER_STATUS.ACTIVE,
+      createdOn: 1737392049,
+    },
+    {
+      name: "Quality Assurance Course",
+      noOfSessions: 5,
+      status: USER_STATUS.ACTIVE,
+      createdOn: 1737392049,
+    },
+    {
+      name: "Quality Assurance Course",
+      noOfSessions: 5,
+      status: USER_STATUS.ACTIVE,
+      createdOn: 1737392049,
+    },
+    {
+      name: "Quality Assurance Course",
+      noOfSessions: 5,
+      status: USER_STATUS.ACTIVE,
+      createdOn: 1737392049,
     },
   ],
 };

@@ -1,3 +1,4 @@
+import { metaDataController } from "@/api/metaDataController";
 import ContentTable from "@/components/content-library/contentTable";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import CustomTable from "@/components/customTable";
@@ -7,12 +8,39 @@ import { roboto } from "@/utils/fonts";
 import { AddCircle } from "@mui/icons-material";
 import { Box, Button, Card, Stack } from "@mui/material";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 const Contentlibrary = () => {
   const router = useRouter();
   const addContent = () => {
     router.push("/roadmap-management/content-library/add-new-content");
   };
+  const [page, setPage] = useState(0);
+
+  const [pageSize, setPageSize] = useState(10);
+  let body = {
+    page: page,
+    pageSize: pageSize,
+  };
+  const [loading, setLoading] = useState(true);
+  const [contentData, setContentData] = useState(null);
+  const getContentLibrary = (body) => {
+    metaDataController
+      .getContentLibrary(body)
+      .then((res) => {
+        const response = res.data.data;
+        setContentData(response);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setLoading(true);
+      });
+  };
+
+  useEffect(() => {
+    getContentLibrary(body);
+  }, []);
+
   return (
     <div>
       <Wrapper>
@@ -50,7 +78,7 @@ const Contentlibrary = () => {
             <CustomTable />
           </Box>
           <Box sx={{ mt: 2 }}>
-            <ContentTable />
+            <ContentTable tableData={contentData} loading={loading} />
           </Box>
         </Card>
       </Wrapper>

@@ -40,8 +40,15 @@ export const AddMetaDataValiationSchema = Yup.object({
 //     }),
 //   });
 export const AddContentValidationSchema = ({ state, errors, setErrors }) => {
-  const { contentType, career, industry, strengths, softSkills, contentName } =
-    state;
+  const {
+    contentType,
+    career,
+    industry,
+    strengths,
+    softSkills,
+    contentName,
+    description,
+  } = state;
 
   if (
     contentType === "" ||
@@ -49,17 +56,19 @@ export const AddContentValidationSchema = ({ state, errors, setErrors }) => {
     industry === "" ||
     strengths === "" ||
     softSkills === "" ||
-    contentName === ""
+    contentName === "" ||
+    description === ""
   ) {
     setErrors({
       ...errors,
       contentType: contentType === "" && "Please Select Content Type",
-      career: career === "" && "Please Select Career",
-      industry: industry === "" && "Please Select Industry",
+      career: "Please Select Career",
+      industry: "Please Select Industry",
       strengths: "Please Select Strengths",
       softSkills: "Please Select Soft Skills",
       contentName: "Please Enter Content Name",
       quizType: "Please Select Quiz Type",
+      description: "Please Enter Description",
     });
     return false;
   } else {

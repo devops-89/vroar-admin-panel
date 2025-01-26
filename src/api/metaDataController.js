@@ -40,11 +40,29 @@ export const metaDataController = {
     }
   },
 
-  // getContentLibrary: async (data) => {
-  //   try {
-  //     let result =await 
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // },
+  getContentLibrary: async (data) => {
+    if (data.page === 0) {
+      data.page = 1;
+    }
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.post(
+        `/api/contentLibrary/getContents`,
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addContentLibrary: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.post(
+        "/api/contentLibrary/addContent",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

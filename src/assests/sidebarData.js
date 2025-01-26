@@ -76,7 +76,22 @@ export const SIDEBARADATA = [
   {
     avatar: <Image src={curriculum} />,
     label: "Curriculum Management",
-    url: "/curriculum-management",
+    // url: "/curriculum-management",
+    modules: true,
+    subModules: [
+      {
+        label: "View Curriculum",
+        url: "/curriculum-management",
+      },
+      {
+        label: "Add Curriculum",
+        url: "/curriculum-management/add-curriculum",
+      },
+      {
+        label: "Edit Curriculum",
+        url: "/curriculum-management/edit-curriculum",
+      },
+    ],
   },
   {
     avatar: <Image src={subscription} />,

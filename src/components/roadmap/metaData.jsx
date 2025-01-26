@@ -3,15 +3,38 @@ import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { FilterList, SwapVert } from "@mui/icons-material";
-import { Box, Button, Grid2, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid2,
+  TablePagination,
+  TextField,
+  Typography,
+} from "@mui/material";
 import RoadmapTable from "./roadmaptable";
+import Loading from "react-loading";
 
-const MetaData = ({ tableData, editMetaData, statusHandler }) => {
+const MetaData = ({
+  tableData,
+  editMetaData,
+  statusHandler,
+  onSearch,
+  loading,
+  page,
+  pageSize,
+  pageChangeHandler,
+  pageSizeHandler,
+}) => {
   return (
     <div>
       <Grid2 container spacing={2}>
         <Grid2 size={9}>
-          <TextField sx={{ ...loginTextField }} label="Search" fullWidth />
+          <TextField
+            sx={{ ...loginTextField }}
+            label="Search"
+            fullWidth
+            onChange={onSearch}
+          />
         </Grid2>
         <Grid2 size={1.5}>
           <Button
@@ -43,14 +66,55 @@ const MetaData = ({ tableData, editMetaData, statusHandler }) => {
           </Button>
         </Grid2>
       </Grid2>
-      <Box sx={{ mt: 1 }}>
-        <RoadmapTable
-          tableHeader={metaDataHeader}
-          tableData={tableData}
-          editMetaData={editMetaData}
-          statusHandler={statusHandler}
-        />
-      </Box>
+
+      {tableData?.docs.length === 0 ? (
+        <Typography
+          sx={{
+            fontSize: 20,
+            fontFamily: roboto.style,
+            textAlign: "center",
+            mt: 2,
+          }}
+        >
+          No Data Found
+        </Typography>
+      ) : (
+        <Box sx={{ mt: 1 }}>
+          {loading ? (
+            <Loading
+              type="bars"
+              width={20}
+              height={20}
+              color={COLORS.BLACK}
+              className="m-auto"
+            />
+          ) : (
+            <>
+              <RoadmapTable
+                tableHeader={metaDataHeader}
+                tableData={tableData?.docs}
+                editMetaData={editMetaData}
+                statusHandler={statusHandler}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <TablePagination
+                  page={page}
+                  rowsPerPage={pageSize}
+                  count={tableData?.totalDocs}
+                  onPageChange={pageChangeHandler}
+                  onRowsPerPageChange={pageSizeHandler}
+                />
+              </Box>
+            </>
+          )}
+        </Box>
+      )}
     </div>
   );
 };

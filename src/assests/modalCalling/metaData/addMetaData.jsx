@@ -22,7 +22,6 @@ import { setToast } from "@/redux/reducers/toast";
 import Loading from "react-loading";
 
 const AddMetaData = ({ getMetaData, metaDataBody }) => {
-  console.log(metaDataBody)
   const dispatch = useDispatch();
 
   const closeModal = () => {
