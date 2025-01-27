@@ -80,7 +80,7 @@ const ContentTable = ({ tableData, loading }) => {
               {tableData?.docs.map((val, i) => (
                 <TableRow key={i}>
                   <TableCell>
-                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style,textTransform:"capitalize" }}>
                       {val.name}
                     </Typography>
                   </TableCell>
@@ -96,65 +96,68 @@ const ContentTable = ({ tableData, loading }) => {
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                      {val.type}
+                      {val.contentType}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                      {val.tags.slice(0, 2).map((tag, i) => (
+                      {val.metadataTags.slice(0, 2).map((tag, i) => (
                         <Chip
                           label={
                             <Typography
                               sx={{ fontSize: 13, fontFamily: roboto.style }}
                             >
-                              {tag}
+                              {tag.name}
                             </Typography>
                           }
                           sx={{
                             backgroundColor:
-                              tag === METADATA_TYPE.CAREER
+                              tag.type === METADATA_TYPE.CAREER
                                 ? COLORS.PENDING
-                                : tag === METADATA_TYPE.INDUSTRY
+                                : tag.type === METADATA_TYPE.INDUSTRY
                                 ? COLORS.DONE
-                                : tag === METADATA_TYPE.STRENGTHS
+                                : tag.type === METADATA_TYPE.STRENGTHS
                                 ? COLORS.SIGNED_UP
                                 : COLORS.PURPLE,
                             color:
-                              tag === METADATA_TYPE.CAREER
+                              tag.type === METADATA_TYPE.CAREER
                                 ? COLORS.PENDING_TEXT
-                                : tag === METADATA_TYPE.INDUSTRY
+                                : tag.type === METADATA_TYPE.INDUSTRY
                                 ? COLORS.DONE_TEXT
-                                : tag === METADATA_TYPE.STRENGTHS
+                                : tag.type === METADATA_TYPE.STRENGTHS
                                 ? COLORS.SIGNED_UP_TEXT
                                 : COLORS.PURPLE_TEXT,
                           }}
                         />
                       ))}
-                      <Button
-                        sx={{
-                          color: COLORS.BLACK,
-                          fontSize: 13,
-                          fontFamily: roboto.style,
-                        }}
-                        onClick={() => handletoggle(i)}
-                      >
-                        {open === i ? (
-                          <Remove sx={{ fontSize: 12 }} />
-                        ) : (
-                          `+${val.tags.length - 2}`
-                        )}
-                      </Button>
+                      {val.metadataTags.length > 3 && (
+                        <Button
+                          sx={{
+                            color: COLORS.BLACK,
+                            fontSize: 13,
+                            fontFamily: roboto.style,
+                          }}
+                          onClick={() => handletoggle(i)}
+                        >
+                          {open === i ? (
+                            <Remove sx={{ fontSize: 12 }} />
+                          ) : (
+                            `+${val.metadataTags.length - 2}`
+                          )}
+                        </Button>
+                      )}
                     </Stack>
                     <Collapse in={i === open} sx={{ mt: 2 }}>
-                      {val.tags.slice(2).map((tag, i) => (
+                      {val.metadataTags.slice(2).map((tag, i) => (
                         <Chip
                           label={
                             <Typography
                               sx={{ fontSize: 13, fontFamily: roboto.style }}
                             >
-                              {tag}
+                              {tag.name}
                             </Typography>
                           }
+                          key={i}
                           sx={{
                             backgroundColor:
                               tag === METADATA_TYPE.CAREER

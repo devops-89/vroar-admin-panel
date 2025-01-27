@@ -1,3 +1,4 @@
+import { metaDataController } from "@/api/metaDataController";
 import { CONTENT_DATA } from "@/assests/roadmapData";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
@@ -9,18 +10,38 @@ const ContentDetails = () => {
   const router = useRouter();
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  // useEffect(() => {
+  //   if (router.query.slug) {
+  //     const newData = CONTENT_DATA.find(
+  //       (val) => val.id === JSON.parse(router.query.slug)
+  //     );
+  //     setTimeout(() => {
+  //       setDetails(newData);
+  //       setLoading(false);
+  //     }, 2000);
+  //     console.log("first", newData);
+  //   }
+  // }, [router.query.slug]);
+
+  const getContentFullDetails = () => {
+    metaDataController
+      .getContentDetails(router.query.slug)
+      .then((res) => {
+        setDetails(res.data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
   useEffect(() => {
     if (router.query.slug) {
-      const newData = CONTENT_DATA.find(
-        (val) => val.id === JSON.parse(router.query.slug)
-      );
-      setTimeout(() => {
-        setDetails(newData);
-        setLoading(false);
-      }, 2000);
-      console.log("first", newData);
+      getContentFullDetails();
     }
   }, [router.query.slug]);
+
+  console.log("test", details);
 
   return (
     <div>
@@ -35,15 +56,17 @@ const ContentDetails = () => {
               ID
             </Typography>
             <Typography sx={{ fontFamily: roboto.style }}>
-              {details.id}
+              {details?.id}
             </Typography>
           </Stack>
           <Stack direction={"row"} alignItems={"center"} spacing={10}>
             <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
               Name
             </Typography>
-            <Typography sx={{ fontFamily: roboto.style }}>
-              {details.name}
+            <Typography
+              sx={{ fontFamily: roboto.style, textTransform: "capitalize" }}
+            >
+              {details?.name}
             </Typography>
           </Stack>
           <Stack direction={"row"} alignItems={"center"} spacing={10}>
@@ -51,16 +74,16 @@ const ContentDetails = () => {
               Type
             </Typography>
             <Typography sx={{ fontFamily: roboto.style }}>
-              {details.type}
+              {details.contentType}
             </Typography>
           </Stack>
           <Stack direction={"row"} alignItems={"center"} spacing={10}>
             <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
               Tags
             </Typography>
-            <Typography sx={{ fontFamily: roboto.style }}>
-              {details.tags.join(" , ")}
-            </Typography>
+            {/* <Typography sx={{ fontFamily: roboto.style }}>
+              {details.tags.map}
+            </Typography> */}
           </Stack>
         </Stack>
       )}

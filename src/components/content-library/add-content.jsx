@@ -6,17 +6,25 @@ import {
   STRENGTHDATA,
 } from "@/assests/roadmapData";
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS, CONTENT_TYPE, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
+import {
+  COLORS,
+  CONTENT_TYPE,
+  METADATA_TYPE,
+  QUIZ_TYPE,
+  ToastStatus,
+} from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddContentValidationSchema } from "@/utils/validationSchema";
 import { AttachFile, Close, ErrorSharp } from "@mui/icons-material";
 import {
   Autocomplete,
+  Backdrop,
   Box,
   Button,
   Checkbox,
   Chip,
+  CircularProgress,
   FormControlLabel,
   FormHelperText,
   Stack,
@@ -32,6 +40,7 @@ import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
 import { metaDataController } from "@/api/metaDataController";
 import Loading from "react-loading";
+import { useRouter } from "next/router";
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -53,6 +62,27 @@ const AddContent = () => {
   const dispatch = useDispatch();
   const [isQuizEnabled, setIsQuizEnabled] = useState(false);
 
+  const [metaData, setMetaData] = useState([]);
+  const [listLoading, setListLoading] = useState(true);
+  const getMetaData = (metaDataType) => {
+    let data = {
+      page: 1,
+      pageSize: 100,
+      type: metaDataType,
+    };
+    metaDataController
+      .getMetaData(data)
+      .then((res) => {
+        const response = res.data.data.docs;
+        setMetaData(response);
+        setListLoading(false);
+      })
+      .catch((err) => {
+        console.log("reeeeeeee", err);
+        setLoading(true);
+      });
+  };
+
   const initialValues = {
     contentType: "",
     career: [],
@@ -65,6 +95,8 @@ const AddContent = () => {
     quizType: "",
   };
 
+  // const dispatch = useDispatch();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const [state, setState] = useState(initialValues);
@@ -147,14 +179,15 @@ const AddContent = () => {
       setErrors({ ...errors, quizType: "Please Select Quiz Type" });
     }
   };
-
+  const [isUploading, setIsUploading] = useState(false);
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       if (selectedFile.type === "application/pdf") {
         setFile(selectedFile);
-        const link = URL.createObjectURL(selectedFile);
-        setState({ ...state, contentLink: link });
+        // const link = URL.createObjectURL(selectedFile);
+        setState({ ...state, contentLink: selectedFile });
+
         setFile(selectedFile);
       } else {
         dispatch(
@@ -168,39 +201,97 @@ const AddContent = () => {
     }
   };
 
+  // useEffect(() => {
+  //   let body = {
+  //     page: 1,
+  //     pageSize: 100,
+  //     type: METADATA_TYPE.CAREER,
+  //   };
+  //   getMetaData(body);
+  // }, []);
+
+  const uploadContentFile = () => {
+    let data = {
+      type: state.contentType,
+      contentFile: state.contentLink,
+    };
+
+    metaDataController
+      .getUploadContentFile(data)
+      .then((response) => {
+        // console.log("upload", response);
+        const fileName = response.data.data.fileName;
+        const filePath = response.data.data.filePath;
+
+        let body = {
+          name: state.contentName,
+          contentType: state.contentType,
+          contentLink: state.contentLink,
+          description: state.description,
+          metadataTags: [
+            ...(Array.isArray(state.career) ? state.career : []),
+            ...(Array.isArray(state.industry) ? state.industry : []),
+            ...(Array.isArray(state.strengths) ? state.strengths : []),
+            ...(Array.isArray(state.softSkills) ? state.softSkills : []),
+          ],
+          contentLink: filePath,
+          contentFileName: fileName,
+        };
+        metaDataController
+          .addContentLibrary(body)
+          .then((res) => {
+            dispatch(
+              setToast({
+                open: true,
+                message: res.data.message,
+                severity: ToastStatus.SUCCESS,
+              })
+            );
+            setLoading(false);
+            router.back();
+          })
+          .catch((err) => {
+            let errMessage =
+              (err.response && err.response.data.message) || err.message;
+
+            dispatch(
+              setToast({
+                open: true,
+                message: errMessage,
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setLoading(false);
+          });
+      })
+      .catch((err) => {
+        let errMessage =
+          (err.response && err.response.data.message) || err.message;
+
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+      });
+  };
+
   const submitHandler = (e) => {
     e.preventDefault();
     if (AddContentValidationSchema({ state, setErrors, errors })) {
       setLoading(true);
-      let body = {
-        name: state.contentName,
-        contentType: state.contentType,
-        contentLink: state.contentLink,
-        description: state.description,
-        metadataTags: [
-          ...(Array.isArray(state.career) ? state.career : []),
-          ...(Array.isArray(state.industry) ? state.industry : []),
-          ...(Array.isArray(state.strengths) ? state.strengths : []),
-          ...(Array.isArray(state.softSkills) ? state.softSkills : []),
-        ],
-      };
-
-      metaDataController
-        .addContentLibrary(body)
-        .then((res) => {
-          console.log("res", res);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log("err", err);
-          setLoading(false);
-        });
+      uploadContentFile();
     } else {
       console.log("error");
     }
   };
   return (
     <Box mt={3}>
+      <Backdrop open={isUploading}>
+        <CircularProgress />
+      </Backdrop>
       <form action="" onSubmit={submitHandler}>
         <Stack
           alignItems={"start"}
@@ -308,7 +399,8 @@ const AddContent = () => {
             onChange={careerHandler}
             value={career}
             fullWidth
-            options={CAREERDATA}
+            options={metaData}
+            loading={listLoading}
             getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
               <Box {...props}>
@@ -342,6 +434,7 @@ const AddContent = () => {
             }
             multiple
             filterSelectedOptions
+            onFocus={() => getMetaData(METADATA_TYPE.CAREER)}
           />
           <Autocomplete
             renderInput={(params) => (
@@ -357,7 +450,7 @@ const AddContent = () => {
             fullWidth
             onChange={industryHandler}
             value={industry}
-            options={INDUSTRYDATA}
+            options={metaData}
             getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
               <Box {...props}>
@@ -391,6 +484,8 @@ const AddContent = () => {
             }
             multiple
             filterSelectedOptions
+            onFocus={() => getMetaData(METADATA_TYPE.INDUSTRY)}
+            loading={listLoading}
           />
           <Autocomplete
             renderInput={(params) => (
@@ -406,7 +501,7 @@ const AddContent = () => {
             fullWidth
             onChange={strengthHandler}
             value={strengths}
-            options={STRENGTHDATA}
+            options={metaData}
             getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
               <Box {...props}>
@@ -440,6 +535,8 @@ const AddContent = () => {
                 );
               })
             }
+            onFocus={() => getMetaData(METADATA_TYPE.STRENGTHS)}
+            loading={listLoading}
           />
           <Autocomplete
             renderInput={(params) => (
@@ -455,7 +552,7 @@ const AddContent = () => {
             fullWidth
             onChange={softSkillsHandler}
             value={softSkills}
-            options={SOFTSKILLSDATA}
+            options={metaData}
             getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
               <Box {...props}>
@@ -489,6 +586,8 @@ const AddContent = () => {
                 );
               })
             }
+            onFocus={() => getMetaData(METADATA_TYPE.SOFT_SKILLS)}
+            loading={listLoading}
           />
           <TextField
             label="Add Name"

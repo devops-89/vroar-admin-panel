@@ -89,12 +89,12 @@ const RoadmapTable = ({
                 </TableCell>
                 <TableCell>
                   <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                    {moment.unix(val.createdAt / 1000).format("DD-MM-YYYY")}
+                    {moment.unix(val.createdAt).format("DD-MM-YYYY")}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                    {moment.unix(val.updatedAt / 1000).format("DD-MM-YYYY")}
+                    {moment.unix(val.updatedAt).format("DD-MM-YYYY")}
                   </Typography>
                 </TableCell>
                 <TableCell>

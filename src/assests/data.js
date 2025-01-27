@@ -224,39 +224,67 @@ export const data = {
       modules: [
         {
           moduleTitle: "Basic Testing Knowledge",
-          url: "",
+          url: "https://www.youtube.com/watch?v=3vDWWy4CMhE",
+          description: "<ol><li>Hello</li><li>Helo</li><li>hey</li></ol",
         },
       ],
+      id: "1",
     },
     {
       name: "Quality Assurance Course",
       noOfSessions: 5,
       status: USER_STATUS.ACTIVE,
       createdOn: 1737392049,
+      modules: [
+        {
+          moduleTitle: "Basic Testing Knowledge",
+          url: "https://www.youtube.com/watch?v=3vDWWy4CMhE",
+          description: "<ol><li>Hello</li><li>Helo</li><li>hey</li></ol",
+        },
+      ],
+      id: "2",
     },
     {
       name: "Quality Assurance Course",
       noOfSessions: 5,
       status: USER_STATUS.ACTIVE,
       createdOn: 1737392049,
+      modules: [
+        {
+          moduleTitle: "Basic Testing Knowledge",
+          url: "https://www.youtube.com/watch?v=3vDWWy4CMhE",
+          description: "<ol><li>Hello</li><li>Helo</li><li>hey</li></ol",
+        },
+      ],
+      id: "3",
     },
     {
       name: "Quality Assurance Course",
       noOfSessions: 5,
       status: USER_STATUS.ACTIVE,
       createdOn: 1737392049,
+      modules: [
+        {
+          moduleTitle: "Basic Testing Knowledge",
+          url: "https://www.youtube.com/watch?v=3vDWWy4CMhE",
+          description: "<ol><li>Hello</li><li>Helo</li><li>hey</li></ol",
+        },
+      ],
+      id: "4",
     },
     {
       name: "Quality Assurance Course",
       noOfSessions: 5,
       status: USER_STATUS.ACTIVE,
       createdOn: 1737392049,
-    },
-    {
-      name: "Quality Assurance Course",
-      noOfSessions: 5,
-      status: USER_STATUS.ACTIVE,
-      createdOn: 1737392049,
+      modules: [
+        {
+          moduleTitle: "Basic Testing Knowledge",
+          url: "https://www.youtube.com/watch?v=3vDWWy4CMhE",
+          description: "<ol><li>Hello</li><li>Helo</li><li>hey</li></ol",
+        },
+      ],
+      id: "5",
     },
   ],
 };

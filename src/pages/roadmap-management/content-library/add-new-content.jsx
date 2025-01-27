@@ -1,11 +1,14 @@
+import { metaDataController } from "@/api/metaDataController";
 import AddContent from "@/components/content-library/add-content";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
+import { METADATA_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Box, Card, Divider, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 
 const AddNewContent = () => {
+ 
   return (
     <div>
       <Wrapper>

@@ -65,4 +65,33 @@ export const metaDataController = {
       throw error;
     }
   },
+
+  getUploadContentFile: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.post(
+        `api/contentLibrary/media/${data.type}`,
+        {
+          contentFile: data.contentFile,
+        },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getContentDetails: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.get(
+        `/api/contentLibrary/getContentById/${data}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

@@ -15,10 +15,17 @@ import {
   Typography,
 } from "@mui/material";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React from "react";
 import { FaRegEdit } from "react-icons/fa";
 
 const CurriculumTable = () => {
+  const router = useRouter();
+
+  const viewDetails = (id) => {
+    router.push(`/curriculum-management/${id}/view-curriculum`);
+  };
+
   return (
     <div>
       <TableContainer>
@@ -62,7 +69,7 @@ const CurriculumTable = () => {
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <IconButton>
+                  <IconButton onClick={() => viewDetails(val.id)}>
                     <Visibility sx={{ fontSize: 20, color: COLORS.BLACK }} />
                   </IconButton>
                   <IconButton>

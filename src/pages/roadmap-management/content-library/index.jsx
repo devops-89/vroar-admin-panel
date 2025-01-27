@@ -58,7 +58,7 @@ const Contentlibrary = () => {
                 },
                 {
                   label: "Content Library",
-                  url: "/roadmap=management/content-library",
+                  url: "/roadmap-management/content-library",
                 },
               ]}
             />

@@ -22,6 +22,7 @@ import { COLORS } from "@/utils/enum";
 import Wrapper from "@/components/wrapper";
 import { loginTextField } from "@/utils/styles";
 import dynamic from "next/dynamic";
+import { isValidURL } from "@/utils/regex";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const modules = {
   toolbar: [
