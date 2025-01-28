@@ -4,6 +4,7 @@ import {
   METADATA_TYPE,
   QUIZ_TYPE,
   RELATIONSHIP_DATA,
+  ROADMAP_STATUS,
   ROADMAP_TENURE,
   USER_STATUS,
 } from "@/utils/enum";
@@ -178,7 +179,28 @@ export const data = {
       speaker_name: "Prof. Jane Doe",
       startDate: 1737800687,
       endDate: 1738232687,
-      // status:
+      status: ROADMAP_STATUS.UPCOMING,
+    },
+    {
+      name: "Exploring Biology",
+      speaker_name: "Dr. John Smith",
+      startDate: 1737800687,
+      endDate: 1738232687,
+      status: ROADMAP_STATUS.In_PROGRESS,
+    },
+    {
+      name: "History of the Civil War",
+      speaker_name: "Prof. Emily Clark",
+      startDate: 1737800687,
+      endDate: 1738232687,
+      status: ROADMAP_STATUS.COMPLETED,
+    },
+    {
+      name: "Fundamentals of Chemistry",
+      speaker_name: "Dr. Michael Johnson",
+      startDate: 1737800687,
+      endDate: 1738232687,
+      status: ROADMAP_STATUS.CANCELLED,
     },
   ],
   roadmap_tenure: [
@@ -285,6 +307,26 @@ export const data = {
         },
       ],
       id: "5",
+    },
+  ],
+  ADLIST_HEADER: [
+    {
+      label: "Event Name",
+    },
+    {
+      label: "Speaker Name",
+    },
+    {
+      label: "Start Date",
+    },
+    {
+      label: "End Date",
+    },
+    {
+      label: "Status",
+    },
+    {
+      label: "Action",
     },
   ],
 };

@@ -1,183 +1,70 @@
-import { internshipController } from "@/api/internship";
-import ToastBar from "@/components/toastBar";
-import { AddCurriculumValidation } from "@/utils/validationSchema";
-import { Close } from "@mui/icons-material";
+import { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Button,
-  Grid,
-  IconButton,
+  Card,
+  FormHelperText,
+  Grid2,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import Loading from "react-loading";
-
-import { roboto } from "@/utils/fonts";
-import { COLORS } from "@/utils/enum";
-import Wrapper from "@/components/wrapper";
-import { loginTextField } from "@/utils/styles";
+import { AddCircleOutline, Delete } from "@mui/icons-material";
 import dynamic from "next/dynamic";
-import { isValidURL } from "@/utils/regex";
+import ToastBar from "@/components/toastBar";
+import Wrapper from "@/components/wrapper";
+import { COLORS } from "@/utils/enum";
+import { roboto } from "@/utils/fonts";
+import { loginTextField } from "@/utils/styles";
+
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-const modules = {
-  toolbar: [
-    [{ header: "1" }, { header: "2" }, { font: [] }],
-    [{ size: [] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["link", "image"],
-    [{ color: [] }, { background: [] }],
-    ["clean"],
-  ],
-};
+
 const AddCurriculum = () => {
-  const initialState = {
-    curriculumTitle: "",
-    img: null,
-    url: "",
-    description: "",
-    sessionTitle: "",
-  };
-  const [state, setState] = useState(initialState);
-  const [error, setError] = useState({
-    curriculumTitle: "",
-    img: null,
-    url: "",
-    description: "",
-    sessionTitle: "",
-  });
-  const [id, setId] = useState("");
-  const inputChangeHandler = (e) => {
-    let { id, value } = e.target;
-    setState({ ...state, [id]: value });
-    setError({
-      ...error,
-      [id]:
-        id === "url" ? (isValidURL(value) ? "" : "Please Enter Valid URL") : "",
-    });
-  };
-  const [editorContent, setEditorContent] = useState("");
-  const handleChange = (content, delta, source, editor) => {
-    setEditorContent(editor.getHTML());
-    setState({ ...state, description: editor.getHTML() });
-    setError({ ...error, description: "" });
-  };
-
-  const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackBar] = useState({
-    open: false,
-    message: "",
-    variant: "",
-  });
-  const [curriculum, setCurriculum] = useState(null);
-  const handleSnackbarClose = () => {
-    setSnackBar({ ...snackbar, open: false });
-  };
-
-  const handleEditSession = () => {
-    setSnackBar({
-      ...snackbar,
-      message: "Edit session",
-      open: true,
-      variant: "success",
-    });
-  };
-  const [isDisabled, setIsDisabled] = useState(false);
-  const getCurriculumDetails = (id) => {
-    internshipController
-      .getCurriculumById(id)
-      .then((res) => {
-        const response = res.data.data;
-        if (response) {
-          setCurriculum(response);
-          setState({ ...state, curriculumTitle: response.title });
-          setIsDisabled(true);
-        }
+  const validationSchema = Yup.object({
+    curriculumTitle: Yup.string().required("Curriculum Title is required"),
+    modules: Yup.array().of(
+      Yup.object({
+        title: Yup.string().required("Module Title is required"),
+        url: Yup.string().required("URL is required"),
+        content: Yup.string().required("Content is required"),
       })
-      .catch((err) => {
-        console.log("err", err);
-      });
-  };
-  const addCurriCulum = () => {
-    setLoading(true);
-    let body = {
-      title: state.curriculumTitle,
-      session: {
-        title: state.sessionTitle,
-        description: state.description,
-      },
-    };
-    if (state.url) {
-      body.session.url = state.url;
-    }
+    ),
+  });
 
-    if (id) {
-      body.id = id;
-    }
-    internshipController
-      .addCurriculum(body)
-      .then((res) => {
-        localStorage.setItem("curriculumId", res.data.data.curriculumId);
+  const [formValues, setFormValues] = useState({
+    curriculumTitle: "",
+    modules: [{ title: "", url: "", content: "" }],
+  });
 
-        setLoading(false);
-        setSnackBar({
-          ...snackbar,
-          open: true,
-          message: res.data.message,
-          variant: "success",
-        });
-        const id = res.data.data.curriculumId;
-        setId(id);
-        setState(initialState);
-        getCurriculumDetails(id);
-        setEditorContent("");
-      })
-      .catch((err) => {
-        let errMessage =
-          (err.response && err.response.data.message) || err.message;
-        setSnackBar({
-          ...snackbar,
-          open: true,
-          message: errMessage,
-          variant: "error",
-        });
-        setLoading(false);
-      });
-  };
-  const [expanded, setExpanded] = React.useState(false);
+  const formik = useFormik({
+    initialValues: formValues,
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      console.log("Form submitted with values:", values);
+    },
+    enableReinitialize: true,
+  });
 
-  const handleAccordionChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
-
-  const submitHandler = () => {
-    if (AddCurriculumValidation({ state, error, setError })) {
-      addCurriCulum();
-    } else {
-      setSnackBar({
-        ...snackbar,
-        open: true,
-        message: "Please Enter All Fields",
-      });
+  const handleAddModule = () => {
+    if (formik.values.modules.length < 10) {
+      const updatedModules = [
+        ...formik.values.modules,
+        { title: "", url: "", content: "" },
+      ];
+      formik.setFieldValue("modules", updatedModules);
     }
   };
 
-  useEffect(() => {
-    const curriculumId = localStorage.getItem("curriculumId");
-    if (curriculumId) {
-      setId(curriculumId);
-      getCurriculumDetails(curriculumId);
-    }
-  }, []);
+  const handleDeleteModule = (index) => {
+    const updatedModules = formik.values.modules.filter((_, i) => i !== index);
+    formik.setFieldValue("modules", updatedModules);
+  };
 
   return (
     <Wrapper>
-      <Box sx={{ p: 3 }}>
+      <Card sx={{ p: 3 }}>
         <Stack direction="row" alignItems={"center"} spacing={2}>
           <Box
             sx={{ background: COLORS.linearGradient, width: 20, height: 20 }}
@@ -196,146 +83,152 @@ const AddCurriculum = () => {
           <Typography sx={{ fontSize: 12, color: "#ff0000" }}>
             * Indicates Required
           </Typography>
-          <Grid container spacing={4}>
-            <Grid item lg={7}>
-              <Grid container mt={2} spacing={2}>
-                <Grid item lg={12}>
-                  <TextField
-                    sx={{ ...loginTextField }}
-                    label="Curriculum Title*"
-                    fullWidth
-                    id="curriculumTitle"
-                    onChange={inputChangeHandler}
-                    error={Boolean(error.curriculumTitle)}
-                    helperText={error.curriculumTitle}
-                    disabled={isDisabled}
-                    value={state.curriculumTitle}
-                    InputProps={{
-                      endAdornment: Boolean(curriculum?.title) && (
-                        <IconButton onClick={() => setIsDisabled(!isDisabled)}>
-                          {isDisabled ? <Edit /> : <Close />}
-                        </IconButton>
-                      ),
-                    }}
-                  />
-                </Grid>
+          <Grid2 container spacing={4} mt={3}>
+            <Grid2 size={12}>
+              <TextField
+                label="Curriculum Title*"
+                fullWidth
+                sx={{ ...loginTextField }}
+                value={formik.values.curriculumTitle}
+                onChange={(e) =>
+                  formik.setFieldValue("curriculumTitle", e.target.value)
+                }
+                error={
+                  formik.touched.curriculumTitle &&
+                  !!formik.errors.curriculumTitle
+                }
+                helperText={
+                  formik.touched.curriculumTitle &&
+                  formik.errors.curriculumTitle
+                }
+              />
+            </Grid2>
+          </Grid2>
 
-                <Grid item lg={12}>
-                  <Typography fontSize={20} color="#000">
-                    Modules :
-                  </Typography>
-                  <Grid container spacing={2} mt={2}>
-                    <Grid item lg={6}>
-                      <TextField
-                        label="Module Title*"
-                        sx={{ ...loginTextField }}
-                        fullWidth
-                        id="sessionTitle"
-                        error={Boolean(error.sessionTitle)}
-                        helperText={error.sessionTitle}
-                        onChange={inputChangeHandler}
-                        value={state.sessionTitle}
-                      />
-                    </Grid>
-                    <Grid item lg={6}>
-                      <TextField
-                        sx={{ ...loginTextField }}
-                        label="URL"
-                        fullWidth
-                        id="url"
-                        error={Boolean(error.url)}
-                        helperText={error.url}
-                        onChange={inputChangeHandler}
-                        value={state.url}
-                      />
-                    </Grid>
-                  </Grid>
-                  <Box sx={{ minHeight: 100, mt: 2 }}>
-                    <ReactQuill
-                      theme="snow"
-                      value={editorContent}
-                      onChange={handleChange}
-                      modules={modules}
-                    />
-                    {error.description && (
-                      <Typography fontSize={12} color="#ff0000" sx={{ mt: 10 }}>
-                        {error.description}
-                      </Typography>
-                    )}
-                  </Box>
-                  <Box
-                    sx={{ textAlign: "end", mt: error.description ? 2 : 10 }}
-                  >
-                    <Button
-                      sx={{
-                        background: COLORS.linearGradient,
-                        color: "#000",
-                        width: 150,
-                      }}
-                      onClick={submitHandler}
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <Loading
-                          type="bars"
-                          width={20}
-                          height={20}
-                          className="m-auto"
-                          color="#000"
-                        />
-                      ) : (
-                        "Add Session"
-                      )}
-                    </Button>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item lg={5} mt={3}>
-              <Typography sx={{ color: "#000", fontSize: 20, mb: 2 }}>
-                {curriculum?.title}
-              </Typography>
-              {curriculum?.sessions.map((val, i) => (
-                <Accordion
-                  sx={{ mb: 1 }}
-                  onChange={handleAccordionChange(`panel${i}`)}
-                  expanded={expanded === `panel${i}`}
+          {formik.values.modules.map((module, index) => (
+            <Grid2 container spacing={2} mt={7} key={index}>
+              <Grid2 size={12}>
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
                 >
-                  <AccordionSummary
-                    sx={{
-                      justifyContent: "space-between",
-                      position: "relative",
-                      borderBottom:
-                        expanded === `panel${i}` && "1px solid #d7d7d7",
-                    }}
-                  >
-                    <Typography
-                      fontSize={12}
-                      fontWeight={600}
-                      sx={{ width: "80%" }}
+                  <Typography sx={{ fontFamily: roboto.style, fontSize: 20 }}>
+                    Module {index + 1}
+                  </Typography>
+                  {formik.values.modules.length > 1 && (
+                    <Button
+                      endIcon={<Delete />}
+                      onClick={() => handleDeleteModule(index)}
+                      sx={{
+                        fontFamily: roboto.style,
+                        fontSize: 14,
+                        color: COLORS.DANGER,
+                        border: `1px solid ${COLORS.DANGER}`,
+                      }}
                     >
-                      Module {i + 1} : {val.title}
-                    </Typography>
-                    {/* <IconButton
-                        sx={{ position: "absolute", right: 0, bottom: "8px" }}
-                        onClick={handleEditSession}
-                      >
-                        <Edit sx={{ fontSize: 12 }} />
-                      </IconButton> */}
-                  </AccordionSummary>
-                  <AccordionDetails sx={{ pl: 5 }}>
-                    <div
-                      dangerouslySetInnerHTML={{ __html: val.description }}
-                      className="custom-description"
-                    ></div>
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-            </Grid>
-          </Grid>
+                      Delete
+                    </Button>
+                  )}
+                </Stack>
+              </Grid2>
+              <Grid2 size={6}>
+                <TextField
+                  label="Module title*"
+                  fullWidth
+                  sx={{ ...loginTextField }}
+                  value={module.title}
+                  onChange={(e) =>
+                    formik.setFieldValue(
+                      `modules[${index}].title`,
+                      e.target.value
+                    )
+                  }
+                  error={
+                    formik.touched.modules?.[index]?.title &&
+                    !!formik.errors.modules?.[index]?.title
+                  }
+                  helperText={
+                    formik.touched.modules?.[index]?.title &&
+                    formik.errors.modules?.[index]?.title
+                  }
+                />
+              </Grid2>
+              <Grid2 size={6}>
+                <TextField
+                  label="Url*"
+                  fullWidth
+                  sx={{ ...loginTextField }}
+                  value={module.url}
+                  onChange={(e) =>
+                    formik.setFieldValue(
+                      `modules[${index}].url`,
+                      e.target.value
+                    )
+                  }
+                  error={
+                    formik.touched.modules?.[index]?.url &&
+                    !!formik.errors.modules?.[index]?.url
+                  }
+                  helperText={
+                    formik.touched.modules?.[index]?.url &&
+                    formik.errors.modules?.[index]?.url
+                  }
+                />
+              </Grid2>
+              <Grid2 size={12}>
+                <ReactQuill
+                  style={{ height: 150 }}
+                  value={module.content}
+                  onChange={(value) =>
+                    formik.setFieldValue(`modules[${index}].content`, value)
+                  }
+                />
+                {formik.touched.modules?.[index]?.content &&
+                  formik.errors.modules?.[index]?.content && (
+                    <FormHelperText sx={{ mt: 6, color: COLORS.DANGER }}>
+                      {formik.touched.modules?.[index]?.content &&
+                        formik.errors.modules?.[index]?.content}
+                    </FormHelperText>
+                  )}
+              </Grid2>
+            </Grid2>
+          ))}
+          {formik.values.modules.length < 10 && (
+            <Grid2 size={12} textAlign={"end"}>
+              <Button
+                sx={{
+                  mt: 4,
+                  color: COLORS.BLACK,
+                  border: `1px solid ${COLORS.BLACK}`,
+                  fontSize: 14,
+                  fontFamily: roboto.style,
+                  mt: 8,
+                }}
+                startIcon={<AddCircleOutline />}
+                onClick={handleAddModule}
+              >
+                Add Modules
+              </Button>
+            </Grid2>
+          )}
+          <Grid2 item xs={12} textAlign={"end"}>
+            <Button
+              sx={{
+                mt: formik.values.modules.length < 10 ? 4 : 10,
+                background: COLORS.linearGradient,
+                color: "#fff",
+                fontSize: 16,
+                fontFamily: roboto.style,
+              }}
+              onClick={formik.handleSubmit}
+            >
+              Submit Curriculum
+            </Button>
+          </Grid2>
           <ToastBar />
         </Box>
-      </Box>
+      </Card>
     </Wrapper>
   );
 };

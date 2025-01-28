@@ -80,7 +80,13 @@ const ContentTable = ({ tableData, loading }) => {
               {tableData?.docs.map((val, i) => (
                 <TableRow key={i}>
                   <TableCell>
-                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style,textTransform:"capitalize" }}>
+                    <Typography
+                      sx={{
+                        fontSize: 15,
+                        fontFamily: roboto.style,
+                        textTransform: "capitalize",
+                      }}
+                    >
                       {val.name}
                     </Typography>
                   </TableCell>
@@ -100,7 +106,12 @@ const ContentTable = ({ tableData, loading }) => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      spacing={1}
+                      flexWrap={"wrap"}
+                    >
                       {val.metadataTags.slice(0, 2).map((tag, i) => (
                         <Chip
                           label={
@@ -148,36 +159,46 @@ const ContentTable = ({ tableData, loading }) => {
                       )}
                     </Stack>
                     <Collapse in={i === open} sx={{ mt: 2 }}>
-                      {val.metadataTags.slice(2).map((tag, i) => (
-                        <Chip
-                          label={
-                            <Typography
-                              sx={{ fontSize: 13, fontFamily: roboto.style }}
-                            >
-                              {tag.name}
-                            </Typography>
-                          }
-                          key={i}
-                          sx={{
-                            backgroundColor:
-                              tag === METADATA_TYPE.CAREER
-                                ? COLORS.PENDING
-                                : tag === METADATA_TYPE.INDUSTRY
-                                ? COLORS.DONE
-                                : tag === METADATA_TYPE.STRENGTHS
-                                ? COLORS.SIGNED_UP
-                                : COLORS.PURPLE,
-                            color:
-                              tag === METADATA_TYPE.CAREER
-                                ? COLORS.PENDING_TEXT
-                                : tag === METADATA_TYPE.INDUSTRY
-                                ? COLORS.DONE_TEXT
-                                : tag === METADATA_TYPE.STRENGTHS
-                                ? COLORS.SIGNED_UP_TEXT
-                                : COLORS.PURPLE_TEXT,
-                          }}
-                        />
-                      ))}
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        spacing={1}
+                        flexWrap={"wrap"}
+                        sx={{ maxWidth: 350 }}
+                        rowGap={1.5}
+                        columnGap={2}
+                      >
+                        {val.metadataTags.slice(2).map((tag, i) => (
+                          <Chip
+                            label={
+                              <Typography
+                                sx={{ fontSize: 13, fontFamily: roboto.style }}
+                              >
+                                {tag.name}
+                              </Typography>
+                            }
+                            key={i}
+                            sx={{
+                              backgroundColor:
+                                tag === METADATA_TYPE.CAREER
+                                  ? COLORS.PENDING
+                                  : tag === METADATA_TYPE.INDUSTRY
+                                  ? COLORS.DONE
+                                  : tag === METADATA_TYPE.STRENGTHS
+                                  ? COLORS.SIGNED_UP
+                                  : COLORS.PURPLE,
+                              color:
+                                tag === METADATA_TYPE.CAREER
+                                  ? COLORS.PENDING_TEXT
+                                  : tag === METADATA_TYPE.INDUSTRY
+                                  ? COLORS.DONE_TEXT
+                                  : tag === METADATA_TYPE.STRENGTHS
+                                  ? COLORS.SIGNED_UP_TEXT
+                                  : COLORS.PURPLE_TEXT,
+                            }}
+                          />
+                        ))}
+                      </Stack>
                     </Collapse>
                   </TableCell>
                   <TableCell>

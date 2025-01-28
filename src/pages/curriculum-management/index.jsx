@@ -164,7 +164,7 @@ const Curriculum = () => {
     <div>
       <Wrapper>
         <Box sx={{ p: 2 }}>
-          <Card sx={{ mt: 2, backgroundColor: "transparent" }}>
+          <Card sx={{ mt: 2 }}>
             <Stack
               direction="row"
               alignItems={"center"}
