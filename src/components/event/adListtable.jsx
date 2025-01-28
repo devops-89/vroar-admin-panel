@@ -25,6 +25,8 @@ import { COLORS, ROADMAP_STATUS } from "@/utils/enum";
 import CustomTable from "../customTable";
 import { data } from "@/assests/data";
 import moment from "moment";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const AdListTable = () => {
   const options = [
@@ -49,6 +51,7 @@ const AdListTable = () => {
   const handlePopover = (e) => {
     setAnchorEl(e.currentTarget);
   };
+
   return (
     <div>
       <Card sx={{ p: 3 }}>
@@ -69,18 +72,20 @@ const AdListTable = () => {
               },
             ]}
           />
-          <Button
-            startIcon={<AddCircle />}
-            sx={{
-              fontSize: 14,
-              fontFamily: roboto.style,
-              color: COLORS.BLACK,
-              backgroundColor: COLORS.primary,
-              width: 150,
-            }}
-          >
-            Add new Ad
-          </Button>
+          <Link href={"/notification-management/ad-list/create-new-ad"}>
+            <Button
+              startIcon={<AddCircle />}
+              sx={{
+                fontSize: 14,
+                fontFamily: roboto.style,
+                color: COLORS.BLACK,
+                backgroundColor: COLORS.primary,
+                width: 150,
+              }}
+            >
+              Add new Ad
+            </Button>
+          </Link>
         </Stack>
         <Box sx={{ mt: 2 }}>
           <CustomTable />
