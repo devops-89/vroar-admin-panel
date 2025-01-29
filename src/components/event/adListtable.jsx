@@ -183,7 +183,7 @@ const AdListTable = () => {
                         anchorEl={anchorEl}
                         sx={{
                           "& .MuiPopover-paper": {
-                            boxShadow: "0px 0px 3px 3px rgb(0,0,0,0.10)",
+                            boxShadow: "0px 0px 3px 3px rgb(0,0,0,0.08)",
                             width: 150,
                           },
                         }}

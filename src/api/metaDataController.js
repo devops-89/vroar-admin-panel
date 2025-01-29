@@ -94,4 +94,31 @@ export const metaDataController = {
       throw error;
     }
   },
+
+  addAdEvent: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.post(
+        "/api/event/addEvent",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getEventList: async (data = {}) => {
+    if (data.page === 0) {
+      data.page = 1;
+    }
+
+    const queryString = new URLSearchParams(data).toString();
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.get(
+        `/api/event/getEvent?${queryString}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
