@@ -1,8 +1,14 @@
 import { metaDataController } from "@/api/metaDataController";
 import { CONTENT_DATA } from "@/assests/roadmapData";
-import { COLORS } from "@/utils/enum";
+import { COLORS, CONTENT_TYPE, METADATA_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { Backdrop, CircularProgress, Stack, Typography } from "@mui/material";
+import {
+  Backdrop,
+  Chip,
+  CircularProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -10,18 +16,6 @@ const ContentDetails = () => {
   const router = useRouter();
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
-  // useEffect(() => {
-  //   if (router.query.slug) {
-  //     const newData = CONTENT_DATA.find(
-  //       (val) => val.id === JSON.parse(router.query.slug)
-  //     );
-  //     setTimeout(() => {
-  //       setDetails(newData);
-  //       setLoading(false);
-  //     }, 2000);
-  //     console.log("first", newData);
-  //   }
-  // }, [router.query.slug]);
 
   const getContentFullDetails = () => {
     metaDataController
@@ -43,6 +37,29 @@ const ContentDetails = () => {
 
   console.log("test", details);
 
+  const viewData = [
+    {
+      label: "ID",
+      value: details?.id,
+    },
+    {
+      label: "Name",
+      value: details?.name,
+    },
+    {
+      label: "Type",
+      value: details?.contentType,
+    },
+    {
+      label: "Tags",
+      value: details?.metadataTags,
+    },
+    {
+      label: "Status",
+      value: details?.status,
+    },
+  ];
+
   return (
     <div>
       {loading ? (
@@ -51,40 +68,62 @@ const ContentDetails = () => {
         </Backdrop>
       ) : (
         <Stack spacing={3} alignItems={"flex-start"}>
-          <Stack direction={"row"} alignItems={"center"} spacing={10}>
-            <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
-              ID
-            </Typography>
-            <Typography sx={{ fontFamily: roboto.style }}>
-              {details?.id}
-            </Typography>
-          </Stack>
-          <Stack direction={"row"} alignItems={"center"} spacing={10}>
-            <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
-              Name
-            </Typography>
-            <Typography
-              sx={{ fontFamily: roboto.style, textTransform: "capitalize" }}
+          {viewData.map((val, i) => (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              spacing={Array.isArray(val.value) ? 10 : 10}
+              flexWrap={"wrap"}
             >
-              {details?.name}
-            </Typography>
-          </Stack>
-          <Stack direction={"row"} alignItems={"center"} spacing={10}>
-            <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
-              Type
-            </Typography>
-            <Typography sx={{ fontFamily: roboto.style }}>
-              {details.contentType}
-            </Typography>
-          </Stack>
-          <Stack direction={"row"} alignItems={"center"} spacing={10}>
-            <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
-              Tags
-            </Typography>
-            {/* <Typography sx={{ fontFamily: roboto.style }}>
-              {details.tags.map}
-            </Typography> */}
-          </Stack>
+              <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
+                {val.label}
+              </Typography>
+              {Array.isArray(val.value) ? (
+                val.value.map((item, index) => (
+                  <Chip
+                    label={
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          fontFamily: roboto.style,
+                        }}
+                      >
+                        {item.name}
+                      </Typography>
+                    }
+                    sx={{
+                      backgroundColor:
+                        item.type === METADATA_TYPE.CAREER
+                          ? COLORS.PENDING
+                          : item.type === METADATA_TYPE.INDUSTRY
+                          ? COLORS.DONE
+                          : item.type === METADATA_TYPE.SOFT_SKILLS
+                          ? COLORS.SIGNED_UP
+                          : item.type === METADATA_TYPE.STRENGTHS
+                          ? COLORS.PURPLE
+                          : "",
+                      color:
+                        item.type === METADATA_TYPE.CAREER
+                          ? COLORS.PENDING_TEXT
+                          : item.type === METADATA_TYPE.INDUSTRY
+                          ? COLORS.DONE_TEXT
+                          : item.type === METADATA_TYPE.SOFT_SKILLS
+                          ? COLORS.SIGNED_UP_TEXT
+                          : item.type === METADATA_TYPE.STRENGTHS
+                          ? COLORS.PURPLE_TEXT
+                          : "",
+                      mt: 1,
+                    }}
+                    key={index}
+                  />
+                ))
+              ) : (
+                <Typography sx={{ fontFamily: roboto.style, fontSize: 14 }}>
+                  {val.value}
+                </Typography>
+              )}
+            </Stack>
+          ))}
         </Stack>
       )}
     </div>

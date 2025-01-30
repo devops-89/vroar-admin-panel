@@ -196,7 +196,7 @@ export const ROADMAP_STATUS = {
   SIGNED_UP: "Signed Up",
   PUBLISHED: "Published",
   PENDING_APPROVAL: "Pending Approval",
-  UPCOMING: "Upcoming",
+  UPCOMING: "UPCOMING",
   In_PROGRESS: "In Progress",
   COMPLETED: "Completed",
   CANCELLED: "Cancelled",

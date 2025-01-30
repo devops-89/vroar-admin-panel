@@ -5,6 +5,7 @@ import { Delete, Remove, Visibility } from "@mui/icons-material";
 import {
   Button,
   Chip,
+  CircularProgress,
   Collapse,
   IconButton,
   Stack,
@@ -19,6 +20,7 @@ import {
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { FaRegEdit } from "react-icons/fa";
 import Loading from "react-loading";
 
 const ContentTable = ({ tableData, loading }) => {
@@ -37,13 +39,14 @@ const ContentTable = ({ tableData, loading }) => {
   return (
     <div>
       {loading ? (
-        <Loading
-          type="bars"
-          width={20}
-          height={20}
-          className="m-auto"
-          color={COLORS.BLACK}
-        />
+        // <Loading
+        //   type="bars"
+        //   width={20}
+        //   height={20}
+
+        //   color={COLORS.BLACK}
+        // />
+        <CircularProgress color={COLORS.BLACK} />
       ) : tableData?.docs.length === 0 ? (
         <Typography
           sx={{
@@ -206,7 +209,7 @@ const ContentTable = ({ tableData, loading }) => {
                       <Visibility fontSize="small" htmlColor={COLORS.BLACK} />
                     </IconButton>
                     <IconButton>
-                      <Delete fontSize="small" htmlColor={COLORS.BLACK} />
+                      <FaRegEdit style={{ color: COLORS.BLACK }} />
                     </IconButton>
                   </TableCell>
                 </TableRow>

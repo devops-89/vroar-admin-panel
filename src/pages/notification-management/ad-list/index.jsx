@@ -6,16 +6,19 @@ import React, { useEffect, useState } from "react";
 const AdList = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-
+  const [adListData, setAdListData] = useState(null);
   let body = {
     page: page,
     pageSize: pageSize,
   };
+  const [loading, setLoading] = useState(true);
   const getEventType = (body) => {
     metaDataController
       .getEventList(body)
       .then((res) => {
-        console.log("res", res);
+        const response = res.data.data;
+        setAdListData(response);
+        setLoading(false);
       })
       .catch((err) => {
         console.log("err", err);
@@ -28,7 +31,7 @@ const AdList = () => {
   return (
     <div>
       <Wrapper>
-        <AdListTable />
+        <AdListTable tableData={adListData} loading={loading} />
       </Wrapper>
     </div>
   );

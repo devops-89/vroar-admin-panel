@@ -1,7 +1,8 @@
 import { metaDataController } from "@/api/metaDataController";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
-import { COLORS } from "@/utils/enum";
+import { setToast } from "@/redux/reducers/toast";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddAdListValidationSchema } from "@/utils/validationSchema";
@@ -14,9 +15,13 @@ import {
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { useFormik } from "formik";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
+import Loading from "react-loading";
+import { useDispatch } from "react-redux";
 
 const AddEvent = () => {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       eventName: "",
@@ -32,19 +37,39 @@ const AddEvent = () => {
     },
     validationSchema: AddAdListValidationSchema,
     onSubmit: (values) => {
-      console.log("test", values);
-      //   addNewEvent(values);
+      // console.log("test", values);
+      addNewEvent(values);
     },
   });
 
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const addNewEvent = (values) => {
+    setLoading(true);
     metaDataController
       .addAdEvent(values)
       .then((res) => {
-        console.log("reerer", res);
+        dispatch(
+          setToast({
+            open: true,
+            message: res.data.message,
+            severity: ToastStatus.SUCCESS,
+          })
+        );
+        setLoading(false);
+        router.back();
       })
       .catch((err) => {
-        console.log("err", err);
+        let errMessage =
+          (err.response && err.response.data.message) || err.messasge;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
       });
   };
   const [sessionStartDate, setSessionStartDate] = useState(null);
@@ -54,7 +79,7 @@ const AddEvent = () => {
     const valid = moment(newDate).isValid();
 
     if (valid) {
-      formik.values.sessionStartDate = moment.unix(newDate?._d).unix();
+      formik.values.sessionStartDate = moment(newDate?._d).unix();
       formik.errors.sessionStartDate = "";
     } else {
       formik.errors.sessionStartDate = "Please Enter Valid Date";
@@ -346,7 +371,16 @@ const AddEvent = () => {
                   }}
                   type="submit"
                 >
-                  Save
+                  {loading ? (
+                    <Loading
+                      type="bars"
+                      width={20}
+                      height={20}
+                      color={COLORS.BLACK}
+                    />
+                  ) : (
+                    "Save"
+                  )}
                 </Button>
               </Grid2>
             </Grid2>
