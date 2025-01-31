@@ -28,6 +28,9 @@ import PageBreadCrumbs from "../customBreadCrumbs";
 import CustomTable from "../customTable";
 import { useRouter } from "next/router";
 import Loading from "react-loading";
+import { useDispatch } from "react-redux";
+import { showModal } from "@/redux/reducers/modal";
+import CopyAd from "@/assests/modalCalling/notification/copyAd";
 
 const AdListTable = ({ tableData, loading }) => {
   const [id, setId] = useState("");
@@ -38,6 +41,7 @@ const AdListTable = ({ tableData, loading }) => {
     },
     {
       label: "Edit",
+      url: `/notification-management/ad-list/${id}/edit-event`,
     },
     {
       label: "Copy",
@@ -50,10 +54,14 @@ const AdListTable = ({ tableData, loading }) => {
     },
   ];
   const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
   const router = useRouter();
   const handleChangePage = (path) => {
     if (path) {
       router.push(path);
+    } else {
+      dispatch(showModal(<CopyAd id={id} />));
+      setAnchorEl(null);
     }
   };
   const open = Boolean(anchorEl);
@@ -109,6 +117,16 @@ const AdListTable = ({ tableData, loading }) => {
               className="m-auto"
               color={COLORS.BLACK}
             />
+          ) : tableData?.docs.length === 0 ? (
+            <Typography
+              sx={{
+                textAlign: "center",
+                fontSize: 20,
+                fontFamily: roboto.style,
+              }}
+            >
+              No Data Found
+            </Typography>
           ) : (
             <TableContainer>
               <Table>
@@ -159,9 +177,7 @@ const AdListTable = ({ tableData, loading }) => {
                         <Typography
                           sx={{ fontSize: 14, fontFamily: roboto.style }}
                         >
-                          {moment
-                            .unix(val.sessionEndDate )
-                            .format("DD-MM-YYYY")}
+                          {moment.unix(val.sessionEndDate).format("DD-MM-YYYY")}
                         </Typography>
                       </TableCell>
                       <TableCell>

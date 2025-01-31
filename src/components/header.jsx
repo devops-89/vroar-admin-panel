@@ -1,19 +1,13 @@
+import logo from "@/logo/logo.png";
+import { COLORS } from "@/utils/enum";
+import { roboto } from "@/utils/fonts";
 import {
-  Avatar,
   Box,
   Button,
-  IconButton,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
 import Image from "next/image";
-import React from "react";
-import logo from "@/logo/logo.png";
-import { roboto } from "@/utils/fonts";
-import { COLORS } from "@/utils/enum";
 const Header = () => {
   return (
     <div>
@@ -32,7 +26,7 @@ const Header = () => {
           zIndex: 999,
         }}
       >
-        <Button sx={{ mr: 5 }}>
+        <Button sx={{ mr: 2 }}>
           <Stack direction={"row"} alignItems={"center"} spacing={1}>
             <Image src={logo} width={50} />
 

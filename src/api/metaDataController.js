@@ -121,4 +121,25 @@ export const metaDataController = {
       throw error;
     }
   },
+  getEventById: async (id) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.get(
+        `api/event/getById/${id}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateEvent: async (data, id) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        `api/event/updateEvent/${id}`,
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

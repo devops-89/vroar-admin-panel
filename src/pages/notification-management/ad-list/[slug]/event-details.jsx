@@ -1,95 +1,142 @@
+import { metaDataController } from "@/api/metaDataController";
 import Wrapper from "@/components/wrapper";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { Button, Stack, Typography } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
+import moment from "moment";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
-
 const EventDetails = () => {
+  const router = useRouter();
+
+  const id = router.query.slug;
+  const [details, setDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const getEventById = (id) => {
+    metaDataController
+      .getEventById(id)
+      .then((res) => {
+        setDetails(res.data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (id) {
+      getEventById(id);
+    }
+  }, [id]);
+
   const newData = [
     {
       label: "Event Name",
-      value: "Creative Writing Workshop",
+      value: details?.eventName,
     },
     {
       label: "Speaker Name",
-      value: "Emily Johnson",
+      value: details?.speakerName,
     },
     {
       label: "Event Description",
-      value:
-        "A workshop to inspire young writers and enhance their creative writing skills.",
+      value: details?.eventDescription,
     },
 
     {
       label: "Speaker Summary",
-      value:
-        "Emily Johnson is an award-winning author and educator with a passion for nurturing young talent.",
+      value: details?.speakerSummary,
     },
     {
       label: "Session Details",
-      value:
-        "Includes writing exercises, group discussions, and personalized feedback.	",
+      value: details?.sessionDetails,
     },
     {
       label: "Session Dates",
-      value: "7th December 2024 - 20th December 2024",
+      value: `${moment
+        .unix(details?.sessionStartDate)
+        .format("Do MMMM YYYY")} - ${moment
+        .unix(details?.sessionEndDate)
+        .format("Do MMMM YYYY")}`,
     },
     {
       label: "Session Timings",
-      value: "1:00 PM - 3:00 PM",
+      value: `${details?.sessionStartTime} - ${details?.sessionEndTime}`,
     },
     {
       label: "Zoom Link",
-      value: "https://zoom.us/j/1234567890",
+      value: details?.zoomLink,
+      url: true,
     },
   ];
   return (
     <div>
       <Wrapper>
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-        >
-          <Typography
-            sx={{ fontSize: 20, fontFamily: roboto.style, fontWeight: 550 }}
-          >
-            Event Details
-          </Typography>
-          <Button
-            endIcon={<FaRegEdit />}
-            sx={{
-              fontSize: 14,
-              color: COLORS.PRIMARY,
-              border: `1px solid ${COLORS.PRIMARY}`,
-            }}
-          >
-            Edit
-          </Button>
-        </Stack>
-        <Stack spacing={2} sx={{ mt: 3 }}>
-          {newData.map((val, i) => (
-            <Stack direction={"row"} alignItems={"center"} spacing={10} key={i}>
+        {loading ? (
+          <Backdrop open={loading}>
+            <CircularProgress color={COLORS.WHITE} />
+          </Backdrop>
+        ) : (
+          <>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+            >
               <Typography
-                sx={{ fontSize: 15, fontFamily: roboto.style, width: 140 }}
+                sx={{ fontSize: 20, fontFamily: roboto.style, fontWeight: 550 }}
               >
-                {" "}
-                {val.label}
+                Event Details
               </Typography>
-
-              <Typography
+              <Button
+                endIcon={<FaRegEdit />}
                 sx={{
                   fontSize: 14,
-                  fontFamily: roboto.style,
-                  fontWeight: 0,
+                  color: COLORS.PRIMARY,
+                  border: `1px solid ${COLORS.PRIMARY}`,
                 }}
               >
-                {" "}
-                {val.value}
-              </Typography>
+                Edit
+              </Button>
             </Stack>
-          ))}
-        </Stack>
+            <Stack spacing={2} sx={{ mt: 3 }}>
+              {newData.map((val, i) => (
+                <Stack direction={"row"} spacing={10} key={i}>
+                  <Box sx={{ width: 200 }}>
+                    <Stack spacing={2}>
+                      <Typography
+                        sx={{ fontSize: 15, fontFamily: roboto.style }}
+                      >
+                        {val.label}
+                      </Typography>
+                    </Stack>
+                  </Box>
+                  <Box sx={{ width: 900 }}>
+                    <Stack spacing={2}>
+                      <Typography
+                        component={val.url ? "a" : "text"}
+                        href={val.value}
+                        sx={{ fontSize: 14, fontFamily: roboto.style }}
+                      >
+                        {val.value}
+                      </Typography>
+                    </Stack>
+                  </Box>
+                </Stack>
+              ))}
+            </Stack>
+          </>
+        )}
       </Wrapper>
     </div>
   );
