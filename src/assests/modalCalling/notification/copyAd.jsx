@@ -14,12 +14,21 @@ import {
   Typography,
 } from "@mui/material";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
 const CopyAd = ({ id }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  const copyDetails = () => {
+    router.push(
+      `/notification-management/ad-list//${id}/edit-event?event=copy`
+    );
+    closeModal();
+  };
 
   const closeModal = () => {
     dispatch(hideModal());
@@ -154,6 +163,7 @@ const CopyAd = ({ id }) => {
                 fontFamily: roboto.style,
               }}
               fullWidth
+              onClick={copyDetails}
             >
               Edit Event
             </Button>

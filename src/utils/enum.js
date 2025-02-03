@@ -329,3 +329,9 @@ export const ROADMAP_TENURE = {
   8: "8 Months",
   12: "12 Months",
 };
+
+export const NOTIFICATION_TYPE = {
+  NEW_REQUEST: "NEW REQUEST",
+  TICKET: "TICKET",
+  ROADMAP: "ROADMAP",
+};

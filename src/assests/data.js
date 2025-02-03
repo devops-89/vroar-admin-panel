@@ -2,6 +2,7 @@ import {
   GENDER_DATA,
   GRADE,
   METADATA_TYPE,
+  NOTIFICATION_TYPE,
   QUIZ_TYPE,
   RELATIONSHIP_DATA,
   ROADMAP_STATUS,
@@ -327,6 +328,14 @@ export const data = {
     },
     {
       label: "Action",
+    },
+  ],
+  notificationList: [
+    {
+      title: "New mentor request",
+      messaege:
+        "Wuhoo! A new mentor (Aman Ratnam) has completed their onboarding journey. Please review their profile and accept/reject their application to become a mentor",
+      notificationType: NOTIFICATION_TYPE.NEW_REQUEST,
     },
   ],
 };

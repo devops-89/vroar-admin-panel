@@ -45,7 +45,12 @@ const EditEventForm = ({ details }) => {
     },
     validationSchema: AddAdListValidationSchema,
     onSubmit: (values) => {
-      addNewEvent(values);
+      if (values.sessionStartTime < moment().unix()) {
+        formik.errors.sessionStartDate = "Sessio";
+        return false;
+      } else {
+        addNewEvent(values);
+      }
     },
   });
 
@@ -54,11 +59,34 @@ const EditEventForm = ({ details }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const addNewEvent = (values) => {
-    if (values.sessionStartDate < moment().unix()) {
-      formik.errors.sessionStartDate =
-        "Session start date must be equal to present day";
+    setLoading(true);
+    if (router.query.event) {
+      metaDataController
+        .addAdEvent(values)
+        .then((res) => {
+          dispatch(
+            setToast({
+              open: true,
+              message: res.data.message,
+              severity: ToastStatus.SUCCESS,
+            })
+          );
+          setLoading(false);
+          router.back();
+        })
+        .catch((err) => {
+          let errMessage =
+            (err.response && err.response.data.message) || err.messasge;
+          dispatch(
+            setToast({
+              open: true,
+              message: errMessage,
+              severity: ToastStatus.ERROR,
+            })
+          );
+          setLoading(false);
+        });
     } else {
-      setLoading(true);
       metaDataController
         .updateEvent(values, details?.id)
         .then((res) => {

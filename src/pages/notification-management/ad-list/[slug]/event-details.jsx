@@ -33,6 +33,12 @@ const EventDetails = () => {
       });
   };
 
+  const editEventDetails = () => {
+    router.push(
+      `/notification-management/ad-list/${router.query.slug}/edit-event`
+    );
+  };
+
   useEffect(() => {
     if (id) {
       getEventById(id);
@@ -105,6 +111,7 @@ const EventDetails = () => {
                   color: COLORS.PRIMARY,
                   border: `1px solid ${COLORS.PRIMARY}`,
                 }}
+                onClick={editEventDetails}
               >
                 Edit
               </Button>

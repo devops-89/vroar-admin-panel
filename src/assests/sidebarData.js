@@ -65,6 +65,7 @@ export const SIDEBARADATA = [
       },
       {
         label: "View Notifications",
+        url: "/notification-management/view-notification",
       },
     ],
   },
