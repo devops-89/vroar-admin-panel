@@ -39,14 +39,14 @@ const ContentTable = ({ tableData, loading }) => {
   return (
     <div>
       {loading ? (
-        // <Loading
-        //   type="bars"
-        //   width={20}
-        //   height={20}
+        <Loading
+          type="bars"
+          width={20}
+          height={20} 
+          className="m-auto"
 
-        //   color={COLORS.BLACK}
-        // />
-        <CircularProgress color={COLORS.BLACK} />
+          color={COLORS.BLACK}
+        />
       ) : tableData?.docs.length === 0 ? (
         <Typography
           sx={{
