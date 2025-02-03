@@ -336,6 +336,24 @@ export const data = {
       messaege:
         "Wuhoo! A new mentor (Aman Ratnam) has completed their onboarding journey. Please review their profile and accept/reject their application to become a mentor",
       notificationType: NOTIFICATION_TYPE.NEW_REQUEST,
+      date: 1707588474,
+      time: "4:05pm",
+    },
+    {
+      title: "New student sign up",
+      messaege:
+        "A new student successfully signed up for the application at 11:42 AM",
+      notificationType: NOTIFICATION_TYPE.NEW_REQUEST,
+      date: 1707588474,
+      time: "4:05pm",
+    },
+    {
+      title: "New mentor request",
+      messaege:
+        "Wuhoo! A new mentor (Aman Ratnam) has completed their onboarding journey. Please review their profile and accept/reject their application to become a mentor",
+      notificationType: NOTIFICATION_TYPE.NEW_REQUEST,
+      date: 1707588474,
+      time: "4:05pm",
     },
   ],
 };

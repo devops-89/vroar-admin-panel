@@ -32,7 +32,7 @@ const NotificationList = () => {
               direction={"row"}
               alignItems={"center"}
               justifyContent={"space-between"}
-              sx={{ ml: 3 }}
+              sx={{ ml: 1 }}
             >
               <Box>
                 <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
