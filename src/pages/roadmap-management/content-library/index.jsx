@@ -37,6 +37,23 @@ const Contentlibrary = () => {
       });
   };
 
+  const pageChangeHandler = (e, newPage) => {
+    setPage(newPage);
+    setLoading(true);
+    if (newPage) {
+      body.page = newPage + 1;
+      getContentLibrary(body);
+    }
+  };
+
+  const pageSizeHandler = (e) => {
+    setPageSize(e.target.value);
+    if (pageSize) {
+      setLoading(true);
+      getContentLibrary(body);
+    }
+  };
+
   useEffect(() => {
     getContentLibrary(body);
   }, []);
@@ -78,7 +95,14 @@ const Contentlibrary = () => {
             <CustomTable />
           </Box>
           <Box sx={{ mt: 2 }}>
-            <ContentTable tableData={contentData} loading={loading} />
+            <ContentTable
+              tableData={contentData}
+              loading={loading}
+              page={page}
+              pageSize={pageSize}
+              onPageChange={pageChangeHandler}
+              onPageSizeChange={pageSizeHandler}
+            />
           </Box>
         </Card>
       </Wrapper>

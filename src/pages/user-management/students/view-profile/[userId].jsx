@@ -33,6 +33,18 @@ const UserProfile = () => {
     {
       label: "Roadmap",
     },
+    {
+      label: "Points",
+    },
+    {
+      label: "Message",
+    },
+    {
+      label: "Notes/Assessments",
+    },
+    {
+      label: "Recommendations",
+    },
   ];
 
   const [value, setValue] = useState(0);
@@ -59,7 +71,7 @@ const UserProfile = () => {
     <div>
       <Wrapper>
         {loading ? (
-          <Backdrop sx={{ color: COLORS.WHITE, zIndex: 0 }} open={loading}>
+          <Backdrop sx={{ color: COLORS.WHITE, zIndex: 99 }} open={loading}>
             <CircularProgress color="inherit" />
           </Backdrop>
         ) : (

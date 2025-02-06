@@ -142,4 +142,15 @@ export const metaDataController = {
       throw error;
     }
   },
+  addQuiz: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.post(
+        "api/quiz/addQuiz",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

@@ -1,11 +1,10 @@
-import { CONTENT_DATA, CONTENT_HEADER } from "@/assests/roadmapData";
+import { CONTENT_HEADER } from "@/assests/roadmapData";
 import { COLORS, METADATA_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { Delete, Remove, Visibility } from "@mui/icons-material";
+import { Remove, Visibility } from "@mui/icons-material";
 import {
   Button,
   Chip,
-  CircularProgress,
   Collapse,
   IconButton,
   Stack,
@@ -14,6 +13,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
 } from "@mui/material";
@@ -23,11 +23,22 @@ import { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import Loading from "react-loading";
 
-const ContentTable = ({ tableData, loading }) => {
+const ContentTable = ({
+  tableData,
+  loading,
+  page,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
+}) => {
   const router = useRouter();
 
   const viewDetails = (id) => {
     router.push(`/roadmap-management/content-library/${id}/view-content`);
+  };
+
+  const editDetails = (id) => {
+    router.push(`/roadmap-management/content-library/${id}/edit-content`);
   };
 
   const [open, setOpen] = useState(null);
@@ -42,9 +53,8 @@ const ContentTable = ({ tableData, loading }) => {
         <Loading
           type="bars"
           width={20}
-          height={20} 
+          height={20}
           className="m-auto"
-
           color={COLORS.BLACK}
         />
       ) : tableData?.docs.length === 0 ? (
@@ -130,17 +140,21 @@ const ContentTable = ({ tableData, loading }) => {
                                 ? COLORS.PENDING
                                 : tag.type === METADATA_TYPE.INDUSTRY
                                 ? COLORS.DONE
-                                : tag.type === METADATA_TYPE.STRENGTHS
+                                : tag.type === METADATA_TYPE.SOFT_SKILLS
                                 ? COLORS.SIGNED_UP
-                                : COLORS.PURPLE,
+                                : tag.type === METADATA_TYPE.STRENGTHS
+                                ? COLORS.PURPLE
+                                : "",
                             color:
                               tag.type === METADATA_TYPE.CAREER
                                 ? COLORS.PENDING_TEXT
                                 : tag.type === METADATA_TYPE.INDUSTRY
                                 ? COLORS.DONE_TEXT
-                                : tag.type === METADATA_TYPE.STRENGTHS
+                                : tag.type === METADATA_TYPE.SOFT_SKILLS
                                 ? COLORS.SIGNED_UP_TEXT
-                                : COLORS.PURPLE_TEXT,
+                                : tag.type === METADATA_TYPE.STRENGTHS
+                                ? COLORS.PURPLE_TEXT
+                                : "",
                           }}
                         />
                       ))}
@@ -183,21 +197,25 @@ const ContentTable = ({ tableData, loading }) => {
                             key={i}
                             sx={{
                               backgroundColor:
-                                tag === METADATA_TYPE.CAREER
+                                tag.type === METADATA_TYPE.CAREER
                                   ? COLORS.PENDING
-                                  : tag === METADATA_TYPE.INDUSTRY
+                                  : tag.type === METADATA_TYPE.INDUSTRY
                                   ? COLORS.DONE
-                                  : tag === METADATA_TYPE.STRENGTHS
+                                  : tag.type === METADATA_TYPE.SOFT_SKILLS
                                   ? COLORS.SIGNED_UP
-                                  : COLORS.PURPLE,
+                                  : tag.type === METADATA_TYPE.STRENGTHS
+                                  ? COLORS.PURPLE
+                                  : "",
                               color:
-                                tag === METADATA_TYPE.CAREER
+                                tag.type === METADATA_TYPE.CAREER
                                   ? COLORS.PENDING_TEXT
-                                  : tag === METADATA_TYPE.INDUSTRY
+                                  : tag.type === METADATA_TYPE.INDUSTRY
                                   ? COLORS.DONE_TEXT
-                                  : tag === METADATA_TYPE.STRENGTHS
+                                  : tag.type === METADATA_TYPE.SOFT_SKILLS
                                   ? COLORS.SIGNED_UP_TEXT
-                                  : COLORS.PURPLE_TEXT,
+                                  : tag.type === METADATA_TYPE.STRENGTHS
+                                  ? COLORS.PURPLE_TEXT
+                                  : "",
                             }}
                           />
                         ))}
@@ -208,7 +226,7 @@ const ContentTable = ({ tableData, loading }) => {
                     <IconButton onClick={() => viewDetails(val.id)}>
                       <Visibility fontSize="small" htmlColor={COLORS.BLACK} />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={() => editDetails(val.id)}>
                       <FaRegEdit style={{ color: COLORS.BLACK }} />
                     </IconButton>
                   </TableCell>
@@ -216,6 +234,14 @@ const ContentTable = ({ tableData, loading }) => {
               ))}
             </TableBody>
           </Table>
+          <TablePagination
+            component={"div"}
+            page={page}
+            rowsPerPage={pageSize}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onPageSizeChange}
+            count={tableData?.totalDocs}
+          />
         </TableContainer>
       )}
     </div>

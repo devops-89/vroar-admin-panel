@@ -1,5 +1,3 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { Delete, DragIndicator } from "@mui/icons-material";
 import {
   Box,
   Collapse,
@@ -8,25 +6,22 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { roboto } from "@/utils/fonts";
-import { COLORS } from "@/utils/enum";
-import { useState } from "react";
-import { loginTextField } from "@/utils/styles";
+import { Delete, DragIndicator, WidthFull } from "@mui/icons-material";
 import OptionBox from "./quiz-option/option";
+import { loginTextField } from "@/utils/styles";
+
 const SortableItem = ({
   id,
   index,
+  question,
   onDelete,
-  canDelete,
-  isDragging,
+  onQuestionChange,
+  onOptionsChange,
   openIndex,
   setOpenIndex,
+  canDelete,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -41,60 +36,47 @@ const SortableItem = ({
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
   };
 
-  const isOpen = openIndex === index;
-
-  const handleCollapseToggle = () => {
-    setOpenIndex(isOpen ? null : index);
-  };
-
   return (
     <Box ref={setNodeRef} style={style} {...attributes}>
       <Stack
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ width: "100%" }}
       >
         <Typography
-          sx={{ fontSize: 17, fontFamily: roboto.style, cursor: "pointer" }}
-          onClick={handleCollapseToggle}
+          sx={{ fontSize: 17, cursor: "pointer" }}
+          onClick={() => setOpenIndex(openIndex === index ? null : index)}
         >
-          Question Number {index + 1}
+          Question {index + 1}
         </Typography>
-        <Stack direction={"row"} alignItems={"center"} spacing={2}>
-          <IconButton
-            {...listeners}
-            sx={{
-              cursor: isDragging ? "grabbing" : "grab",
-            }}
-          >
-            <DragIndicator htmlColor={COLORS.BLACK} />
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <IconButton {...listeners}>
+            <DragIndicator />
           </IconButton>
           {canDelete && (
-            <IconButton onClick={() => onDelete(id)} disa>
-              <Delete htmlColor={COLORS.BLACK} />
+            <IconButton onClick={() => onDelete(id)}>
+              <Delete />
             </IconButton>
           )}
         </Stack>
       </Stack>
-      <Collapse in={isOpen}>
+
+      <Collapse in={openIndex === index}>
         <TextField
           multiline
-          label="Enter Question?"
           fullWidth
-          sx={{
-            ...loginTextField,
-            mt: 2,
-            "& .MuiOutlinedInput-root": {
-              backgroundColor: COLORS.WHITE,
-              "&.Mui-focused fieldset": {
-                border: "1px solid #000",
-              },
-            },
-          }}
+          label="Enter Question"
+          value={question.question}
+          onChange={(e) => onQuestionChange(id, e.target.value)}
+          sx={{ mt: 2, ...loginTextField }}
         />
 
         <Box sx={{ mt: 3, p: 1 }}>
-          <OptionBox />
+          <OptionBox
+            options={question.options}
+            onOptionsChange={(newOptions) => onOptionsChange(id, newOptions)}
+          />
         </Box>
       </Collapse>
     </Box>

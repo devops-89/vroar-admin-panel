@@ -1,30 +1,28 @@
-import {
-  CONTENT_TYPE_DATA
-} from "@/assests/roadmapData";
+import { CONTENT_TYPE_DATA } from "@/assests/roadmapData";
 import { setToast } from "@/redux/reducers/toast";
 import {
-  COLORS,
-  CONTENT_TYPE,
-  METADATA_TYPE,
-  QUIZ_TYPE,
-  ToastStatus,
+    COLORS,
+    CONTENT_TYPE,
+    METADATA_TYPE,
+    QUIZ_TYPE,
+    ToastStatus,
 } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddContentValidationSchema } from "@/utils/validationSchema";
 import { AttachFile, ErrorSharp } from "@mui/icons-material";
 import {
-  Autocomplete,
-  Backdrop,
-  Box,
-  Button,
-  Checkbox,
-  CircularProgress,
-  FormControlLabel,
-  FormHelperText,
-  Stack,
-  TextField,
-  Typography
+    Autocomplete,
+    Backdrop,
+    Box,
+    Button,
+    Checkbox,
+    CircularProgress,
+    FormControlLabel,
+    FormHelperText,
+    Stack,
+    TextField,
+    Typography,
 } from "@mui/material";
 
 import { metaDataController } from "@/api/metaDataController";
@@ -45,7 +43,7 @@ const contentTypeConfig = {
   [CONTENT_TYPE.NATIVE_VIDEO_LINK]: { showFile: false, showLink: true },
   [CONTENT_TYPE.YOUTUBE_VIDEO_LINK]: { showFile: false, showLink: true },
 };
-const AddContent = () => {
+const EditContent = () => {
   const inputRef = useRef();
   const [content, setContent] = useState(null);
   const [career, setCareer] = useState([]);
@@ -58,26 +56,6 @@ const AddContent = () => {
   const dispatch = useDispatch();
   const [isQuizEnabled, setIsQuizEnabled] = useState(false);
 
-  const [metaData, setMetaData] = useState([]);
-  const [listLoading, setListLoading] = useState(true);
-  const getMetaData = (metaDataType) => {
-    let data = {
-      page: 1,
-      pageSize: 100,
-      type: metaDataType,
-    };
-    metaDataController
-      .getMetaData(data)
-      .then((res) => {
-        const response = res.data.data.docs;
-        setMetaData(response);
-        setListLoading(false);
-      })
-      .catch((err) => {
-        console.log("reeeeeeee", err);
-        setLoading(true);
-      });
-  };
 
   const initialValues = {
     contentType: "",
@@ -580,4 +558,4 @@ const AddContent = () => {
   );
 };
 
-export default AddContent;
+export default EditContent;

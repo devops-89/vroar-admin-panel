@@ -346,12 +346,38 @@ export const data = {
       notificationType: NOTIFICATION_TYPE.NEW_REQUEST,
       date: 1707588474,
       time: "4:05pm",
+      link: "continue to review profile",
     },
     {
-      title: "New mentor request",
+      title: "New paid customer",
       messaege:
-        "Wuhoo! A new mentor (Aman Ratnam) has completed their onboarding journey. Please review their profile and accept/reject their application to become a mentor",
+        "Yay! Mr. Virat Khanna has paid for the subscription. Let’s work to provide them best learning experience to them",
       notificationType: NOTIFICATION_TYPE.NEW_REQUEST,
+      date: 1707588474,
+      time: "4:05pm",
+    },
+    {
+      title: "Support ticket raised",
+      messaege:
+        "Mr. Sachin Tendulkar has raised a support ticket #213. Please review the request and respond accordingly",
+      notificationType: NOTIFICATION_TYPE.TICKET,
+      date: 1707588474,
+      time: "4:05pm",
+      link: "Create Roadmap",
+    },
+    {
+      title: "Student roadmap request received",
+      messaege:
+        "Student: Rohit Sharma has completed their onboarding journey and is waiting to receive their personalised roadmap. View the request in roadmap management panel",
+      notificationType: NOTIFICATION_TYPE.ROADMAP,
+      date: 1707588474,
+      time: "4:05pm",
+    },
+    {
+      title: "Student’s roadmap completion 50%",
+      messaege:
+        "Student: Shivli Narendra has completed 50% of their roadmap. That’s great work!",
+      notificationType: NOTIFICATION_TYPE.ROADMAP,
       date: 1707588474,
       time: "4:05pm",
     },

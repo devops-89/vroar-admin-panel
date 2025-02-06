@@ -73,50 +73,51 @@ const ContentDetails = () => {
               direction={"row"}
               alignItems={"center"}
               spacing={Array.isArray(val.value) ? 10 : 10}
-              flexWrap={"wrap"}
             >
               <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
                 {val.label}
               </Typography>
+
               {Array.isArray(val.value) ? (
-                val.value.map((item, index) => (
-                  <Chip
-                    label={
-                      <Typography
-                        sx={{
-                          fontSize: 14,
-                          fontFamily: roboto.style,
-                        }}
-                      >
-                        {item.name}
-                      </Typography>
-                    }
-                    sx={{
-                      backgroundColor:
-                        item.type === METADATA_TYPE.CAREER
-                          ? COLORS.PENDING
-                          : item.type === METADATA_TYPE.INDUSTRY
-                          ? COLORS.DONE
-                          : item.type === METADATA_TYPE.SOFT_SKILLS
-                          ? COLORS.SIGNED_UP
-                          : item.type === METADATA_TYPE.STRENGTHS
-                          ? COLORS.PURPLE
-                          : "",
-                      color:
-                        item.type === METADATA_TYPE.CAREER
-                          ? COLORS.PENDING_TEXT
-                          : item.type === METADATA_TYPE.INDUSTRY
-                          ? COLORS.DONE_TEXT
-                          : item.type === METADATA_TYPE.SOFT_SKILLS
-                          ? COLORS.SIGNED_UP_TEXT
-                          : item.type === METADATA_TYPE.STRENGTHS
-                          ? COLORS.PURPLE_TEXT
-                          : "",
-                      mt: 1,
-                    }}
-                    key={index}
-                  />
-                ))
+                <Stack direction={"row"} spacing={3} flexWrap={"wrap"} rowGap={1}>
+                  {val.value.map((item, index) => (
+                    <Chip
+                      label={
+                        <Typography
+                          sx={{
+                            fontSize: 14,
+                            fontFamily: roboto.style,
+                          }}
+                        >
+                          {item.name}
+                        </Typography>
+                      }
+                      sx={{
+                        backgroundColor:
+                          item.type === METADATA_TYPE.CAREER
+                            ? COLORS.PENDING
+                            : item.type === METADATA_TYPE.INDUSTRY
+                            ? COLORS.DONE
+                            : item.type === METADATA_TYPE.SOFT_SKILLS
+                            ? COLORS.SIGNED_UP
+                            : item.type === METADATA_TYPE.STRENGTHS
+                            ? COLORS.PURPLE
+                            : "",
+                        color:
+                          item.type === METADATA_TYPE.CAREER
+                            ? COLORS.PENDING_TEXT
+                            : item.type === METADATA_TYPE.INDUSTRY
+                            ? COLORS.DONE_TEXT
+                            : item.type === METADATA_TYPE.SOFT_SKILLS
+                            ? COLORS.SIGNED_UP_TEXT
+                            : item.type === METADATA_TYPE.STRENGTHS
+                            ? COLORS.PURPLE_TEXT
+                            : "",
+                      }}
+                      key={index}
+                    />
+                  ))}
+                </Stack>
               ) : (
                 <Typography sx={{ fontFamily: roboto.style, fontSize: 14 }}>
                   {val.value}

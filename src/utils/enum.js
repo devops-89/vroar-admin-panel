@@ -320,8 +320,8 @@ export const CONTENT_TYPE = {
 };
 
 export const QUIZ_TYPE = {
-  OBJECTIVE_QUIZ: "Objective Quiz",
-  SUBJECTIVE_QUIZ: "Subjective Quiz",
+  OBJECTIVE_QUIZ: "Objective",
+  SUBJECTIVE_QUIZ: "Subjective",
 };
 
 export const ROADMAP_TENURE = {
