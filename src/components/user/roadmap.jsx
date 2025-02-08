@@ -3,10 +3,9 @@ import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { LinearProgress } from "@mui/joy";
 import {
-  Box,
   Button,
+  Chip,
   Collapse,
-  IconButton,
   Stack,
   Table,
   TableBody,
@@ -23,11 +22,23 @@ import { useSelector } from "react-redux";
 
 const Roadmap = () => {
   const user = useSelector((state) => state.USER);
-  // console.log("test", user.roadMapData[0].carrerTags);
   const [open, setOpen] = useState(null);
-
+  const [industryOpen, setIndustryOpen] = useState(null);
+  const [strengthOpen, setStrengthsOpen] = useState(null);
+  const [softSkillsOpen, setSkillsOpen] = useState(null);
   const handletoggle = (index) => {
     setOpen((prev) => (prev === index ? null : index));
+  };
+
+  const IndustryOpenHandler = (index) => {
+    setIndustryOpen((prev) => (prev === index ? null : index));
+  };
+
+  const strengthOpenHandler = (index) => {
+    setStrengthsOpen((prev) => (prev === index ? null : index));
+  };
+  const softSkillsOpenHandler = (index) => {
+    setSkillsOpen((prev) => (prev === index ? null : index));
   };
 
   return (
@@ -38,7 +49,7 @@ const Roadmap = () => {
             <TableRow>
               {roadMapTableHeader.map((val, i) =>
                 val.sort ? (
-                  <TableCell align="center" key={i}>
+                  <TableCell align="center" key={i} sx={{ width: 150 }}>
                     <TableSortLabel
                       sx={{
                         "& .MuiTableSortLabel-icon": {
@@ -58,7 +69,13 @@ const Roadmap = () => {
                   </TableCell>
                 ) : (
                   <TableCell key={i} align="center" size="small">
-                    <Typography sx={{ fontSize: 13, fontFamily: roboto.style }}>
+                    <Typography
+                      sx={{
+                        fontSize: 13,
+                        fontFamily: roboto.style,
+                        width: 100,
+                      }}
+                    >
                       {val.label}
                     </Typography>
                   </TableCell>
@@ -80,102 +97,245 @@ const Roadmap = () => {
                   </Typography>
                 </TableCell>
                 <TableCell align="center" size="small">
-                  <Stack direction={"row"} alignItems={"center"} spacing={2}>
-                    {val?.careerTags.slice(0, 1).map((item, i) => (
-                      <Typography
+                  <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                    {val?.careerTags.slice(0, 1).map((item, index) => (
+                      <Chip
                         sx={{
-                          fontSize: 12,
-                          fontFamily: roboto.style,
-                          borderRadius: 4,
                           backgroundColor: COLORS.PENDING,
-                          height: 30,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           color: COLORS.PENDING_TEXT,
-                          px: 2,
                         }}
                         key={i}
-                      >
-                        {item}
-                      </Typography>
+                        label={
+                          <Typography sx={{ fontSize: 14 }}>{item}</Typography>
+                        }
+                      />
                     ))}
-                    <Button
-                      sx={{
-                        width: 20,
-                        color: COLORS.BLACK,
-                        fontFamily: roboto.style,
-                        fontSize: 13,
-                      }}
-                      onClick={() => handletoggle(i)}
-                    >
-                      + {val.careerTags.length - 1}
-                    </Button>
+                    {val.careerTags.length > 1 && (
+                      <Button
+                        sx={{
+                          width: 20,
+                          color: COLORS.BLACK,
+                          fontFamily: roboto.style,
+                          fontSize: 13,
+                        }}
+                        onClick={() => handletoggle(i)}
+                      >
+                        + {val.careerTags.length - 1}
+                      </Button>
+                    )}
                   </Stack>
-                  <Collapse in={open === i}></Collapse>
+                  <Collapse in={open === i} sx={{ mt: 1 }}>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      spacing={1}
+                      rowGap={2}
+                    >
+                      {val?.careerTags.slice(1).map((item, index) => (
+                        <Chip
+                          sx={{
+                            backgroundColor: COLORS.PENDING,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: COLORS.PENDING_TEXT,
+                          }}
+                          key={i}
+                          label={
+                            <Typography sx={{ fontSize: 14 }}>
+                              {item}
+                            </Typography>
+                          }
+                        />
+                      ))}
+                    </Stack>
+                  </Collapse>
                 </TableCell>
                 <TableCell align="center" size="small">
-                  {val?.industryTags.map((item, i) => (
-                    <Typography
-                      sx={{
-                        fontSize: 12,
-                        fontFamily: roboto.style,
-                        borderRadius: 4,
-                        backgroundColor: COLORS.DONE,
-                        height: 30,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: COLORS.DONE_TEXT,
-                        width: 155,
-                      }}
-                      key={i}
+                  <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                    {val?.industryTags.slice(0, 1).map((item, index) => (
+                      <Chip
+                        sx={{
+                          backgroundColor: COLORS.DONE,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: COLORS.DONE_TEXT,
+                        }}
+                        key={i}
+                        label={
+                          <Typography sx={{ fontSize: 14 }}>{item}</Typography>
+                        }
+                      />
+                    ))}
+                    {val.industryTags.length > 1 && (
+                      <Button
+                        sx={{
+                          width: 20,
+                          color: COLORS.BLACK,
+                          fontFamily: roboto.style,
+                          fontSize: 13,
+                        }}
+                        onClick={() => IndustryOpenHandler(i)}
+                      >
+                        + {val.industryTags.length - 1}
+                      </Button>
+                    )}
+                  </Stack>
+                  <Collapse in={industryOpen === i} sx={{ mt: 1 }}>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      spacing={1}
+                      rowGap={2}
                     >
-                      {item}
-                    </Typography>
-                  ))}
+                      {val?.industryTags.slice(1).map((item, index) => (
+                        <Chip
+                          sx={{
+                            backgroundColor: COLORS.PENDING,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: COLORS.PENDING_TEXT,
+                          }}
+                          key={i}
+                          label={
+                            <Typography sx={{ fontSize: 14 }}>
+                              {item}
+                            </Typography>
+                          }
+                        />
+                      ))}
+                    </Stack>
+                  </Collapse>
                 </TableCell>
                 <TableCell align="center">
-                  {val?.strengthsTags.map((item, i) => (
-                    <Typography
-                      sx={{
-                        fontSize: 12,
-                        fontFamily: roboto.style,
-                        borderRadius: 4,
-                        backgroundColor: COLORS.SIGNED_UP,
-                        height: 30,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: COLORS.SIGNED_UP_TEXT,
-                        width: 120,
-                      }}
-                      key={i}
+                  <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                    {val?.strengthsTags.slice(0, 1).map((item, index) => (
+                      <Chip
+                        sx={{
+                          fontFamily: roboto.style,
+
+                          backgroundColor: COLORS.SIGNED_UP,
+                          height: 30,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: COLORS.SIGNED_UP_TEXT,
+                        }}
+                        key={i}
+                        label={
+                          <Typography sx={{ fontSize: 12 }}>{item}</Typography>
+                        }
+                      />
+                    ))}
+
+                    {val.strengthsTags.length < 1 && (
+                      <Button
+                        sx={{
+                          width: 20,
+                          color: COLORS.BLACK,
+                          fontFamily: roboto.style,
+                          fontSize: 13,
+                        }}
+                        onClick={() => strengthOpenHandler(i)}
+                      >
+                        + {val.strengthsTags.length - 1}
+                      </Button>
+                    )}
+                  </Stack>
+
+                  <Collapse in={strengthOpen === i} sx={{ mt: 1 }}>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      spacing={1}
+                      rowGap={2}
                     >
-                      {item}
-                    </Typography>
-                  ))}
+                      {val?.strengthsTags.slice(1).map((item, index) => (
+                        <Chip
+                          sx={{
+                            backgroundColor: COLORS.PENDING,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: COLORS.PENDING_TEXT,
+                          }}
+                          key={i}
+                          label={
+                            <Typography sx={{ fontSize: 14 }}>
+                              {item}
+                            </Typography>
+                          }
+                        />
+                      ))}
+                    </Stack>
+                  </Collapse>
                 </TableCell>
                 <TableCell align="center">
-                  {val?.softSkillsTags.map((item, i) => (
-                    <Typography
-                      sx={{
-                        fontSize: 12,
-                        fontFamily: roboto.style,
-                        borderRadius: 4,
-                        backgroundColor: COLORS.PURPLE,
-                        height: 30,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: COLORS.PURPLE_TEXT,
-                        width: 120,
-                      }}
-                      key={i}
+                  <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                    {val?.softSkillsTags.slice(0, 1).map((item, index) => (
+                      <Chip
+                        sx={{
+                          fontFamily: roboto.style,
+
+                          backgroundColor: COLORS.SIGNED_UP,
+                          height: 30,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: COLORS.SIGNED_UP_TEXT,
+                        }}
+                        key={i}
+                        label={
+                          <Typography sx={{ fontSize: 12 }}>{item}</Typography>
+                        }
+                      />
+                    ))}
+
+                    {val.softSkillsTags.length < 1 && (
+                      <Button
+                        sx={{
+                          width: 20,
+                          color: COLORS.BLACK,
+                          fontFamily: roboto.style,
+                          fontSize: 13,
+                        }}
+                        onClick={() => softSkillsOpenHandler(i)}
+                      >
+                        + {val.strengthsTags.length - 1}
+                      </Button>
+                    )}
+                  </Stack>
+                  <Collapse in={softSkillsOpen === i} sx={{ mt: 1 }}>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      spacing={1}
+                      rowGap={2}
                     >
-                      {item}
-                    </Typography>
-                  ))}
+                      {val?.softSkillsTags.slice(1).map((item, index) => (
+                        <Chip
+                          sx={{
+                            backgroundColor: COLORS.PENDING,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: COLORS.PENDING_TEXT,
+                          }}
+                          key={i}
+                          label={
+                            <Typography sx={{ fontSize: 14 }}>
+                              {item}
+                            </Typography>
+                          }
+                        />
+                      ))}
+                    </Stack>
+                  </Collapse>
                 </TableCell>
                 <TableCell align="center">
                   <LinearProgress

@@ -40,10 +40,9 @@ const Contentlibrary = () => {
   const pageChangeHandler = (e, newPage) => {
     setPage(newPage);
     setLoading(true);
-    if (newPage) {
-      body.page = newPage + 1;
-      getContentLibrary(body);
-    }
+
+    body.page = newPage + 1;
+    getContentLibrary(body);
   };
 
   const pageSizeHandler = (e) => {

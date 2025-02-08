@@ -2,18 +2,22 @@ import { data } from "@/assests/data";
 import { studentTableData } from "@/assests/studentData";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import TabPanel from "@/components/tabPanel";
+import Points from "@/components/user/points";
 import Roadmap from "@/components/user/roadmap";
 import StudentProfile from "@/components/user/studentProfile";
 import Wrapper from "@/components/wrapper";
 import { setUserDetails } from "@/redux/reducers/userInformation";
-import { COLORS } from "@/utils/enum";
+import { COLORS, PROFILE_DATA } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import { AddCircleOutline } from "@mui/icons-material";
 import {
   Backdrop,
   Box,
   Breadcrumbs,
+  Button,
   Card,
   CircularProgress,
+  Stack,
   Tab,
   Tabs,
   Typography,
@@ -28,29 +32,28 @@ const UserProfile = () => {
 
   const profileTabs = [
     {
-      label: "Profile Details",
+      label: PROFILE_DATA.PROFILE_DETAILS,
     },
     {
-      label: "Roadmap",
+      label: PROFILE_DATA.ROADMAP,
     },
     {
-      label: "Points",
+      label: PROFILE_DATA.POINTS,
+    },
+
+    {
+      label: PROFILE_DATA.NOTES,
     },
     {
-      label: "Message",
-    },
-    {
-      label: "Notes/Assessments",
-    },
-    {
-      label: "Recommendations",
+      label: PROFILE_DATA.RECOMMENDATIONS,
     },
   ];
 
   const [value, setValue] = useState(0);
-
+  const [tabsValue, setTabsValue] = useState("");
   const tabChangeHandler = (e, newValue) => {
     setValue(newValue);
+    setTabsValue(e.target.innerText);
   };
 
   const dispatch = useDispatch();
@@ -76,22 +79,40 @@ const UserProfile = () => {
           </Backdrop>
         ) : (
           <Card sx={{ p: 2 }}>
-            <PageBreadCrumbs
-              data={[
-                {
-                  label: "User Management",
-                  url: "/user-management/students",
-                },
-                {
-                  label: "Students",
-                  url: "/user-management/students",
-                },
-                {
-                  label: "View Profile",
-                  url: `/user-management/students/view-profile/${userId}`,
-                },
-              ]}
-            />
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+            >
+              <PageBreadCrumbs
+                data={[
+                  {
+                    label: "User Management",
+                    url: "/user-management/students",
+                  },
+                  {
+                    label: "Students",
+                    url: "/user-management/students",
+                  },
+                  {
+                    label: "View Profile",
+                    url: `/user-management/students/view-profile/${userId}`,
+                  },
+                ]}
+              />
+              {tabsValue === PROFILE_DATA.ROADMAP && (
+                <Button
+                  startIcon={<AddCircleOutline />}
+                  sx={{
+                    color: COLORS.WHITE,
+                    backgroundColor: COLORS.PRIMARY,
+                    width: 150,
+                  }}
+                >
+                  Add Roadmap
+                </Button>
+              )}
+            </Stack>
             <Box sx={{ mt: 2 }}>
               <Tabs
                 sx={{
@@ -132,6 +153,11 @@ const UserProfile = () => {
               <TabPanel value={value} index={1}>
                 <Box sx={{ mt: 2 }}>
                   <Roadmap />
+                </Box>
+              </TabPanel>
+              <TabPanel value={value} index={2}>
+                <Box sx={{ mt: 2 }}>
+                  <Points />
                 </Box>
               </TabPanel>
             </Box>

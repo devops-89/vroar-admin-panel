@@ -1,34 +1,34 @@
 import { CONTENT_TYPE_DATA } from "@/assests/roadmapData";
 import { setToast } from "@/redux/reducers/toast";
 import {
-    COLORS,
-    CONTENT_TYPE,
-    METADATA_TYPE,
-    QUIZ_TYPE,
-    ToastStatus,
+  COLORS,
+  CONTENT_TYPE,
+  METADATA_TYPE,
+  QUIZ_TYPE,
+  ToastStatus,
 } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddContentValidationSchema } from "@/utils/validationSchema";
 import { AttachFile, ErrorSharp } from "@mui/icons-material";
 import {
-    Autocomplete,
-    Backdrop,
-    Box,
-    Button,
-    Checkbox,
-    CircularProgress,
-    FormControlLabel,
-    FormHelperText,
-    Stack,
-    TextField,
-    Typography,
+  Autocomplete,
+  Backdrop,
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  FormControlLabel,
+  FormHelperText,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 
 import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import ToastBar from "../toastBar";
@@ -55,8 +55,7 @@ const EditContent = () => {
   const [showLink, setShowLink] = useState(false);
   const dispatch = useDispatch();
   const [isQuizEnabled, setIsQuizEnabled] = useState(false);
-
-
+  const [contentData, setContentData] = useState(null);
   const initialValues = {
     contentType: "",
     career: [],
@@ -89,6 +88,10 @@ const EditContent = () => {
 
   // const dispatch = useDispatch();
   const router = useRouter();
+
+  const id = router.query.slug;
+
+  console.log("id", id);
   const [loading, setLoading] = useState(false);
 
   const [state, setState] = useState(initialValues);
@@ -190,15 +193,6 @@ const EditContent = () => {
       }
     }
   };
-
-  // useEffect(() => {
-  //   let body = {
-  //     page: 1,
-  //     pageSize: 100,
-  //     type: METADATA_TYPE.CAREER,
-  //   };
-  //   getMetaData(body);
-  // }, []);
 
   const subjectiveHandler = (e) => {
     let { id, value } = e.target;
@@ -332,6 +326,37 @@ const EditContent = () => {
       console.log("error");
     }
   };
+
+  const getContentDetails = (id) => {
+    metaDataController
+      .getContentDetails(id)
+      .then((res) => {
+        setContentData(res.data.data);
+        const response = res.data.data;
+        console.log(response);
+        if (response) {
+          setState({
+            ...state,
+            contentType: response.contentType,
+            contentLink: response.contentLink,
+          });
+          setContent({ label: response.contentType });
+          const { showFile = false, showLink = false } =
+            contentTypeConfig[response.contentType] || {};
+          setShowFile(showFile);
+          setShowLink(showLink);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  useEffect(() => {
+    if (id) {
+      getContentDetails(id);
+    }
+  }, [id]);
   return (
     <Box mt={3}>
       <Backdrop open={isUploading}>
