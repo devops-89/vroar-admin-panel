@@ -382,4 +382,21 @@ export const data = {
       time: "4:05pm",
     },
   ],
+  assessmentHeader: [
+    {
+      label: "Name",
+    },
+    {
+      label: "Created At",
+    },
+    {
+      label: "Updated At",
+    },
+    {
+      label: "Status",
+    },
+    {
+      label: "Actions",
+    },
+  ],
 };
