@@ -102,7 +102,7 @@ const CreateAssessment = () => {
             {questionType?.label === QUIZ_TYPE.OBJECTIVE_QUIZ && (
               <Box sx={{ mt: 1 }}>
                 {questions.map((val, i) => (
-                  <Card key={i} sx={{ mt: 1,p:1 }}>
+                  <Card key={i} sx={{ mt: 1, p: 1 }}>
                     <Box>
                       <Stack
                         direction={"row"}
@@ -123,7 +123,7 @@ const CreateAssessment = () => {
                           Question {i + 1}
                         </Typography>
                         {questions.length > 1 && (
-                          <IconButton onClick={()=>handleDeleteQuestion(i)}>
+                          <IconButton onClick={() => handleDeleteQuestion(i)}>
                             <Delete htmlColor={COLORS.BLACK} />
                           </IconButton>
                         )}
