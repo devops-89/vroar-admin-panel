@@ -52,6 +52,10 @@ export const SIDEBARADATA = [
         label: "Create/View Roadmaps",
         url: "/roadmap-management",
       },
+      {
+        label: "Assessment Management",
+        url: "/roadmap-management/assessment-management",
+      },
     ],
   },
   {

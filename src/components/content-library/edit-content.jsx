@@ -91,7 +91,6 @@ const EditContent = () => {
 
   const id = router.query.slug;
 
-  console.log("id", id);
   const [loading, setLoading] = useState(false);
 
   const [state, setState] = useState(initialValues);
@@ -130,6 +129,7 @@ const EditContent = () => {
   };
   const careerHandler = (e, newValue) => {
     setCareer(newValue);
+    console.log("sddsdsdsds", newValue);
     if (newValue) {
       setState({ ...state, career: newValue.map((val) => val.id) });
       setErrors({ ...errors, career: "" });
@@ -210,6 +210,8 @@ const EditContent = () => {
       .then((response) => {
         const fileName = response.data.data.fileName;
         const filePath = response.data.data.filePath;
+
+        setState({ ...state, contentLink: filePath });
 
         let body = {
           name: state.contentName,
@@ -333,18 +335,74 @@ const EditContent = () => {
       .then((res) => {
         setContentData(res.data.data);
         const response = res.data.data;
+
         console.log(response);
         if (response) {
           setState({
             ...state,
             contentType: response.contentType,
             contentLink: response.contentLink,
+            description: response.description,
+            career: response.career,
+            industry: response.industry,
+            strengths: response.strengths,
+            softSkills: response.softSkills,
+            contentName: response.name,
           });
           setContent({ label: response.contentType });
           const { showFile = false, showLink = false } =
             contentTypeConfig[response.contentType] || {};
           setShowFile(showFile);
           setShowLink(showLink);
+
+          const career = response.metadataTags.filter(
+            (val) => val.type === METADATA_TYPE.CAREER
+          );
+          setCareer(
+            career.map((val) => {
+              return {
+                name: val.name,
+                id: val.id,
+              };
+            })
+          );
+
+          const industry = response.metadataTags.filter(
+            (val) => val.type === METADATA_TYPE.INDUSTRY
+          );
+
+          setIndustry(
+            industry.map((val) => {
+              return {
+                name: val.name,
+                id: val.id,
+              };
+            })
+          );
+          const strengths = response.metadataTags.filter(
+            (val) => val.type === METADATA_TYPE.STRENGTHS
+          );
+
+          setStrengths(
+            strengths.map((val) => {
+              return {
+                name: val.name,
+                id: val.id,
+              };
+            })
+          );
+          const softSkills = response.metadataTags.filter(
+            (val) => val.type === METADATA_TYPE.SOFT_SKILLS
+          );
+
+          setSoftSkills(
+            softSkills.map((val) => {
+              return {
+                name: val.name,
+                id: val.id,
+              };
+            })
+          );
         }
       })
       .catch((err) => {
@@ -453,6 +511,7 @@ const EditContent = () => {
             onChange={inputHandler}
             error={Boolean(errors.description)}
             helperText={errors.description}
+            value={state.description}
           />
 
           <MetaDataAutocomplete
@@ -502,6 +561,7 @@ const EditContent = () => {
             onChange={inputHandler}
             error={Boolean(errors.contentName)}
             helperText={errors.contentName}
+            value={state.contentName}
           />
           <FormControlLabel
             label={

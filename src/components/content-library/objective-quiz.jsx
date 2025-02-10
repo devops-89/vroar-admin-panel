@@ -93,20 +93,21 @@ const ObjectiveQuestion = ({ questions, setQuestions }) => {
           ))}
         </SortableContext>
       </DndContext>
-
-      <Button
-        onClick={handleAddQuestion}
-        sx={{
-          mt: 2,
-          color: COLORS.BLACK,
-          fontFamily: roboto.style,
-          border: "1px solid #000",
-        }}
-        fullWidth
-        startIcon={<AddCircleOutlined />}
-      >
-        Add Question
-      </Button>
+      {questions.length <= 9 && (
+        <Button
+          onClick={handleAddQuestion}
+          sx={{
+            mt: 2,
+            color: COLORS.BLACK,
+            fontFamily: roboto.style,
+            border: "1px solid #000",
+          }}
+          fullWidth
+          startIcon={<AddCircleOutlined />}
+        >
+          Add Question
+        </Button>
+      )}
     </Box>
   );
 };
