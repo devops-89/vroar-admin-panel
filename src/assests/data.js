@@ -7,6 +7,7 @@ import {
   RELATIONSHIP_DATA,
   ROADMAP_STATUS,
   ROADMAP_TENURE,
+  USER_GROUP,
   USER_STATUS,
 } from "@/utils/enum";
 
@@ -397,6 +398,15 @@ export const data = {
     },
     {
       label: "Actions",
+    },
+  ],
+
+  userGroupData: [
+    {
+      label: USER_GROUP.STUDENT,
+    },
+    {
+      label: USER_GROUP.PARENT,
     },
   ],
 };
