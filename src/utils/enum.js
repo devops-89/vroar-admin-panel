@@ -345,3 +345,12 @@ export const PROFILE_DATA = {
   NOTES: "NOTES/ASSIGNMENTS",
   RECOMMENDATIONS: "RECOMMENDATIONS",
 };
+
+export const ASSESSMENT_TYPE = {
+  INITIAL_ASSESSMENT: "INITIAL ASSESSMENT",
+  SOFT_SKILLS_ASSESSMENT: "Soft Skills Assessment",
+  GSP_RESULTS: "GSP Results",
+  VIEW_STRENGTHS: "View Strengths",
+  SELECTED_PATHS: "Selected Paths",
+  MANUAL_NOTES: "Manual Notes",
+};

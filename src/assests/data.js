@@ -1,4 +1,5 @@
 import {
+  ASSESSMENT_TYPE,
   GENDER_DATA,
   GRADE,
   METADATA_TYPE,
@@ -407,6 +408,26 @@ export const data = {
     },
     {
       label: USER_GROUP.PARENT,
+    },
+  ],
+  ASSESSMENT_DATA: [
+    {
+      label: ASSESSMENT_TYPE.INITIAL_ASSESSMENT,
+    },
+    {
+      label: ASSESSMENT_TYPE.SOFT_SKILLS_ASSESSMENT,
+    },
+    {
+      label: ASSESSMENT_TYPE.GSP_RESULTS,
+    },
+    {
+      label: ASSESSMENT_TYPE.VIEW_STRENGTHS,
+    },
+    {
+      label: ASSESSMENT_TYPE.SELECTED_PATHS,
+    },
+    {
+      label: ASSESSMENT_TYPE.MANUAL_NOTES,
     },
   ],
 };

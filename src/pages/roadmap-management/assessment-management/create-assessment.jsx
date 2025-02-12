@@ -1,7 +1,10 @@
+import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
+import ToastBar from "@/components/toastBar";
 import Wrapper from "@/components/wrapper";
-import { COLORS, QUIZ_TYPE } from "@/utils/enum";
+import { setToast } from "@/redux/reducers/toast";
+import { COLORS, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddCircleOutlineOutlined, Delete } from "@mui/icons-material";
@@ -10,23 +13,20 @@ import {
   Box,
   Button,
   Card,
-  Checkbox,
   Collapse,
-  Divider,
-  FormControlLabel,
   IconButton,
-  Radio,
-  RadioGroup,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const CreateAssessment = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const [role, setRole] = useState(null);
-
+  const [assessmentName, setAssessmentName] = useState("");
+  const dispatch = useDispatch();
   const roleChangeHandler = (e, newValue) => {
     setRole(newValue);
   };
@@ -45,42 +45,22 @@ const CreateAssessment = () => {
     },
   ]);
 
-  const questionTypeChangeHandler = (index, newValue) => {
+  const handleInputChange = (index, key, value) => {
     setQuestions((prev) =>
-      prev.map((q, i) => (i === index ? { ...q, questionType: newValue } : q))
+      prev.map((q, i) =>
+        i === index
+          ? {
+              ...q,
+              [key]: key === "questionType" ? value : value,
+              ...(key === "questionType" && value.label === QUIZ_TYPE.SUBJECTIVE
+                ? { options: undefined }
+                : {}),
+            }
+          : q
+      )
     );
   };
 
-  const handleAddQuestion = () => {
-    if (questions.length < 10) {
-      setQuestions((prev) => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          questionType: "",
-          question: "",
-          options: [
-            { id: 1, optionText: "" },
-            { id: 2, optionText: "" },
-            { id: 3, optionText: "" },
-            { id: 4, optionText: "" },
-          ],
-        },
-      ]);
-    }
-  };
-
-  const handleQuestionChange = (id, newText) => {
-    setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, question: newText } : q))
-    );
-  };
-
-  const handleDeleteQuestion = (id) => {
-    if (questions.length > 1) {
-      setQuestions((prev) => prev.filter((q) => q.id !== id));
-    }
-  };
   const handleOptionChange = (qIndex, optIndex, value) => {
     setQuestions((prev) =>
       prev.map((q, i) =>
@@ -94,6 +74,31 @@ const CreateAssessment = () => {
           : q
       )
     );
+  };
+
+  const handleAddQuestion = () => {
+    if (questions.length < 10) {
+      setQuestions((prev) => [
+        ...prev,
+        {
+          id: prev.length + 1,
+          questionType: { label: QUIZ_TYPE.OBJECTIVE_QUIZ },
+          question: "",
+          options: [
+            { id: 1, optionText: "" },
+            { id: 2, optionText: "" },
+            { id: 3, optionText: "" },
+            { id: 4, optionText: "" },
+          ],
+        },
+      ]);
+    }
+  };
+
+  const handleDeleteQuestion = (id) => {
+    if (questions.length > 1) {
+      setQuestions((prev) => prev.filter((q) => q.id !== id));
+    }
   };
 
   const handleAddOption = (qIndex) => {
@@ -125,20 +130,52 @@ const CreateAssessment = () => {
     );
   };
 
-  const submitHandler = () => {
-    const body = {
-      role: role?.label,
-      assessment: questions.map((q) => ({
-        id: q.id,
-        questionType: q.questionType,
-        question: q.question,
-        options:
-          q.questionType.label === QUIZ_TYPE.SUBJECTIVE_QUIZ ? [] : q.options,
-      })),
-    };
+  const addAssessment = (body) => {
+    metaDataController
+      .addAssessment(body)
+      .then((res) => {
+        console.log("res", res);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
 
-    console.log(body);
-    console.log("test", questions);
+  const handleSubmit = () => {
+    if (assessmentName === "" || role === "" || questions.length === 0) {
+      dispatch(
+        setToast({
+          open: true,
+          message: "Please Enter Required Details",
+          severity: ToastStatus.ERROR,
+        })
+      );
+    } else {
+      const filteredData = questions.map((item) =>
+        item.questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ
+          ? (({ options, ...rest }) => rest)(item)
+          : item
+      );
+
+      const updatedData = filteredData.map(
+        ({ id, questionType, options, ...rest }) => ({
+          ...rest,
+          questionType: questionType.label,
+          options:
+            questionType.label === QUIZ_TYPE.SUBJECTIVE_QUIZ
+              ? []
+              : options?.map(({ id, ...optionRest }) => optionRest),
+        })
+      );
+
+      const body = {
+        role: role?.label,
+        questions: updatedData,
+        assessmentName: assessmentName,
+      };
+
+      addAssessment(body);
+    }
   };
 
   return (
@@ -160,6 +197,12 @@ const CreateAssessment = () => {
           />
         </Box>
         <Box sx={{ p: 2 }}>
+          <TextField
+            sx={{ ...loginTextField, mb: 1 }}
+            fullWidth
+            label="Assessment Name"
+            onChange={(e) => setAssessmentName(e.target.value)}
+          />
           <Autocomplete
             renderInput={(params) => (
               <TextField
@@ -181,8 +224,30 @@ const CreateAssessment = () => {
           />
         </Box>
         {questions.map((val, i) => (
-          <Box sx={{ p: 2 }}>
+          <Box key={val.id} sx={{ p: 2 }}>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+            >
+              <Typography
+                sx={{ fontSize: 20, fontFamily: roboto.style, mb: 2 }}
+              >
+                Question {i + 1}
+              </Typography>
+              {questions.length > 1 && (
+                <IconButton onClick={() => handleDeleteQuestion(i)}>
+                  <Delete htmlColor={COLORS.BLACK} />
+                </IconButton>
+              )}
+            </Stack>
             <Autocomplete
+              options={data.QUIZ_TYPE_DATA}
+              getOptionLabel={(option) => option.label}
+              value={val.questionType}
+              onChange={(e, newValue) =>
+                handleInputChange(i, "questionType", newValue)
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -190,142 +255,96 @@ const CreateAssessment = () => {
                   sx={{ ...loginTextField }}
                 />
               )}
-              options={data.QUIZ_TYPE_DATA}
-              renderOption={(props, option) => (
-                <Box {...props} component={"li"}>
-                  <Typography sx={{ fontFamily: roboto.style }}>
-                    {option.label}
-                  </Typography>
-                </Box>
-              )}
-              onChange={(event, newValue) =>
-                questionTypeChangeHandler(i, newValue)
-              }
-              value={val.questionType}
             />
 
-            <Box sx={{ mt: 1 }}>
-              <Card sx={{ mt: 1, p: 1, backgroundColor: "#eee" }}>
-                <Box>
+            <TextField
+              label="Question"
+              sx={{ ...loginTextField, mt: 1 }}
+              fullWidth
+              value={val.question}
+              onChange={(e) => handleInputChange(i, "question", e.target.value)}
+            />
+
+            {val.questionType.label === QUIZ_TYPE.OBJECTIVE_QUIZ && (
+              <Box sx={{ p: 2 }}>
+                {val.options.map((item, index) => (
                   <Stack
+                    key={item.id}
                     direction="row"
                     alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ width: "100%", p: 1 }}
+                    spacing={2}
+                    sx={{ mt: 1 }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: 15,
-                        fontFamily: roboto.style,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                    >
-                      Question
-                    </Typography>
-
-                    {questions.length > 1 && (
-                      <IconButton onClick={() => handleDeleteQuestion(val.id)}>
+                    <TextField
+                      sx={{ ...loginTextField, mt: 1, flexGrow: 1 }}
+                      fullWidth
+                      label={`Option ${index + 1}`}
+                      value={item.optionText}
+                      onChange={(e) =>
+                        handleOptionChange(i, index, e.target.value)
+                      }
+                    />
+                    {val.options.length > 1 && (
+                      <IconButton
+                        onClick={() => handleDeleteOption(i, index)}
+                        sx={{ mt: 1 }}
+                      >
                         <Delete htmlColor={COLORS.BLACK} />
                       </IconButton>
                     )}
                   </Stack>
-                </Box>
-
-                <Collapse in={openIndex === i}>
-                  <TextField
-                    label="Question"
-                    sx={{ ...loginTextField }}
-                    fullWidth
-                    onChange={(e) => handleQuestionChange(i, e.target.value)}
-                  />
-
-                  {val.questionType.label === QUIZ_TYPE.OBJECTIVE_QUIZ && (
-                    <Box sx={{ p: 2 }}>
-                      {val.options.map((item, index) => (
-                        <Stack
-                          key={item.id}
-                          direction="row"
-                          alignItems="center"
-                          spacing={2}
-                          sx={{ mt: 1 }}
-                        >
-                          <TextField
-                            sx={{ ...loginTextField, mt: 1, flexGrow: 1 }}
-                            fullWidth
-                            label={`Option ${index + 1}`}
-                            value={item.optionText}
-                            onChange={(e) =>
-                              handleOptionChange(i, index, e.target.value)
-                            }
-                          />
-                          {val.options.length > 1 && (
-                            <IconButton
-                              onClick={() => handleDeleteOption(i, index)}
-                              sx={{ mt: 1 }}
-                            >
-                              <Delete htmlColor={COLORS.BLACK} />
-                            </IconButton>
-                          )}
-                        </Stack>
-                      ))}
-                      {val.options.length < 10 && (
-                        <Box textAlign={"end"}>
-                          <Button
-                            sx={{
-                              color: COLORS.BLACK,
-                              fontSize: 14,
-                              mt: 1,
-                              border: "1px solid #000",
-                            }}
-                            startIcon={<AddCircleOutlineOutlined />}
-                            onClick={() => handleAddOption(i)}
-                          >
-                            Add Option
-                          </Button>
-                        </Box>
-                      )}
-                    </Box>
-                  )}
-                </Collapse>
-              </Card>
-            </Box>
-            <Divider />
+                ))}
+                {val.options.length < 10 && (
+                  <Box sx={{ textAlign: "end", mt: 2 }}>
+                    <Button
+                      onClick={() => handleAddOption(i)}
+                      sx={{
+                        border: "1px solid #000",
+                        color: COLORS.BLACK,
+                        fontSize: 12,
+                      }}
+                      startIcon={<AddCircleOutlineOutlined />}
+                    >
+                      Add Option
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            )}
           </Box>
         ))}
+
         {questions.length < 10 && (
-          <Box sx={{ mt: 2, textAlign: "end", mb: 2, mr: 2 }}>
+          <Box sx={{ p: 2 }}>
             <Button
+              onClick={handleAddQuestion}
               sx={{
-                border: "1px solid #000000",
+                border: "1px solid #000",
                 color: COLORS.BLACK,
-                fontSize: 14,
-                fontFamily: roboto.style,
+                borderRadius: 5,
               }}
               startIcon={<AddCircleOutlineOutlined />}
-              onClick={handleAddQuestion}
+              fullWidth
             >
               Add Question
             </Button>
           </Box>
         )}
       </Card>
-
       <Box sx={{ textAlign: "end" }}>
         <Button
+          onClick={handleSubmit}
           sx={{
-            backgroundColor: COLORS.PRIMARY,
-            fontSize: 14,
-            fontFamily: roboto.style,
-            color: COLORS.WHITE,
-            mt: 2,
             width: 150,
+            mt: 2,
+            color: COLORS.WHITE,
+            backgroundColor: COLORS.PRIMARY,
           }}
-          onClick={submitHandler}
         >
           Save
         </Button>
       </Box>
+      <ToastBar />
     </Wrapper>
   );
 };

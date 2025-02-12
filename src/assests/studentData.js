@@ -474,6 +474,28 @@ export const studentTableData = [
         points: "50",
       },
     ],
+    assessmentData: [
+      {
+        question: "How are you feeling about career exploration right now?",
+        options: [
+          {
+            optionText: "Excited—I can’t wait to explore my options!",
+            isCorrect: false,
+          },
+          {
+            optionText: "Nervous—I feel overwhelmed and unsure where to start",
+            isCorrect: false,
+          },
+          {
+            optionText: "Curious—I’m open to learning about possibilities",
+            isCorrect: false,
+          },
+          {
+            optionText: "Indifferent—I haven’t thought much about it yet",
+          },
+        ],
+      },
+    ],
   },
   {
     avatar: studentAvatar,

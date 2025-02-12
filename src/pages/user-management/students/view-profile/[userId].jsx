@@ -2,6 +2,7 @@ import { data } from "@/assests/data";
 import { studentTableData } from "@/assests/studentData";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import TabPanel from "@/components/tabPanel";
+import Notes from "@/components/user/notes";
 import Points from "@/components/user/points";
 import Roadmap from "@/components/user/roadmap";
 import StudentProfile from "@/components/user/studentProfile";
@@ -158,6 +159,11 @@ const UserProfile = () => {
               <TabPanel value={value} index={2}>
                 <Box sx={{ mt: 2 }}>
                   <Points />
+                </Box>
+              </TabPanel>
+              <TabPanel value={value} index={3}>
+                <Box sx={{ mt: 2 }}>
+                  <Notes />
                 </Box>
               </TabPanel>
             </Box>
