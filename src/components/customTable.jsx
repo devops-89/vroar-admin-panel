@@ -5,12 +5,17 @@ import { DownloadForOffline, FilterList, SwapVert } from "@mui/icons-material";
 import { Button, Grid2, Stack, TextField } from "@mui/material";
 import React from "react";
 
-const CustomTable = ({ button }) => {
+const CustomTable = ({ button, onSearch }) => {
   return (
     <div>
       <Grid2 container alignItems={"center"} spacing={2}>
         <Grid2 size={!button ? 9 : 7}>
-          <TextField label="Search" fullWidth sx={{ ...loginTextField }} />
+          <TextField
+            label="Search"
+            fullWidth
+            sx={{ ...loginTextField }}
+            onChange={onSearch}
+          />
         </Grid2>
         <Grid2 size={1.5}>
           <Button

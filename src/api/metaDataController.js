@@ -164,4 +164,18 @@ export const metaDataController = {
       throw error;
     }
   },
+  getAssessmentsList: async (data) => {
+    if (data.page === 0) {
+      data.page = 1;
+    }
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.post(
+        "api/assessment/getAssessments",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

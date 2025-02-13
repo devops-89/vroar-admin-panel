@@ -19,7 +19,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
 const CreateAssessment = () => {
@@ -76,6 +78,8 @@ const CreateAssessment = () => {
     );
   };
 
+  const [loading, setLoading] = useState(false);
+
   const handleAddQuestion = () => {
     if (questions.length < 10) {
       setQuestions((prev) => [
@@ -117,6 +121,8 @@ const CreateAssessment = () => {
     );
   };
 
+  const router = useRouter();
+
   const handleDeleteOption = (qIndex, optIndex) => {
     setQuestions((prev) =>
       prev.map((q, i) =>
@@ -131,18 +137,60 @@ const CreateAssessment = () => {
   };
 
   const addAssessment = (body) => {
+    setLoading(true);
     metaDataController
       .addAssessment(body)
       .then((res) => {
-        console.log("res", res);
+        dispatch(
+          setToast({
+            open: true,
+            message: res.data.message,
+            severity: ToastStatus.SUCCESS,
+          })
+        );
+        setLoading(false);
+        router.back();
       })
       .catch((err) => {
-        console.log("err", err);
+        let errMessage = err.response && err.response.data.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
       });
   };
 
   const handleSubmit = () => {
-    if (assessmentName === "" || role === "" || questions.length === 0) {
+    let isOptionEmpty = false;
+
+    for (const ques of questions) {
+      if (ques.question === "") {
+        isOptionEmpty = true;
+        break;
+      }
+
+      let currentOptEmt = true;
+      for (const opt of ques.options) {
+        if (opt.optionText === "") {
+          currentOptEmt = false;
+        }
+        if (!currentOptEmt) {
+          isOptionEmpty = true;
+          break;
+        }
+      }
+    }
+
+    if (
+      assessmentName === "" ||
+      role === "" ||
+      questions.length === 0 ||
+      isOptionEmpty
+    ) {
       dispatch(
         setToast({
           open: true,
@@ -150,6 +198,8 @@ const CreateAssessment = () => {
           severity: ToastStatus.ERROR,
         })
       );
+
+      console.log(isOptionEmpty);
     } else {
       const filteredData = questions.map((item) =>
         item.questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ
@@ -158,14 +208,20 @@ const CreateAssessment = () => {
       );
 
       const updatedData = filteredData.map(
-        ({ id, questionType, options, ...rest }) => ({
-          ...rest,
-          questionType: questionType.label,
-          options:
-            questionType.label === QUIZ_TYPE.SUBJECTIVE_QUIZ
-              ? []
-              : options?.map(({ id, ...optionRest }) => optionRest),
-        })
+        ({ id, questionType, options, ...rest }) => {
+          const updatedItem = {
+            ...rest,
+            questionType: questionType.label,
+          };
+
+          if (questionType.label !== QUIZ_TYPE.SUBJECTIVE_QUIZ) {
+            updatedItem.options = options?.map(
+              ({ id, ...optionRest }) => optionRest
+            );
+          }
+
+          return updatedItem;
+        }
       );
 
       const body = {
@@ -174,7 +230,8 @@ const CreateAssessment = () => {
         assessmentName: assessmentName,
       };
 
-      addAssessment(body);
+      // addAssessment(body);
+      console.log("first", body);
     }
   };
 
@@ -341,7 +398,11 @@ const CreateAssessment = () => {
             backgroundColor: COLORS.PRIMARY,
           }}
         >
-          Save
+          {loading ? (
+            <Loading type="bars" color={COLORS.BLACK} width={20} height={20} />
+          ) : (
+            "Save"
+          )}
         </Button>
       </Box>
       <ToastBar />

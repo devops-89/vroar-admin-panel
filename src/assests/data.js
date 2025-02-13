@@ -389,6 +389,9 @@ export const data = {
       label: "Name",
     },
     {
+      label: "Role",
+    },
+    {
       label: "Created At",
     },
     {
