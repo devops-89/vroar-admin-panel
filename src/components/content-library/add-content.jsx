@@ -1,6 +1,4 @@
-import {
-  CONTENT_TYPE_DATA
-} from "@/assests/roadmapData";
+import { CONTENT_TYPE_DATA } from "@/assests/roadmapData";
 import { setToast } from "@/redux/reducers/toast";
 import {
   COLORS,
@@ -24,7 +22,7 @@ import {
   FormHelperText,
   Stack,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 
 import { metaDataController } from "@/api/metaDataController";
@@ -306,6 +304,9 @@ const AddContent = () => {
           }
 
           addQuizHandler(data);
+        } else {
+          setLoading(false);
+          router.back();
         }
       })
       .catch((err) => {

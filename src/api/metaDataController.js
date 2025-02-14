@@ -178,4 +178,15 @@ export const metaDataController = {
       throw error;
     }
   },
+
+  getAssessmentById: async (id) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.get(
+        `api/assessment/getAssessmentById/${id}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

@@ -129,7 +129,6 @@ const EditContent = () => {
   };
   const careerHandler = (e, newValue) => {
     setCareer(newValue);
-    console.log("sddsdsdsds", newValue);
     if (newValue) {
       setState({ ...state, career: newValue.map((val) => val.id) });
       setErrors({ ...errors, career: "" });

@@ -36,6 +36,7 @@ const userController = {
       );
       return result;
     } catch (error) {
+      
       throw error;
     }
   },

@@ -98,6 +98,12 @@ const Assessment = () => {
     router.push("/roadmap-management/assessment-management/create-assessment");
   };
 
+  const editAssessment = (id) => {
+    router.push(
+      `/roadmap-management/assessment-management/${id}/edit-assessment`
+    );
+  };
+
   useEffect(() => {
     getAssessmentLists(body);
   }, []);
@@ -157,7 +163,7 @@ const Assessment = () => {
                   <TableHead sx={{ backgroundColor: "#d7d7d7" }}>
                     <TableRow>
                       {data.assessmentHeader.map((val, i) => (
-                        <TableCell key={i}>
+                        <TableCell key={`tableCell ${i + 1}`}>
                           <Typography sx={{ fontFamily: roboto.style }}>
                             {val.label}
                           </Typography>
@@ -167,7 +173,7 @@ const Assessment = () => {
                   </TableHead>
                   <TableBody>
                     {assessmentData?.docs.map((val, i) => (
-                      <TableRow key={i}>
+                      <TableRow key={`tableCell ${i + 1}`}>
                         <TableCell>
                           <Typography
                             sx={{ fontSize: 14, fontFamily: roboto.style }}
@@ -203,23 +209,35 @@ const Assessment = () => {
                           />
                         </TableCell>
                         <TableCell>
-                          <IconButton>
-                            <FaRegEdit fontSize={20} />
+                          <IconButton onClick={() => editAssessment(val.id)}>
+                            <FaRegEdit fontSize={20} color={COLORS.BLACK} />
                           </IconButton>
                           <IconButton>
-                            <Visibility sx={{ fontSize: 20 }} />
+                            <Visibility
+                              sx={{ fontSize: 20 }}
+                              htmlColor={COLORS.BLACK}
+                            />
                           </IconButton>
                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-                <TablePagination
-                  page={page}
-                  onPageChange={pageChangeHandler}
-                  rowsPerPage={pageSize}
-                  count={assessmentData.totalDocs}
-                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <TablePagination
+                    page={page}
+                    onPageChange={pageChangeHandler}
+                    rowsPerPage={pageSize}
+                    count={assessmentData.totalDocs}
+                    onRowsPerPageChange={pageSizeHandler}
+                  />
+                </Box>
               </TableContainer>
             )}
           </Box>

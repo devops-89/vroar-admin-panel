@@ -10,9 +10,11 @@ import { loginTextField } from "@/utils/styles";
 import { AddCircleOutlineOutlined, Delete } from "@mui/icons-material";
 import {
   Autocomplete,
+  Backdrop,
   Box,
   Button,
   Card,
+  CircularProgress,
   Collapse,
   IconButton,
   Stack,
@@ -20,11 +22,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
-const CreateAssessment = () => {
+const EditAssessment = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const [role, setRole] = useState(null);
   const [assessmentName, setAssessmentName] = useState("");
@@ -122,6 +124,8 @@ const CreateAssessment = () => {
   };
 
   const router = useRouter();
+
+  const { assessmentId } = router.query;
 
   const handleDeleteOption = (qIndex, optIndex) => {
     setQuestions((prev) =>
@@ -230,12 +234,58 @@ const CreateAssessment = () => {
         assessmentName: assessmentName,
       };
 
-      addAssessment(body);
+      // addAssessment(body);
+      console.log("first", body);
     }
   };
 
+  const [detailsLoading, setDetailsLoading] = useState(true);
+
+  const getAssessmentDetails = (id) => {
+    metaDataController
+      .getAssessmentById(id)
+      .then((res) => {
+        const response = res.data.data;
+        setAssessmentName(response.assessmentName);
+        setRole({ label: response.role });
+
+        const questionData = response?.questions.map((val) => {
+          const ques = {
+            id: val.id,
+            questionType: { label: val.questionType },
+            question: val.questionText,
+          };
+
+          if (
+            val.questionType === QUIZ_TYPE.OBJECTIVE_QUIZ &&
+            val.options.length
+          ) {
+            ques.options = val.options;
+          }
+
+          return ques;
+        });
+
+        setQuestions(questionData);
+        setDetailsLoading(false);
+      })
+      .catch((err) => {
+        console.log("error in fetching assessment details >>>>", err);
+        setDetailsLoading(true);
+      });
+  };
+
+  useEffect(() => {
+    if (assessmentId) {
+      getAssessmentDetails(assessmentId);
+    }
+  }, [assessmentId]);
+
   return (
     <Wrapper>
+      <Backdrop open={detailsLoading} sx={{ zIndex: 99 }}>
+        <CircularProgress sx={{ color: COLORS.WHITE }} />
+      </Backdrop>
       <Card>
         <Box sx={{ p: 2 }}>
           <PageBreadCrumbs
@@ -247,7 +297,7 @@ const CreateAssessment = () => {
               },
               {
                 label: "Create Assessment Management",
-                url: "/roadmap-management/assessment-management/create-assessment",
+                url: `/roadmap-management/assessment-management/${assessmentId}/edit-assessment`,
               },
             ]}
           />
@@ -258,6 +308,7 @@ const CreateAssessment = () => {
             fullWidth
             label="Assessment Name"
             onChange={(e) => setAssessmentName(e.target.value)}
+            value={assessmentName}
           />
           <Autocomplete
             renderInput={(params) => (
@@ -409,4 +460,4 @@ const CreateAssessment = () => {
   );
 };
 
-export default CreateAssessment;
+export default EditAssessment;
