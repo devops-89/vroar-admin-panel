@@ -347,6 +347,7 @@ const EditContent = () => {
             strengths: response.strengths,
             softSkills: response.softSkills,
             contentName: response.name,
+            quizType: response?.quiz?.quizType,
           });
           setContent({ label: response.contentType });
           const { showFile = false, showLink = false } =
@@ -402,6 +403,26 @@ const EditContent = () => {
               };
             })
           );
+
+          if (response.quiz !== null) {
+            setIsQuizEnabled(true);
+            setQuizType({ label: response?.quiz?.quizType });
+            const questionData = response?.quiz?.quizQuestions;
+            console.log("test", questionData);
+
+            const newQuestions = questionData.map((val) => {
+              const ques = {
+                id: val.id,
+                question: val.questionText,
+              };
+
+              if (val.options.length) {
+                ques.options = val.options;
+              }
+              return ques;
+            });
+            setQuestions(newQuestions);
+          }
         }
       })
       .catch((err) => {
@@ -568,7 +589,9 @@ const EditContent = () => {
                 Enable Quiz
               </Typography>
             }
-            control={<Checkbox onChange={quizHandler} />}
+            control={
+              <Checkbox onChange={quizHandler} checked={isQuizEnabled} />
+            }
             sx={{
               "& .Mui-checked": {
                 color: `${COLORS.PRIMARY} !important`,

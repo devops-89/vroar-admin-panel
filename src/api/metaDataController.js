@@ -189,4 +189,15 @@ export const metaDataController = {
       throw error;
     }
   },
+  editAssessment: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        "api/assessment/editAssessment",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

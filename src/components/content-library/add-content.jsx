@@ -58,24 +58,6 @@ const AddContent = () => {
 
   const [metaData, setMetaData] = useState([]);
   const [listLoading, setListLoading] = useState(true);
-  const getMetaData = (metaDataType) => {
-    let data = {
-      page: 1,
-      pageSize: 100,
-      type: metaDataType,
-    };
-    metaDataController
-      .getMetaData(data)
-      .then((res) => {
-        const response = res.data.data.docs;
-        setMetaData(response);
-        setListLoading(false);
-      })
-      .catch((err) => {
-        console.log("reeeeeeee", err);
-        setLoading(true);
-      });
-  };
 
   const initialValues = {
     contentType: "",
@@ -211,15 +193,6 @@ const AddContent = () => {
     }
   };
 
-  // useEffect(() => {
-  //   let body = {
-  //     page: 1,
-  //     pageSize: 100,
-  //     type: METADATA_TYPE.CAREER,
-  //   };
-  //   getMetaData(body);
-  // }, []);
-
   const subjectiveHandler = (e) => {
     let { id, value } = e.target;
     setSia({ ...sia, [id]: value });
@@ -268,6 +241,43 @@ const AddContent = () => {
   };
 
   const addContentApi = (body) => {
+    let isOptionEmpty = false;
+
+    for (const ques of questions) {
+      if (ques.question === "") {
+        isOptionEmpty = true;
+        break;
+      }
+
+      let currentOptEmt = true;
+      for (const opt of ques.options) {
+        if (opt.optionText === "") {
+          currentOptEmt = false;
+        }
+        if (!currentOptEmt) {
+          isOptionEmpty = true;
+          break;
+        }
+      }
+    }
+
+    const isEmpty = Object.entries(initialValues).some(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value.length === 0;
+      }
+      return value === "" || value === null;
+    });
+
+    if (isEmpty || questions.length === 0 || isOptionEmpty) {
+      dispatch(
+        setToast({
+          open: true,
+          message: "Please Enter All Required Details",
+          severity: ToastStatus.ERROR,
+        })
+      );
+    }
+
     metaDataController
       .addContentLibrary(body)
       .then((res) => {

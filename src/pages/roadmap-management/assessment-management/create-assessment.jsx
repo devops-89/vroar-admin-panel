@@ -199,7 +199,7 @@ const CreateAssessment = () => {
         })
       );
 
-      console.log(isOptionEmpty);
+      // console.log(isOptionEmpty);
     } else {
       const filteredData = questions.map((item) =>
         item.questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ

@@ -140,10 +140,10 @@ const EditAssessment = () => {
     );
   };
 
-  const addAssessment = (body) => {
+  const editAssessment = (body) => {
     setLoading(true);
     metaDataController
-      .addAssessment(body)
+      .editAssessment(body)
       .then((res) => {
         dispatch(
           setToast({
@@ -203,7 +203,7 @@ const EditAssessment = () => {
         })
       );
 
-      console.log(isOptionEmpty);
+      // console.log(isOptionEmpty);
     } else {
       const filteredData = questions.map((item) =>
         item.questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ
@@ -232,10 +232,10 @@ const EditAssessment = () => {
         role: role?.label,
         questions: updatedData,
         assessmentName: assessmentName,
+        id: assessmentId,
       };
 
-      // addAssessment(body);
-      console.log("first", body);
+      editAssessment(body);
     }
   };
 
