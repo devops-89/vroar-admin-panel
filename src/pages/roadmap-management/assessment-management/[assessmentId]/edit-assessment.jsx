@@ -178,15 +178,15 @@ const EditAssessment = () => {
       }
 
       let currentOptEmt = true;
-      for (const opt of ques.options) {
-        if (opt.optionText === "") {
-          currentOptEmt = false;
-        }
-        if (!currentOptEmt) {
-          isOptionEmpty = true;
-          break;
-        }
-      }
+      // for (const opt of ques.options) {
+      //   if (opt.optionText === "") {
+      //     currentOptEmt = false;
+      //   }
+      //   if (!currentOptEmt) {
+      //     isOptionEmpty = true;
+      //     break;
+      //   }
+      // }
     }
 
     if (
@@ -227,6 +227,8 @@ const EditAssessment = () => {
           return updatedItem;
         }
       );
+
+    
 
       const body = {
         role: role?.label,

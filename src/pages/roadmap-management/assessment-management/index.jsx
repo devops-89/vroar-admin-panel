@@ -104,6 +104,12 @@ const Assessment = () => {
     );
   };
 
+  const viewAssessment = (id) => {
+    router.push(
+      `/roadmap-management/assessment-management/${id}/view-assessment`
+    );
+  };
+
   useEffect(() => {
     getAssessmentLists(body);
   }, []);
@@ -212,7 +218,7 @@ const Assessment = () => {
                           <IconButton onClick={() => editAssessment(val.id)}>
                             <FaRegEdit fontSize={20} color={COLORS.BLACK} />
                           </IconButton>
-                          <IconButton>
+                          <IconButton onClick={() => viewAssessment(val.id)}>
                             <Visibility
                               sx={{ fontSize: 20 }}
                               htmlColor={COLORS.BLACK}
