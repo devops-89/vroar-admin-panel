@@ -35,6 +35,7 @@ import ToastBar from "../toastBar";
 import MetaDataAutocomplete from "./metadataAutocomplete";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
+import { isValidURL } from "@/utils/regex";
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -50,12 +51,17 @@ const EditContent = () => {
   const [industry, setIndustry] = useState([]);
   const [strengths, setStrengths] = useState([]);
   const [softSkills, setSoftSkills] = useState([]);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState({
+    fileName: "",
+    filePath: "",
+  });
   const [showFile, setShowFile] = useState(false);
   const [showLink, setShowLink] = useState(false);
   const dispatch = useDispatch();
   const [isQuizEnabled, setIsQuizEnabled] = useState(false);
   const [contentData, setContentData] = useState(null);
+  const [isDetailsLoading, setIsDetailsLoading] = useState(true);
+
   const initialValues = {
     contentType: "",
     career: [],
@@ -66,6 +72,7 @@ const EditContent = () => {
     isQuizEnabled: false,
     contentLink: "",
     quizType: "",
+    quizId: "",
   };
 
   const [questions, setQuestions] = useState([
@@ -173,14 +180,11 @@ const EditContent = () => {
       setErrors({ ...errors, quizType: "Please Select Quiz Type" });
     }
   };
-  const [isUploading, setIsUploading] = useState(false);
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       if (selectedFile.type === "application/pdf") {
-        setFile(selectedFile);
         setState({ ...state, contentLink: selectedFile });
-        setFile(selectedFile);
       } else {
         dispatch(
           setToast({
@@ -207,9 +211,11 @@ const EditContent = () => {
     metaDataController
       .getUploadContentFile(data)
       .then((response) => {
-        const fileName = response.data.data.fileName;
-        const filePath = response.data.data.filePath;
-
+        setFile({
+          ...file,
+          fileName: response.data.data.fileName,
+          filePath: response.data.data.filePath,
+        });
         setState({ ...state, contentLink: filePath });
 
         let body = {
@@ -223,8 +229,8 @@ const EditContent = () => {
             ...(Array.isArray(state.strengths) ? state.strengths : []),
             ...(Array.isArray(state.softSkills) ? state.softSkills : []),
           ],
-          contentLink: filePath,
-          contentFileName: fileName,
+          contentLink: file.filePath,
+          contentFileName: file.fileName,
         };
         addContentApi(body);
       })
@@ -239,15 +245,14 @@ const EditContent = () => {
             severity: ToastStatus.ERROR,
           })
         );
+        setLoading(false);
       });
   };
 
   const addContentApi = (body) => {
     metaDataController
-      .addContentLibrary(body)
+      .editContent(body)
       .then((res) => {
-        const contentLibraryId = res.data.data.id;
-
         dispatch(
           setToast({
             open: true,
@@ -263,7 +268,7 @@ const EditContent = () => {
           }));
 
           const data = {
-            contentLibraryId: contentLibraryId,
+            contentLibraryId: id,
             quizType: state.quizType,
           };
           if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
@@ -322,7 +327,26 @@ const EditContent = () => {
     e.preventDefault();
     if (AddContentValidationSchema({ state, setErrors, errors })) {
       setLoading(true);
-      uploadContentFile();
+      if (isValidURL(state.contentLink)) {
+        let body = {
+          name: state.contentName,
+          contentType: state.contentType,
+          contentLink: state.contentLink,
+          description: state.description,
+          metadataTags: [
+            ...(Array.isArray(state.career) ? state.career : []),
+            ...(Array.isArray(state.industry) ? state.industry : []),
+            ...(Array.isArray(state.strengths) ? state.strengths : []),
+            ...(Array.isArray(state.softSkills) ? state.softSkills : []),
+          ],
+          contentLink: file.filePath,
+          contentFileName: file.fileName,
+          id: id,
+        };
+        addContentApi(body);
+      } else {
+        uploadContentFile();
+      }
     } else {
       console.log("error");
     }
@@ -335,29 +359,44 @@ const EditContent = () => {
         setContentData(res.data.data);
         const response = res.data.data;
 
-        console.log(response);
+        const career = response.metadataTags.filter(
+          (val) => val.type === METADATA_TYPE.CAREER
+        );
+        const industry = response.metadataTags.filter(
+          (val) => val.type === METADATA_TYPE.INDUSTRY
+        );
+        const strengths = response.metadataTags.filter(
+          (val) => val.type === METADATA_TYPE.STRENGTHS
+        );
+        const softSkills = response.metadataTags.filter(
+          (val) => val.type === METADATA_TYPE.SOFT_SKILLS
+        );
         if (response) {
           setState({
             ...state,
             contentType: response.contentType,
             contentLink: response.contentLink,
             description: response.description,
-            career: response.career,
-            industry: response.industry,
-            strengths: response.strengths,
-            softSkills: response.softSkills,
+            career: career.map((val) => val.id),
+            industry: industry.map((val) => val.id),
+            strengths: strengths.map((val) => val.id),
+            softSkills: softSkills.map((val) => val.id),
             contentName: response.name,
             quizType: response?.quiz?.quizType,
+            quizId: response?.quiz?.id,
           });
+          // console.log("test", response);
           setContent({ label: response.contentType });
           const { showFile = false, showLink = false } =
             contentTypeConfig[response.contentType] || {};
           setShowFile(showFile);
           setShowLink(showLink);
+          setFile({
+            ...file,
+            fileName: response?.contentFileName,
+            filePath: response?.contentLink,
+          });
 
-          const career = response.metadataTags.filter(
-            (val) => val.type === METADATA_TYPE.CAREER
-          );
           setCareer(
             career.map((val) => {
               return {
@@ -365,10 +404,6 @@ const EditContent = () => {
                 id: val.id,
               };
             })
-          );
-
-          const industry = response.metadataTags.filter(
-            (val) => val.type === METADATA_TYPE.INDUSTRY
           );
 
           setIndustry(
@@ -379,9 +414,6 @@ const EditContent = () => {
               };
             })
           );
-          const strengths = response.metadataTags.filter(
-            (val) => val.type === METADATA_TYPE.STRENGTHS
-          );
 
           setStrengths(
             strengths.map((val) => {
@@ -390,9 +422,6 @@ const EditContent = () => {
                 id: val.id,
               };
             })
-          );
-          const softSkills = response.metadataTags.filter(
-            (val) => val.type === METADATA_TYPE.SOFT_SKILLS
           );
 
           setSoftSkills(
@@ -408,7 +437,6 @@ const EditContent = () => {
             setIsQuizEnabled(true);
             setQuizType({ label: response?.quiz?.quizType });
             const questionData = response?.quiz?.quizQuestions;
-            console.log("test", questionData);
 
             const newQuestions = questionData.map((val) => {
               const ques = {
@@ -416,14 +444,25 @@ const EditContent = () => {
                 question: val.questionText,
               };
 
-              if (val.options.length) {
+              if (val.questionType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
+                setSia({
+                  ...sia,
+                  question: val.questionText,
+                  subText: val.subText,
+                });
+              }
+
+              if (val.options || val.options.length) {
                 ques.options = val.options;
               }
               return ques;
             });
+
             setQuestions(newQuestions);
           }
+          // setFile({...file,fileName:})
         }
+        setIsDetailsLoading(false);
       })
       .catch((err) => {
         console.log("err", err);
@@ -435,10 +474,12 @@ const EditContent = () => {
       getContentDetails(id);
     }
   }, [id]);
+
+  // console.log("state", state);
   return (
     <Box mt={3}>
-      <Backdrop open={isUploading}>
-        <CircularProgress />
+      <Backdrop open={isDetailsLoading} sx={{ zIndex: 998 }}>
+        <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Backdrop>
       <form action="" onSubmit={submitHandler}>
         <Stack
@@ -492,7 +533,7 @@ const EditContent = () => {
                     textTransform: "initial",
                   }}
                 >
-                  Upload
+                  {file.filePath ? file?.fileName : "Upload"}
                 </Typography>
                 <input
                   type="file"
@@ -532,6 +573,7 @@ const EditContent = () => {
             error={Boolean(errors.description)}
             helperText={errors.description}
             value={state.description}
+            focused={Boolean(state.description)}
           />
 
           <MetaDataAutocomplete
@@ -631,7 +673,10 @@ const EditContent = () => {
 
           {state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && isQuizEnabled && (
             <Box sx={{ width: "100%" }}>
-              <SubjectiveQuiz subjectiveHandler={subjectiveHandler} />
+              <SubjectiveQuiz
+                subjectiveHandler={subjectiveHandler}
+                state={sia}
+              />
             </Box>
           )}
 

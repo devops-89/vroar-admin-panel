@@ -16,7 +16,7 @@ const CreateRoadmap = () => {
                   url: "/roadmap-management",
                 },
                 {
-                  label: "Create/View Roadmaps",
+                  label: "Create/View Roadmap",
                   url: "/roadmap-management",
                 },
                 {

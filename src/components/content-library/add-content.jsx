@@ -557,7 +557,10 @@ const AddContent = () => {
 
           {state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && isQuizEnabled && (
             <Box sx={{ width: "100%" }}>
-              <SubjectiveQuiz subjectiveHandler={subjectiveHandler} />
+              <SubjectiveQuiz
+                subjectiveHandler={subjectiveHandler}
+                state={sia}
+              />
             </Box>
           )}
 

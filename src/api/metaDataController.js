@@ -200,4 +200,15 @@ export const metaDataController = {
       throw error;
     }
   },
+  editContent: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        "api/contentLibrary/editContent",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

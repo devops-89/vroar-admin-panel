@@ -228,10 +228,7 @@ const EditAssessment = () => {
         }
       );
 
-    
-
       const body = {
-        role: role?.label,
         questions: updatedData,
         assessmentName: assessmentName,
         id: assessmentId,
