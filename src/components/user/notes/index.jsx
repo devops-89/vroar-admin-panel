@@ -4,6 +4,10 @@ import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Tab, Tabs, Typography } from "@mui/material";
 import React, { useState } from "react";
+import InitialAssessment from "./initial-assessment";
+import GSPResults from "./gspResults";
+import Strengths from "./strengths";
+import SelectedPaths from "./selectedPaths";
 
 const Notes = () => {
   const [value, setValue] = useState(0);
@@ -46,7 +50,16 @@ const Notes = () => {
         ))}
       </Tabs>
       <TabPanel value={value} index={0}>
-        Hello
+        <InitialAssessment />
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <GSPResults />
+      </TabPanel>
+      <TabPanel value={value} index={3}>
+        <Strengths />
+      </TabPanel>
+      <TabPanel value={value} index={4}>
+        <SelectedPaths />
       </TabPanel>
     </div>
   );

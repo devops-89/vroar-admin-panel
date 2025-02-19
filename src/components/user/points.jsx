@@ -20,7 +20,7 @@ import moment from "moment";
 const Points = () => {
   const user = useSelector((state) => state.USER);
 
-//   console.log("sstststs", user);
+  //   console.log("sstststs", user);
   return (
     <div>
       <Stack
@@ -70,7 +70,7 @@ const Points = () => {
                   <TableCell key={i}>
                     <Typography
                       sx={{
-                        fontSize: 15,
+                        fontSize: 14,
                         fontFamily: roboto.style,
                         fontWeight: 600,
                       }}
@@ -85,18 +85,18 @@ const Points = () => {
               {user?.points.map((val, i) => (
                 <TableRow key={i}>
                   <TableCell>
-                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                       {moment.unix(val.allocatedDate).format("DD-MM-YYYY")} ,{" "}
                       {val.allocatedTime}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                       {val.allocatedFor}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                       {val.allocatedBy}
                     </Typography>
                   </TableCell>
@@ -105,7 +105,7 @@ const Points = () => {
                       <Image src={coins} width={20} alt="" />
                       <Typography
                         sx={{
-                          fontSize: 15,
+                          fontSize: 14,
                           fontFamily: roboto.style,
                           color: COLORS.PRIMARY,
                         }}

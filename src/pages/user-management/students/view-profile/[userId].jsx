@@ -10,6 +10,7 @@ import Wrapper from "@/components/wrapper";
 import { setUserDetails } from "@/redux/reducers/userInformation";
 import { COLORS, PROFILE_DATA } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import { profileTabs } from "@/utils/genericArray";
 import { AddCircleOutline } from "@mui/icons-material";
 import {
   Backdrop,
@@ -31,24 +32,7 @@ const UserProfile = () => {
   const router = useRouter();
   const userId = router.query.userId;
 
-  const profileTabs = [
-    {
-      label: PROFILE_DATA.PROFILE_DETAILS,
-    },
-    {
-      label: PROFILE_DATA.ROADMAP,
-    },
-    {
-      label: PROFILE_DATA.POINTS,
-    },
 
-    {
-      label: PROFILE_DATA.NOTES,
-    },
-    {
-      label: PROFILE_DATA.RECOMMENDATIONS,
-    },
-  ];
 
   const [value, setValue] = useState(0);
   const [tabsValue, setTabsValue] = useState("");
@@ -134,7 +118,7 @@ const UserProfile = () => {
                     label={
                       <Typography
                         sx={{
-                          fontSize: 14,
+                          fontSize: 13,
                           fontFamily: roboto.style,
                           fontWeight: 500,
                         }}

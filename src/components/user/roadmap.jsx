@@ -282,12 +282,12 @@ const Roadmap = () => {
                         sx={{
                           fontFamily: roboto.style,
 
-                          backgroundColor: COLORS.SIGNED_UP,
+                          backgroundColor: COLORS.PURPLE,
                           height: 30,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          color: COLORS.SIGNED_UP_TEXT,
+                          color: COLORS.PURPLE_TEXT,
                         }}
                         key={i}
                         label={
@@ -320,11 +320,11 @@ const Roadmap = () => {
                       {val?.softSkillsTags.slice(1).map((item, index) => (
                         <Chip
                           sx={{
-                            backgroundColor: COLORS.PENDING,
+                            backgroundColor: COLORS.PURPLE,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            color: COLORS.PENDING_TEXT,
+                            color: COLORS.PURPLE_TEXT,
                           }}
                           key={i}
                           label={
