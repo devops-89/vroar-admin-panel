@@ -70,7 +70,7 @@ const Sidebar = () => {
               width={40}
               style={{
                 opacity: sidebarCollapse ? 1 : 0,
-                transition: "opacity 0.5s ease all",
+                transition: "opacity 0.5s ease-in-out",
               }}
             />
           ) : (

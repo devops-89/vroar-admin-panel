@@ -21,7 +21,6 @@ const Layout = ({ children }) => {
     (state) => state.sideBarCollapse.isSidebarCollapse
   );
 
-  console.log("first", sidebarCollapse);
   return (
     <div>
       <Head>
@@ -34,7 +33,7 @@ const Layout = ({ children }) => {
             position: "absolute",
             zIndex: 9999,
             top: -40,
-            left: 185,
+            left: sidebarCollapse ? 35 : 185,
             backgroundColor: COLORS.TRANSPARENT,
             boxShadow: "0px 0px 1px 1px #00000020",
             ":hover": {
@@ -45,11 +44,10 @@ const Layout = ({ children }) => {
           }}
           onClick={() => collapseSidebar(sidebarCollapse ? false : true)}
         >
-          {sidebarCollapse ? (
-            <ChevronRight htmlColor={COLORS.BLACK} />
-          ) : (
-            <ChevronLeft htmlColor={COLORS.BLACK} />
-          )}
+          <ChevronLeft
+            htmlColor={COLORS.BLACK}
+            sx={{ transform:sidebarCollapse?   "rotate(180deg)":"rotate(0)", transition: "0.5s ease all" }}
+          />
         </IconButton>
       </Box>
       {router.pathname !== "/" && <Header />}
