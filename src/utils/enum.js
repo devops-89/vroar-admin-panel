@@ -354,3 +354,8 @@ export const ASSESSMENT_TYPE = {
   SELECTED_PATHS: "Selected Paths",
   MANUAL_NOTES: "Manual Notes",
 };
+
+export const PAYMENT_STATUS = {
+  PAID: "Paid",
+  UNPAID: "UnPaid",
+};

@@ -429,8 +429,8 @@ export const data = {
     {
       label: ASSESSMENT_TYPE.SELECTED_PATHS,
     },
-    {
-      label: ASSESSMENT_TYPE.MANUAL_NOTES,
-    },
+    // {
+    //   label: ASSESSMENT_TYPE.MANUAL_NOTES,
+    // },
   ],
 };

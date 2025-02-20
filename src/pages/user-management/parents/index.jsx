@@ -1,6 +1,7 @@
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import CustomCard from "@/components/customCard";
 import CustomTable from "@/components/customTable";
+import ParentTable from "@/components/user/parent/parentTable";
 import Wrapper from "@/components/wrapper";
 import { Box, Card } from "@mui/material";
 import React from "react";
@@ -24,6 +25,9 @@ const Parents = () => {
           />
           <Box sx={{ mt: 2 }}>
             <CustomTable button={true} />
+          </Box>
+          <Box sx={{ mt: 2 }}>
+            <ParentTable />
           </Box>
         </Card>
       </Wrapper>

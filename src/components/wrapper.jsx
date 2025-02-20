@@ -4,7 +4,7 @@ import React from "react";
 const Wrapper = ({ children }) => {
   return (
     <div>
-      <Box sx={{ marginLeft: "250px", marginTop: "60px",p:2 }}>{children}</Box>
+      <Box sx={{ marginLeft: "210px", marginTop: "80px" }}>{children}</Box>
     </div>
   );
 };
