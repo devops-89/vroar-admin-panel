@@ -1,34 +1,37 @@
-import React, { useState } from "react";
-import {
-  Card,
-  List,
-  ListItemButton,
-  ListItemAvatar,
-  ListItemText,
-  Typography,
-  Collapse,
-  Box,
-  Divider,
-  Stack,
-} from "@mui/material";
-import {
-  KeyboardArrowDown,
-  KeyboardArrowUp,
-  HomeOutlined,
-} from "@mui/icons-material";
-import Image from "next/image";
-import logo from "@/logo/logo.svg";
-import { roboto } from "@/utils/fonts";
 import { SIDEBARADATA } from "@/assests/sidebarData";
-import { useRouter } from "next/router";
+import logo from "@/logo/logo.svg";
 import { COLORS } from "@/utils/enum";
-
+import { roboto } from "@/utils/fonts";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import {
+  Box,
+  Card,
+  Collapse,
+  Divider,
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import lionFace from "@/logo/logo.png";
 const Sidebar = () => {
   const [openIndex, setOpenIndex] = useState(null);
 
   const handleToggle = (index) => {
     setOpenIndex((prevIndex) => (prevIndex === index ? null : index));
   };
+
+  const sidebarCollapse = useSelector(
+    (state) => state.sideBarCollapse.isSidebarCollapse
+  );
+
+  console.log("first", sidebarCollapse);
 
   const router = useRouter();
 
@@ -37,31 +40,51 @@ const Sidebar = () => {
   };
 
   return (
-    <div>
+    <Box sx={{ position: "relative" }}>
       <Card
         sx={{
-          width: 250,
+          width: sidebarCollapse ? 50 : 200,
           position: "fixed",
           left: 0,
           top: 0,
           height: "100vh",
           overflowY: "auto",
           zIndex: 999,
+          transition:"width 0.5s ease all"
         }}
       >
         <Box
           sx={{
             textAlign: "center",
-            p: 1,
+            // p: 1,
             position: "fixed",
-            width: 235,
-            zIndex: 9999,
+            width: sidebarCollapse ? 50 : 200,
+            zIndex: 999,
             backgroundColor: COLORS.WHITE,
+            pt: 1,
           }}
         >
-          <Image src={logo} alt="" width={100} height={40} />
+          {sidebarCollapse ? (
+            <Image
+              src={lionFace}
+              width={40}
+              style={{
+                opacity: sidebarCollapse ? 1 : 0,
+                transition: "opacity 0.5s ease all",
+              }}
+            />
+          ) : (
+            <Image
+              src={logo}
+              alt=""
+              width={100}
+              height={40}
+              style={{ opacity: sidebarCollapse ? 0 : 1 }}
+            />
+          )}
           <Divider sx={{ mt: 1 }} />
         </Box>
+
         <Box sx={{ height: "90%", overflowY: "auto", pt: 8 }}>
           <List>
             {SIDEBARADATA.map((val, index) => (
@@ -80,7 +103,7 @@ const Sidebar = () => {
                         <ListItemText
                           primary={
                             <Typography
-                              sx={{ fontFamily: roboto.style, fontSize: 13 }}
+                              sx={{ fontFamily: roboto.style, fontSize: 12 }}
                             >
                               {val.label}
                             </Typography>
@@ -109,7 +132,7 @@ const Sidebar = () => {
                           }}
                           onClick={() => changePath(subVal.url)}
                         >
-                          <ListItemAvatar sx={{ minWidth: 40 }}>
+                          <ListItemAvatar sx={{ minWidth: 30 }}>
                             {subVal.avatar}
                           </ListItemAvatar>
                           <ListItemText
@@ -117,7 +140,7 @@ const Sidebar = () => {
                               <Typography
                                 sx={{
                                   fontFamily: roboto.style,
-                                  fontSize: 13,
+                                  fontSize: 12,
                                   fontWeight: 500,
                                 }}
                               >
@@ -148,7 +171,7 @@ const Sidebar = () => {
                     <ListItemText
                       primary={
                         <Typography
-                          sx={{ fontFamily: roboto.style, fontSize: 14 }}
+                          sx={{ fontFamily: roboto.style, fontSize: 12 }}
                         >
                           {val.label}
                         </Typography>
@@ -161,7 +184,7 @@ const Sidebar = () => {
           </List>
         </Box>
       </Card>
-    </div>
+    </Box>
   );
 };
 

@@ -37,7 +37,7 @@ const SelectedPaths = () => {
     <div>
       {paths.map((val, i) => (
         <Box sx={{ mt: 2 }}>
-          <Typography sx={{ fontSize: 18, fontFamily: roboto.style }}>
+          <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
             {val.title}
           </Typography>
           {val.tags.map((item) => (
@@ -49,12 +49,20 @@ const SelectedPaths = () => {
                     ? COLORS.PENDING_TEXT
                     : val.type === METADATA_TYPE.INDUSTRY
                     ? COLORS.DONE_TEXT
+                    : val.type === METADATA_TYPE.STRENGTHS
+                    ? COLORS.SIGNED_UP_TEXT
+                    : val.type === METADATA_TYPE.SOFT_SKILLS
+                    ? COLORS.PURPLE_TEXT
                     : "",
                 backgroundColor:
                   val.type === METADATA_TYPE.CAREER
                     ? COLORS.PENDING
                     : val.type === METADATA_TYPE.INDUSTRY
                     ? COLORS.DONE
+                    : val.type === METADATA_TYPE.STRENGTHS
+                    ? COLORS.SIGNED_UP
+                    : val.type === METADATA_TYPE.SOFT_SKILLS
+                    ? COLORS.PURPLE
                     : "",
 
                 mt: 2,

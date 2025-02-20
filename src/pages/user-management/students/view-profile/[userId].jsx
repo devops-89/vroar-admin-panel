@@ -32,8 +32,6 @@ const UserProfile = () => {
   const router = useRouter();
   const userId = router.query.userId;
 
-
-
   const [value, setValue] = useState(0);
   const [tabsValue, setTabsValue] = useState("");
   const tabChangeHandler = (e, newValue) => {
@@ -63,7 +61,7 @@ const UserProfile = () => {
             <CircularProgress color="inherit" />
           </Backdrop>
         ) : (
-          <Card sx={{ p: 2 }}>
+          <Card sx={{ p: 2,mt:2 }}>
             <Stack
               direction={"row"}
               alignItems={"center"}
