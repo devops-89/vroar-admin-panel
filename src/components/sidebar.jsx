@@ -31,7 +31,7 @@ const Sidebar = () => {
     (state) => state.sideBarCollapse.isSidebarCollapse
   );
 
-  console.log("first", sidebarCollapse);
+  // console.log("first", sidebarCollapse);
 
   const router = useRouter();
 
@@ -50,7 +50,7 @@ const Sidebar = () => {
           height: "100vh",
           overflowY: "auto",
           zIndex: 999,
-          transition:"width 0.5s ease all"
+          transition: "width 0.5s ease all",
         }}
       >
         <Box
