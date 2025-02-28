@@ -11,7 +11,7 @@ const ContactInformation = () => {
 
   console.log("teste", user);
 
-  const phoneNumber = `${user?.countryCode} ${user.phoneNumber}`;
+  const phoneNumber = `${user?.countryCode} ${user.phoneNo}`;
 
   return (
     <Box>

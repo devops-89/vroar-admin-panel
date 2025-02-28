@@ -1,12 +1,15 @@
-import { data } from "@/assests/data";
+import userController from "@/api/user";
+import AddRoadmap from "@/assests/modalCalling/user/addRoadmap";
 import { studentTableData } from "@/assests/studentData";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import TabPanel from "@/components/tabPanel";
+import InternshipInterested from "@/components/user/interestedInternship/view";
 import Notes from "@/components/user/notes";
 import Points from "@/components/user/points";
 import Roadmap from "@/components/user/roadmap";
 import StudentProfile from "@/components/user/studentProfile";
 import Wrapper from "@/components/wrapper";
+import { showModal } from "@/redux/reducers/modal";
 import { setUserDetails } from "@/redux/reducers/userInformation";
 import { COLORS, PROFILE_DATA } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
@@ -15,7 +18,6 @@ import { AddCircleOutline } from "@mui/icons-material";
 import {
   Backdrop,
   Box,
-  Breadcrumbs,
   Button,
   Card,
   CircularProgress,
@@ -25,12 +27,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 const UserProfile = () => {
   const router = useRouter();
-  const userId = router.query.userId;
+  const { userId } = router.query;
 
   const [value, setValue] = useState(0);
   const [tabsValue, setTabsValue] = useState("");
@@ -39,17 +41,31 @@ const UserProfile = () => {
     setTabsValue(e.target.innerText);
   };
 
+  const addRoadmapModal = () => {
+    dispatch(showModal(<AddRoadmap />));
+  };
+
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+
+  const getUserInformationByUserId = (id) => {
+    userController
+      .getUserById(id)
+      .then((res) => {
+        dispatch(setUserDetails(res.data.data));
+        setLoading(false);
+      })
+      .catch((err) => {
+        let errMessage =
+          (err.response && err.response.data.message) || err.message;
+        console.log("Err", errMessage);
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
     if (userId) {
-      setTimeout(() => {
-        const userData = studentTableData.find(
-          (val) => val.userId === parseInt(userId)
-        );
-        dispatch(setUserDetails({ ...userData }));
-        setLoading(false);
-      }, 2000);
+      getUserInformationByUserId(userId);
     }
   }, [userId]);
 
@@ -61,7 +77,7 @@ const UserProfile = () => {
             <CircularProgress color="inherit" />
           </Backdrop>
         ) : (
-          <Card sx={{ p: 2,mt:2 }}>
+          <Card sx={{ p: 2, mt: 2 }}>
             <Stack
               direction={"row"}
               alignItems={"center"}
@@ -90,7 +106,9 @@ const UserProfile = () => {
                     color: COLORS.WHITE,
                     backgroundColor: COLORS.PRIMARY,
                     width: 150,
+                    fontFamily: roboto.style,
                   }}
+                  onClick={addRoadmapModal}
                 >
                   Add Roadmap
                 </Button>
@@ -146,6 +164,11 @@ const UserProfile = () => {
               <TabPanel value={value} index={3}>
                 <Box sx={{ mt: 2 }}>
                   <Notes />
+                </Box>
+              </TabPanel>
+              <TabPanel value={value} index={4}>
+                <Box sx={{ mt: 2 }}>
+                  <InternshipInterested />
                 </Box>
               </TabPanel>
             </Box>

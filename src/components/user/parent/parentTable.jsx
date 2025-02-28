@@ -29,7 +29,7 @@ const ParentTable = () => {
             <TableRow>
               {PARENT_TABLE_HEADER.map((val, i) =>
                 val.sort ? (
-                  <TableCell align="center">
+                  <TableCell >
                     <TableSortLabel
                       sx={{
                         "& .MuiTableSortLabel-icon": {
@@ -48,7 +48,7 @@ const ParentTable = () => {
                     </TableSortLabel>
                   </TableCell>
                 ) : (
-                  <TableCell key={i} align="center">
+                  <TableCell key={i} >
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                       {val.label}
                     </Typography>
@@ -70,7 +70,7 @@ const ParentTable = () => {
                     </Typography>
                   </Stack>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <Stack direction={"row"} alignItems={"center"} spacing={1}>
                     <Avatar sx={{ width: 30, height: 30 }}>
                       <Image src={val.student?.avatar} width={30} />
@@ -79,17 +79,17 @@ const ParentTable = () => {
                       {val.student?.name}
                     </Typography>
                   </Stack>
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                     {val.userId}
                   </Typography>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                     {val.student?.grade}
                   </Typography>
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                     {val.relation}

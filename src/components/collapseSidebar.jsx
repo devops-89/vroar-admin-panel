@@ -6,23 +6,29 @@ import {
   List,
   ListItemAvatar,
   ListItemButton,
+  ListItemText,
   Popover,
   Popper,
+  Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import lionFace from "@/logo/logo.png";
 import Image from "next/image";
 import { SIDEBARADATA } from "@/assests/sidebarData";
 import { useRouter } from "next/router";
+import { roboto } from "@/utils/fonts";
 const CollapseSidebar = () => {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState(null);
-
+  const [sidebarModulesData, setSideBarModulesData] = useState([]);
   const handleRouter = (e, value) => {
     if (value?.modules) {
       setAnchorEl(e.currentTarget);
+      console.log("values", value);
+      setSideBarModulesData(value.subModules);
     } else {
       router.push(value.url);
+      setAnchorEl(null);
     }
 
     console.log("value", value);
@@ -38,7 +44,7 @@ const CollapseSidebar = () => {
           height: "100vh",
           overflowY: "auto",
           zIndex: 999,
-          transition: "width 0.5s ease all",
+          transition: " 0.5s ease all",
         }}
       >
         <Box
@@ -78,10 +84,41 @@ const CollapseSidebar = () => {
             anchorEl={anchorEl}
             anchorOrigin={{
               horizontal: "right",
-              vertical: "bottom",
+              vertical: "top",
+            }}
+            onClose={() => setAnchorEl(null)}
+            sx={{
+              boxShadow: "none",
+              "& .MuiPopover-paper": {
+                boxShadow: "0px 0px 4px 4px #d7d7d7",
+              },
             }}
           >
-            hello
+            <List>
+              {sidebarModulesData.map((val, i) => (
+                <ListItemButton
+                  onClick={(e) => handleRouter(e, val)}
+                  key={i}
+                  sx={{
+                    backgroundColor:
+                      router.pathname === val.url ? COLORS.secondary : "#fff",
+                    ":hover": {
+                      backgroundColor: COLORS.secondary,
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary={
+                      <Typography
+                        sx={{ fontSize: 14, fontFamily: roboto.style }}
+                      >
+                        {val.label}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              ))}
+            </List>
           </Popover>
         </Box>
       </Card>

@@ -4,7 +4,6 @@ let initialState = {
   firstName: "",
   lastName: "",
   dob: "",
-  isAuthenticated: false,
 };
 
 export const USERINFORMATION = createSlice({

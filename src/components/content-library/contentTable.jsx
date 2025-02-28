@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import Loading from "react-loading";
+import CustomChip from "../customChip";
 
 const ContentTable = ({
   tableData,
@@ -95,7 +96,7 @@ const ContentTable = ({
                   <TableCell>
                     <Typography
                       sx={{
-                        fontSize: 15,
+                        fontSize: 14,
                         fontFamily: roboto.style,
                         textTransform: "capitalize",
                       }}
@@ -104,12 +105,12 @@ const ContentTable = ({
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                       {val.id}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                       {moment.unix(val.createdAt).format("YYYY-MM-DD")}
                     </Typography>
                   </TableCell>
@@ -118,47 +119,17 @@ const ContentTable = ({
                       {val.contentType}
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{width:200}}>
                     <Stack
                       direction={"row"}
                       alignItems={"center"}
                       spacing={1}
-                      flexWrap={"wrap"}
+                      // flexWrap={"wrap"}
                     >
-                      {val.metadataTags.slice(0, 2).map((tag, i) => (
-                        <Chip
-                          label={
-                            <Typography
-                              sx={{ fontSize: 13, fontFamily: roboto.style }}
-                            >
-                              {tag.name}
-                            </Typography>
-                          }
-                          sx={{
-                            backgroundColor:
-                              tag.type === METADATA_TYPE.CAREER
-                                ? COLORS.PENDING
-                                : tag.type === METADATA_TYPE.INDUSTRY
-                                ? COLORS.DONE
-                                : tag.type === METADATA_TYPE.SOFT_SKILLS
-                                ? COLORS.SIGNED_UP
-                                : tag.type === METADATA_TYPE.STRENGTHS
-                                ? COLORS.PURPLE
-                                : "",
-                            color:
-                              tag.type === METADATA_TYPE.CAREER
-                                ? COLORS.PENDING_TEXT
-                                : tag.type === METADATA_TYPE.INDUSTRY
-                                ? COLORS.DONE_TEXT
-                                : tag.type === METADATA_TYPE.SOFT_SKILLS
-                                ? COLORS.SIGNED_UP_TEXT
-                                : tag.type === METADATA_TYPE.STRENGTHS
-                                ? COLORS.PURPLE_TEXT
-                                : "",
-                          }}
-                        />
+                      {val.metadataTags.slice(0, 1).map((tag, i) => (
+                        <CustomChip variant={tag.type} label={tag.name} />
                       ))}
-                      {val.metadataTags.length > 3 && (
+                      {val.metadataTags.length > 2 && (
                         <Button
                           sx={{
                             color: COLORS.BLACK,
@@ -181,54 +152,25 @@ const ContentTable = ({
                         alignItems={"center"}
                         spacing={1}
                         flexWrap={"wrap"}
-                        sx={{ maxWidth: 350 }}
+                        sx={{ maxWidth: 200 }}
                         rowGap={1.5}
                         columnGap={2}
                       >
                         {val.metadataTags.slice(2).map((tag, i) => (
-                          <Chip
-                            label={
-                              <Typography
-                                sx={{ fontSize: 13, fontFamily: roboto.style }}
-                              >
-                                {tag.name}
-                              </Typography>
-                            }
-                            key={i}
-                            sx={{
-                              backgroundColor:
-                                tag.type === METADATA_TYPE.CAREER
-                                  ? COLORS.PENDING
-                                  : tag.type === METADATA_TYPE.INDUSTRY
-                                  ? COLORS.DONE
-                                  : tag.type === METADATA_TYPE.SOFT_SKILLS
-                                  ? COLORS.SIGNED_UP
-                                  : tag.type === METADATA_TYPE.STRENGTHS
-                                  ? COLORS.PURPLE
-                                  : "",
-                              color:
-                                tag.type === METADATA_TYPE.CAREER
-                                  ? COLORS.PENDING_TEXT
-                                  : tag.type === METADATA_TYPE.INDUSTRY
-                                  ? COLORS.DONE_TEXT
-                                  : tag.type === METADATA_TYPE.SOFT_SKILLS
-                                  ? COLORS.SIGNED_UP_TEXT
-                                  : tag.type === METADATA_TYPE.STRENGTHS
-                                  ? COLORS.PURPLE_TEXT
-                                  : "",
-                            }}
-                          />
+                          <CustomChip label={tag.name} variant={tag.type} />
                         ))}
                       </Stack>
                     </Collapse>
                   </TableCell>
                   <TableCell>
-                    <IconButton onClick={() => viewDetails(val.id)}>
-                      <Visibility fontSize="small" htmlColor={COLORS.BLACK} />
-                    </IconButton>
-                    <IconButton onClick={() => editDetails(val.id)}>
-                      <FaRegEdit style={{ color: COLORS.BLACK }} />
-                    </IconButton>
+                    <Stack direction={"row"} alignItems={"center"}>
+                      <IconButton onClick={() => viewDetails(val.id)}>
+                        <Visibility fontSize="small" htmlColor={COLORS.BLACK} />
+                      </IconButton>
+                      <IconButton onClick={() => editDetails(val.id)}>
+                        <FaRegEdit style={{ color: COLORS.BLACK }} />
+                      </IconButton>
+                    </Stack>
                   </TableCell>
                 </TableRow>
               ))}

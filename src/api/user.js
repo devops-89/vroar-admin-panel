@@ -17,7 +17,7 @@ const userController = {
     }
     try {
       let result = await securedApi.userSecuredApi.post(
-        "/api/users/getUsers",
+        "api/user/getUsers",
         value
       );
       return result;
@@ -36,13 +36,22 @@ const userController = {
       );
       return result;
     } catch (error) {
-      
       throw error;
     }
   },
   getProfileCount: async () => {
     try {
       let result = await securedApi.userSecuredApi.get("/api/users/getCount");
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getUserById: async (id) => {
+    try {
+      let result = await securedApi.userSecuredApi.get(
+        `api/user/getUserById?id=${id}`
+      );
       return result;
     } catch (error) {
       throw error;

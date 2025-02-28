@@ -1,4 +1,4 @@
-const { PROFILE_DATA, CONTENT_TYPE } = require("./enum");
+const { PROFILE_DATA, CONTENT_TYPE, ASSESSMENTS_TYPE } = require("./enum");
 
 export const profileTabs = [
   {
@@ -20,6 +20,9 @@ export const profileTabs = [
   // {
   //   label: PROFILE_DATA.RECOMMENDATIONS,
   // },
+  {
+    label: PROFILE_DATA.INTEREST,
+  },
 ];
 
 export const contentType = [
@@ -40,5 +43,16 @@ export const contentType = [
   },
   {
     label: CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
+  },
+];
+
+export const assessmentTypeArray = [
+  {
+    label: "Soft Skills Assessment",
+    value: ASSESSMENTS_TYPE.SOFT_SKILL,
+  },
+  {
+    label: "Onboarding Assessment",
+    value: ASSESSMENTS_TYPE.ONBOARDING,
   },
 ];

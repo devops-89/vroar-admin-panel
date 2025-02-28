@@ -344,6 +344,7 @@ export const PROFILE_DATA = {
   MESSAGE: "MESSAGE",
   NOTES: "NOTES/ASSIGNMENTS",
   RECOMMENDATIONS: "RECOMMENDATIONS",
+  INTEREST: "INTEREST",
 };
 
 export const ASSESSMENT_TYPE = {
@@ -358,4 +359,9 @@ export const ASSESSMENT_TYPE = {
 export const PAYMENT_STATUS = {
   PAID: "Paid",
   UNPAID: "UnPaid",
+};
+
+export const ASSESSMENTS_TYPE = {
+  SOFT_SKILL: "SOFT_SKILL",
+  ONBOARDING: "ONBOARDING",
 };
