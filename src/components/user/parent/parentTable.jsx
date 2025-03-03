@@ -1,4 +1,5 @@
 import { PARENT_DATA, PARENT_TABLE_HEADER } from "@/assests/parentData";
+import CustomChip from "@/components/customChip";
 import { COLORS, PAYMENT_STATUS, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
@@ -20,7 +21,8 @@ import moment from "moment";
 import Image from "next/image";
 import React from "react";
 
-const ParentTable = () => {
+const ParentTable = ({ userData }) => {
+  console.log("user", userData);
   return (
     <div>
       <TableContainer>
@@ -29,7 +31,7 @@ const ParentTable = () => {
             <TableRow>
               {PARENT_TABLE_HEADER.map((val, i) =>
                 val.sort ? (
-                  <TableCell >
+                  <TableCell>
                     <TableSortLabel
                       sx={{
                         "& .MuiTableSortLabel-icon": {
@@ -48,7 +50,7 @@ const ParentTable = () => {
                     </TableSortLabel>
                   </TableCell>
                 ) : (
-                  <TableCell key={i} >
+                  <TableCell key={i}>
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                       {val.label}
                     </Typography>
@@ -58,15 +60,15 @@ const ParentTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {PARENT_DATA.map((val, i) => (
+            {userData?.docs.map((val, i) => (
               <TableRow>
                 <TableCell>
                   <Stack direction={"row"} alignItems={"center"} spacing={1}>
                     <Avatar sx={{ width: 30, height: 30 }}>
-                      <Image src={val.avatar} width={30} />
+                      <Image src={val.avatar} width={30} height={30} />
                     </Avatar>
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {val.name}
+                      {val.firstName} {val.lastName}
                     </Typography>
                   </Stack>
                 </TableCell>
@@ -82,7 +84,7 @@ const ParentTable = () => {
                 </TableCell> */}
                 <TableCell>
                   <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                    {val.userId}
+                    {val.id}
                   </Typography>
                 </TableCell>
                 {/* <TableCell>
@@ -97,29 +99,11 @@ const ParentTable = () => {
                 </TableCell>
                 <TableCell>
                   <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                    {moment.unix(val.registeredOn).format("DD-MM-YYYY")}
+                    {moment.unix(val.createdAt).format("DD-MM-YYYY")}
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Chip
-                    label={
-                      <Typography
-                        sx={{ fontSize: 14, fontFamily: roboto.style }}
-                      >
-                        {val.subscriptionStatus}
-                      </Typography>
-                    }
-                    sx={{
-                      color:
-                        val.subscriptionStatus === PAYMENT_STATUS.PAID
-                          ? COLORS.DONE_TEXT
-                          : COLORS.DANGER,
-                      backgroundColor:
-                        val.subscriptionStatus === PAYMENT_STATUS.PAID
-                          ? COLORS.DONE
-                          : COLORS.DANGER_BOX,
-                    }}
-                  />
+                  <CustomChip label={val.subscriptionStatus} />
                 </TableCell>
                 <TableCell>
                   <Switch

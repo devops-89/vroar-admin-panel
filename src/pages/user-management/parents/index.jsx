@@ -30,6 +30,8 @@ const Parents = () => {
       setErrMessage,
     });
   }, []);
+
+  console.log("userdata", userData);
   return (
     <div>
       <Wrapper>
@@ -50,7 +52,7 @@ const Parents = () => {
             <CustomTable button={true} />
           </Box>
           <Box sx={{ mt: 2 }}>
-            <ParentTable />
+            <ParentTable userData={userData} />
           </Box>
         </Card>
       </Wrapper>
