@@ -38,21 +38,26 @@ const ParentProfile = () => {
   return (
     <div>
       <Wrapper>
-        <Backdrop open={loading} sx={{ zIndex: 999 }}>
-          <CircularProgress sx={{ color: COLORS.WHITE }} />
-        </Backdrop>
-        <Typography
-          sx={{ fontSize: 20, fontFamily: roboto.style, fontWeight: 550 }}
-        >
-          Profile Details
-        </Typography>
-        <PersonalInformation />
-        <Box sx={{ mt: 2 }}>
-          <ContactInformation />
-        </Box>
-        <Box sx={{ mt: 2 }}>
-          <KidDetails />
-        </Box>
+        {loading ? (
+          <Backdrop open={loading} sx={{ zIndex: 999 }}>
+            <CircularProgress sx={{ color: COLORS.WHITE }} />
+          </Backdrop>
+        ) : (
+          <>
+            <Typography
+              sx={{ fontSize: 20, fontFamily: roboto.style, fontWeight: 550 }}
+            >
+              Profile Details
+            </Typography>
+            <PersonalInformation />
+            <Box sx={{ mt: 2 }}>
+              <ContactInformation />
+            </Box>
+            <Box sx={{ mt: 2 }}>
+              <KidDetails />
+            </Box>
+          </>
+        )}
       </Wrapper>
     </div>
   );
