@@ -1,5 +1,5 @@
 import { data } from "@/assests/data";
-import { COLORS } from "@/utils/enum";
+import { COLORS, USER_GROUP } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import {
@@ -21,8 +21,7 @@ import { useSelector } from "react-redux";
 const PersonalInformation = () => {
   const user = useSelector((state) => state.USER);
 
-  console.log("user", user);
-
+  
   const gender = { label: user?.gender };
   const studentDob = moment.unix(user?.birthDate);
 
@@ -40,7 +39,6 @@ const PersonalInformation = () => {
           <Grid2 container spacing={4}>
             <Grid2 size={6}>
               <TextField
-                // label="First Name"
                 fullWidth
                 sx={{ ...loginTextField }}
                 value={user?.firstName}
@@ -53,7 +51,6 @@ const PersonalInformation = () => {
             </Grid2>
             <Grid2 size={6}>
               <TextField
-                // label="Last Name"
                 fullWidth
                 sx={{ ...loginTextField }}
                 value={user?.lastName}
@@ -116,36 +113,40 @@ const PersonalInformation = () => {
                 readOnly
               />
             </Grid2>
-            <Grid2 size={6}>
-              <InputLabel>
-                <Typography
-                  sx={{
-                    fontSize: 14,
-                    fontFamily: roboto.style,
-                    mb: 1,
-                    color: COLORS.BLACK,
-                  }}
-                >
-                  Grade
-                </Typography>
-              </InputLabel>
-              <Autocomplete
-                renderInput={(params) => (
-                  <TextField {...params} sx={{ ...loginTextField }} />
-                )}
-                options={data.grade}
-                getOptionLabel={(option) => option.label}
-                renderOption={(props, option) => (
-                  <Box component={"li"} {...props}>
-                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                      {option.label}
-                    </Typography>
-                  </Box>
-                )}
-                value={grade}
-                readOnly
-              />
-            </Grid2>
+            {user?.group === USER_GROUP.STUDENT && (
+              <Grid2 size={6}>
+                <InputLabel>
+                  <Typography
+                    sx={{
+                      fontSize: 14,
+                      fontFamily: roboto.style,
+                      mb: 1,
+                      color: COLORS.BLACK,
+                    }}
+                  >
+                    Grade
+                  </Typography>
+                </InputLabel>
+                <Autocomplete
+                  renderInput={(params) => (
+                    <TextField {...params} sx={{ ...loginTextField }} />
+                  )}
+                  options={data.grade}
+                  getOptionLabel={(option) => option.label}
+                  renderOption={(props, option) => (
+                    <Box component={"li"} {...props}>
+                      <Typography
+                        sx={{ fontSize: 15, fontFamily: roboto.style }}
+                      >
+                        {option.label}
+                      </Typography>
+                    </Box>
+                  )}
+                  value={grade}
+                  readOnly
+                />
+              </Grid2>
+            )}
           </Grid2>
         </Grid2>
         <Grid2 size={3}>

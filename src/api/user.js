@@ -1,5 +1,5 @@
 import securedApi from "./config";
-
+import userSecuredApi from "./config";
 const userController = {
   csvDownload: async (role) => {
     try {
@@ -51,6 +51,17 @@ const userController = {
     try {
       let result = await securedApi.userSecuredApi.get(
         `api/user/getUserById?id=${id}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  blockUnblockUser: async (data) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "api/user/blockUnblockUser",
+        data
       );
       return result;
     } catch (error) {

@@ -46,7 +46,7 @@ const EditEventForm = ({ details }) => {
     validationSchema: AddAdListValidationSchema,
     onSubmit: (values) => {
       if (values.sessionStartTime < moment().unix()) {
-        formik.errors.sessionStartDate = "Sessio";
+        formik.errors.sessionStartDate = "Session";
         return false;
       } else {
         addNewEvent(values);
@@ -162,6 +162,7 @@ const EditEventForm = ({ details }) => {
     const validTime = moment(newTime).isValid();
     if (validTime) {
       formik.values.sessionEndTime = moment(newTime).format("hh:mm A");
+      // formik.setValues("")
       formik.errors.sessionEndTime = "";
     } else {
       formik.errors.sessionEndTime = "Please Select Valid Time";

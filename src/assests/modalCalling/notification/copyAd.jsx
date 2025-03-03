@@ -98,7 +98,7 @@ const CopyAd = ({ id }) => {
   }, [id]);
 
   return (
-    <Box sx={{ width: 900 }}>
+    <Box sx={{ width: "100%" }}>
       <Stack
         direction={"row"}
         alignItems={"center"}

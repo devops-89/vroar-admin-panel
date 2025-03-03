@@ -52,7 +52,7 @@ const Parents = () => {
             <CustomTable button={true} />
           </Box>
           <Box sx={{ mt: 2 }}>
-            <ParentTable userData={userData} />
+            <ParentTable userData={userData} loading={loading} />
           </Box>
         </Card>
       </Wrapper>

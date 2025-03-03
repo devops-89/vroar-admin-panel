@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 import { Provider } from "react-redux";
 import "react-quill/dist/quill.snow.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import ToastBar from "@/components/toastBar";
 
 export default function App({ Component, pageProps }) {
   return (
@@ -13,6 +14,7 @@ export default function App({ Component, pageProps }) {
         <Modal />
         <Component {...pageProps} />
         <SpeedInsights />
+        <ToastBar />
       </Layout>
     </Provider>
   );

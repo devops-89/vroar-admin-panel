@@ -1,6 +1,6 @@
 import { data } from "@/assests/data";
 import { studentTableData, tableHeader } from "@/assests/studentData";
-import { COLORS, ROADMAP_STATUS, USER_STATUS } from "@/utils/enum";
+import { COLORS, ROADMAP_STATUS, USER_GROUP, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
   Avatar,
@@ -24,6 +24,9 @@ import { useRouter } from "next/router";
 import React, { use } from "react";
 import CustomChip from "../customChip";
 import Loading from "react-loading";
+import { useDispatch } from "react-redux";
+import DisableProfile from "@/assests/modalCalling/user/disableProfile";
+import { showModal } from "@/redux/reducers/modal";
 
 const StudentTable = ({
   userData,
@@ -32,14 +35,32 @@ const StudentTable = ({
   pageSize,
   onPageChange,
   onPageSizeChange,
+  getStudentList,
 }) => {
   const router = useRouter();
   const viewProfile = (userId) => {
     router.push(`/user-management/students/view-profile/${userId}`);
   };
+  const dispatch = useDispatch();
+  const body = {
+    page: page + 1,
+    pageSize: pageSize,
+    group: USER_GROUP.STUDENT,
+  };
+
+  const disableProfile = (id, status) => {
+    dispatch(
+      showModal(
+        <DisableProfile
+          id={id}
+          status={status}
+          getUserList={() => getStudentList(body)}
+        />
+      )
+    );
+  };
 
   const studentData = userData?.docs;
-  console.log("studentData", studentData);
   return (
     <div>
       <TableContainer>
@@ -97,7 +118,12 @@ const StudentTable = ({
                   <TableCell>
                     <Stack direction={"row"} alignItems={"center"} spacing={2}>
                       <Avatar>
-                        <Image src={val?.avatar} width={40} height={40} />
+                        <Image
+                          src={val?.avatar}
+                          width={40}
+                          height={40}
+                          alt={`profile picture of ${val.firstName}`}
+                        />
                       </Avatar>
                       <Typography
                         sx={{
@@ -106,24 +132,30 @@ const StudentTable = ({
                           textTransform: "capitalize",
                         }}
                       >
-                        {val.firstName || "--"} {val.lastName || "--"}
+                        {val.firstName.slice(0, 10) || "--"}{" "}
+                        {val.lastName.slice(0, 10) || "--"}
                       </Typography>
                     </Stack>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell>
                     {val.guardian ? (
                       <Stack
                         direction={"row"}
                         alignItems={"center"}
                         spacing={2}
                       >
-                        <Avatar>
-                          <Image src={val?.guardian?.avatar} width={40} />
+                        <Avatar sx={{ width: 40, height: 40 }}>
+                          <Image
+                            src={val?.guardian?.avatar}
+                            width={40}
+                            height={40}
+                          />
                         </Avatar>
                         <Typography
                           sx={{ fontSize: 14, fontFamily: roboto.style }}
                         >
-                          {val?.guardian?.firstName} {val?.guardian?.lastName}
+                          {val?.guardian?.firstName.slice(0, 10)}{" "}
+                          {val?.guardian?.lastName.slice(0, 10)}
                         </Typography>
                       </Stack>
                     ) : (
@@ -159,6 +191,7 @@ const StudentTable = ({
                     <Switch
                       checked={val.status === USER_STATUS.ACTIVE}
                       color="success"
+                      onChange={() => disableProfile(val.id, val.status)}
                     />
                   </TableCell>
                   <TableCell align="center">

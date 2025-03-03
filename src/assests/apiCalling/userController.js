@@ -1,5 +1,4 @@
 import userController from "@/api/user";
-import { setUserDetails } from "@/redux/reducers/userInformation";
 
 export const getUserList = ({ body, setData, isLoading, setErrMessage }) => {
   userController

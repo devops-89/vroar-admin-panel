@@ -13,24 +13,23 @@ const CustomCard = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [errMesaage, setErrMessage] = useState("");
+  const [errMessage, setErrMessage] = useState("");
   let body = {
     userRole: USER_GROUP.STUDENT,
     page: page,
     pageSize: pageSize,
   };
+  const getStudentList = (body) => {
+    getUserList({
+      body,
+      setData: setUserData,
+      isLoading: setLoading,
+      setErrMessage,
+    });
+  };
 
   const debouncedSearch = useCallback(
-    debounce(
-      (body) =>
-        getUserList({
-          body,
-          setData: setUserData,
-          isLoading: setLoading,
-          setErrMessage,
-        }),
-      300
-    ),
+    debounce((body) => getStudentList(body), 300),
     []
   );
 
@@ -44,12 +43,7 @@ const CustomCard = () => {
       };
       debouncedSearch(body);
     } else {
-      getUserList({
-        body,
-        setData: setUserData,
-        isLoading: setLoading,
-        setErrMessage,
-      });
+      getStudentList(body);
     }
   };
 
@@ -62,12 +56,7 @@ const CustomCard = () => {
         page: newPage + 1,
       };
     }
-    getUserList({
-      body,
-      setData: setUserData,
-      isLoading: setLoading,
-      setErrMessage,
-    });
+    getStudentList(body);
   };
 
   const pageSizeChangeHandler = (e) => {
@@ -77,21 +66,11 @@ const CustomCard = () => {
       ...body,
       pageSize: e.target.value,
     };
-    getUserList({
-      body,
-      setData: setUserData,
-      isLoading: setLoading,
-      setErrMessage,
-    });
+    getStudentList(body);
   };
 
   useEffect(() => {
-    getUserList({
-      body,
-      setData: setUserData,
-      isLoading: setLoading,
-      setErrMessage,
-    });
+    getStudentList(body);
   }, []);
 
   return (
@@ -120,6 +99,7 @@ const CustomCard = () => {
             pageSize={pageSize}
             onPageChange={pageChangeHandler}
             onPageSizeChange={pageSizeChangeHandler}
+            getStudentList={getStudentList}
           />
         </Box>
       </Card>
