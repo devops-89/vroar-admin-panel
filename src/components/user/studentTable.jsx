@@ -163,7 +163,7 @@ const StudentTable = ({
                   </TableCell>
                   <TableCell align="center">
                     <Button
-                      sx={{ fontSize: 14, fontFamily: roboto.style }}
+                      sx={{ fontSize: 13, fontFamily: roboto.style }}
                       onClick={() => viewProfile(val.id)}
                     >
                       View Profile

@@ -1,6 +1,11 @@
-import { COLORS, METADATA_TYPE, ROADMAP_STATUS } from "@/utils/enum";
+import {
+  COLORS,
+  METADATA_TYPE,
+  PAYMENT_STATUS,
+  ROADMAP_STATUS,
+} from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { Close, CloseOutlined } from "@mui/icons-material";
+import { CloseOutlined } from "@mui/icons-material";
 import { Chip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -19,7 +24,8 @@ const CustomChip = ({ label, variant, removable, onDelete }) => {
     if (
       variant === METADATA_TYPE.INDUSTRY ||
       variant === ROADMAP_STATUS.PAYMENT_DONE ||
-      variant === ROADMAP_STATUS.PUBLISHED
+      variant === ROADMAP_STATUS.PUBLISHED ||
+      variant === PAYMENT_STATUS.PAID
     ) {
       setBgColor(COLORS.DONE);
       setColor(COLORS.DONE_TEXT);
@@ -34,6 +40,11 @@ const CustomChip = ({ label, variant, removable, onDelete }) => {
     ) {
       setBgColor(COLORS.SIGNED_UP);
       setColor(COLORS.SIGNED_UP_TEXT);
+    }
+
+    if (variant === PAYMENT_STATUS.UNPAID) {
+      setBgColor(COLORS.DANGER_BOX);
+      setColor(COLORS.DANGER);
     }
   }, [variant]);
   return (
