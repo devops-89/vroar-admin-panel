@@ -96,3 +96,19 @@ export const AddAdListValidationSchema = Yup.object({
     .required("Please Enter Zoom Link")
     .url("Please Enter Valid Url"),
 });
+
+export const studentJourneyValidationSchema = Yup.object({
+  journey_name: Yup.string().required("Please Enter Journey Name"),
+  careerRoadmap: Yup.array()
+    .min(1, "Please Select Career Roadmap")
+    .required("Please Select Career Roadmap"),
+  strengthRoadmap: Yup.array()
+    .min(1, "Please Select Strength Roadmap")
+    .required("Please Select Strength Roadmap"),
+  industryRoadmap: Yup.array()
+    .min(1, "Please Select Industry Roadmap")
+    .required("Please Select Industry Roadmap"),
+  softSkillsRoadmap: Yup.array()
+    .min(1, "Please Select Soft Skills Roadmap")
+    .required("Please Select Soft Skills Roadmap"),
+});

@@ -11,16 +11,16 @@ export const PARENT_TABLE_HEADER = [
     label: "Parent Name",
     sort: true,
   },
-  {
-    label: "Kid Name",
-    sort: true,
-  },
+  // {
+  //   label: "Kid Name",
+  //   sort: true,
+  // },
   {
     label: "User ID",
   },
-  {
-    label: "Kid's Grade",
-  },
+  // {
+  //   label: "Kid's Grade",
+  // },
   {
     label: "Relation to Kid",
   },
@@ -48,11 +48,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.UNPAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -62,11 +62,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -76,11 +76,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.UNPAID,
     status: USER_STATUS.InActive,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -90,11 +90,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -104,11 +104,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -118,11 +118,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -132,11 +132,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -146,11 +146,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -160,11 +160,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -174,11 +174,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -188,11 +188,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -202,11 +202,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -216,11 +216,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -230,11 +230,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -244,11 +244,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -258,11 +258,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -272,11 +272,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -286,11 +286,11 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
   {
     avatar: parentAvatar,
@@ -300,10 +300,10 @@ export const PARENT_DATA = [
     registeredOn: 1740032661,
     subscriptionStatus: PAYMENT_STATUS.PAID,
     status: USER_STATUS.ACTIVE,
-    student: {
-      avatar: studentAvatar,
-      name: "John Doe",
-      grade: GRADE[10],
-    },
+    // student: {
+    //   avatar: studentAvatar,
+    //   name: "John Doe",
+    //   grade: GRADE[10],
+    // },
   },
 ];

@@ -1,28 +1,102 @@
-import { COLORS } from "@/utils/enum";
-import { roboto } from "@/utils/fonts";
-import { NavigateNext } from "@mui/icons-material";
-import { Box, Breadcrumbs, Card, Typography } from "@mui/material";
-import React from "react";
+import { getUserList } from "@/assests/apiCalling/userController";
+import { USER_GROUP } from "@/utils/enum";
+import { Box, Card } from "@mui/material";
+import { debounce } from "lodash";
+import { useCallback, useEffect, useState } from "react";
+import PageBreadCrumbs from "./customBreadCrumbs";
 import CustomTable from "./customTable";
 import StudentTable from "./user/studentTable";
-import PageBreadCrumbs from "./customBreadCrumbs";
 
 const CustomCard = () => {
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [errMesaage, setErrMessage] = useState("");
+  let body = {
+    userRole: USER_GROUP.STUDENT,
+    page: page,
+    pageSize: pageSize,
+  };
+
+  const debouncedSearch = useCallback(
+    debounce(
+      (body) =>
+        getUserList({
+          body,
+          setData: setUserData,
+          isLoading: setLoading,
+          setErrMessage,
+        }),
+      300
+    ),
+    []
+  );
+
+  const searchHandler = (e) => {
+    setSearch(e.target.value);
+    setLoading(true);
+    if (e.target.value) {
+      body = {
+        ...body,
+        search: e.target.value,
+      };
+      debouncedSearch(body);
+    } else {
+      getUserList({
+        body,
+        setData: setUserData,
+        isLoading: setLoading,
+        setErrMessage,
+      });
+    }
+  };
+
+  const pageChangeHandler = (e, newPage) => {
+    setLoading(true);
+    setPage(newPage);
+    if (newPage) {
+      body = {
+        ...body,
+        page: newPage + 1,
+      };
+    }
+    getUserList({
+      body,
+      setData: setUserData,
+      isLoading: setLoading,
+      setErrMessage,
+    });
+  };
+
+  const pageSizeChangeHandler = (e) => {
+    setPageSize(e.target.value);
+    setLoading(true);
+    body = {
+      ...body,
+      pageSize: e.target.value,
+    };
+    getUserList({
+      body,
+      setData: setUserData,
+      isLoading: setLoading,
+      setErrMessage,
+    });
+  };
+
+  useEffect(() => {
+    getUserList({
+      body,
+      setData: setUserData,
+      isLoading: setLoading,
+      setErrMessage,
+    });
+  }, []);
+
   return (
     <div>
       <Card sx={{ p: 2 }}>
-        {/* <Breadcrumbs separator={<NavigateNext />}>
-          <Typography
-            sx={{ fontSize: 15, fontFamily: roboto.style, color: COLORS.BLACK }}
-          >
-            User Management
-          </Typography>
-          <Typography
-            sx={{ fontSize: 15, fontFamily: roboto.style, color: COLORS.BLACK }}
-          >
-            Students
-          </Typography>
-        </Breadcrumbs> */}
         <PageBreadCrumbs
           data={[
             {
@@ -36,10 +110,17 @@ const CustomCard = () => {
           ]}
         />
         <Box sx={{ mt: 2 }}>
-          <CustomTable button={true} />
+          <CustomTable button={true} onSearch={searchHandler} />
         </Box>
         <Box sx={{ mt: 2 }}>
-          <StudentTable />
+          <StudentTable
+            userData={userData}
+            loading={loading}
+            page={page}
+            pageSize={pageSize}
+            onPageChange={pageChangeHandler}
+            onPageSizeChange={pageSizeChangeHandler}
+          />
         </Box>
       </Card>
     </div>

@@ -6,6 +6,7 @@ import Wrapper from "@/components/wrapper";
 import { setToast } from "@/redux/reducers/toast";
 import { COLORS, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import { assessmentTypeArray } from "@/utils/genericArray";
 import { loginTextField } from "@/utils/styles";
 import { AddCircleOutlineOutlined, Delete } from "@mui/icons-material";
 import {
@@ -28,9 +29,14 @@ const CreateAssessment = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const [role, setRole] = useState(null);
   const [assessmentName, setAssessmentName] = useState("");
+  const [assessmentType, setAssessmentType] = useState(null);
   const dispatch = useDispatch();
   const roleChangeHandler = (e, newValue) => {
     setRole(newValue);
+  };
+
+  const handleAssessmentTypeChangeHandler = (e, newValue) => {
+    setAssessmentType(newValue);
   };
 
   const [questions, setQuestions] = useState([
@@ -198,8 +204,6 @@ const CreateAssessment = () => {
           severity: ToastStatus.ERROR,
         })
       );
-
-      // console.log(isOptionEmpty);
     } else {
       const filteredData = questions.map((item) =>
         item.questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ
@@ -228,6 +232,7 @@ const CreateAssessment = () => {
         role: role?.label,
         questions: updatedData,
         assessmentName: assessmentName,
+        type: assessmentType?.value,
       };
 
       addAssessment(body);
@@ -253,6 +258,26 @@ const CreateAssessment = () => {
           />
         </Box>
         <Box sx={{ p: 2 }}>
+          <Autocomplete
+            renderInput={(params) => (
+              <TextField
+                label="Assessment Type"
+                {...params}
+                sx={{ ...loginTextField, mb: 1 }}
+              />
+            )}
+            options={assessmentTypeArray}
+            getOptionLabel={(option) => option.label}
+            renderOption={(props, option) => (
+              <Box {...props}>
+                <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                  {option.label}
+                </Typography>
+              </Box>
+            )}
+            onChange={handleAssessmentTypeChangeHandler}
+            value={assessmentType}
+          />
           <TextField
             sx={{ ...loginTextField, mb: 1 }}
             fullWidth

@@ -1,5 +1,5 @@
 import { hideModal } from "@/redux/reducers/modal";
-import { COLORS } from "@/utils/enum";
+import { COLORS, ToastStatus, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Close } from "@mui/icons-material";
 import {
@@ -20,6 +20,8 @@ import { useFormik } from "formik";
 import { AddMetaDataValiationSchema } from "@/utils/validationSchema";
 import { metaDataController } from "@/api/metaDataController";
 import Loading from "react-loading";
+import { setToast } from "@/redux/reducers/toast";
+import ToastBar from "@/components/toastBar";
 
 const EditMetaData = ({ value, getMetaData, metaDataBody }) => {
   const dispatch = useDispatch();
@@ -40,18 +42,33 @@ const EditMetaData = ({ value, getMetaData, metaDataBody }) => {
       let body = {
         type: values.metadataType,
         name: values.name,
+        status: USER_STATUS.ACTIVE,
       };
       setLoading(true);
       metaDataController
         .editMetaData({ data: body, id: value.id })
         .then((res) => {
-          console.log("esr", res);
+          dispatch(
+            setToast({
+              message: res.data.message,
+              severity: ToastStatus.SUCCESS,
+              open: true,
+            })
+          );
           setLoading(false);
           getMetaData(metaDataBody);
           dispatch(closeModal());
         })
         .catch((err) => {
-          console.log("err", err);
+          const errMessage =
+            (err.response && err.response.data.message) || err.message;
+          dispatch(
+            setToast({
+              message: errMessage,
+              severity: ToastStatus.ERROR,
+              open: true,
+            })
+          );
           setLoading(false);
         });
     },
@@ -168,6 +185,7 @@ const EditMetaData = ({ value, getMetaData, metaDataBody }) => {
           </FormControl>
         </form>
       </Box>
+      <ToastBar />
     </div>
   );
 };

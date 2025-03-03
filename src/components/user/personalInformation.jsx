@@ -24,7 +24,7 @@ const PersonalInformation = () => {
   console.log("user", user);
 
   const gender = { label: user?.gender };
-  const studentDob = moment.unix(user?.dob);
+  const studentDob = moment.unix(user?.birthDate);
 
   const grade = { label: user?.grade };
 

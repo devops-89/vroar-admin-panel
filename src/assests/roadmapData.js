@@ -51,16 +51,16 @@ export const CONTENT_HEADER = [
 ];
 
 export const ROADMAP_HEADER = [
-  {
-    label: "Student Name",
-    sort: true,
-  },
+  // {
+  //   label: "Student Name",
+  //   sort: true,
+  // },
   {
     label: "Name",
   },
-  {
-    label: "Tenure",
-  },
+  // {
+  //   label: "Tenure",
+  // },
   {
     label: "No. of Levels",
   },
@@ -326,11 +326,12 @@ export const CONTENT_TYPE_DATA = [
 
 export const ROADMAP_DATA = [
   {
+    id: 1,
     img: avatar,
     name: "John Doe",
     roadmap_name: "Data Science",
-    tenure: "12 months",
-    number_Of_Levels: "8",
+    // tenure: "12 months",
+    number_Of_Levels: "3",
     tags: [
       {
         tag: METADATA_TYPE.CAREER,
@@ -351,67 +352,40 @@ export const ROADMAP_DATA = [
     ],
     createdOn: 1737541487,
     roadmap_status: ROADMAP_STATUS.PUBLISHED,
-  },
-  {
-    img: avatar,
-    name: "John Doe",
-    roadmap_name: "Literature Journey",
-    tenure: "8 months",
-    number_Of_Levels: "9",
-    tags: [
+    tiles: [
       {
-        tag: METADATA_TYPE.CAREER,
-        count: CAREERDATA.length,
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
       },
       {
-        tag: METADATA_TYPE.INDUSTRY,
-        count: INDUSTRYDATA.length,
+        name: "World War II Overview",
+        contentType: CONTENT_TYPE.ASSIGNMENT,
+        timeRequired: "2 weeks",
+        pointsAllocated: 50,
       },
       {
-        tag: METADATA_TYPE.SOFT_SKILLS,
-        count: SOFTSKILLSDATA.length,
-      },
-      {
-        tag: METADATA_TYPE.STRENGTHS,
-        count: STRENGTHDATA.length,
-      },
-    ],
-    createdOn: 1737541487,
-    roadmap_status: ROADMAP_STATUS.PENDING_APPROVAL,
-  },
-  {
-    img: avatar,
-    name: "John Doe",
-    roadmap_name: "Web Development",
-    tenure: "6 months",
-    number_Of_Levels: "10",
-    tags: [
-      {
-        tag: METADATA_TYPE.CAREER,
-        count: CAREERDATA.length,
-      },
-      {
-        tag: METADATA_TYPE.INDUSTRY,
-        count: INDUSTRYDATA.length,
-      },
-      {
-        tag: METADATA_TYPE.SOFT_SKILLS,
-        count: SOFTSKILLSDATA.length,
-      },
-      {
-        tag: METADATA_TYPE.STRENGTHS,
-        count: STRENGTHDATA.length,
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
       },
     ],
-    createdOn: 1737541487,
-    roadmap_status: ROADMAP_STATUS.PUBLISHED,
   },
   {
+    id: 2,
     img: avatar,
     name: "John Doe",
-    roadmap_name: "Computer Basics",
-    tenure: "7 months",
-    number_Of_Levels: "10",
+    roadmap_name: "Data Science",
+    // tenure: "12 months",
+    number_Of_Levels: "3",
     tags: [
       {
         tag: METADATA_TYPE.CAREER,
@@ -432,5 +406,248 @@ export const ROADMAP_DATA = [
     ],
     createdOn: 1737541487,
     roadmap_status: ROADMAP_STATUS.PUBLISHED,
+    tiles: [
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+      {
+        name: "World War II Overview",
+        contentType: CONTENT_TYPE.ASSIGNMENT,
+        timeRequired: "2 weeks",
+        pointsAllocated: 50,
+      },
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+    ],
   },
+  {
+    id: 3,
+    img: avatar,
+    name: "John Doe",
+    roadmap_name: "Data Science",
+    // tenure: "12 months",
+    number_Of_Levels: "3",
+    tags: [
+      {
+        tag: METADATA_TYPE.CAREER,
+        count: CAREERDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.INDUSTRY,
+        count: INDUSTRYDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.SOFT_SKILLS,
+        count: SOFTSKILLSDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.STRENGTHS,
+        count: STRENGTHDATA.length,
+      },
+    ],
+    createdOn: 1737541487,
+    roadmap_status: ROADMAP_STATUS.PUBLISHED,
+    tiles: [
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+      {
+        name: "World War II Overview",
+        contentType: CONTENT_TYPE.ASSIGNMENT,
+        timeRequired: "2 weeks",
+        pointsAllocated: 50,
+      },
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+    ],
+  },
+  {
+    id: 4,
+    img: avatar,
+    name: "John Doe",
+    roadmap_name: "Data Science",
+    // tenure: "12 months",
+    number_Of_Levels: "3",
+    tags: [
+      {
+        tag: METADATA_TYPE.CAREER,
+        count: CAREERDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.INDUSTRY,
+        count: INDUSTRYDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.SOFT_SKILLS,
+        count: SOFTSKILLSDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.STRENGTHS,
+        count: STRENGTHDATA.length,
+      },
+    ],
+    createdOn: 1737541487,
+    roadmap_status: ROADMAP_STATUS.PUBLISHED,
+    tiles: [
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+      {
+        name: "World War II Overview",
+        contentType: CONTENT_TYPE.ASSIGNMENT,
+        timeRequired: "2 weeks",
+        pointsAllocated: 50,
+      },
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+    ],
+  },
+  {
+    id: 5,
+    img: avatar,
+    name: "John Doe",
+    roadmap_name: "Data Science",
+    // tenure: "12 months",
+    number_Of_Levels: "3",
+    tags: [
+      {
+        tag: METADATA_TYPE.CAREER,
+        count: CAREERDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.INDUSTRY,
+        count: INDUSTRYDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.SOFT_SKILLS,
+        count: SOFTSKILLSDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.STRENGTHS,
+        count: STRENGTHDATA.length,
+      },
+    ],
+    createdOn: 1737541487,
+    roadmap_status: ROADMAP_STATUS.PUBLISHED,
+    tiles: [
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+      {
+        name: "World War II Overview",
+        contentType: CONTENT_TYPE.ASSIGNMENT,
+        timeRequired: "2 weeks",
+        pointsAllocated: 50,
+      },
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+    ],
+  },
+  {
+    id: 6,
+    img: avatar,
+    name: "John Doe",
+    roadmap_name: "Data Science",
+    // tenure: "12 months",
+    number_Of_Levels: "3",
+    tags: [
+      {
+        tag: METADATA_TYPE.CAREER,
+        count: CAREERDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.INDUSTRY,
+        count: INDUSTRYDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.SOFT_SKILLS,
+        count: SOFTSKILLSDATA.length,
+      },
+      {
+        tag: METADATA_TYPE.STRENGTHS,
+        count: STRENGTHDATA.length,
+      },
+    ],
+    createdOn: 1737541487,
+    roadmap_status: ROADMAP_STATUS.PUBLISHED,
+    tiles: [
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+      {
+        name: "World War II Overview",
+        contentType: CONTENT_TYPE.ASSIGNMENT,
+        timeRequired: "2 weeks",
+        pointsAllocated: 50,
+      },
+      {
+        name: "Algebra Basics",
+        contentType: CONTENT_TYPE.ARTICLE_PDF,
+        fileName: "Algebra_Basics.pdf",
+        filePath:
+          "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        timeRequired: "2 hours",
+        pointsAllocated: 50,
+      },
+    ],
+  },
+ 
 ];
