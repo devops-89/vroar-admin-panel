@@ -3,6 +3,7 @@ import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
 import { COLORS, CONTENT_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { Box, Button, Card, Divider, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -37,7 +38,6 @@ const ViewRoadmap = () => {
       value: roadmapData?.number_Of_Levels,
     },
   ];
-
 
   return (
     <div>
@@ -206,4 +206,4 @@ const ViewRoadmap = () => {
   );
 };
 
-export default ViewRoadmap;
+export default withAuth(ViewRoadmap);

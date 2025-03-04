@@ -1,6 +1,7 @@
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { Card, Stack, Typography } from "@mui/material";
 import React from "react";
 
@@ -34,4 +35,4 @@ const SubscriptionManagement = () => {
   );
 };
 
-export default SubscriptionManagement;
+export default withAuth(SubscriptionManagement);

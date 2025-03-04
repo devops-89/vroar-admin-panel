@@ -5,6 +5,7 @@ import CustomTable from "@/components/customTable";
 import ParentTable from "@/components/user/parent/parentTable";
 import Wrapper from "@/components/wrapper";
 import { USER_GROUP } from "@/utils/enum";
+import withAuth from "@/utils/withAuth";
 import { Box, Card } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
@@ -60,4 +61,4 @@ const Parents = () => {
   );
 };
 
-export default Parents;
+export default withAuth(Parents);

@@ -1,6 +1,7 @@
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Createroadmap from "@/components/roadmap/createRoadmap";
 import Wrapper from "@/components/wrapper";
+import withAuth from "@/utils/withAuth";
 import { Box, Card, Divider } from "@mui/material";
 
 const CreateRoadmap = () => {
@@ -36,4 +37,4 @@ const CreateRoadmap = () => {
   );
 };
 
-export default CreateRoadmap;
+export default withAuth(CreateRoadmap);

@@ -5,6 +5,7 @@ import CustomTable from "@/components/customTable";
 import Wrapper from "@/components/wrapper";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { AddCircle } from "@mui/icons-material";
 import { Box, Button, Card, Stack } from "@mui/material";
 import { useRouter } from "next/router";
@@ -109,4 +110,4 @@ const Contentlibrary = () => {
   );
 };
 
-export default Contentlibrary;
+export default withAuth(Contentlibrary);

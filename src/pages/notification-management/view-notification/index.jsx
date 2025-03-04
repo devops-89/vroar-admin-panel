@@ -3,6 +3,7 @@ import NotificationList from "@/components/event/notification-list";
 import Wrapper from "@/components/wrapper";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { Done } from "@mui/icons-material";
 import { Box, Button, Card, Divider, Stack, Typography } from "@mui/material";
 import React from "react";
@@ -72,4 +73,4 @@ const ViewNotification = () => {
   );
 };
 
-export default ViewNotification;
+export default withAuth(ViewNotification);

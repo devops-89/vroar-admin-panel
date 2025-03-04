@@ -15,6 +15,7 @@ import Wrapper from "@/components/wrapper";
 import { showModal } from "@/redux/reducers/modal";
 import { COLORS, METADATA_TYPE, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { AddCircle } from "@mui/icons-material";
 import {
   Box,
@@ -249,4 +250,4 @@ const Metadata = () => {
   );
 };
 
-export default Metadata;
+export default withAuth(Metadata);

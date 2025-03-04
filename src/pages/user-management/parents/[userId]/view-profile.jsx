@@ -7,6 +7,7 @@ import Wrapper from "@/components/wrapper";
 import { setUserDetails } from "@/redux/reducers/userInformation";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { Backdrop, Box, CircularProgress, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -63,4 +64,4 @@ const ParentProfile = () => {
   );
 };
 
-export default ParentProfile;
+export default withAuth(ParentProfile);

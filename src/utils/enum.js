@@ -180,6 +180,8 @@ export const INVOICESTATUS = {
 export const ToastStatus = {
   ERROR: "error",
   SUCCESS: "success",
+  INFO: "info",
+  WARNING: "warning",
 };
 
 export const GRADE = {

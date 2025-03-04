@@ -4,11 +4,11 @@ import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
 import { METADATA_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 
 const AddNewContent = () => {
- 
   return (
     <div>
       <Wrapper>
@@ -47,4 +47,4 @@ const AddNewContent = () => {
   );
 };
 
-export default AddNewContent;
+export default withAuth(AddNewContent);

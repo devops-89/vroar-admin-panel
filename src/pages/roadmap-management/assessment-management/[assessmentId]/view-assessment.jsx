@@ -3,6 +3,7 @@ import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { Box, Button, Card, Divider, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -87,5 +88,4 @@ const ViewAssessment = () => {
   );
 };
 
-export default ViewAssessment;
- 
+export default withAuth(ViewAssessment);

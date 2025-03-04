@@ -14,6 +14,7 @@ import { setUserDetails } from "@/redux/reducers/userInformation";
 import { COLORS, PROFILE_DATA } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { profileTabs } from "@/utils/genericArray";
+import withAuth from "@/utils/withAuth";
 import { AddCircleOutline } from "@mui/icons-material";
 import {
   Backdrop,
@@ -179,4 +180,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default withAuth(UserProfile);

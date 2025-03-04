@@ -1,6 +1,7 @@
 import { metaDataController } from "@/api/metaDataController";
 import AdListTable from "@/components/event/adListtable";
 import Wrapper from "@/components/wrapper";
+import withAuth from "@/utils/withAuth";
 import React, { useEffect, useState } from "react";
 
 const AdList = () => {
@@ -37,4 +38,4 @@ const AdList = () => {
   );
 };
 
-export default AdList;
+export default withAuth(AdList);

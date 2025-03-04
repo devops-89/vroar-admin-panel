@@ -1,4 +1,12 @@
-import { HomeOutlined, List } from "@mui/icons-material";
+import {
+  ContactMail,
+  HomeOutlined,
+  List,
+  People,
+  Person,
+  Settings,
+  VpnKey,
+} from "@mui/icons-material";
 import userManagement from "@/icons/userManagement.png";
 import road from "@/icons/road.png";
 import home from "@/icons/home.png";
@@ -111,11 +119,49 @@ export const SIDEBARADATA = [
   {
     avatar: <Image src={internship} />,
     label: "Internship Management",
-    url: "/internship-management",
+    modules: true,
+    subModules: [
+      {
+        label: "Companies",
+        url: "/internship-management/companies",
+      },
+      {
+        label: "Job Master",
+        url: "/internship-management/job-master",
+      },
+      {
+        label: "Internship",
+        url: "/internship-management",
+      },
+    ],
   },
   {
     avatar: <Image src={waitlist} />,
     label: "Waitlist",
     url: "/waitlist",
+  },
+];
+
+export const AdminDrawerData = [
+  // {
+  //   avatar: Person,
+  //   label: "Profile",
+  //   url: "/profile",
+  // },
+  {
+    avatar: Settings,
+    label: "Account Settings",
+    url: "/profile/account-settings",
+  },
+];
+
+export const AccountTabs = [
+  {
+    icon: ContactMail,
+    label: "General",
+  },
+  {
+    icon: VpnKey,
+    label: "Security",
   },
 ];

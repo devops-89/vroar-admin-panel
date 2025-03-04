@@ -5,6 +5,7 @@ import CustomTable from "@/components/customTable";
 import Wrapper from "@/components/wrapper";
 import { COLORS, METADATA_TYPE, ROADMAP_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { AddCircle, Remove } from "@mui/icons-material";
 import {
   Avatar,
@@ -271,4 +272,4 @@ const Roadmap = () => {
   );
 };
 
-export default Roadmap;
+export default withAuth(Roadmap);

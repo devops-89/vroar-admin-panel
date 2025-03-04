@@ -2,6 +2,7 @@ import { metaDataController } from "@/api/metaDataController";
 import Wrapper from "@/components/wrapper";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import {
   Backdrop,
   Box,
@@ -149,4 +150,4 @@ const EventDetails = () => {
   );
 };
 
-export default EventDetails;
+export default withAuth(EventDetails);

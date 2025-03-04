@@ -7,6 +7,7 @@ import { setToast } from "@/redux/reducers/toast";
 import { COLORS, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
+import withAuth from "@/utils/withAuth";
 import { AddCircleOutlineOutlined, Delete } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -459,4 +460,4 @@ const EditAssessment = () => {
   );
 };
 
-export default EditAssessment;
+export default withAuth(EditAssessment);

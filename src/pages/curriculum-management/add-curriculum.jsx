@@ -18,6 +18,7 @@ import Wrapper from "@/components/wrapper";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
+import withAuth from "@/utils/withAuth";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -233,4 +234,4 @@ const AddCurriculum = () => {
   );
 };
 
-export default AddCurriculum;
+export default withAuth(AddCurriculum);

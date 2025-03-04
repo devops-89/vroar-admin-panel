@@ -1,6 +1,7 @@
 import userController from "@/api/user";
 import UserCard from "@/components/user/userCard";
 import Wrapper from "@/components/wrapper";
+import withAuth from "@/utils/withAuth";
 import { Business, Person, Wc } from "@mui/icons-material";
 import { Grid2 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -66,4 +67,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default withAuth(Dashboard);

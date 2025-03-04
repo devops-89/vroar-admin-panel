@@ -16,7 +16,7 @@ export const Authcontrollers = {
   },
   logout: async () => {
     try {
-      let result = await authenticationpublicApi.authenticationpublicApi.get(
+      let result = await authenticationpublicApi.authenticationSecuredApi.get(
         "/api/logout/currentSession"
       );
       return result;

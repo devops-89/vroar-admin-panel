@@ -1,4 +1,5 @@
 import Wrapper from "@/components/wrapper";
+import withAuth from "@/utils/withAuth";
 import React from "react";
 
 const Mentor = () => {
@@ -9,4 +10,4 @@ const Mentor = () => {
   );
 };
 
-export default Mentor;
+export default withAuth(Mentor);

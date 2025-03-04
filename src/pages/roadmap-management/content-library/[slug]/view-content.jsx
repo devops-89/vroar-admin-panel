@@ -3,6 +3,7 @@ import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { Box, Button, Card, Divider, Stack, Typography } from "@mui/material";
 import React from "react";
 import { FaRegEdit } from "react-icons/fa";
@@ -63,4 +64,4 @@ const ViewContent = () => {
   );
 };
 
-export default ViewContent;
+export default withAuth(ViewContent);

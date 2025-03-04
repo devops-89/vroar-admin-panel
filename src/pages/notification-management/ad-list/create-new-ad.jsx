@@ -1,4 +1,5 @@
 import AddEvent from "@/components/event/add-new-event";
+import withAuth from "@/utils/withAuth";
 
 const CreateNewAd = () => {
   return (
@@ -8,4 +9,4 @@ const CreateNewAd = () => {
   );
 };
 
-export default CreateNewAd;
+export default withAuth(CreateNewAd);

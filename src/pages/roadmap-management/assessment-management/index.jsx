@@ -5,6 +5,7 @@ import CustomTable from "@/components/customTable";
 import Wrapper from "@/components/wrapper";
 import { COLORS, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import withAuth from "@/utils/withAuth";
 import { Visibility } from "@mui/icons-material";
 import {
   Box,
@@ -253,4 +254,4 @@ const Assessment = () => {
   );
 };
 
-export default Assessment;
+export default withAuth(Assessment);

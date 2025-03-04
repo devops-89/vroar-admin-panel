@@ -1,6 +1,7 @@
 import EditContent from "@/components/content-library/edit-content";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
+import withAuth from "@/utils/withAuth";
 import { Box, Card } from "@mui/material";
 import React from "react";
 
@@ -37,4 +38,4 @@ const EditContentLibrary = () => {
   );
 };
 
-export default EditContentLibrary;
+export default withAuth(EditContentLibrary);

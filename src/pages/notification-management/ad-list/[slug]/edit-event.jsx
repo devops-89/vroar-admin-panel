@@ -1,6 +1,7 @@
 import { metaDataController } from "@/api/metaDataController";
 import EditEventForm from "@/components/event/editEvent";
 import Wrapper from "@/components/wrapper";
+import withAuth from "@/utils/withAuth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -34,4 +35,4 @@ const EditEvent = () => {
   );
 };
 
-export default EditEvent;
+export default withAuth(EditEvent);

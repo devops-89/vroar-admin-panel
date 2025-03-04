@@ -1,5 +1,6 @@
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
+import withAuth from "@/utils/withAuth";
 import { Card, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -8,8 +9,7 @@ const ViewCurriculum = () => {
   const router = useRouter();
   const id = router.query.slug;
   useEffect(() => {
-    if(router.query.slug){
-
+    if (router.query.slug) {
     }
   }, [router.query.slug]);
 
@@ -29,12 +29,10 @@ const ViewCurriculum = () => {
               },
             ]}
           />
-
-          
         </Card>
       </Wrapper>
     </div>
   );
 };
 
-export default ViewCurriculum;
+export default withAuth(ViewCurriculum);

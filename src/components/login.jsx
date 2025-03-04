@@ -10,17 +10,17 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
-  CircularProgress,
   Grid2,
   IconButton,
   InputAdornment,
   Stack,
-  TextField,
+  TextField
 } from "@mui/material";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import ToastBar from "./toastBar";
 const Login = () => {
@@ -66,7 +66,6 @@ const Login = () => {
     },
     validationSchema: loginValidationSchema,
     onSubmit: (values) => {
-      // conosole.log("values", values);
       loginUser(values);
     },
   });
@@ -157,11 +156,14 @@ const Login = () => {
                         },
                       }}
                       type="submit"
+                      disabled={loading}
                     >
                       {loading ? (
-                        <CircularProgress
-                          size={20}
-                          sx={{ color: COLORS.BLACK }}
+                        <Loading
+                          type="bars"
+                          width={20}
+                          height={20}
+                          color={COLORS.BLACK}
                         />
                       ) : (
                         "Login"

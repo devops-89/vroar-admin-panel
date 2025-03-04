@@ -8,6 +8,7 @@ import { COLORS, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { assessmentTypeArray } from "@/utils/genericArray";
 import { loginTextField } from "@/utils/styles";
+import withAuth from "@/utils/withAuth";
 import { AddCircleOutlineOutlined, Delete } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -434,4 +435,4 @@ const CreateAssessment = () => {
   );
 };
 
-export default CreateAssessment;
+export default withAuth(CreateAssessment);

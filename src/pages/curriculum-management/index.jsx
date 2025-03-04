@@ -9,6 +9,7 @@ import { setToast } from "@/redux/reducers/toast";
 import { COLORS, ToastStatus, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
+import withAuth from "@/utils/withAuth";
 import { Add } from "@mui/icons-material";
 import {
   Box,
@@ -281,4 +282,4 @@ const Curriculum = () => {
   );
 };
 
-export default Curriculum;
+export default withAuth(Curriculum);
