@@ -1,6 +1,7 @@
 import { AccountTabs } from "@/assests/sidebarData";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import GeneralSettings from "@/components/profile/general-settings";
+import Security from "@/components/profile/security";
 import TabPanel from "@/components/tabPanel";
 import Wrapper from "@/components/wrapper";
 import { COLORS } from "@/utils/enum";
@@ -68,7 +69,7 @@ const AccountSettings = () => {
               <GeneralSettings />
             </TabPanel>
             <TabPanel index={1} value={value}>
-              Hi
+              <Security />
             </TabPanel>
           </Box>
         </Box>

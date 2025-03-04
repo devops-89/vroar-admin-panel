@@ -3,7 +3,7 @@ import { Button } from "@mui/material";
 import React from "react";
 
 const CustomButton = (props) => {
-  const { children, fullWidth, variant, onClick } = props;
+  const { children, fullWidth, variant, onClick, type } = props;
   return (
     <Button
       sx={{
@@ -15,6 +15,7 @@ const CustomButton = (props) => {
       fullWidth={fullWidth}
       variant={variant}
       onClick={onClick}
+      type={type}
     >
       {children}
     </Button>

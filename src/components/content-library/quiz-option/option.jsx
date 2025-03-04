@@ -45,7 +45,12 @@ const OptionBox = ({ options, onOptionsChange }) => {
             onChange={(e) =>
               handleOptionChange(index, "optionText", e.target.value)
             }
-            sx={{ ...loginTextField}}
+            sx={{
+              ...loginTextField,
+              "& .MuiOutlinedInput-input": {
+                fontFamily: roboto.style,
+              },
+            }}
           />
         </Stack>
       ))}

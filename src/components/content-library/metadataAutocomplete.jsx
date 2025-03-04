@@ -38,7 +38,12 @@ const MetaDataAutocomplete = ({
           {...params}
           label={label}
           fullWidth
-          sx={{ ...loginTextField }}
+          sx={{
+            ...loginTextField,
+            "& .MuiOutlinedInput-input": {
+              fontFamily: roboto.style,
+            },
+          }}
           error={Boolean(error)}
           helperText={helperText}
         />
@@ -67,6 +72,7 @@ const MetaDataAutocomplete = ({
                 "& ": {
                   backgroundColor: colors.bg,
                   color: colors.text,
+                  fontFamily: roboto.style,
                 },
                 "& svg": {
                   color: `${colors.text} !important`,

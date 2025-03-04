@@ -56,9 +56,6 @@ const AddContent = () => {
   const dispatch = useDispatch();
   const [isQuizEnabled, setIsQuizEnabled] = useState(false);
 
-  const [metaData, setMetaData] = useState([]);
-  const [listLoading, setListLoading] = useState(true);
-
   const initialValues = {
     contentType: "",
     career: [],
@@ -89,7 +86,6 @@ const AddContent = () => {
     subText: "",
   });
 
-  // const dispatch = useDispatch();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -383,7 +379,12 @@ const AddContent = () => {
                 {...params}
                 label="Select Content Type"
                 fullWidth
-                sx={{ ...loginTextField }}
+                sx={{
+                  ...loginTextField,
+                  "& .MuiOutlinedInput-input": {
+                    fontFamily: roboto.style,
+                  },
+                }}
                 error={Boolean(errors.contentType)}
                 helperText={errors.contentType}
               />
@@ -446,14 +447,24 @@ const AddContent = () => {
             <TextField
               label="Insert Link "
               fullWidth
-              sx={{ ...loginTextField }}
+              sx={{
+                ...loginTextField,
+                "& .MuiOutlinedInput-input": {
+                  fontFamily: roboto.style,
+                },
+              }}
               onChange={inputHandler}
               id="contentLink"
             />
           )}
 
           <TextField
-            sx={{ ...loginTextField }}
+            sx={{
+              ...loginTextField,
+              "& .MuiOutlinedInput-input": {
+                fontFamily: roboto.style,
+              },
+            }}
             label="Description"
             multiline
             fullWidth
@@ -505,7 +516,12 @@ const AddContent = () => {
           <TextField
             label="Add Name"
             fullWidth
-            sx={{ ...loginTextField }}
+            sx={{
+              ...loginTextField,
+              "& .MuiOutlinedInput-input": {
+                fontFamily: roboto.style,
+              },
+            }}
             id="contentName"
             onChange={inputHandler}
             error={Boolean(errors.contentName)}
@@ -530,7 +546,13 @@ const AddContent = () => {
                 <TextField
                   {...params}
                   label="Select Quiz Type"
-                  sx={{ ...loginTextField, mt: 1 }}
+                  sx={{
+                    ...loginTextField,
+                    mt: 1,
+                    "& .MuiOutlinedInput-input": {
+                      fontFamily: roboto.style,
+                    },
+                  }}
                   error={Boolean(errors.quizType)}
                   helperText={errors.quizType}
                   fullWidth

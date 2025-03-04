@@ -69,7 +69,13 @@ const SortableItem = ({
           label="Enter Question"
           value={question.question}
           onChange={(e) => onQuestionChange(id, e.target.value)}
-          sx={{ mt: 2, ...loginTextField }}
+          sx={{
+            mt: 2,
+            ...loginTextField,
+            "& .MuiOutlinedInput-input": {
+              fontFamily: roboto.style,
+            },
+          }}
         />
 
         <Box sx={{ mt: 3, p: 1 }}>

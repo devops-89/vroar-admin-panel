@@ -4,10 +4,27 @@ import { roboto } from "@/utils/fonts";
 import withAuth from "@/utils/withAuth";
 import { Avatar, Box, Card, Grid2, Typography } from "@mui/material";
 import Image from "next/image";
+import ProfileDetails from "./profile-details";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { AddUserDetails } from "@/redux/reducers/user";
 const GeneralSettings = () => {
+  const initialState = {
+    name: "Vroar",
+    email: "vroar@vroar.ai",
+    countryCode: "+1",
+    phoneNo: "3134825424",
+  };
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (initialState) {
+      dispatch(AddUserDetails({ ...initialState }));
+    }
+  }, [initialState]);
   return (
     <div>
-      <Grid2 container>
+      <Grid2 container spacing={5}>
         <Grid2 size={4}>
           <Card
             sx={{
@@ -16,6 +33,8 @@ const GeneralSettings = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              borderRadius: 4,
+              boxShadow: "0px 0px 4px 4px #00000020",
             }}
           >
             <Box>
@@ -56,7 +75,9 @@ const GeneralSettings = () => {
             </Box>
           </Card>
         </Grid2>
-        <Grid2 size={6}>Hello</Grid2>
+        <Grid2 size={8}>
+          <ProfileDetails />
+        </Grid2>
       </Grid2>
     </div>
   );

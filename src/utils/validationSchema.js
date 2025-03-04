@@ -112,3 +112,8 @@ export const studentJourneyValidationSchema = Yup.object({
     .min(1, "Please Select Soft Skills Roadmap")
     .required("Please Select Soft Skills Roadmap"),
 });
+
+export const changePasswordValidation = Yup.object({
+  oldPassword: Yup.string().required("Please Enter Current Password"),
+  newPassword: Yup.string().required("Please Enter New Password"),
+});

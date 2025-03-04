@@ -113,7 +113,12 @@ const EditMetaData = ({ value, getMetaData, metaDataBody }) => {
                   {...params}
                   fullWidth
                   label="Select Metadata Type"
-                  sx={{ ...loginTextField }}
+                  sx={{
+                    ...loginTextField,
+                    "& .MuiOutlinedInput-input": {
+                      fontFamily: roboto.style,
+                    },
+                  }}
                   id="metadataType"
                   error={
                     formik.touched.metadataType &&
@@ -138,7 +143,13 @@ const EditMetaData = ({ value, getMetaData, metaDataBody }) => {
               id="metadataType"
             />
             <TextField
-              sx={{ ...loginTextField, mt: 2 }}
+              sx={{
+                ...loginTextField,
+                mt: 2,
+                "& .MuiOutlinedInput-input": {
+                  fontFamily: roboto.style,
+                },
+              }}
               label="Enter Free Text"
               id="name"
               onChange={formik.handleChange}

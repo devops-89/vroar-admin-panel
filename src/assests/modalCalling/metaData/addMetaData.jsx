@@ -44,8 +44,10 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
   const [metaDataType, setmetaDataType] = useState(null);
   const metaSelectHandler = (e, newValue) => {
     setmetaDataType(newValue);
-    setState({ ...state, metadataType: newValue.label });
-    setErrors({ ...errors, metadataType: "" });
+    if (newValue) {
+      setState({ ...state, metadataType: newValue.label });
+      setErrors({ ...errors, metadataType: "" });
+    }
   };
 
   const validateForm = async () => {
@@ -126,7 +128,12 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
                 {...params}
                 fullWidth
                 label="Select Metadata Type"
-                sx={{ ...loginTextField }}
+                sx={{
+                  ...loginTextField,
+                  "& .MuiOutlinedInput-input": {
+                    fontFamily: roboto.style,
+                  },
+                }}
                 id="metadataType"
                 error={Boolean(errors.metadataType)}
                 helperText={errors.metadataType}
@@ -145,7 +152,13 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
             value={metaDataType}
           />
           <TextField
-            sx={{ ...loginTextField, mt: 2 }}
+            sx={{
+              ...loginTextField,
+              mt: 2,
+              "& .MuiOutlinedInput-input": {
+                fontFamily: roboto.style,
+              },
+            }}
             label="Enter Free Text"
             id="name"
             value={state.name}
