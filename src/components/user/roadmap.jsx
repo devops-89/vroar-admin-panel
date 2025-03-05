@@ -19,6 +19,7 @@ import {
 import moment from "moment";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import UserRoadmapProgress from "./user-roadmap-progress";
 
 const Roadmap = () => {
   const user = useSelector((state) => state.USER);
@@ -338,37 +339,7 @@ const Roadmap = () => {
                   </Collapse>
                 </TableCell>
                 <TableCell align="center">
-                  <LinearProgress
-                    thickness={15}
-                    determinate
-                    value={val.progress}
-                    sx={{
-                      backgroundColor: COLORS.LIGHTGREY,
-                      color:
-                        val.progress <= 25
-                          ? COLORS.PROGRESS25
-                          : val.progress <= 50
-                          ? COLORS.PENDING
-                          : COLORS.SIGNED_UP,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: 12,
-                        fontFamily: roboto.style,
-                        color:
-                          val.progress <= 25
-                            ? COLORS.RED
-                            : val.progress <= 50
-                            ? COLORS.PENDING_TEXT
-                            : COLORS.SIGNED_UP_TEXT,
-                        position: "absolute",
-                      }}
-                      key={i}
-                    >
-                      {val.progress}%
-                    </Typography>
-                  </LinearProgress>
+                  <UserRoadmapProgress progress={val.progress} />
                 </TableCell>
               </TableRow>
             ))}

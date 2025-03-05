@@ -1,4 +1,9 @@
-const { PROFILE_DATA, CONTENT_TYPE, ASSESSMENTS_TYPE } = require("./enum");
+const {
+  PROFILE_DATA,
+  CONTENT_TYPE,
+  ASSESSMENTS_TYPE,
+  USER_STATUS,
+} = require("./enum");
 
 export const profileTabs = [
   {
@@ -54,5 +59,26 @@ export const assessmentTypeArray = [
   {
     label: "Onboarding Assessment",
     value: ASSESSMENTS_TYPE.ONBOARDING,
+  },
+];
+
+export const mentor_tab_array = [
+  {
+    label: "Active Mentors",
+  },
+  {
+    label: "Pending Mentors",
+  },
+  {
+    label: "Rejected Mentors",
+  },
+];
+
+export const APPROVAL_ARRAY = [
+  {
+    label: USER_STATUS.APPROVE,
+  },
+  {
+    label: USER_STATUS.REJECT,
   },
 ];

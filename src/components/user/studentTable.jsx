@@ -27,6 +27,7 @@ import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import DisableProfile from "@/assests/modalCalling/user/disableProfile";
 import { showModal } from "@/redux/reducers/modal";
+import UserAvatar from "./userAvatar";
 
 const StudentTable = ({
   userData,
@@ -116,48 +117,19 @@ const StudentTable = ({
               {studentData.map((val, i) => (
                 <TableRow key={i} hover>
                   <TableCell>
-                    <Stack direction={"row"} alignItems={"center"} spacing={2}>
-                      <Avatar>
-                        <Image
-                          src={val?.avatar}
-                          width={40}
-                          height={40}
-                          alt={`profile picture of ${val.firstName}`}
-                        />
-                      </Avatar>
-                      <Typography
-                        sx={{
-                          fontSize: 14,
-                          fontFamily: roboto.style,
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        {val.firstName.slice(0, 10) || "--"}{" "}
-                        {val.lastName.slice(0, 10) || "--"}
-                      </Typography>
-                    </Stack>
+                    <UserAvatar
+                      avatar={val?.avatar}
+                      firstName={val.firstName.slice(0, 10) || "--"}
+                      lastName={val.lastName.slice(0, 10) || "--"}
+                    />
                   </TableCell>
                   <TableCell>
                     {val.guardian ? (
-                      <Stack
-                        direction={"row"}
-                        alignItems={"center"}
-                        spacing={2}
-                      >
-                        <Avatar sx={{ width: 40, height: 40 }}>
-                          <Image
-                            src={val?.guardian?.avatar}
-                            width={40}
-                            height={40}
-                          />
-                        </Avatar>
-                        <Typography
-                          sx={{ fontSize: 14, fontFamily: roboto.style }}
-                        >
-                          {val?.guardian?.firstName.slice(0, 10)}{" "}
-                          {val?.guardian?.lastName.slice(0, 10)}
-                        </Typography>
-                      </Stack>
+                      <UserAvatar
+                        avatar={val?.guardian?.avatar}
+                        firstName={val?.guardian?.firstName.slice(0, 10)}
+                        lastName={val?.guardian?.lastName.slice(0, 10)}
+                      />
                     ) : (
                       <Typography
                         sx={{ fontSize: 14, fontFamily: roboto.style }}

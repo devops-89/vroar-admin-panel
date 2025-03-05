@@ -1,14 +1,11 @@
 import DisableProfile from "@/assests/modalCalling/user/disableProfile";
-import { PARENT_DATA, PARENT_TABLE_HEADER } from "@/assests/parentData";
+import { PARENT_TABLE_HEADER } from "@/assests/parentData";
 import CustomChip from "@/components/customChip";
 import { showModal } from "@/redux/reducers/modal";
-import { COLORS, PAYMENT_STATUS, USER_STATUS } from "@/utils/enum";
+import { COLORS, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
-  Avatar,
   Button,
-  Chip,
-  Stack,
   Switch,
   Table,
   TableBody,
@@ -17,14 +14,13 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Typography,
+  Typography
 } from "@mui/material";
 import moment from "moment";
-import Image from "next/image";
 import { useRouter } from "next/router";
-import React from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
+import UserAvatar from "../userAvatar";
 
 const ParentTable = ({ userData, loading }) => {
   const router = useRouter();
@@ -91,20 +87,11 @@ const ParentTable = ({ userData, loading }) => {
               {userData?.docs.map((val, i) => (
                 <TableRow key={i}>
                   <TableCell>
-                    <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                      <Avatar sx={{ width: 30, height: 30 }}>
-                        <Image src={val.avatar} width={30} height={30} />
-                      </Avatar>
-                      <Typography
-                        sx={{
-                          fontSize: 14,
-                          fontFamily: roboto.style,
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        {val.firstName.slice(0, 10)} {val.lastName.slice(0, 10)}
-                      </Typography>
-                    </Stack>
+                    <UserAvatar
+                      avatar={val?.avatar}
+                      firstName={val.firstName.slice(0, 10)}
+                      lastName={val.lastName.slice(0, 10)}
+                    />
                   </TableCell>
 
                   <TableCell>

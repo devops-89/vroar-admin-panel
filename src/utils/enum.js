@@ -66,6 +66,8 @@ export const USER_STATUS = {
   BANNED: "BANNED",
   InActive: "INACTIVE",
   BLOCKED: "BLOCKED",
+  APPROVE: "Approve",
+  REJECT: "Reject",
 };
 
 export const SORT = {
