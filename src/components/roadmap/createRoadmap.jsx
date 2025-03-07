@@ -30,7 +30,7 @@ const Createroadmap = () => {
   const [state, setState] = useState({
     roadmapName: "",
     metaDataType: "",
-    metaDataTag: "",
+    metaDataTag: [],
   });
 
   const [selectedMetaDataType, setSelectedMetaDataType] = useState(null);
@@ -39,7 +39,6 @@ const Createroadmap = () => {
   const [metaDataList, setMetaDataList] = useState([]);
   const metaTagTypeHandler = (e, newValue) => {
     setSelectedMetaDataType(newValue);
-    console.log("test", newValue);
     if (newValue) {
       const body = {
         page: 1,
@@ -82,7 +81,7 @@ const Createroadmap = () => {
     const body = {
       roadmapName: state.roadmapName,
       metaDataType: state.metaDataType,
-      metaDataId: state.metaDataTag,
+      metaDataIds: state.metaDataTag,
       tiles: transformedData,
     };
     console.log("state", body);

@@ -8,6 +8,7 @@ import InitialAssessment from "./initial-assessment";
 import GSPResults from "./gspResults";
 import Strengths from "./strengths";
 import SelectedPaths from "./selectedPaths";
+import SkillsAssessment from "./skillsAssesment";
 
 const Notes = () => {
   const [value, setValue] = useState(0);
@@ -51,6 +52,9 @@ const Notes = () => {
       </Tabs>
       <TabPanel value={value} index={0}>
         <InitialAssessment />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <SkillsAssessment />
       </TabPanel>
       <TabPanel value={value} index={2}>
         <GSPResults />

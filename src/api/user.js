@@ -1,3 +1,4 @@
+import { result } from "lodash";
 import securedApi from "./config";
 import userSecuredApi from "./config";
 const userController = {
@@ -61,6 +62,18 @@ const userController = {
     try {
       let result = await userSecuredApi.userSecuredApi.post(
         "api/user/blockUnblockUser",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getUserAssessmentResult: async (data) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "api/userOnboardJourney/getResult",
         data
       );
       return result;
