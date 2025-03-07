@@ -11,6 +11,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Delete, DragIndicator, WidthFull } from "@mui/icons-material";
 import OptionBox from "./quiz-option/option";
 import { loginTextField } from "@/utils/styles";
+import { roboto } from "@/utils/fonts";
 
 const SortableItem = ({
   id,
