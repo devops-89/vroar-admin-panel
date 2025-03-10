@@ -433,4 +433,27 @@ export const data = {
     //   label: ASSESSMENT_TYPE.MANUAL_NOTES,
     // },
   ],
+  roadMapData: [
+    {
+      startDate: 1736919828,
+      careerTags: ["Developer", "Engineer"],
+
+      progress: 25,
+      roadmapName: "Data Science",
+    },
+    {
+      startDate: 1736919828,
+      careerTags: ["Designer", "Artist"],
+
+      progress: 50,
+      roadmapName: "Data Science",
+    },
+    {
+      startDate: 1736919828,
+      careerTags: ["Researcher", "Scientist"],
+
+      progress: 75,
+      roadmapName: "Data Science",
+    },
+  ],
 };

@@ -222,4 +222,28 @@ export const metaDataController = {
       throw error;
     }
   },
+  getRoadmapJourney: async (data) => {
+    if (data.page === 0) {
+      data.page = 1;
+    }
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.post(
+        "/api/roadmapJourney/getAll",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getRoadmapDetails: async (id) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.get(
+        `/api/roadmapJourney/getRoadmapById/${id}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

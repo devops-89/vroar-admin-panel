@@ -1,3 +1,4 @@
+import { metaDataController } from "@/api/metaDataController";
 import { ROADMAP_DATA, ROADMAP_HEADER } from "@/assests/roadmapData";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import CustomChip from "@/components/customChip";
@@ -28,10 +29,32 @@ import {
 import moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Loading from "react-loading";
 
 const Roadmap = () => {
   const router = useRouter();
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [roadmapData, setRoadmapData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  let body = {
+    page: page,
+    pageSize: pageSize,
+  };
+
+  const getAllRoadmapJourney = (body) => {
+    metaDataController
+      .getRoadmapJourney(body)
+      .then((res) => {
+        const response = res.data.data;
+        setRoadmapData(response);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
 
   const addRoadmap = () => {
     router.push("/roadmap-management/create-roadmap");
@@ -46,6 +69,14 @@ const Roadmap = () => {
   const handleToggle = (index) => {
     setOpen((prev) => (prev === index ? null : index));
   };
+
+  useEffect(() => {
+    if (body) {
+      getAllRoadmapJourney(body);
+    }
+  }, []);
+
+  console.log("test", roadmapData);
 
   return (
     <div>
@@ -92,7 +123,7 @@ const Roadmap = () => {
                   <TableRow>
                     {ROADMAP_HEADER.map((val, i) =>
                       val.sort ? (
-                        <TableCell align="center" key={i} sx={{ width: 140 }}>
+                        <TableCell align="start" key={i} sx={{ width: 140 }}>
                           <TableSortLabel
                             sx={{
                               "& .MuiTableSortLabel-icon": {
@@ -111,7 +142,7 @@ const Roadmap = () => {
                           </TableSortLabel>
                         </TableCell>
                       ) : (
-                        <TableCell key={i} align="center">
+                        <TableCell key={i} align="start">
                           <Typography
                             sx={{ fontFamily: roboto.style, fontSize: 16 }}
                           >
@@ -122,147 +153,110 @@ const Roadmap = () => {
                     )}
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {ROADMAP_DATA.map((val, i) => (
-                    <TableRow key={i}>
-                      {/* <TableCell align="center">
-                        <Stack
-                          direction={"row"}
-                          spacing={0.4}
-                          alignItems="center"
-                        >
-                          <Avatar sx={{ width: 30, height: 30 }}>
-                            <Image src={val.img} alt="" width={30} />
-                          </Avatar>
+                {loading ? (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={12}>
+                        <Loading
+                          type="bars"
+                          height={20}
+                          width={20}
+                          color={COLORS.BLACK}
+                          className="m-auto"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                ) : (
+                  <TableBody>
+                    {roadmapData?.docs.map((val, i) => (
+                      <TableRow key={i}>
+                        <TableCell align="start">
                           <Typography
-                            sx={{ fontSize: 14, fontFamily: roboto.style }}
+                            sx={{ fontSize: 15, fontFamily: roboto.style }}
                           >
                             {val.name}
                           </Typography>
-                        </Stack>
-                      </TableCell> */}
-                      <TableCell align="center">
-                        <Typography
-                          sx={{ fontSize: 15, fontFamily: roboto.style }}
-                        >
-                          {val.roadmap_name}
-                        </Typography>
-                      </TableCell>
-                      {/* <TableCell align="center">
-                        <Typography
-                          sx={{ fontSize: 14, fontFamily: roboto.style }}
-                        >
-                          {val.tenure}
-                        </Typography>
-                      </TableCell> */}
-                      <TableCell align="center">
-                        <Typography
-                          sx={{ fontSize: 15, fontFamily: roboto.style }}
-                        >
-                          {val.number_Of_Levels}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Stack
-                          direction={"row"}
-                          alignItems={"center"}
-                          spacing={1}
-                        >
-                          {val.tags.slice(0, 2).map((item) => (
-                            <React.Fragment key={item.tag}>
-                              <CustomChip
-                                label={`${item.tag} (${item.count})`}
-                                variant={item.tag}
-                              />
-                            </React.Fragment>
-                          ))}
-                          {val.tags.length > 1 && (
-                            <IconButton
-                              sx={{
-                                fontSize: 14,
-                                color: COLORS.BLACK,
-                                width: 25,
-                                height: 25,
-                              }}
-                              onClick={() => handleToggle(i)}
-                            >
-                              {open === i ? (
-                                <Remove sx={{ fontSize: 12 }} />
-                              ) : (
-                                `
-                             +${val.tags.length - 2}
-                             `
-                              )}
-                            </IconButton>
-                          )}
-                        </Stack>
-                        <Collapse in={open === i} sx={{ mt: 1 }}>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Typography
+                            sx={{ fontSize: 15, fontFamily: roboto.style }}
+                          >
+                            {val.roadmapStepCount}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="center">
                           <Stack
                             direction={"row"}
                             alignItems={"center"}
-                            flexWrap={"wrap"}
                             spacing={1}
                           >
-                            {val.tags.slice(2).map((tag, idx) => (
-                              <CustomChip
-                                label={`${tag.tag} (${tag.count})`}
-                                variant={tag.tag}
-                              />
+                            {val.metadataTags.slice(0, 2).map((item) => (
+                              <React.Fragment key={item.tag}>
+                                <CustomChip
+                                  label={`${item.name} `}
+                                  variant={item.type}
+                                />
+                              </React.Fragment>
                             ))}
+                            {val.metadataTags.length > 2 && (
+                              <IconButton
+                                sx={{
+                                  fontSize: 14,
+                                  color: COLORS.BLACK,
+                                  width: 25,
+                                  height: 25,
+                                }}
+                                onClick={() => handleToggle(i)}
+                              >
+                                {open === i ? (
+                                  <Remove sx={{ fontSize: 12 }} />
+                                ) : (
+                                  `
+                             +${val.metadataTags?.length - 2}
+                             `
+                                )}
+                              </IconButton>
+                            )}
                           </Stack>
-                        </Collapse>
-                      </TableCell>{" "}
-                      <TableCell align="center">
-                        <Typography
-                          sx={{ fontSize: 14, fontFamily: roboto.style }}
-                        >
-                          {moment.unix(val.createdOn).format("DD-MM-YYYY")}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        {/* <Chip
-                          label={
-                            <Typography
-                              sx={{ fontSize: 14, fontFamily: roboto.style }}
+                          <Collapse in={open === i} sx={{ mt: 1 }}>
+                            <Stack
+                              direction={"row"}
+                              alignItems={"center"}
+                              flexWrap={"wrap"}
+                              spacing={1}
                             >
-                              {val.roadmap_status}
-                            </Typography>
-                          }
-                          sx={{
-                            color:
-                              val.roadmap_status ===
-                              ROADMAP_STATUS.PENDING_APPROVAL
-                                ? COLORS.PENDING_TEXT
-                                : ROADMAP_STATUS.PUBLISHED ===
-                                  val.roadmap_status
-                                ? COLORS.DONE_TEXT
-                                : "",
-                            backgroundColor:
-                              val.roadmap_status ===
-                              ROADMAP_STATUS.PENDING_APPROVAL
-                                ? COLORS.PENDING
-                                : ROADMAP_STATUS.PUBLISHED ===
-                                  val.roadmap_status
-                                ? COLORS.DONE
-                                : "",
-                          }}
-                        /> */}
-                        <CustomChip
-                          label={val.roadmap_status}
-                          variant={val.roadmap_status}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          sx={{ fontSize: 14, fontFamily: roboto.style }}
-                          onClick={() => viewRoadmap(val.id)}
-                        >
-                          View Roadmap
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
+                              {val.metadataTags.slice(2).map((tag, idx) => (
+                                <CustomChip
+                                  label={`${tag.name} `}
+                                  variant={tag.type}
+                                />
+                              ))}
+                            </Stack>
+                          </Collapse>
+                        </TableCell>{" "}
+                        <TableCell align="center">
+                          <Typography
+                            sx={{ fontSize: 14, fontFamily: roboto.style }}
+                          >
+                            {moment.unix(val.createdAt).format("DD-MM-YYYY")}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <CustomChip label={val.status} variant={val.status} />
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            sx={{ fontSize: 14, fontFamily: roboto.style }}
+                            onClick={() => viewRoadmap(val.id)}
+                          >
+                            View Roadmap
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                )}
               </Table>
             </TableContainer>
           </Box>

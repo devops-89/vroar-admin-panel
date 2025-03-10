@@ -117,3 +117,23 @@ export const changePasswordValidation = Yup.object({
   oldPassword: Yup.string().required("Please Enter Current Password"),
   newPassword: Yup.string().required("Please Enter New Password"),
 });
+
+export const roadmapValidationSchema = Yup.object().shape({
+  roadmapName: Yup.string().required("Roadmap name is required"),
+  metadataIds: Yup.array()
+    .of(Yup.string().required("Metadata tag is required"))
+    .min(1, "At least one metadata tag is required"),
+  tiles: Yup.array()
+    .of(
+      Yup.object().shape({
+        tileName: Yup.string().required("Tile name is required"),
+
+        contentLibraryId: Yup.string().required(
+          "Content Library ID is required"
+        ),
+        time: Yup.string().required("Time is required"),
+        points: Yup.string().required("Points are required"),
+      })
+    )
+    .min(1, "At least one tile must be added"),
+});

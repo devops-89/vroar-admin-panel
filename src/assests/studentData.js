@@ -49,15 +49,7 @@ export const roadMapTableHeader = [
   {
     label: "Career Tags",
   },
-  {
-    label: "Industry Tags",
-  },
-  {
-    label: "Strengths Tags",
-  },
-  {
-    label: "Soft Skills Tags",
-  },
+
   {
     label: "Progress Percentage",
   },

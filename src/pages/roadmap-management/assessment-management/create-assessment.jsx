@@ -264,7 +264,13 @@ const CreateAssessment = () => {
               <TextField
                 label="Assessment Type"
                 {...params}
-                sx={{ ...loginTextField, mb: 1 }}
+                sx={{
+                  ...loginTextField,
+                  mb: 1,
+                  "& .MuiOutlinedInput-input": {
+                    fontFamily: roboto.style,
+                  },
+                }}
               />
             )}
             options={assessmentTypeArray}
@@ -280,7 +286,13 @@ const CreateAssessment = () => {
             value={assessmentType}
           />
           <TextField
-            sx={{ ...loginTextField, mb: 1 }}
+            sx={{
+              ...loginTextField,
+              mb: 1,
+              "& .MuiOutlinedInput-input": {
+                fontFamily: roboto.style,
+              },
+            }}
             fullWidth
             label="Assessment Name"
             onChange={(e) => setAssessmentName(e.target.value)}
@@ -290,7 +302,12 @@ const CreateAssessment = () => {
               <TextField
                 {...params}
                 label="Select Role"
-                sx={{ ...loginTextField }}
+                sx={{
+                  ...loginTextField,
+                  "& .MuiOutlinedInput-input": {
+                    fontFamily: roboto.style,
+                  },
+                }}
               />
             )}
             renderOption={(props, option) => (
@@ -334,14 +351,25 @@ const CreateAssessment = () => {
                 <TextField
                   {...params}
                   label="Question Type"
-                  sx={{ ...loginTextField }}
+                  sx={{
+                    ...loginTextField,
+                    "& .MuiOutlinedInput-input": {
+                      fontFamily: roboto.style,
+                    },
+                  }}
                 />
               )}
             />
 
             <TextField
               label="Question"
-              sx={{ ...loginTextField, mt: 1 }}
+              sx={{
+                ...loginTextField,
+                mt: 1,
+                "& .MuiOutlinedInput-input": {
+                  fontFamily: roboto.style,
+                },
+              }}
               fullWidth
               value={val.question}
               onChange={(e) => handleInputChange(i, "question", e.target.value)}
@@ -358,7 +386,14 @@ const CreateAssessment = () => {
                     sx={{ mt: 1 }}
                   >
                     <TextField
-                      sx={{ ...loginTextField, mt: 1, flexGrow: 1 }}
+                      sx={{
+                        ...loginTextField,
+                        mt: 1,
+                        flexGrow: 1,
+                        "& .MuiOutlinedInput-input": {
+                          fontFamily: roboto.style,
+                        },
+                      }}
                       fullWidth
                       label={`Option ${index + 1}`}
                       value={item.optionText}

@@ -100,7 +100,12 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
           <Stack alignItems={"center"} spacing={2} sx={{ mt: 2 }}>
             <TextField
               label="Enter Tile Name"
-              sx={{ ...loginTextField }}
+              sx={{
+                ...loginTextField,
+                "& .MuiOutlinedInput-input": {
+                  fontFamily: roboto.style,
+                },
+              }}
               fullWidth
               value={val.tileName}
               onChange={(e) =>
@@ -112,7 +117,12 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  sx={{ ...loginTextField }}
+                  sx={{
+                    ...loginTextField,
+                    "& .MuiOutlinedInput-input": {
+                      fontFamily: roboto.style,
+                    },
+                  }}
                   label="Select Content Type"
                 />
               )}
@@ -135,7 +145,12 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  sx={{ ...loginTextField }}
+                  sx={{
+                    ...loginTextField,
+                    "& .MuiOutlinedInput-input": {
+                      fontFamily: roboto.style,
+                    },
+                  }}
                   label="Select Content"
                 />
               )}
@@ -155,8 +170,14 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
             />
 
             <TextField
-              label="Enter Time"
-              sx={{ ...loginTextField }}
+              label="Enter Time (in minutes)"
+              sx={{
+                ...loginTextField,
+                "& .MuiOutlinedInput-input": {
+                  fontFamily: roboto.style,
+                },
+              }}
+              type="number"
               fullWidth
               value={val.time}
               onChange={(e) =>
@@ -166,7 +187,12 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
 
             <TextField
               label="Enter Points"
-              sx={{ ...loginTextField }}
+              sx={{
+                ...loginTextField,
+                "& .MuiOutlinedInput-input": {
+                  fontFamily: roboto.style,
+                },
+              }}
               fullWidth
               value={val.points}
               onChange={(e) =>

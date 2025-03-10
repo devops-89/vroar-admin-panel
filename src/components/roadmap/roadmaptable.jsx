@@ -1,10 +1,8 @@
 import DeletemetaData from "@/assests/modalCalling/metaData/deleteMetaData";
-import EditMetaData from "@/assests/modalCalling/metaData/editMetaData";
-import { metaDataHeader } from "@/assests/roadmapData";
 import { showModal } from "@/redux/reducers/modal";
 import { COLORS, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { Delete, Edit, Person } from "@mui/icons-material";
+import { Person } from "@mui/icons-material";
 import {
   Avatar,
   IconButton,
@@ -18,11 +16,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React from "react";
-import { useDispatch } from "react-redux";
-import { FaRegEdit } from "react-icons/fa";
-import Image from "next/image";
 import moment from "moment";
+import Image from "next/image";
+import { useState } from "react";
+import { FaRegEdit } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 const RoadmapTable = ({
   tableHeader,
   tableData,
@@ -30,13 +28,11 @@ const RoadmapTable = ({
   statusHandler,
 }) => {
   const dispatch = useDispatch();
-  // const editMetaData = (value) => {
-  //   dispatch(showModal(<EditMetaData value={value} />));
-  // };
 
   const deleteModal = (value) => {
     dispatch(showModal(<DeletemetaData value={value} />));
   };
+
   return (
     <div>
       <TableContainer>

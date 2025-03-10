@@ -199,7 +199,7 @@ export const ROADMAP_STATUS = {
   ROADMAP_REQUESTED: "Roadmap Requested",
   PAYMENT_DONE: "Payment Done",
   SIGNED_UP: "Signed Up",
-  PUBLISHED: "Published",
+  PUBLISHED: "PUBLISHED",
   PENDING_APPROVAL: "Pending Approval",
   UPCOMING: "UPCOMING",
   In_PROGRESS: "In Progress",
