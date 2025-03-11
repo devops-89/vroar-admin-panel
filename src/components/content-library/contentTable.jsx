@@ -129,7 +129,7 @@ const ContentTable = ({
                       {val.metadataTags.slice(0, 1).map((tag, i) => (
                         <CustomChip variant={tag.type} label={tag.name} />
                       ))}
-                      {val.metadataTags.length > 2 && (
+                      {val.metadataTags.length > 1 && (
                         <Button
                           sx={{
                             color: COLORS.BLACK,
@@ -141,7 +141,7 @@ const ContentTable = ({
                           {open === i ? (
                             <Remove sx={{ fontSize: 12 }} />
                           ) : (
-                            `+${val.metadataTags.length - 2}`
+                            `+${val.metadataTags.length - 1}`
                           )}
                         </Button>
                       )}
@@ -156,8 +156,8 @@ const ContentTable = ({
                         rowGap={1.5}
                         columnGap={2}
                       >
-                        {val.metadataTags.slice(2).map((tag, i) => (
-                          <CustomChip label={tag.name} variant={tag.type} />
+                        {val.metadataTags.slice(1).map((tag, i) => (
+                          <CustomChip label={tag.name} variant={tag.type} key={i} />
                         ))}
                       </Stack>
                     </Collapse>

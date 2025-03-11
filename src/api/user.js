@@ -81,5 +81,16 @@ const userController = {
       throw error;
     }
   },
+  assignRoadmapJourney: async (data) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "/api/userRoadmapJourney/assign",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;

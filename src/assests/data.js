@@ -456,4 +456,48 @@ export const data = {
       roadmapName: "Data Science",
     },
   ],
+  points: [
+    {
+      allocatedDate: 1738922540,
+      allocatedTime: "07:35PM",
+      allocatedFor: "Level 2 Completion",
+      allocatedBy: "Admin",
+      points: "50",
+    },
+    {
+      allocatedDate: 1738922540,
+      allocatedTime: "07:35PM",
+      allocatedFor: "Level 2 Completion",
+      allocatedBy: "System",
+      points: "50",
+    },
+    {
+      allocatedDate: 1738922540,
+      allocatedTime: "07:35PM",
+      allocatedFor: "Level 2 Completion",
+      allocatedBy: "Admin",
+      points: "50",
+    },
+    {
+      allocatedDate: 1738922540,
+      allocatedTime: "07:35PM",
+      allocatedFor: "Level 2 Completion",
+      allocatedBy: "System",
+      points: "50",
+    },
+    {
+      allocatedDate: 1738922540,
+      allocatedTime: "07:35PM",
+      allocatedFor: "Level 2 Completion",
+      allocatedBy: "Admin",
+      points: "50",
+    },
+    {
+      allocatedDate: 1738922540,
+      allocatedTime: "07:35PM",
+      allocatedFor: "Level 2 Completion",
+      allocatedBy: "System",
+      points: "50",
+    },
+  ],
 };

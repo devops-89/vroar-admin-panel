@@ -1,9 +1,8 @@
 import userController from "@/api/user";
 import AddRoadmap from "@/assests/modalCalling/user/addRoadmap";
-import { studentTableData } from "@/assests/studentData";
+import RewardPoints from "@/assests/modalCalling/user/rewardPoints";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import TabPanel from "@/components/tabPanel";
-import InternshipInterested from "@/components/user/interestedInternship/view";
 import Notes from "@/components/user/notes";
 import Points from "@/components/user/points";
 import Roadmap from "@/components/user/roadmap";
@@ -44,6 +43,10 @@ const UserProfile = () => {
 
   const addRoadmapModal = () => {
     dispatch(showModal(<AddRoadmap />));
+  };
+
+  const rewardPoints = () => {
+    dispatch(showModal(<RewardPoints />));
   };
 
   const dispatch = useDispatch();
@@ -114,6 +117,21 @@ const UserProfile = () => {
                   Add Roadmap
                 </Button>
               )}
+
+              {tabsValue === PROFILE_DATA.POINTS && (
+                <Button
+                  startIcon={<AddCircleOutline />}
+                  sx={{
+                    color: COLORS.WHITE,
+                    backgroundColor: COLORS.PRIMARY,
+
+                    fontFamily: roboto.style,
+                  }}
+                  onClick={rewardPoints}
+                >
+                  Reward Points
+                </Button>
+              )}
             </Stack>
             <Box sx={{ mt: 2 }}>
               <Tabs
@@ -169,7 +187,7 @@ const UserProfile = () => {
               </TabPanel>
               <TabPanel value={value} index={4}>
                 <Box sx={{ mt: 2 }}>
-                  <InternshipInterested />
+                  
                 </Box>
               </TabPanel>
             </Box>

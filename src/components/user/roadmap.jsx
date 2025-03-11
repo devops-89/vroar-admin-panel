@@ -3,6 +3,7 @@ import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { LinearProgress } from "@mui/joy";
 import {
+  Box,
   Button,
   Chip,
   Collapse,
@@ -18,9 +19,12 @@ import {
 } from "@mui/material";
 import moment from "moment";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import UserRoadmapProgress from "./user-roadmap-progress";
 import { data } from "@/assests/data";
+import { AddCircleOutlined, Error } from "@mui/icons-material";
+import { showModal } from "@/redux/reducers/modal";
+import AddRoadmap from "@/assests/modalCalling/user/addRoadmap";
 
 const Roadmap = () => {
   const user = useSelector((state) => state.USER);
@@ -28,9 +32,11 @@ const Roadmap = () => {
   const [industryOpen, setIndustryOpen] = useState(null);
   const [strengthOpen, setStrengthsOpen] = useState(null);
   const [softSkillsOpen, setSkillsOpen] = useState(null);
+  const [roadmapData, setRoadmapData] = useState([]);
   const handletoggle = (index) => {
     setOpen((prev) => (prev === index ? null : index));
   };
+  const dispatch = useDispatch();
 
   const IndustryOpenHandler = (index) => {
     setIndustryOpen((prev) => (prev === index ? null : index));
@@ -42,6 +48,56 @@ const Roadmap = () => {
   const softSkillsOpenHandler = (index) => {
     setSkillsOpen((prev) => (prev === index ? null : index));
   };
+
+  const handleAddRoadmap = () => {
+    dispatch(showModal(<AddRoadmap />));
+  };
+
+  if (Roadmap.length === 0) {
+    return (
+      <Box
+        sx={{
+          height: 300,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Box sx={{ textAlign: "center", width: 450 }}>
+          <Error sx={{ color: COLORS.grey, fontSize: 50 }} />
+          <Typography
+            sx={{
+              mt: 1,
+              textAlign: "center",
+              fontFamily: roboto.style,
+              fontSize: 20,
+              fontWeight: 550,
+            }}
+          >
+            No Roadmap Assigned
+          </Typography>
+          <Typography sx={{ mt: 1, fontFamily: roboto.style }}>
+            No roadmap is currently assigned.It needs to be assigned.
+          </Typography>
+          <Typography sx={{ mt: 1, fontFamily: roboto.style }}>
+            Click the CTA to assign a roadmap.
+          </Typography>
+          <Button
+            startIcon={<AddCircleOutlined sx={{ color: COLORS.WHITE }} />}
+            sx={{
+              backgroundColor: COLORS.PRIMARY,
+              mt: 2,
+              fontFamily: roboto.style,
+              color: COLORS.WHITE,
+            }}
+            onClick={handleAddRoadmap}
+          >
+            Add Roadmap
+          </Button>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <div>
@@ -86,7 +142,7 @@ const Roadmap = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.roadMapData.map((val, i) => (
+            {roadmapData.map((val, i) => (
               <TableRow key={i}>
                 <TableCell align="center">
                   <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>

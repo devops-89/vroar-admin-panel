@@ -165,15 +165,16 @@ const ViewRoadmap = () => {
                         label: "Name",
                         value: data.name,
                       },
-                      // {
-                      //   label: "content Type",
-                      //   value: data.contentType,
-                      // },
-                      // data.contentType === CONTENT_TYPE.ARTICLE_PDF && {
-                      //   label: "Uploaded Pdf",
-                      //   value: data.fileName,
-                      //   url: data.filePath,
-                      // },
+                      {
+                        label: "content Type",
+                        value: data.content?.contentType,
+                      },
+                      data.content?.contentType ===
+                        CONTENT_TYPE.ARTICLE_PDF && {
+                        label: "Uploaded Pdf",
+                        value: data.content?.contentFileName,
+                        url: data.content?.contentLink,
+                      },
                       {
                         label: "Time Required",
                         value: data.time,
@@ -220,6 +221,7 @@ const ViewRoadmap = () => {
                                 component={"a"}
                                 href={val.url}
                                 target="_blank"
+                                rel="noopener noreferrer"
                               >
                                 {val.value}
                               </Typography>

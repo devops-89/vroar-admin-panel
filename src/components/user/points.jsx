@@ -17,6 +17,7 @@ import { COLORS } from "@/utils/enum";
 import { PointsHeader } from "@/assests/studentData";
 import { useSelector } from "react-redux";
 import moment from "moment";
+import { data } from "@/assests/data";
 const Points = () => {
   const user = useSelector((state) => state.USER);
 
@@ -82,7 +83,7 @@ const Points = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {user?.points.map((val, i) => (
+              {data?.points.map((val, i) => (
                 <TableRow key={i}>
                   <TableCell>
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>

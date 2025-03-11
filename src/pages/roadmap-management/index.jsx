@@ -95,7 +95,7 @@ const Roadmap = () => {
                   url: "/roadmap-management",
                 },
                 {
-                  label: "Create/View Roadmaps",
+                  label: "Create/View Roadmap",
                   url: "/roadmap-management",
                 },
               ]}
@@ -135,7 +135,7 @@ const Roadmap = () => {
                             }}
                           >
                             <Typography
-                              sx={{ fontFamily: roboto.style, fontSize: 16 }}
+                              sx={{ fontFamily: roboto.style, fontSize: 14 }}
                             >
                               {val.label}
                             </Typography>
@@ -144,7 +144,7 @@ const Roadmap = () => {
                       ) : (
                         <TableCell key={i} align="start">
                           <Typography
-                            sx={{ fontFamily: roboto.style, fontSize: 16 }}
+                            sx={{ fontFamily: roboto.style, fontSize: 14 }}
                           >
                             {val.label}
                           </Typography>
@@ -247,7 +247,7 @@ const Roadmap = () => {
                         </TableCell>
                         <TableCell>
                           <Button
-                            sx={{ fontSize: 14, fontFamily: roboto.style }}
+                            sx={{ fontSize: 12, fontFamily: roboto.style }}
                             onClick={() => viewRoadmap(val.id)}
                           >
                             View Roadmap

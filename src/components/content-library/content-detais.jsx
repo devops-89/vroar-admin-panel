@@ -79,6 +79,7 @@ const ContentDetails = () => {
                 direction={"row"}
                 alignItems={"center"}
                 spacing={Array.isArray(val.value) ? 10 : 10}
+                key={i}
               >
                 <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
                   {val.label}

@@ -99,18 +99,16 @@ export const AddAdListValidationSchema = Yup.object({
 
 export const studentJourneyValidationSchema = Yup.object({
   journey_name: Yup.string().required("Please Enter Journey Name"),
-  careerRoadmap: Yup.array()
-    .min(1, "Please Select Career Roadmap")
-    .required("Please Select Career Roadmap"),
-  strengthRoadmap: Yup.array()
-    .min(1, "Please Select Strength Roadmap")
-    .required("Please Select Strength Roadmap"),
-  industryRoadmap: Yup.array()
-    .min(1, "Please Select Industry Roadmap")
-    .required("Please Select Industry Roadmap"),
-  softSkillsRoadmap: Yup.array()
-    .min(1, "Please Select Soft Skills Roadmap")
-    .required("Please Select Soft Skills Roadmap"),
+  // careerRoadmap: Yup.array().min(1, "Please Select Career Roadmap").optional(),
+  // strengthRoadmap: Yup.array()
+  //   .min(1, "Please Select Strength Roadmap")
+  //   .optional(),
+  // industryRoadmap: Yup.array()
+  //   .min(1, "Please Select Industry Roadmap")
+  //   .optional(),
+  // softSkillsRoadmap: Yup.array()
+  //   .min(1, "Please Select Soft Skills Roadmap")
+  //   .optional(),
 });
 
 export const changePasswordValidation = Yup.object({
@@ -136,4 +134,9 @@ export const roadmapValidationSchema = Yup.object().shape({
       })
     )
     .min(1, "At least one tile must be added"),
+});
+
+export const pointsValidation = Yup.object().shape({
+  points: Yup.string().required("Please Enter Points"),
+  reason: Yup.string().required("Please Enter Reason"),
 });
