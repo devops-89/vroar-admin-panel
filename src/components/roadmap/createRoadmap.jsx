@@ -31,6 +31,7 @@ const Createroadmap = () => {
       contentLibraryId: "",
       time: "",
       points: "",
+      description: "",
     },
   ]);
   const [state, setState] = useState({

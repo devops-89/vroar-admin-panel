@@ -131,6 +131,7 @@ export const roadmapValidationSchema = Yup.object().shape({
         ),
         time: Yup.string().required("Time is required"),
         points: Yup.string().required("Points are required"),
+        description: Yup.string().required("Description is Required"),
       })
     )
     .min(1, "At least one tile must be added"),
