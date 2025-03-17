@@ -53,6 +53,9 @@ export const roadMapTableHeader = [
   {
     label: "Progress Percentage",
   },
+  {
+    label: "Action",
+  },
 ];
 
 export const PointsHeader = [

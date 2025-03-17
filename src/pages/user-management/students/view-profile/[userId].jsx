@@ -186,9 +186,7 @@ const UserProfile = () => {
                 </Box>
               </TabPanel>
               <TabPanel value={value} index={4}>
-                <Box sx={{ mt: 2 }}>
-                  
-                </Box>
+                <Box sx={{ mt: 2 }}></Box>
               </TabPanel>
             </Box>
           </Card>

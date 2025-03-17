@@ -9,6 +9,7 @@ import {
   ROADMAP_STATUS,
   ROADMAP_TENURE,
   USER_GROUP,
+  USER_ROADMAP_REVIEW_STATUS,
   USER_STATUS,
 } from "@/utils/enum";
 
@@ -498,6 +499,32 @@ export const data = {
       allocatedFor: "Level 2 Completion",
       allocatedBy: "System",
       points: "50",
+    },
+  ],
+  userRoadmapData: [
+    {
+      tileNumber: 4,
+      tileName: "Assessment | What is Data Analytics ?",
+      completionDate: 1738922540,
+      review_status: USER_ROADMAP_REVIEW_STATUS.PROVIDE_FEEDBACK,
+    },
+    {
+      tileNumber: 2,
+      tileName: "Assessment | What is Data Analytics ?",
+      completionDate: 1738922540,
+      review_status: USER_ROADMAP_REVIEW_STATUS.PROVIDE_FEEDBACK,
+    },
+    {
+      tileNumber: 3,
+      tileName: "Assessment | What is Data Analytics ?",
+      completionDate: 1738922540,
+      review_status: USER_ROADMAP_REVIEW_STATUS.FEEDBACK_PROVIDED,
+    },
+    {
+      tileNumber: 1,
+      tileName: "Assessment | What is Data Analytics ?",
+      completionDate: 1738922540,
+      review_status: USER_ROADMAP_REVIEW_STATUS.PROVIDE_FEEDBACK,
     },
   ],
 };

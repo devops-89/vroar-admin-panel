@@ -29,7 +29,7 @@ const Layout = ({ children }) => {
         <link href="/favicon.png" rel="icon" />
       </Head>
       <Analytics />
-      {router.pathname !== "/" && (
+      {/* {router.pathname !== "/" && (
         <Box sx={{ position: "relative" }}>
           <IconButton
             sx={{
@@ -56,7 +56,7 @@ const Layout = ({ children }) => {
             />
           </IconButton>
         </Box>
-      )}
+      )} */}
       {router.pathname !== "/" && <Header />}
       {router.pathname !== "/" &&
         (sidebarCollapse ? <CollapseSidebar /> : <Sidebar />)}

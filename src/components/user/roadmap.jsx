@@ -7,6 +7,7 @@ import {
   Button,
   Chip,
   Collapse,
+  IconButton,
   Stack,
   Table,
   TableBody,
@@ -22,17 +23,23 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserRoadmapProgress from "./user-roadmap-progress";
 import { data } from "@/assests/data";
-import { AddCircleOutlined, Error } from "@mui/icons-material";
+import {
+  AddCircleOutlined,
+  Error,
+  VisibilityOutlined,
+} from "@mui/icons-material";
 import { showModal } from "@/redux/reducers/modal";
 import AddRoadmap from "@/assests/modalCalling/user/addRoadmap";
+import { useRouter } from "next/router";
 
 const Roadmap = () => {
+  const router = useRouter();
   const user = useSelector((state) => state.USER);
   const [open, setOpen] = useState(null);
   const [industryOpen, setIndustryOpen] = useState(null);
   const [strengthOpen, setStrengthsOpen] = useState(null);
   const [softSkillsOpen, setSkillsOpen] = useState(null);
-  const [roadmapData, setRoadmapData] = useState([]);
+  const [roadmapData, setRoadmapData] = useState(data.roadMapData);
   const handletoggle = (index) => {
     setOpen((prev) => (prev === index ? null : index));
   };
@@ -53,7 +60,11 @@ const Roadmap = () => {
     dispatch(showModal(<AddRoadmap />));
   };
 
-  if (Roadmap.length === 0) {
+  const handleRouter = () => {
+    router.push(`/user-management/students/roadmap-details/${2}`);
+  };
+
+  if (roadmapData.length === 0) {
     return (
       <Box
         sx={{
@@ -126,7 +137,7 @@ const Roadmap = () => {
                     </TableSortLabel>
                   </TableCell>
                 ) : (
-                  <TableCell key={i} align="start" size="small">
+                  <TableCell key={i} align="center" size="small">
                     <Typography
                       sx={{
                         fontSize: 15,
@@ -155,7 +166,12 @@ const Roadmap = () => {
                   </Typography>
                 </TableCell>
                 <TableCell align="center" size="small">
-                  <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                    spacing={1}
+                  >
                     {val?.careerTags.slice(0, 3).map((item, index) => (
                       <Chip
                         sx={{
@@ -222,6 +238,11 @@ const Roadmap = () => {
 
                 <TableCell align="center">
                   <UserRoadmapProgress progress={val.progress} />
+                </TableCell>
+                <TableCell align="center">
+                  <IconButton onClick={handleRouter}>
+                    <VisibilityOutlined />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}

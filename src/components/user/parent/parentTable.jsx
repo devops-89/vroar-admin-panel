@@ -14,7 +14,7 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Typography
+  Typography,
 } from "@mui/material";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -102,7 +102,7 @@ const ParentTable = ({ userData, loading }) => {
 
                   <TableCell>
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {val.relation}
+                      {val.kids?.relationWithGuardian || "--"}
                     </Typography>
                   </TableCell>
                   <TableCell>
