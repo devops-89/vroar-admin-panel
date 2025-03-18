@@ -1,7 +1,8 @@
 import { metaDataController } from "@/api/metaDataController";
-import { ROADMAP_DATA } from "@/assests/roadmapData";
+import ViewPdf from "@/assests/modalCalling/View-pdf";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
+import { showModal } from "@/redux/reducers/modal";
 import { COLORS, CONTENT_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import withAuth from "@/utils/withAuth";
@@ -18,6 +19,7 @@ import {
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 
 const ViewRoadmap = () => {
   const router = useRouter();
@@ -44,6 +46,10 @@ const ViewRoadmap = () => {
       viewRoadmapDetails();
     }
   }, [roadmapId]);
+  const dispatch = useDispatch();
+  const pdfviewer = (fileUrl) => {
+    dispatch(showModal(<ViewPdf fileUrl={fileUrl} />));
+  };
 
   console.log("roadmap", roadmapData);
 
@@ -54,7 +60,7 @@ const ViewRoadmap = () => {
     },
     {
       label: "Tags",
-      value: roadmapData?.metadataTags.map((data) => data.name).join(" , "),
+      value: roadmapData?.metadataTags?.map((data) => data.name).join(" , "),
     },
     {
       label: "Tiles",
@@ -169,12 +175,22 @@ const ViewRoadmap = () => {
                         label: "content Type",
                         value: data.content?.contentType,
                       },
-                      data.content?.contentType ===
-                        CONTENT_TYPE.ARTICLE_PDF && {
-                        label: "Uploaded Pdf",
-                        value: data.content?.contentFileName,
-                        url: data.content?.contentLink,
-                      },
+                      data.content?.contentType === CONTENT_TYPE.ARTICLE_PDF ||
+                      data?.content?.contentType ===
+                        CONTENT_TYPE.ARTICLE_WRITEUP ||
+                      data?.content?.contentType === CONTENT_TYPE.ASSIGNMENT
+                        ? {
+                            label: "Uploaded Pdf",
+                            value: data.content?.contentFileName,
+                            url: data.content?.contentLink,
+                            type: data?.content?.contentType,
+                          }
+                        : {
+                            label: data?.content?.contentType,
+                            value: data.content?.contentFileName,
+                            url: data.content?.contentLink,
+                            type: data?.content?.contentType,
+                          },
                       {
                         label: "Time Required",
                         value: data.time,
@@ -216,15 +232,35 @@ const ViewRoadmap = () => {
                               >
                                 {val.label}
                               </Typography>
-                              <Typography
-                                sx={{ fontSize: 14, fontFamily: roboto.style }}
-                                component={"a"}
-                                href={val.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {val.value}
-                              </Typography>
+                              {val.type === CONTENT_TYPE.ARTICLE_PDF ||
+                              val.type === CONTENT_TYPE.ARTICLE_WRITEUP ||
+                              val.type === CONTENT_TYPE.ASSIGNMENT ? (
+                                <Typography
+                                  sx={{
+                                    fontSize: 14,
+                                    fontFamily: roboto.style,
+                                    cursor: "pointer",
+                                    textDecoration: "underline",
+                                    color: COLORS.DARKBLUE,
+                                  }}
+                                  onClick={() => pdfviewer(val.url)}
+                                >
+                                  {val.value}
+                                </Typography>
+                              ) : (
+                                <Typography
+                                  sx={{
+                                    fontSize: 14,
+                                    fontFamily: roboto.style,
+                                  }}
+                                  component={"a"}
+                                  href={val.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {val.value}
+                                </Typography>
+                              )}
                             </Stack>
                           ))}
                         </Stack>

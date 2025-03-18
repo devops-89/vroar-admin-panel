@@ -51,6 +51,10 @@ const Sidebar = () => {
           overflowY: "auto",
           zIndex: 999,
           transition: "width 0.5s ease all",
+          "& ::-webkit-scrollbar-thumb": {
+            width: "5px",
+            backgroundColor: COLORS.PRIMARY,
+          },
         }}
       >
         <Box

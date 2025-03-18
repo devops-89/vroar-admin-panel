@@ -6,6 +6,7 @@ import TabPanel from "@/components/tabPanel";
 import Notes from "@/components/user/notes";
 import Points from "@/components/user/points";
 import Roadmap from "@/components/user/roadmap";
+import Sessions from "@/components/user/sessions";
 import StudentProfile from "@/components/user/studentProfile";
 import Wrapper from "@/components/wrapper";
 import { showModal } from "@/redux/reducers/modal";
@@ -187,6 +188,11 @@ const UserProfile = () => {
               </TabPanel>
               <TabPanel value={value} index={4}>
                 <Box sx={{ mt: 2 }}></Box>
+              </TabPanel>
+              <TabPanel value={value} index={5}>
+                <Box sx={{ mt: 2 }}>
+                  <Sessions />
+                </Box>
               </TabPanel>
             </Box>
           </Card>

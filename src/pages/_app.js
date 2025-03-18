@@ -8,14 +8,15 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import ToastBar from "@/components/toastBar";
 import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-
+import "@react-pdf-viewer/core/lib/styles/index.css";
+// import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 export default function App({ Component, pageProps }) {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       const decoded = jwtDecode(token);
 
-      console.log("decoded", decoded);
+      // console.log("decoded", decoded);
     }
   }, []);
 

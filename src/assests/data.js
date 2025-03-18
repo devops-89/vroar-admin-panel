@@ -527,4 +527,36 @@ export const data = {
       review_status: USER_ROADMAP_REVIEW_STATUS.PROVIDE_FEEDBACK,
     },
   ],
+  sessionsData: [
+    {
+      mentorName: "Kunal Sharma",
+      sessionDate: 1738922540,
+      sessionTime: "4:30 AM",
+    },
+    {
+      mentorName: "Kunal Sharma",
+      sessionDate: 1738922540,
+      sessionTime: "4:30 AM",
+    },
+    {
+      mentorName: "Kunal Sharma",
+      sessionDate: 1738922540,
+      sessionTime: "4:30 AM",
+    },
+    {
+      mentorName: "Kunal Sharma",
+      sessionDate: 1738922540,
+      sessionTime: "4:30 AM",
+    },
+    {
+      mentorName: "Kunal Sharma",
+      sessionDate: 1738922540,
+      sessionTime: "4:30 AM",
+    },
+    {
+      mentorName: "Kunal Sharma",
+      sessionDate: 1738922540,
+      sessionTime: "4:30 AM",
+    },
+  ],
 };
