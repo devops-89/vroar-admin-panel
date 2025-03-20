@@ -17,7 +17,7 @@ export const loginTextField = {
   },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      border: "1px solid #d7d7d7",
+      border: "1px solid #d7d7d7",  
       padding: "12px",
     },
     "&:hover fieldset": {

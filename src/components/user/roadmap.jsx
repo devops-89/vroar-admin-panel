@@ -71,6 +71,11 @@ const Roadmap = () => {
       });
   };
 
+  useEffect(() => {
+    if (body) {
+      getAssignedRoadmap();
+    }
+  }, []);
   if (roadmapData?.docs.length === 0) {
     return (
       <Box
@@ -116,12 +121,6 @@ const Roadmap = () => {
       </Box>
     );
   }
-
-  useEffect(() => {
-    if (body) {
-      getAssignedRoadmap();
-    }
-  }, [body]);
 
   return (
     <div>
