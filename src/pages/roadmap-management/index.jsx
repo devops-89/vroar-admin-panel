@@ -22,6 +22,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   TableSortLabel,
   Typography,
@@ -41,6 +42,25 @@ const Roadmap = () => {
   let body = {
     page: page,
     pageSize: pageSize,
+  };
+  const pageChangeHandler = (newPage) => {
+    setLoading(true);
+    setPage(newPage);
+    if (newPage) {
+      body.page = newPage + 1;
+    }
+    getAllRoadmapJourney(body);
+  };
+
+  const pageSizeHandler = (e) => {
+    const rowsPerPage = e.target.value;
+    setLoading(true);
+
+    setPageSize(rowsPerPage);
+    if (rowsPerPage) {
+      body.pageSize = rowsPerPage;
+    }
+    getAllRoadmapJourney(body);
   };
 
   const getAllRoadmapJourney = (body) => {
@@ -75,8 +95,6 @@ const Roadmap = () => {
       getAllRoadmapJourney(body);
     }
   }, []);
-
-  console.log("test", roadmapData);
 
   return (
     <div>
@@ -173,14 +191,14 @@ const Roadmap = () => {
                       <TableRow key={i}>
                         <TableCell align="start">
                           <Typography
-                            sx={{ fontSize: 15, fontFamily: roboto.style }}
+                            sx={{ fontSize: 14, fontFamily: roboto.style }}
                           >
                             {val.name}
                           </Typography>
                         </TableCell>
                         <TableCell align="center">
                           <Typography
-                            sx={{ fontSize: 15, fontFamily: roboto.style }}
+                            sx={{ fontSize: 14, fontFamily: roboto.style }}
                           >
                             {val.roadmapStepCount}
                           </Typography>
@@ -258,6 +276,23 @@ const Roadmap = () => {
                   </TableBody>
                 )}
               </Table>
+              {!loading && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <TablePagination
+                    page={page}
+                    rowsPerPage={pageSize}
+                    count={roadmapData?.totalDocs}
+                    onRowsPerPageChange={pageSizeHandler}
+                    onPageChange={pageChangeHandler}
+                  />
+                </Box>
+              )}
             </TableContainer>
           </Box>
         </Card>

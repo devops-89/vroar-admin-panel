@@ -62,7 +62,7 @@ export const ROADMAP_HEADER = [
   //   label: "Tenure",
   // },
   {
-    label: "No. of Levels",
+    label: "Tiles",
   },
   {
     label: "Tags",

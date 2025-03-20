@@ -1,3 +1,4 @@
+import userController from "@/api/user";
 import { data } from "@/assests/data";
 import Wrapper from "@/components/wrapper";
 import { COLORS, USER_ROADMAP_REVIEW_STATUS } from "@/utils/enum";
@@ -15,9 +16,27 @@ import {
 } from "@mui/material";
 import moment from "moment";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const UserRoadmapDetails = () => {
   const router = useRouter();
+  const { roadmapId, userId } = router.query;
+
+  const body = {
+    roadmapId: roadmapId,
+    userId: userId,
+  };
+  const getUserRoadmapDetails = () => {
+    userController
+      .getUserRoadmapDetails(body)
+      .then((res) => {
+        console.log("res", res);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
   const tableHeaderData = [
     {
       label: "Tile Number",
@@ -32,6 +51,12 @@ const UserRoadmapDetails = () => {
       label: "Review Status",
     },
   ];
+
+  useEffect(() => {
+    if (roadmapId && userId) {
+      getUserRoadmapDetails();
+    }
+  }, [roadmapId, userId]);
   return (
     <div>
       <Wrapper>

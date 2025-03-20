@@ -106,5 +106,16 @@ const userController = {
       throw error;
     }
   },
+  getUserRoadmapDetails: async (data) => {
+    const { roadmapId, userId } = data;
+    try {
+      let result = await userSecuredApi.userSecuredApi.get(
+        `/api/userRoadmapJourney/getRoadmap/${roadmapId}?userId=${userId}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;

@@ -7,6 +7,7 @@ import { roboto } from "@/utils/fonts";
 import {
   AddCircleOutlined,
   Error,
+  Remove,
   VisibilityOutlined,
 } from "@mui/icons-material";
 import {
@@ -32,12 +33,13 @@ import { useDispatch, useSelector } from "react-redux";
 import UserRoadmapProgress from "./user-roadmap-progress";
 import userController from "@/api/user";
 import CustomChip from "../customChip";
+import Loading from "react-loading";
 
 const Roadmap = () => {
   const router = useRouter();
   const userId = useSelector((state) => state.USER.id);
   const [open, setOpen] = useState(null);
-  console.log("user", userId);
+  // console.log("user", userId);
   const [roadmapData, setRoadmapData] = useState(null);
   const handletoggle = (index) => {
     setOpen((prev) => (prev === index ? null : index));
@@ -48,11 +50,14 @@ const Roadmap = () => {
     dispatch(showModal(<AddRoadmap />));
   };
 
-  const handleRouter = () => {
-    router.push(`/user-management/students/roadmap-details/${2}`);
+  const handleRouter = (roadmapId) => {
+    router.push(
+      `/user-management/students/roadmap-details/${roadmapId}?userId=${userId}`
+    );
   };
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [loading, setLoading] = useState(true);
   const body = {
     page: page,
     pageSize: pageSize,
@@ -65,6 +70,7 @@ const Roadmap = () => {
         // console.log("res", res);
         const response = res.data.data;
         setRoadmapData(response);
+        setLoading(false);
       })
       .catch((err) => {
         console.log("err", err);
@@ -164,77 +170,99 @@ const Roadmap = () => {
               )}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {roadmapData?.docs.map((val, i) => {
-              const percentage = (val.completedSteps / val.totalSteps) * 100;
-              return (
-                <TableRow key={i}>
-                  <TableCell align="center">
-                    <Typography
-                      sx={{
-                        fontSize: 14,
-                        fontFamily: roboto.style,
-                        textTransform: "capitalize",
-                      }}
-                    >
-                      {val.name}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                      {moment.unix(val.assignedDate).format("DD-MM-YYYY")}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center" size="small">
-                    <Stack
-                      direction={"row"}
-                      alignItems={"center"}
-                      justifyContent={"center"}
-                      spacing={1}
-                    >
-                      {val?.metadataTags?.slice(0, 2).map((item, index) => (
-                        <CustomChip label={item.name} variant={item.type} />
-                      ))}
-                      {val.metadataTags.length > 2 && (
-                        <Button
-                          sx={{
-                            width: 20,
-                            color: COLORS.BLACK,
-                            fontFamily: roboto.style,
-                            fontSize: 15,
-                          }}
-                          onClick={() => handletoggle(i)}
-                        >
-                          + {val.metadataTags.length - 2}
-                        </Button>
-                      )}
-                    </Stack>
-                    <Collapse in={open === i} sx={{ mt: 1 }}>
+          {loading ? (
+            <TableBody>
+              <TableRow>
+                <TableCell colSpan={12}>
+                  <Loading
+                    type="bars"
+                    color={COLORS.BLACK}
+                    width={20}
+                    height={20}
+                    className="m-auto"
+                  />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          ) : (
+            <TableBody>
+              {roadmapData?.docs.map((val, i) => {
+                const percentage = (val.completedSteps / val.totalSteps) * 100;
+                return (
+                  <TableRow key={i}>
+                    <TableCell align="center">
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          fontFamily: roboto.style,
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        {val.name}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography
+                        sx={{ fontSize: 15, fontFamily: roboto.style }}
+                      >
+                        {moment.unix(val.assignedDate).format("DD-MM-YYYY")}
+                      </Typography>
+                    </TableCell>
+                    <TableCell size="small">
                       <Stack
                         direction={"row"}
                         alignItems={"center"}
+                        // justifyContent={"center"}
                         spacing={1}
-                        rowGap={2}
                       >
-                        {val?.metadataTags.slice(2).map((item, index) => (
+                        {val?.metadataTags?.slice(0, 2).map((item, index) => (
                           <CustomChip label={item.name} variant={item.type} />
                         ))}
+                        {val.metadataTags.length > 2 && (
+                          <Button
+                            sx={{
+                              width: 20,
+                              color: COLORS.BLACK,
+                              fontFamily: roboto.style,
+                              fontSize: 15,
+                            }}
+                            onClick={() => handletoggle(i)}
+                          >
+                            {open === i ? (
+                              <Remove sx={{ fontSize: 20 }} />
+                            ) : (
+                              `+ ${val.metadataTags.length - 2}`
+                            )}
+                          </Button>
+                        )}
                       </Stack>
-                    </Collapse>
-                  </TableCell>
+                      <Collapse in={open === i} sx={{ mt: 1 }}>
+                        <Stack
+                          direction={"row"}
+                          alignItems={"center"}
+                          spacing={1}
+                          rowGap={2}
+                        >
+                          {val?.metadataTags.slice(2).map((item, index) => (
+                            <CustomChip label={item.name} variant={item.type} />
+                          ))}
+                        </Stack>
+                      </Collapse>
+                    </TableCell>
 
-                  <TableCell align="center">
-                    <UserRoadmapProgress progress={percentage} />
-                  </TableCell>
-                  <TableCell align="center">
-                    <IconButton onClick={handleRouter}>
-                      <VisibilityOutlined />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
+                    <TableCell align="center">
+                      <UserRoadmapProgress progress={percentage} />
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton onClick={() => handleRouter(val.id)}>
+                        <VisibilityOutlined />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          )}
         </Table>
       </TableContainer>
     </div>
