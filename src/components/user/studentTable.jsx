@@ -179,14 +179,16 @@ const StudentTable = ({
             </TableBody>
           )}
         </Table>
-        <TablePagination
-          component={"div"}
-          page={page}
-          rowsPerPage={pageSize}
-          count={userData?.totalDocs}
-          onPageChange={onPageChange}
-          onRowsPerPageChange={onPageSizeChange}
-        />
+        {!loading && (
+          <TablePagination
+            component={"div"}
+            page={page}
+            rowsPerPage={pageSize}
+            count={userData?.totalDocs}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onPageSizeChange}
+          />
+        )}
       </TableContainer>
     </div>
   );

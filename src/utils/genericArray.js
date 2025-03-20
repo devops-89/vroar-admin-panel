@@ -28,6 +28,9 @@ export const profileTabs = [
   {
     label: PROFILE_DATA.INTEREST,
   },
+  {
+    label: PROFILE_DATA.SESSIONS,
+  },
 ];
 
 export const contentType = [

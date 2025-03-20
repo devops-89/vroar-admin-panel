@@ -9,7 +9,13 @@ const UserAvatar = (props) => {
     <div>
       <Stack direction={"row"} alignItems={"center"} spacing={2}>
         <Avatar>
-          <Image src={avatar} alt={"user avatar"} width={40} height={40} />
+          <Image
+            src={avatar}
+            alt={"user avatar"}
+            width={40}
+            height={40}
+            style={{ objectFit: "cover" }}
+          />
         </Avatar>
         <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
           {name ? name : `${firstName} ${lastName}`}

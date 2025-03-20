@@ -53,6 +53,9 @@ export const roadMapTableHeader = [
   {
     label: "Progress Percentage",
   },
+  {
+    label: "Action",
+  },
 ];
 
 export const PointsHeader = [
@@ -2216,3 +2219,16 @@ export const studentTableData = [
     ],
   },
 ];
+
+export const sessionTableHead = [
+  {
+    label: "Mentor Name",
+  },
+  {
+    label: "Session Start Date",
+  },
+  {
+    label: "Session Start Time",
+  },
+];
+ 

@@ -199,6 +199,28 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
                 handleInputChange(val.id, "points", e.target.value)
               }
             />
+
+            <TextField
+              label="Enter Tile Description"
+              sx={{
+                ...loginTextField,
+                "& .MuiOutlinedInput-input": {
+                  fontFamily: roboto.style,
+                },
+                "& .MuiOutlinedInput-root": {
+                  height: "200px",
+                },
+                "& textarea": {
+                  height: "170px !important",
+                },
+              }}
+              fullWidth
+              value={val.description}
+              onChange={(e) =>
+                handleInputChange(val.id, "description", e.target.value)
+              }
+              multiline
+            />
           </Stack>
         </Box>
       ))}

@@ -92,5 +92,19 @@ const userController = {
       throw error;
     }
   },
+  getAssignedRoadmapJourney: async (data) => {
+    if (data.page === 0) {
+      data.page = 1;
+    }
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "/api/userRoadmapJourney/getAllRoadmap",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;
