@@ -1,11 +1,10 @@
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { LinearProgress } from "@mui/joy";
-import {  Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import React from "react";
 
 const UserRoadmapProgress = ({ progress }) => {
-  console.log("first", progress);
   return (
     <div>
       <LinearProgress

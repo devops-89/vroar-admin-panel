@@ -12,6 +12,9 @@ export const loginTextField = {
   "& .MuiInput-underline:after": {
     borderBottomColor: "#B2BAC2",
   },
+  "& .MuiOutlinedInput-input": {
+    fontFamily: roboto.style,
+  },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       border: "1px solid #d7d7d7",
