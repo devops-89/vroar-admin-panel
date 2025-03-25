@@ -1,15 +1,11 @@
+import { setSidebarCollapse } from "@/redux/reducers/sidebarCollapse";
+import { Analytics } from "@vercel/analytics/react";
+import Head from "next/head";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import CollapseSidebar from "./collapseSidebar";
 import Header from "./header";
 import Sidebar from "./sidebar";
-import Head from "next/head";
-import { Analytics } from "@vercel/analytics/react";
-import { Box, IconButton } from "@mui/material";
-import { COLORS } from "@/utils/enum";
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
-import { setSidebarCollapse } from "@/redux/reducers/sidebarCollapse";
-import CollapseSidebar from "./collapseSidebar";
-import { useEffect, useState } from "react";
 const Layout = ({ children }) => {
   const router = useRouter();
 

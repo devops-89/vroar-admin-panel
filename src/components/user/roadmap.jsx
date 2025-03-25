@@ -46,10 +46,6 @@ const Roadmap = () => {
   };
   const dispatch = useDispatch();
 
-  const handleAddRoadmap = () => {
-    dispatch(showModal(<AddRoadmap />));
-  };
-
   const handleRouter = (roadmapId) => {
     router.push(
       `/user-management/students/roadmap-details/${roadmapId}?userId=${userId}`
@@ -75,6 +71,10 @@ const Roadmap = () => {
       .catch((err) => {
         console.log("err", err);
       });
+  };
+
+  const handleAddRoadmap = () => {
+    dispatch(showModal(<AddRoadmap  />));
   };
 
   useEffect(() => {

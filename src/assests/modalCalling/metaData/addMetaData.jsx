@@ -1,5 +1,5 @@
 import { hideModal } from "@/redux/reducers/modal";
-import { COLORS, ToastStatus } from "@/utils/enum";
+import { COLORS, ToastStatus, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Close } from "@mui/icons-material";
 import {
@@ -74,6 +74,7 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
       let body = {
         name: state.name,
         type: state.metadataType,
+        status: USER_STATUS.ACTIVE,
       };
       metaDataController
         .addMetaData(body)

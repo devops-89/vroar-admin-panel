@@ -29,7 +29,7 @@ import { useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
-const AddRoadmap = () => {
+const AddRoadmap = ({ getJourney }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { userId } = router.query;
@@ -43,7 +43,6 @@ const AddRoadmap = () => {
     },
     validationSchema: studentJourneyValidationSchema,
     onSubmit: async (values) => {
-      // console.log("values", values);
       setLoading(true);
       const body = {
         name: values.journey_name,
@@ -67,7 +66,6 @@ const AddRoadmap = () => {
         );
         dispatch(hideModal());
       } catch (err) {
-        console.log("err", err);
         let errMesssage =
           (err.response && err.response.data.message) || err.message;
         dispatch(
