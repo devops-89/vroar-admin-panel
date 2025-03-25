@@ -255,7 +255,7 @@ const Roadmap = () => {
                     </TableCell>
                     <TableCell align="center">
                       <IconButton onClick={() => handleRouter(val.id)}>
-                        <VisibilityOutlined />
+                        <VisibilityOutlined htmlColor={COLORS.BLACK} />
                       </IconButton>
                     </TableCell>
                   </TableRow>

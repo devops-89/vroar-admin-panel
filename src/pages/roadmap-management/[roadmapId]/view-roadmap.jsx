@@ -41,6 +41,10 @@ const ViewRoadmap = () => {
       });
   };
 
+  const handleRouter = () => {
+    router.push(`/roadmap-management/${roadmapId}/edit-roadmap`);
+  };
+
   useEffect(() => {
     if (roadmapId) {
       viewRoadmapDetails();
@@ -116,6 +120,7 @@ const ViewRoadmap = () => {
                     border: `1px solid ${COLORS.PRIMARY}`,
                     color: COLORS.PRIMARY,
                   }}
+                  onClick={handleRouter}
                 >
                   Edit
                 </Button>

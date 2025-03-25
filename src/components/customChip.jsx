@@ -3,6 +3,7 @@ import {
   METADATA_TYPE,
   PAYMENT_STATUS,
   ROADMAP_STATUS,
+  USER_ROADMAP_REVIEW_STATUS,
 } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { CloseOutlined } from "@mui/icons-material";
@@ -16,7 +17,8 @@ const CustomChip = ({ label, variant, removable, onDelete }) => {
   useEffect(() => {
     if (
       variant === METADATA_TYPE.CAREER ||
-      variant === ROADMAP_STATUS.ROADMAP_REQUESTED
+      variant === ROADMAP_STATUS.ROADMAP_REQUESTED ||
+      variant === USER_ROADMAP_REVIEW_STATUS.PENDING
     ) {
       setBgColor(COLORS.PENDING);
       setColor(COLORS.PENDING_TEXT);
@@ -25,7 +27,8 @@ const CustomChip = ({ label, variant, removable, onDelete }) => {
       variant === METADATA_TYPE.INDUSTRY ||
       variant === ROADMAP_STATUS.PAYMENT_DONE ||
       variant === ROADMAP_STATUS.PUBLISHED ||
-      variant === PAYMENT_STATUS.PAID
+      variant === PAYMENT_STATUS.PAID ||
+      variant === USER_ROADMAP_REVIEW_STATUS.COMPLETED
     ) {
       setBgColor(COLORS.DONE);
       setColor(COLORS.DONE_TEXT);
@@ -36,7 +39,8 @@ const CustomChip = ({ label, variant, removable, onDelete }) => {
     }
     if (
       variant === METADATA_TYPE.STRENGTHS ||
-      variant === ROADMAP_STATUS.SIGNED_UP
+      variant === ROADMAP_STATUS.SIGNED_UP ||
+      variant === USER_ROADMAP_REVIEW_STATUS.IN_PROGRESS
     ) {
       setBgColor(COLORS.SIGNED_UP);
       setColor(COLORS.SIGNED_UP_TEXT);

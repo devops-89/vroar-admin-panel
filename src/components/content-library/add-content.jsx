@@ -355,8 +355,24 @@ const AddContent = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     if (AddContentValidationSchema({ state, setErrors, errors })) {
-      setLoading(true);
-      uploadContentFile();
+      if (showLink) {
+        let body = {
+          name: state.contentName,
+          contentType: state.contentType,
+          contentLink: state.contentLink,
+          description: state.description,
+          metadataTags: [
+            ...(Array.isArray(state.career) ? state.career : []),
+            ...(Array.isArray(state.industry) ? state.industry : []),
+            ...(Array.isArray(state.strengths) ? state.strengths : []),
+            ...(Array.isArray(state.softSkills) ? state.softSkills : []),
+          ],
+        };
+        addContentApi(body);
+      } else {
+        setLoading(true);
+        uploadContentFile();
+      }
     } else {
       console.log("error");
     }

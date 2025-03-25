@@ -313,6 +313,7 @@ export const METADATA_TYPE = {
   INDUSTRY: "INDUSTRY",
   STRENGTHS: "STRENGTHS",
   SOFT_SKILLS: "SOFT SKILLS",
+  
 };
 
 export const CONTENT_TYPE = {
@@ -380,4 +381,7 @@ export const ONBOARDING_JOURNEY_TYPE = {
 export const USER_ROADMAP_REVIEW_STATUS = {
   PROVIDE_FEEDBACK: "Provide Feedback",
   FEEDBACK_PROVIDED: "Feedback Provided",
+  PENDING: "PENDING",
+  COMPLETED: "COMPLETED",
+  IN_PROGRESS:"IN PROGRESS"
 };
