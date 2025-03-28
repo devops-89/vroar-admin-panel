@@ -39,7 +39,7 @@ export const AddContentValidationSchema = ({ state, errors, setErrors }) => {
       strengths: "Please Select Strengths",
       softSkills: "Please Select Soft Skills",
       contentName: "Please Enter Content Name",
-      quizType: "Please Select Quiz Type",
+
       description: "Please Enter Description",
     });
     return false;
@@ -70,17 +70,11 @@ export const AddAdListValidationSchema = Yup.object({
 });
 
 export const studentJourneyValidationSchema = Yup.object({
-  journey_name: Yup.string().required("Please Enter Journey Name"),
-  // careerRoadmap: Yup.array().min(1, "Please Select Career Roadmap").optional(),
-  // strengthRoadmap: Yup.array()
-  //   .min(1, "Please Select Strength Roadmap")
-  //   .optional(),
-  // industryRoadmap: Yup.array()
-  //   .min(1, "Please Select Industry Roadmap")
-  //   .optional(),
-  // softSkillsRoadmap: Yup.array()
-  //   .min(1, "Please Select Soft Skills Roadmap")
-  //   .optional(),
+  name: Yup.string().required("Please Enter Journey Name"),
+  roadmapJourneyIds: Yup.array()
+    .required("Please Select Roadmap")
+    .min(1, "Please Select at least one Roadmap"),
+  userId: Yup.string().required("Please Select User"),
 });
 
 export const changePasswordValidation = Yup.object({
@@ -112,4 +106,50 @@ export const roadmapValidationSchema = Yup.object().shape({
 export const pointsValidation = Yup.object().shape({
   points: Yup.string().required("Please Enter Points"),
   reason: Yup.string().required("Please Enter Reason"),
+});
+
+export const newAddContentValidationSchema = Yup.object().shape({
+  contentName: Yup.string().required("Please Enter Content Name"),
+  description: Yup.string().required("Please Enter Description"),
+  contentType: Yup.string().required("Please Select Content Type"),
+  career: Yup.array()
+    .required("Please Select Career")
+    .min(1, "Please Select Career"),
+  industry: Yup.array()
+    .required("Please Select Industry")
+    .min(1, "Please Select Industry"),
+  strengths: Yup.array()
+    .required("Please Select Strengths")
+    .min(1, "Please Select Strengths"),
+  softSkills: Yup.array()
+    .required("Please Select Soft Skills")
+    .min(1, "Please Select Soft Skills"),
+  isQuizEnabled: Yup.boolean(),
+});
+
+export const quizValidationSchema = Yup.object().shape({
+  quizQuestions: Yup.array()
+    .of(
+      Yup.object().shape({
+        question: Yup.string().required("Question is required"),
+        options: Yup.array()
+          .of(
+            Yup.object().shape({
+              optionText: Yup.string().required("Option text is required"),
+              isCorrect: Yup.boolean().required("isCorrect is required"),
+            })
+          )
+          .min(2, "At least two options are required")
+          .test(
+            "at-least-one-correct",
+            "At least one option must be marked as correct",
+            (options) => options?.some((option) => option.isCorrect === true)
+          ),
+      })
+    )
+    .when("isQuizEnabled", {
+      is: true,
+      then: (schema) => schema.min(1, "At least one question is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
 });

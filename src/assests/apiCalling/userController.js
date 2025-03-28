@@ -18,4 +18,15 @@ export const getUserList = ({ body, setData, isLoading, setErrMessage }) => {
     });
 };
 
-
+export const getUserRoadMapJourney = ({ userId, setLoading, setData }) => {
+  userController
+    .getUserRoadmapJourney(userId)
+    .then((res) => {
+      console.log("res", res);
+      setData(res.data.data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.log("err", err);
+    });
+};

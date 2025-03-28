@@ -40,11 +40,11 @@ export const tableHeader = [
 export const roadMapTableHeader = [
   {
     label: "Roadmap Name",
-    sort: true,
+    sort: false,
   },
   {
     label: "Started On",
-    sort: true,
+    sort: false,
   },
   {
     label: "Career Tags",
@@ -55,6 +55,21 @@ export const roadMapTableHeader = [
   },
   {
     label: "Action",
+  },
+];
+
+export const RoadmapJourneyHeader = [
+  {
+    label: "Journey Name",
+  },
+  {
+    label: "Started On",
+  },
+  {
+    label: "No. of Roadmaps",
+  },
+  {
+    label: "Status",
   },
 ];
 
@@ -2231,4 +2246,3 @@ export const sessionTableHead = [
     label: "Session Start Time",
   },
 ];
- 

@@ -1,11 +1,5 @@
 import { metaDataController } from "@/api/metaDataController";
 import userController from "@/api/user";
-import {
-  CAREERDATA,
-  INDUSTRYDATA,
-  SOFTSKILLSDATA,
-  STRENGTHDATA,
-} from "@/assests/roadmapData";
 import CustomChip from "@/components/customChip";
 import { hideModal } from "@/redux/reducers/modal";
 import { setToast } from "@/redux/reducers/toast";
@@ -30,9 +24,11 @@ import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
 const AddRoadmap = ({ getJourney }) => {
+  // console.log("jounser",getJourney)
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { userId } = router.query;
+  // const { userId } = router.query;
   const formik = useFormik({
     initialValues: {
       journey_name: "",
@@ -41,7 +37,7 @@ const AddRoadmap = ({ getJourney }) => {
       industryRoadmap: [],
       softSkillsRoadmap: [],
     },
-    validationSchema: studentJourneyValidationSchema,
+    // validationSchema: studentJourneyValidationSchema,
     onSubmit: async (values) => {
       setLoading(true);
       const body = {
@@ -54,30 +50,52 @@ const AddRoadmap = ({ getJourney }) => {
         ],
         userId: userId,
       };
-
       try {
-        const res = await userController.assignRoadmapJourney(body);
-        dispatch(
-          setToast({
-            open: true,
-            message: res.data.message,
-            severity: ToastStatus.SUCCESS,
-          })
-        );
-        dispatch(hideModal());
-      } catch (err) {
-        let errMesssage =
-          (err.response && err.response.data.message) || err.message;
-        dispatch(
-          setToast({
-            open: true,
-            message: errMesssage,
-            severity: ToastStatus.ERROR,
-          })
-        );
-        setLoading(false);
-      } finally {
-        setLoading(false);
+        await studentJourneyValidationSchema.validate(body, {
+          abortEarly: false,
+        });
+        try {
+          const res = await userController.assignRoadmapJourney(body);
+          dispatch(
+            setToast({
+              open: true,
+              message: res.data.message,
+              severity: ToastStatus.SUCCESS,
+            })
+          );
+          getJourney();
+          dispatch(hideModal());
+        } catch (err) {
+          let errMesssage =
+            (err.response && err.response.data.message) || err.message;
+          dispatch(
+            setToast({
+              open: true,
+              message: errMesssage,
+              severity: ToastStatus.ERROR,
+            })
+          );
+          setLoading(false);
+        } finally {
+          setLoading(false);
+        }
+      } catch (error) {
+        if (error.inner) {
+          error.inner.forEach((err) => {
+            const validationErrors = {};
+            error.inner.forEach((err) => {
+              validationErrors[err.path] = err.message;
+            });
+            dispatch(
+              setToast({
+                open: true,
+                message: err.message,
+                severity: ToastStatus.ERROR,
+              })
+            );
+          });
+          setLoading(false);
+        }
       }
     },
   });

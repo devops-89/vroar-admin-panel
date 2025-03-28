@@ -21,6 +21,7 @@ import { setToast } from "@/redux/reducers/toast";
 import Loading from "react-loading";
 import { roadmapValidationSchema } from "@/utils/validationSchema";
 import { useRouter } from "next/router";
+import CustomChip from "../customChip";
 
 const Createroadmap = () => {
   const [tiles, setTiles] = useState([
@@ -209,6 +210,25 @@ const Createroadmap = () => {
           value={selectedTags}
           multiple
           filterSelectedOptions
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => {
+              const { key, ...tagProps } = getTagProps({ index });
+              return (
+                <CustomChip
+                  variant={selectedMetaDataType.label}
+                  label={option.name}
+                  onDelete={() => {
+                    setSelectedTags((tags) =>
+                      tags.filter((tag) => tag.id !== option.id)
+                    );
+                  }}
+                  key={key}
+                  {...tagProps}
+                  removable={true}
+                />
+              );
+            })
+          }
         />
 
         <RoadmapTiles tiles={tiles} setTiles={setTiles} />

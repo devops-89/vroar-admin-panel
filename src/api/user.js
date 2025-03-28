@@ -117,5 +117,15 @@ const userController = {
       throw error;
     }
   },
+  getUserRoadmapJourney: async (userId) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.get(
+        `/api/userRoadmapJourney/getJourneys?userId=${userId}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;

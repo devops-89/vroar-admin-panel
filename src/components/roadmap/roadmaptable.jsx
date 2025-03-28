@@ -38,12 +38,12 @@ const RoadmapTable = ({
       <TableContainer>
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: COLORS.LIGHTGREY }}>
+            <TableRow sx={{ backgroundColor: "#d7d7d7" }}>
               {tableHeader.map((val, i) => (
                 <TableCell key={i} size="medium">
                   <Typography
                     sx={{
-                      fontFamiy: 14,
+                      fontSize: 14,
                       fontFamily: roboto.style,
                       fontWeight: 550,
                     }}

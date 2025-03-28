@@ -9,7 +9,11 @@ import {
 } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
-import { AddContentValidationSchema } from "@/utils/validationSchema";
+import {
+  AddContentValidationSchema,
+  newAddContentValidationSchema,
+  quizValidationSchema,
+} from "@/utils/validationSchema";
 import { AttachFile, ErrorSharp } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -172,10 +176,15 @@ const AddContent = () => {
   const [isUploading, setIsUploading] = useState(false);
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
+    // console.log("selected", selectedFile);
     if (selectedFile) {
       if (selectedFile.type === "application/pdf") {
         setFile(selectedFile);
-        setState({ ...state, contentLink: selectedFile });
+        setState({
+          ...state,
+          contentLink: selectedFile,
+          contentName: selectedFile.name,
+        });
         setFile(selectedFile);
       } else {
         dispatch(
@@ -233,61 +242,32 @@ const AddContent = () => {
             severity: ToastStatus.ERROR,
           })
         );
+        setLoading(false);
       });
   };
 
-  const addContentApi = (body) => {
-    let isOptionEmpty = false;
-
-    for (const ques of questions) {
-      if (ques.question === "") {
-        isOptionEmpty = true;
-        break;
+  const addContentApi = async (body) => {
+    if (isQuizEnabled) {
+      if (state.quizType === "") {
+        setErrors({ ...errors, quizType: "Please Select Quiz Type" });
+        setLoading(false);
+        return;
       }
-
-      let currentOptEmt = true;
-      for (const opt of ques.options) {
-        if (opt.optionText === "") {
-          currentOptEmt = false;
-        }
-        if (!currentOptEmt) {
-          isOptionEmpty = true;
-          break;
-        }
-      }
-    }
-
-    const isEmpty = Object.entries(initialValues).some(([key, value]) => {
-      if (Array.isArray(value)) {
-        return value.length === 0;
-      }
-      return value === "" || value === null;
-    });
-
-    if (isEmpty || questions.length === 0 || isOptionEmpty) {
-      dispatch(
-        setToast({
-          open: true,
-          message: "Please Enter All Required Details",
-          severity: ToastStatus.ERROR,
-        })
-      );
-    }
-
-    metaDataController
-      .addContentLibrary(body)
-      .then((res) => {
-        const contentLibraryId = res.data.data.id;
-
-        dispatch(
-          setToast({
-            open: true,
-            message: res.data.message,
-            severity: ToastStatus.SUCCESS,
-          })
+      try {
+        await quizValidationSchema.validate(
+          { quizQuestions: questions },
+          { abortEarly: false }
         );
+        metaDataController.addContentLibrary(body).then((res) => {
+          const contentLibraryId = res.data.data.id;
 
-        if (isQuizEnabled) {
+          dispatch(
+            setToast({
+              open: true,
+              message: res.data.message,
+              severity: ToastStatus.SUCCESS,
+            })
+          );
           const modifiedData = questions.map(({ id, options, ...rest }) => ({
             ...rest,
             options: options.map(({ id, ...optionRest }) => optionRest),
@@ -310,26 +290,53 @@ const AddContent = () => {
           }
 
           addQuizHandler(data);
-        } else {
-          setLoading(false);
-          router.back();
+        });
+      } catch (error) {
+        if (error.inner) {
+          const validationErrors = {};
+          error.inner.forEach((err) => {
+            validationErrors[err.path] = err.message;
+          });
+
+          setErrors(validationErrors);
         }
-      })
-      .catch((err) => {
-        let errMessage =
-          (err.response && err.response.data.message) || err.message;
 
         dispatch(
           setToast({
             open: true,
-            message: errMessage,
+            message: "Please fix validation errors",
             severity: ToastStatus.ERROR,
           })
         );
-        setLoading(false);
-      });
+      }
+    } else {
+      metaDataController
+        .addContentLibrary(body)
+        .then((res) => {
+          dispatch(
+            setToast({
+              open: true,
+              message: res.data.message,
+              severity: ToastStatus.SUCCESS,
+            })
+          );
+          setLoading(false);
+          router.back();
+        })
+        .catch((err) => {
+          let errMessage =
+            (err.response && err.response.data.message) || err.message;
+          dispatch(
+            setToast({
+              open: true,
+              message: errMessage,
+              severity: ToastStatus.ERROR,
+            })
+          );
+          setLoading(false);
+        });
+    }
   };
-
   const addQuizHandler = (data) => {
     metaDataController
       .addQuiz(data)
@@ -352,31 +359,115 @@ const AddContent = () => {
       });
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    if (AddContentValidationSchema({ state, setErrors, errors })) {
+    setLoading(true);
+    try {
+      await newAddContentValidationSchema.validate(state, {
+        abortEarly: false,
+      });
+
+      let body = {
+        name: state.contentName,
+        contentType: state.contentType,
+        contentLink: state.contentLink,
+        description: state.description,
+        metadataTags: [
+          ...(Array.isArray(state.career) ? state.career : []),
+          ...(Array.isArray(state.industry) ? state.industry : []),
+          ...(Array.isArray(state.strengths) ? state.strengths : []),
+          ...(Array.isArray(state.softSkills) ? state.softSkills : []),
+        ],
+      };
+
       if (showLink) {
-        let body = {
-          name: state.contentName,
-          contentType: state.contentType,
-          contentLink: state.contentLink,
-          description: state.description,
-          metadataTags: [
-            ...(Array.isArray(state.career) ? state.career : []),
-            ...(Array.isArray(state.industry) ? state.industry : []),
-            ...(Array.isArray(state.strengths) ? state.strengths : []),
-            ...(Array.isArray(state.softSkills) ? state.softSkills : []),
-          ],
-        };
-        addContentApi(body);
+        if (isQuizEnabled && state.isQuizEnabled) {
+          if (state.quizType === "") {
+            setErrors({ ...errors, quizType: "Please Select Quiz Type" });
+            setLoading(false);
+            return;
+          }
+          try {
+            await quizValidationSchema.validate(
+              { quizQuestions: questions },
+              { abortEarly: true }
+            );
+            addContentApi(body);
+          } catch (error) {
+            if (error.inner) {
+              const validationErrors = {};
+              error.inner.forEach((err) => {
+                validationErrors[err.path] = err.message;
+              });
+
+              setErrors(validationErrors);
+            }
+
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please Enter All Fields",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setLoading(false);
+          }
+        } else {
+          addContentApi(body);
+        }
       } else {
-        setLoading(true);
-        uploadContentFile();
+        if (isQuizEnabled && state.isQuizEnabled) {
+          if (state.quizType === "") {
+            setErrors({ ...errors, quizType: "Please Select Quiz Type" });
+            setLoading(false);
+            return;
+          }
+          try {
+            await quizValidationSchema.validate(
+              { quizQuestions: questions },
+              { abortEarly: true }
+            );
+            uploadContentFile();
+          } catch (error) {
+            if (error.inner) {
+              const validationErrors = {};
+              error.inner.forEach((err) => {
+                validationErrors[err.path] = err.message;
+              });
+
+              setErrors(validationErrors);
+            }
+
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please Enter Required Fields",
+                severity: ToastStatus.ERROR,
+              })
+            );
+          }
+        }
       }
-    } else {
-      console.log("error");
+    } catch (error) {
+      if (error.inner) {
+        const validationErrors = {};
+        error.inner.forEach((err) => {
+          validationErrors[err.path] = err.message;
+        });
+
+        setErrors(validationErrors);
+      }
+
+      dispatch(
+        setToast({
+          open: true,
+          message: "Please fix validation errors",
+          severity: ToastStatus.ERROR,
+        })
+      );
     }
   };
+
   return (
     <Box mt={3}>
       <Backdrop open={isUploading}>
@@ -439,7 +530,7 @@ const AddContent = () => {
                     textTransform: "initial",
                   }}
                 >
-                  Upload
+                  {state.contentName ? state.contentName : "Upload"}
                 </Typography>
                 <input
                   type="file"
@@ -627,7 +718,7 @@ const AddContent = () => {
         </Stack>
       </form>
 
-      <ToastBar />
+      {/* <ToastBar /> */}
     </Box>
   );
 };

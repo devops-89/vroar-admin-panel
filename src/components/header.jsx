@@ -85,6 +85,7 @@ const Header = () => {
           justifyContent: "flex-end",
           boxShadow: "0px 0px 1px 1px rgb(0,0,0,0.2)",
           backdropFilter: "blur(5px)",
+          // backgroundColor: "rgba(255,255,255,0.8)",
           zIndex: 999,
         }}
       >

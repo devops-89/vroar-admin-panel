@@ -5,7 +5,7 @@ import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import TabPanel from "@/components/tabPanel";
 import Notes from "@/components/user/notes";
 import Points from "@/components/user/points";
-import Roadmap from "@/components/user/roadmap";
+import Roadmap from "@/components/user/userRoadmap/roadmap";
 import Sessions from "@/components/user/sessions";
 import StudentProfile from "@/components/user/studentProfile";
 import Wrapper from "@/components/wrapper";
@@ -30,6 +30,7 @@ import {
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { getUserRoadMapJourney } from "@/assests/apiCalling/userController";
 
 const UserProfile = () => {
   const router = useRouter();
@@ -41,9 +42,18 @@ const UserProfile = () => {
     setValue(newValue);
     setTabsValue(e.target.innerText);
   };
+  const [roadmapData, setRoadmapData] = useState([]);
 
   const addRoadmapModal = () => {
-    dispatch(showModal(<AddRoadmap />));
+    dispatch(showModal(<AddRoadmap getJourney={getRoadmapData} />));
+  };
+
+  const getRoadmapData = async () => {
+    await getUserRoadMapJourney({
+      userId,
+      setLoading,
+      setData: setRoadmapData,
+    });
   };
 
   const rewardPoints = () => {
