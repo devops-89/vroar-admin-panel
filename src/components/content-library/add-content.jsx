@@ -70,6 +70,7 @@ const AddContent = () => {
     isQuizEnabled: false,
     contentLink: "",
     quizType: "",
+    contentFileName: "",
   };
 
   const [questions, setQuestions] = useState([
@@ -183,7 +184,7 @@ const AddContent = () => {
         setState({
           ...state,
           contentLink: selectedFile,
-          contentName: selectedFile.name,
+          contentFileName: selectedFile.name,
         });
         setFile(selectedFile);
       } else {
@@ -214,7 +215,11 @@ const AddContent = () => {
       .then((response) => {
         const fileName = response.data.data.fileName;
         const filePath = response.data.data.filePath;
-
+        setState({
+          ...state,
+          contentLink: filePath,
+          contentFileName: filePath,
+        });
         let body = {
           name: state.contentName,
           contentType: state.contentType,
@@ -446,6 +451,8 @@ const AddContent = () => {
               })
             );
           }
+        } else {
+          uploadContentFile();
         }
       }
     } catch (error) {
@@ -465,6 +472,7 @@ const AddContent = () => {
           severity: ToastStatus.ERROR,
         })
       );
+      setLoading(false);
     }
   };
 
@@ -530,7 +538,7 @@ const AddContent = () => {
                     textTransform: "initial",
                   }}
                 >
-                  {state.contentName ? state.contentName : "Upload"}
+                  {state.contentFileName ? state.contentFileName : "Upload"}
                 </Typography>
                 <input
                   type="file"

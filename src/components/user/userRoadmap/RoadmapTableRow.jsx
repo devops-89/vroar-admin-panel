@@ -35,7 +35,7 @@ const RoadmapTableRow = ({ i, val, handleToggle, open }) => {
         </TableCell>
         <TableCell align="center">
           <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-            {moment.unix(val.assignedDate).format("DD-MM-YYYY")}
+            {moment.unix(val.createdAt).format("DD-MM-YYYY")}
           </Typography>
         </TableCell>
         <TableCell align="center">

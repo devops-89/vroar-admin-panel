@@ -18,12 +18,19 @@ import moment from "moment";
 import { useState } from "react";
 import UserRoadmapProgress from "../user-roadmap-progress";
 import { COLORS } from "@/utils/enum";
+import { useRouter } from "next/router";
 
 const CollapseTableCell = ({ data }) => {
   const [open, setOpen] = useState(null);
-  console.log("data", data);
   const handleToggle = (index) => {
     setOpen((prev) => (prev === index ? null : index));
+  };
+  const router = useRouter();
+  const { userId } = router.query;
+  const handleRouter = (roadmapId) => {
+    router.push(
+      `/user-management/students/roadmap-details/${roadmapId}?userId=${userId}`
+    );
   };
   return (
     <Table>
@@ -44,7 +51,13 @@ const CollapseTableCell = ({ data }) => {
         {data?.map((val, i) => (
           <TableRow key={i}>
             <TableCell>
-              <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
+              <Typography
+                sx={{
+                  fontSize: 14,
+                  fontFamily: roboto.style,
+                  textTransform: "capitalize",
+                }}
+              >
                 {val.name}
               </Typography>
             </TableCell>
@@ -100,7 +113,7 @@ const CollapseTableCell = ({ data }) => {
               />
             </TableCell>
             <TableCell>
-              <IconButton>
+              <IconButton onClick={() => handleRouter(val.id)}>
                 <VisibilityOutlined
                   sx={{ fontSize: 20, color: COLORS.BLACK }}
                 />
