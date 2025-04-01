@@ -726,7 +726,6 @@ const AddContent = () => {
         </Stack>
       </form>
 
-      {/* <ToastBar /> */}
     </Box>
   );
 };

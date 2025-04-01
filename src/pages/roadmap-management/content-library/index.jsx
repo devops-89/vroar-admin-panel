@@ -48,8 +48,9 @@ const Contentlibrary = () => {
 
   const pageSizeHandler = (e) => {
     setPageSize(e.target.value);
-    if (pageSize) {
+    if (e.target.value) {
       setLoading(true);
+      body.pageSize = e.target.value;
       getContentLibrary(body);
     }
   };
