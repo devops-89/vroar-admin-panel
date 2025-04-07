@@ -21,7 +21,13 @@ const ManualNotes = () => {
   return (
     <div>
       {data.notes.map((val, i) => (
-        <Stack alignItems={"start"} key={i} spacing={2} mt={1} sx={{width:"100%"}}>
+        <Stack
+          alignItems={"start"}
+          key={i}
+          spacing={2}
+          mt={1}
+          sx={{ width: "100%" }}
+        >
           <Box
             sx={{
               borderRadius: 18,
@@ -29,7 +35,7 @@ const ManualNotes = () => {
               px: 3,
               py: 2,
               mt: 1,
-              width:"95%"
+              width: "95%",
             }}
           >
             <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
@@ -41,7 +47,7 @@ const ManualNotes = () => {
             alignItems={"center"}
             justifyContent={"flex-end"}
             spacing={1}
-            sx={{width:"95%"}}
+            sx={{ width: "95%" }}
           >
             <Typography
               sx={{
@@ -94,8 +100,7 @@ const ManualNotes = () => {
           helperText={formik.touched.notes && formik.errors.notes}
         /> */}
         <Box>
-
-        <ReactQuill style={{ height: 150 }}/>
+          <ReactQuill style={{ height: 150 }} />
         </Box>
         <Box sx={{ mt: 10, textAlign: "end" }}>
           <Button
@@ -103,7 +108,7 @@ const ManualNotes = () => {
               fontSize: 15,
               fontFamily: roboto.style,
               color: COLORS.WHITE,
-              backgroundColor: COLORS.PRIMARY,
+              backgroundColor: COLORS.PRIMARY, 
               textTransform: "capitalize",
               width: 180,
             }}
