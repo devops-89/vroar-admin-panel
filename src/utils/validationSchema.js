@@ -112,18 +112,18 @@ export const newAddContentValidationSchema = Yup.object().shape({
   contentName: Yup.string().required("Please Enter Content Name"),
   description: Yup.string().required("Please Enter Description"),
   contentType: Yup.string().required("Please Select Content Type"),
-  career: Yup.array()
-    .required("Please Select Career")
-    .min(1, "Please Select Career"),
-  industry: Yup.array()
-    .required("Please Select Industry")
-    .min(1, "Please Select Industry"),
-  strengths: Yup.array()
-    .required("Please Select Strengths")
-    .min(1, "Please Select Strengths"),
-  softSkills: Yup.array()
-    .required("Please Select Soft Skills")
-    .min(1, "Please Select Soft Skills"),
+  // career: Yup.array()
+  //   .required("Please Select Career")
+  //   .min(1, "Please Select Career"),
+  // industry: Yup.array()
+  //   .required("Please Select Industry")
+  //   .min(1, "Please Select Industry"),
+  // strengths: Yup.array()
+  //   .required("Please Select Strengths")
+  //   .min(1, "Please Select Strengths"),
+  // softSkills: Yup.array()
+  //   .required("Please Select Soft Skills")
+  //   .min(1, "Please Select Soft Skills"),
   isQuizEnabled: Yup.boolean(),
 });
 
@@ -152,4 +152,10 @@ export const quizValidationSchema = Yup.object().shape({
       then: (schema) => schema.min(1, "At least one question is required"),
       otherwise: (schema) => schema.notRequired(),
     }),
+});
+
+export const manualNotesValidationSchema = Yup.object().shape({
+  notes: Yup.string()
+    .required("Please Enter Notes")
+    .max(500, "Notes must be less than 500 characters"),
 });

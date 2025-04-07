@@ -39,6 +39,7 @@ import ToastBar from "../toastBar";
 import MetaDataAutocomplete from "./metadataAutocomplete";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
+import { isYoutubeUrl } from "@/utils/regex";
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -102,7 +103,17 @@ const AddContent = () => {
     const { id, value } = e.target;
 
     setState({ ...state, [id]: value });
-    setErrors({ ...errors, [id]: "" });
+    setErrors({
+      ...errors,
+      [id]:
+        id === "contentLink"
+          ? state.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK
+            ? isYoutubeUrl(value)
+              ? ""
+              : "Please Enter Native Video link"
+            : ""
+          : "",
+    });
   };
 
   const quizHandler = (e) => {
@@ -155,6 +166,8 @@ const AddContent = () => {
       setErrors({ ...errors, strengths: "Please Select Valid Strengths" });
     }
   };
+
+  console.log("errors", errors);
   const softSkillsHandler = (e, newValue) => {
     setSoftSkills(newValue);
     if (newValue) {
@@ -371,6 +384,10 @@ const AddContent = () => {
       await newAddContentValidationSchema.validate(state, {
         abortEarly: false,
       });
+      if (errors.contentLink) {
+        setLoading(false);
+        return;
+      }
 
       let body = {
         name: state.contentName,
@@ -570,6 +587,8 @@ const AddContent = () => {
               }}
               onChange={inputHandler}
               id="contentLink"
+              error={Boolean(errors.contentLink)}
+              helperText={errors.contentLink}
             />
           )}
 
@@ -725,7 +744,6 @@ const AddContent = () => {
           </Button>
         </Stack>
       </form>
-
     </Box>
   );
 };

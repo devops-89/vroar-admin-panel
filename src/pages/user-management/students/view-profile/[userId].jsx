@@ -31,6 +31,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { getUserRoadMapJourney } from "@/assests/apiCalling/userController";
+import ManualNotes from "@/components/user/notes/ManualNotes";
 
 const UserProfile = () => {
   const router = useRouter();
@@ -202,6 +203,11 @@ const UserProfile = () => {
               <TabPanel value={value} index={5}>
                 <Box sx={{ mt: 2 }}>
                   <Sessions />
+                </Box>
+              </TabPanel>
+              <TabPanel value={value} index={6}>
+                <Box sx={{ mt: 2 }}>
+                  <ManualNotes />
                 </Box>
               </TabPanel>
             </Box>

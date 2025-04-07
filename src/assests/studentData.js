@@ -71,6 +71,9 @@ export const RoadmapJourneyHeader = [
   {
     label: "Status",
   },
+  {
+    label: "Actions",
+  },
 ];
 
 export const PointsHeader = [

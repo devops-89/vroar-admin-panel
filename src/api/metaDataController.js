@@ -246,5 +246,4 @@ export const metaDataController = {
       throw error;
     }
   },
-  
 };

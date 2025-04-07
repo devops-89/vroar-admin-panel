@@ -31,6 +31,9 @@ export const profileTabs = [
   {
     label: PROFILE_DATA.SESSIONS,
   },
+  {
+    label: PROFILE_DATA.MANUAL_NOTES,
+  },
 ];
 
 export const contentType = [

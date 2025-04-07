@@ -109,7 +109,9 @@ const CollapseTableCell = ({ data }) => {
             </TableCell>
             <TableCell>
               <UserRoadmapProgress
-                progress={`${(val.completedSteps / val.totalSteps) * 100}`}
+                progress={`${Math.round(
+                  (val.completedSteps / val.totalSteps) * 100
+                )}`}
               />
             </TableCell>
             <TableCell>

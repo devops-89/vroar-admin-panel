@@ -217,7 +217,7 @@ const EditContent = () => {
           filePath: response.data.data.filePath,
         });
         setState({ ...state, contentLink: filePath });
-
+        
         let body = {
           name: state.contentName,
           contentType: state.contentType,
@@ -260,6 +260,7 @@ const EditContent = () => {
             severity: ToastStatus.SUCCESS,
           })
         );
+        setLoading(false);
 
         if (isQuizEnabled) {
           const modifiedData = questions.map(({ id, options, ...rest }) => ({
@@ -285,6 +286,7 @@ const EditContent = () => {
 
           addQuizHandler(data);
         }
+        router.back();
       })
       .catch((err) => {
         let errMessage =
@@ -372,6 +374,7 @@ const EditContent = () => {
           (val) => val.type === METADATA_TYPE.SOFT_SKILLS
         );
         if (response) {
+          // console.log("response",response)
           setState({
             ...state,
             contentType: response.contentType,

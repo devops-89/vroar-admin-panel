@@ -43,13 +43,14 @@ const Roadmap = () => {
     page: page,
     pageSize: pageSize,
   };
-  const pageChangeHandler = (newPage) => {
+  const pageChangeHandler = (e,newPage) => {
     setLoading(true);
+   
     setPage(newPage);
     if (newPage) {
       body.page = newPage + 1;
+      getAllRoadmapJourney(body);
     }
-    getAllRoadmapJourney(body);
   };
 
   const pageSizeHandler = (e) => {

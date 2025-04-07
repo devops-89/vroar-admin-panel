@@ -5,7 +5,7 @@ import { DownloadForOffline, FilterList, SwapVert } from "@mui/icons-material";
 import { Button, Grid2, Stack, TextField } from "@mui/material";
 import React from "react";
 
-const CustomTable = ({ button, onSearch }) => {
+const CustomTable = ({ button, onSearch, onFilter }) => {
   return (
     <div>
       <Grid2 container alignItems={"center"} spacing={2}>
@@ -45,6 +45,7 @@ const CustomTable = ({ button, onSearch }) => {
               textTransform: "inherit",
             }}
             fullWidth
+            onClick={onFilter}
           >
             Filter
           </Button>

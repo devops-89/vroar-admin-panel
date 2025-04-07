@@ -559,4 +559,36 @@ export const data = {
       sessionTime: "4:30 AM",
     },
   ],
+  notes: [
+    {
+      message:
+        "Wuhoo! A new mentor (Kunal Sharma) has completed their onboarding journey. Please review their profile and accept/reject their application to become a mentor.",
+      time: "5:15 pm",
+      date: "10 Jan 2025",
+    },
+    {
+      message:
+        "Wuhoo! A new mentor (Kunal Sharma) has completed their onboarding journey. Please review their profile and accept/reject their application to become a mentor.",
+      time: "5:15 pm",
+      date: "10 Jan 2025",
+    },
+    {
+      message:
+        "Wuhoo! A new mentor (Kunal Sharma) has completed their onboarding journey. Please review their profile and accept/reject their application to become a mentor.",
+      time: "5:15 pm",
+      date: "10 Jan 2025",
+    },
+    {
+      message:
+        "Wuhoo! A new mentor (Kunal Sharma) has completed their onboarding journey. Please review their profile and accept/reject their application to become a mentor.",
+      time: "5:15 pm",
+      date: "10 Jan 2025",
+    },
+    {
+      message:
+        "Wuhoo! A new mentor (Kunal Sharma) has completed their onboarding journey. Please review their profile and accept/reject their application to become a mentor.",
+      time: "5:15 pm",
+      date: "10 Jan 2025",
+    },
+  ],
 };

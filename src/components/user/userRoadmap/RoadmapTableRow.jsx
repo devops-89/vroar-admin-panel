@@ -1,7 +1,14 @@
 import CustomChip from "@/components/customChip";
 import { roboto } from "@/utils/fonts";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import {
+  AddCircleOutline,
+  Add,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  Visibility,
+} from "@mui/icons-material";
+import {
+  Button,
   Collapse,
   IconButton,
   TableCell,
@@ -13,7 +20,6 @@ import React from "react";
 import CollapseTableCell from "./CollapseTableCell";
 
 const RoadmapTableRow = ({ i, val, handleToggle, open }) => {
-  
   return (
     <React.Fragment>
       <TableRow key={i}>
@@ -45,6 +51,18 @@ const RoadmapTableRow = ({ i, val, handleToggle, open }) => {
         </TableCell>
         <TableCell align="center">
           <CustomChip label={val.status} variant={val.status} />
+        </TableCell>
+        <TableCell>
+          <Button
+            startIcon={<AddCircleOutline />}
+            sx={{
+              fontSize: 13,
+              fontFamily: roboto.style,
+              textTransform: "capitalize",
+            }}
+          >
+            Add Roadmap
+          </Button>
         </TableCell>
       </TableRow>
       <TableRow>
