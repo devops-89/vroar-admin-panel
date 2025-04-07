@@ -5,6 +5,7 @@ import { loginTextField } from "@/utils/styles";
 import { manualNotesValidationSchema } from "@/utils/validationSchema";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
+import ReactQuill from "react-quill";
 
 const ManualNotes = () => {
   const formik = useFormik({
@@ -20,7 +21,7 @@ const ManualNotes = () => {
   return (
     <div>
       {data.notes.map((val, i) => (
-        <Stack alignItems={"flex-end"} key={i} spacing={2} mt={1}>
+        <Stack alignItems={"start"} key={i} spacing={2} mt={1} sx={{width:"100%"}}>
           <Box
             sx={{
               borderRadius: 18,
@@ -28,6 +29,7 @@ const ManualNotes = () => {
               px: 3,
               py: 2,
               mt: 1,
+              width:"95%"
             }}
           >
             <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
@@ -39,6 +41,7 @@ const ManualNotes = () => {
             alignItems={"center"}
             justifyContent={"flex-end"}
             spacing={1}
+            sx={{width:"95%"}}
           >
             <Typography
               sx={{
@@ -70,7 +73,7 @@ const ManualNotes = () => {
         </Stack>
       ))}
       <form onSubmit={formik.handleSubmit}>
-        <TextField
+        {/* <TextField
           sx={{
             ...loginTextField,
             fieldset: {
@@ -89,8 +92,12 @@ const ManualNotes = () => {
           id="notes"
           error={formik.touched.notes && Boolean(formik.errors.notes)}
           helperText={formik.touched.notes && formik.errors.notes}
-        />
-        <Box sx={{ mt: 2, textAlign: "end" }}>
+        /> */}
+        <Box>
+
+        <ReactQuill style={{ height: 150 }}/>
+        </Box>
+        <Box sx={{ mt: 10, textAlign: "end" }}>
           <Button
             sx={{
               fontSize: 15,
