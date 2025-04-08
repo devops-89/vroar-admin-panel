@@ -110,7 +110,7 @@ const Roadmap = () => {
               }}
               onClick={handleAddRoadmap}
             >
-              Add Roadmap
+              Add Journey
             </Button>
           </Box>
         </Box>

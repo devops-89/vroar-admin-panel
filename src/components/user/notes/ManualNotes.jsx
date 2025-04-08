@@ -44,8 +44,8 @@ const ManualNotes = () => {
             sx={{
               borderRadius: 18,
               backgroundColor: "#EEEFF3",
-              px: 3,
-              py: 2,
+              px: open === i ? 4 : 3,
+              py: open === i ? 3 : 2,
               mt: 1,
               width: "95%",
             }}

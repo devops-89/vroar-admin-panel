@@ -126,7 +126,7 @@ const UserProfile = () => {
                   }}
                   onClick={addRoadmapModal}
                 >
-                  Add Roadmap
+                  Add Journey
                 </Button>
               )}
 
