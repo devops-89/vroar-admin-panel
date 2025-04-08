@@ -87,7 +87,7 @@ export const PointsHeader = [
     label: "Allocated by",
   },
   {
-    label: "Points",
+    label: "Coins",
   },
 ];
 

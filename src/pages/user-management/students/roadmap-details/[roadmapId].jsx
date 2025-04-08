@@ -60,7 +60,7 @@ const UserRoadmapDetails = () => {
       label: "Review Status",
     },
   ];
-  console.log("uer", userAssignedRoadmap);
+  // console.log("uer", userAssignedRoadmap);
 
   useEffect(() => {
     if (roadmapId && userId) {

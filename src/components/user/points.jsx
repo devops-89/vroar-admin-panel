@@ -35,7 +35,7 @@ const Points = () => {
         <Typography
           sx={{ fontSize: 20, fontWeight: 550, fontFamily: roboto.style }}
         >
-          Total Points Earned
+          Total Coins Earned
         </Typography>
 
         <Stack direction={"row"} alignItems={"center"} spacing={1}>
@@ -57,7 +57,7 @@ const Points = () => {
                 fontFamily: roboto.style,
               }}
             >
-              PTS
+              Coins
             </Typography>
           </Typography>
         </Stack>

@@ -18,8 +18,16 @@ import {
 import moment from "moment";
 import React from "react";
 import CollapseTableCell from "./CollapseTableCell";
+import { useDispatch } from "react-redux";
+import { showModal } from "@/redux/reducers/modal";
+import AddRoadmapJourney from "@/assests/modalCalling/user/AddRoadmapJourney";
 
 const RoadmapTableRow = ({ i, val, handleToggle, open }) => {
+  const dispatch = useDispatch();
+
+  const handleAddRoadmap = () => {
+    dispatch(showModal(<AddRoadmapJourney />));
+  };
   return (
     <React.Fragment>
       <TableRow key={i}>
@@ -60,6 +68,7 @@ const RoadmapTableRow = ({ i, val, handleToggle, open }) => {
               fontFamily: roboto.style,
               textTransform: "capitalize",
             }}
+            onClick={handleAddRoadmap}
           >
             Add Roadmap
           </Button>

@@ -3,10 +3,18 @@ import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { manualNotesValidationSchema } from "@/utils/validationSchema";
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Collapse,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useFormik } from "formik";
-import ReactQuill from "react-quill";
-
+import dynamic from "next/dynamic";
+import { useState } from "react";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const ManualNotes = () => {
   const formik = useFormik({
     initialValues: {
@@ -17,6 +25,10 @@ const ManualNotes = () => {
       console.log("values", values);
     },
   });
+  const [open, setOpen] = useState(false);
+  const handleOpen = (index) => {
+    setOpen((prev) => (prev === index ? null : index));
+  };
 
   return (
     <div>
@@ -39,8 +51,46 @@ const ManualNotes = () => {
             }}
           >
             <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-              {val.message}
+              {open === i ? val.message : val.message.slice(0, 250) + "..."}
+              <Typography
+                component={"span"}
+                sx={{
+                  fontFamily: roboto.style,
+                  color: COLORS.PRIMARY,
+                  fontSize: 14,
+                  cursor: "pointer",
+                }}
+              >
+                {open !== i && (
+                  <Button
+                    sx={{
+                      fontFamily: roboto.style,
+                      color: COLORS.PRIMARY,
+                      fontSize: 14,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleOpen(i)}
+                    variant="text"
+                  >
+                    Read More
+                  </Button>
+                )}
+              </Typography>
             </Typography>
+            {open === i && (
+              <Button
+                sx={{
+                  fontFamily: roboto.style,
+                  color: COLORS.PRIMARY,
+                  fontSize: 14,
+                  cursor: "pointer",
+                }}
+                onClick={() => handleOpen(i)}
+                variant="text"
+              >
+                Read Less
+              </Button>
+            )}
           </Box>
           <Stack
             direction={"row"}
@@ -108,7 +158,7 @@ const ManualNotes = () => {
               fontSize: 15,
               fontFamily: roboto.style,
               color: COLORS.WHITE,
-              backgroundColor: COLORS.PRIMARY, 
+              backgroundColor: COLORS.PRIMARY,
               textTransform: "capitalize",
               width: 180,
             }}

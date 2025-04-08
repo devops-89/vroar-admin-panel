@@ -15,16 +15,11 @@ export const profileTabs = [
   {
     label: PROFILE_DATA.POINTS,
   },
-  // {
-  //   label: PROFILE_DATA.MESSAGE,
-  // },
 
   {
     label: PROFILE_DATA.NOTES,
   },
-  // {
-  //   label: PROFILE_DATA.RECOMMENDATIONS,
-  // },
+
   {
     label: PROFILE_DATA.INTEREST,
   },
