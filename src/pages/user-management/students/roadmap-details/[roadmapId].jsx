@@ -1,12 +1,16 @@
 import userController from "@/api/user";
 import { data } from "@/assests/data";
+import RoadmapTileDetails from "@/assests/modalCalling/user/RoadmapTileDetails";
 import CustomChip from "@/components/customChip";
 import Wrapper from "@/components/wrapper";
+import { showModal } from "@/redux/reducers/modal";
 import { COLORS, USER_ROADMAP_REVIEW_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import { Visibility } from "@mui/icons-material";
 import {
   Button,
   Card,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -19,6 +23,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "react-loading";
+import { useDispatch } from "react-redux";
 
 const UserRoadmapDetails = () => {
   const router = useRouter();
@@ -59,8 +64,15 @@ const UserRoadmapDetails = () => {
     {
       label: "Review Status",
     },
+    {
+      label: "Action",
+    },
   ];
-  // console.log("uer", userAssignedRoadmap);
+
+  const dispatch = useDispatch();
+  const showRoadmapTilesData = (value) => {
+    dispatch(showModal(<RoadmapTileDetails value={value} />));
+  };
 
   useEffect(() => {
     if (roadmapId && userId) {
@@ -166,6 +178,11 @@ const UserRoadmapDetails = () => {
                             --
                           </Typography>
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => showRoadmapTilesData(val)}>
+                          <Visibility />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
