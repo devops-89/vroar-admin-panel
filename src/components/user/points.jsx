@@ -10,7 +10,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import coins from "@/icons/coins.png";
 import Image from "next/image";
 import { COLORS } from "@/utils/enum";
@@ -18,10 +18,17 @@ import { PointsHeader } from "@/assests/studentData";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import { data } from "@/assests/data";
-const Points = () => {
-  const user = useSelector((state) => state.USER);
+import { useRouter } from "next/router";
+const Points = ({ getRewards }) => {
+  const router = useRouter();
+  const { userId } = router.query;
 
-  //   console.log("sstststs", user);
+  useEffect(() => {
+    if (userId) {
+      getRewards(userId);
+    }
+  }, []);
+
   return (
     <div>
       <Stack

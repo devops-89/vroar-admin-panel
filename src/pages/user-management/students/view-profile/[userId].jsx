@@ -78,6 +78,16 @@ const UserProfile = () => {
         setLoading(false);
       });
   };
+  const getRedeemCoins = (id) => {
+    userController
+      .getRewards(id)
+      .then((res) => {
+        console.log("res", res);
+      })
+      .catch((err) => {
+        console.log("err in get rewards api", err);
+      });
+  };
 
   useEffect(() => {
     if (userId) {
@@ -141,7 +151,7 @@ const UserProfile = () => {
                   }}
                   onClick={rewardPoints}
                 >
-                  Reward Points
+                  Reward Coins
                 </Button>
               )}
             </Stack>
@@ -189,7 +199,7 @@ const UserProfile = () => {
               </TabPanel>
               <TabPanel value={value} index={2}>
                 <Box sx={{ mt: 2 }}>
-                  <Points />
+                  <Points getRewards={getRedeemCoins} />
                 </Box>
               </TabPanel>
               <TabPanel value={value} index={3}>
