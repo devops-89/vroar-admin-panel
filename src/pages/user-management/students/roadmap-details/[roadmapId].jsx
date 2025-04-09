@@ -155,7 +155,8 @@ const UserRoadmapDetails = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        {val.review_status ? (
+                        {val.review_status
+                         ? (
                           <Button
                             sx={{
                               fontFamily: roboto.style,
@@ -169,7 +170,7 @@ const UserRoadmapDetails = () => {
                               p: 0,
                             }}
                           >
-                            {USER_ROADMAP_REVIEW_STATUS.FEEDBACK_PROVIDED}
+                            {val.review_status}
                           </Button>
                         ) : (
                           <Typography
