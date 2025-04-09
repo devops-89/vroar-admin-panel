@@ -127,5 +127,16 @@ const userController = {
       throw error;
     }
   },
+  addRewardCoins: async (data) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "/api/rewards/add",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;
