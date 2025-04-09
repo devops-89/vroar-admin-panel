@@ -10,7 +10,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import coins from "@/icons/coins.png";
 import Image from "next/image";
 import { COLORS } from "@/utils/enum";
@@ -18,10 +18,14 @@ import { PointsHeader } from "@/assests/studentData";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import { data } from "@/assests/data";
-const Points = () => {
+const Points = ({ getUserRewardPoint, rewardData }) => {
   const userId = useSelector((state) => state.USER.id);
 
- 
+  useEffect(() => {
+    if (userId) {
+      getUserRewardPoint(userId);
+    }
+  }, [userId]);
 
   //   console.log("sstststs", user);
   return (
@@ -50,7 +54,7 @@ const Points = () => {
               fontWeight: 600,
             }}
           >
-            500{" "}
+            {rewardData?.totalCoinEarn}{" "}
             <Typography
               component={"span"}
               sx={{
@@ -85,22 +89,21 @@ const Points = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data?.points.map((val, i) => (
+              {rewardData?.docs.map((val, i) => (
                 <TableRow key={i}>
                   <TableCell>
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {moment.unix(val.allocatedDate).format("DD-MM-YYYY")} ,{" "}
-                      {val.allocatedTime}
+                      {moment.unix(val.createdAt).format("DD-MM-YYYY")}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {val.allocatedFor}
+                      {val.description}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {val.allocatedBy}
+                      {val.earnedFrom}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -113,7 +116,7 @@ const Points = () => {
                           color: COLORS.PRIMARY,
                         }}
                       >
-                        +{val.points}
+                        +{val.rewardValue}
                       </Typography>
                     </Stack>
                   </TableCell>

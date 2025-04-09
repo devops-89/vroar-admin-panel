@@ -57,6 +57,20 @@ const UserProfile = () => {
     });
   };
 
+  const [rewardData, setRewardData] = useState(null);
+
+  const getRewardCoins = (id) => {
+    userController
+      .getRewardsCoins(id)
+      .then((res) => {
+        console.log("res", res);
+        setRewardData(res.data.data);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
   const rewardPoints = () => {
     dispatch(showModal(<RewardPoints />));
   };
@@ -189,7 +203,7 @@ const UserProfile = () => {
               </TabPanel>
               <TabPanel value={value} index={2}>
                 <Box sx={{ mt: 2 }}>
-                  <Points />
+                  <Points getUserRewardPoint={getRewardCoins} rewardData={rewardData} />
                 </Box>
               </TabPanel>
               <TabPanel value={value} index={3}>
