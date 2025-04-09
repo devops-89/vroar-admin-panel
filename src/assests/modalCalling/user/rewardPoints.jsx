@@ -1,21 +1,27 @@
+import userController from "@/api/user";
 import { hideModal } from "@/redux/reducers/modal";
-import { COLORS } from "@/utils/enum";
+import { setToast } from "@/redux/reducers/toast";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { pointsValidation } from "@/utils/validationSchema";
 import { Close } from "@mui/icons-material";
 import {
-    Box,
-    Button,
-    IconButton,
-    Stack,
-    TextField,
-    Typography,
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
+import Loading from "react-loading";
+import { useDispatch, useSelector } from "react-redux";
 
 const RewardPoints = () => {
+  const userId = useSelector((state) => state.USER.id);
+
   const formik = useFormik({
     initialValues: {
       points: "",
@@ -23,7 +29,12 @@ const RewardPoints = () => {
     },
     validationSchema: pointsValidation,
     onSubmit: (values) => {
-      console.log("values", values);
+      let body = {
+        userId: userId,
+        description: values.reason,
+        rewardValue: values.points,
+      };
+      handleSubmit(body);
     },
   });
 
@@ -31,6 +42,37 @@ const RewardPoints = () => {
 
   const handleCloseModal = () => {
     dispatch(hideModal());
+  };
+
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = (body) => {
+    setLoading(true);
+    userController
+      .addRewardCoins(body)
+      .then((res) => {
+        dispatch(
+          setToast({
+            open: true,
+            message: res.data.message,
+            variant: ToastStatus.SUCCESS,
+          })
+        );
+        handleCloseModal();
+        setLoading(false);
+      })
+      .catch((err) => {
+        // console.log("err", err);
+        let errMessage =
+          (err.response && err.response.data.message) || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            messsage: errMessage,
+            variant: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
+      });
   };
 
   return (
@@ -42,7 +84,7 @@ const RewardPoints = () => {
         mb={2}
       >
         <Typography sx={{ fontSize: 20, fontFamily: roboto.style }}>
-          Reward Points
+          Reward Coins
         </Typography>
         <IconButton onClick={handleCloseModal}>
           <Close sx={{ color: COLORS.PRIMARY }} />
@@ -52,7 +94,7 @@ const RewardPoints = () => {
         <TextField
           sx={{ ...loginTextField }}
           fullWidth
-          label="Enter the points"
+          label="Enter the Coins"
           id="points"
           onChange={formik.handleChange}
           error={formik.touched.points && Boolean(formik.errors.points)}
@@ -79,7 +121,11 @@ const RewardPoints = () => {
           fullWidth
           onClick={formik.handleSubmit}
         >
-          Add Points
+          {loading ? (
+            <Loading width={20} height={20} color={COLORS.BLACK} type="bars" />
+          ) : (
+            "Add Points"
+          )}
         </Button>
       </Stack>
     </Box>

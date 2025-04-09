@@ -138,5 +138,15 @@ const userController = {
       throw error;
     }
   },
+  getRewardsCoins: async (userId) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.get(
+        `api/rewards/get?userId=${userId}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;

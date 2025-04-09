@@ -19,7 +19,9 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import { data } from "@/assests/data";
 const Points = () => {
-  const user = useSelector((state) => state.USER);
+  const userId = useSelector((state) => state.USER.id);
+
+ 
 
   //   console.log("sstststs", user);
   return (

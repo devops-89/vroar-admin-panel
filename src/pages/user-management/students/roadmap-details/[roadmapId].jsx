@@ -155,8 +155,7 @@ const UserRoadmapDetails = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        {val.review_status
-                         ? (
+                        {val.review_status ? (
                           <Button
                             sx={{
                               fontFamily: roboto.style,
