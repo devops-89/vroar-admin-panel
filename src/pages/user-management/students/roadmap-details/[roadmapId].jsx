@@ -169,7 +169,7 @@ const UserRoadmapDetails = () => {
                               p: 0,
                             }}
                           >
-                            {val.review_status}
+                            {USER_ROADMAP_REVIEW_STATUS.FEEDBACK_PROVIDED}
                           </Button>
                         ) : (
                           <Typography
