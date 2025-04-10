@@ -8,7 +8,7 @@ const userController = {
         `/api/userReports/downloadCSV/${role}`
       );
       return result;
-    } catch (error) { 
+    } catch (error) {
       throw error;
     }
   },
@@ -142,6 +142,27 @@ const userController = {
     try {
       let result = await userSecuredApi.userSecuredApi.get(
         `api/rewards/get?userId=${userId}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addNotes: async (data) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "api/userNotes/addNote",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getNotes: async (userId) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.get(
+        `api/userNotes/getNotes?userId=${userId}`
       );
       return result;
     } catch (error) {

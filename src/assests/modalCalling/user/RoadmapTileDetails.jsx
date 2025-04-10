@@ -14,14 +14,14 @@ const RoadmapTileDetails = ({ value }) => {
     dispatch(hideModal());
   };
   return (
-    <Box sx={{ width: 400 }}>
+    <Box sx={{ minWidth: 900 }}>
       <Stack
         direction={"row"}
         alignItems={"center"}
         justifyContent={"space-between"}
       >
-        <Typography sx={{ fontFamily: roboto.style, fontSize: 17 }}>
-          {value.name}
+        <Typography sx={{ fontFamily: roboto.style, fontSize: 20 }}>
+          Roadmap Tiles Details
         </Typography>
         <IconButton onClick={closeModal}>
           <Close sx={{ color: COLORS.PRIMARY }} />

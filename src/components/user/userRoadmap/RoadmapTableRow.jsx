@@ -2,10 +2,8 @@ import CustomChip from "@/components/customChip";
 import { roboto } from "@/utils/fonts";
 import {
   AddCircleOutline,
-  Add,
   KeyboardArrowDown,
   KeyboardArrowUp,
-  Visibility,
 } from "@mui/icons-material";
 import {
   Button,
@@ -24,7 +22,6 @@ import AddRoadmapJourney from "@/assests/modalCalling/user/AddRoadmapJourney";
 
 const RoadmapTableRow = ({ i, val, handleToggle, open }) => {
   const dispatch = useDispatch();
-
   const handleAddRoadmap = () => {
     dispatch(showModal(<AddRoadmapJourney />));
   };

@@ -1,5 +1,7 @@
+import userController from "@/api/user";
 import { data } from "@/assests/data";
-import { COLORS } from "@/utils/enum";
+import { setToast } from "@/redux/reducers/toast";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { manualNotesValidationSchema } from "@/utils/validationSchema";
@@ -13,22 +15,74 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const ManualNotes = () => {
+  const user = useSelector((state) => state.USER);
   const formik = useFormik({
     initialValues: {
       notes: "",
     },
-    validationSchema: manualNotesValidationSchema,
     onSubmit: (values) => {
-      console.log("values", values);
+      let body = {
+        note: values.notes,
+        userId: user.id,
+      };
+      handleSubmit(body);
     },
   });
   const [open, setOpen] = useState(false);
+
+  const [value, setValue] = useState("");
+  const handleChangeNote = (newValue) => {
+    setValue(newValue);
+    formik.values.notes = newValue;
+  };
+
   const handleOpen = (index) => {
     setOpen((prev) => (prev === index ? null : index));
   };
+  const dispatch = useDispatch();
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const handleSubmit = (body) => {
+    if (formik.values.notes === "") {
+      dispatch(
+        setToast({
+          open: true,
+          message: "Please Enter Note",
+          variant: ToastStatus.ERROR,
+        })
+      );
+      return;
+    }
+    userController
+      .addNotes(body)
+      .then((res) => {
+        console.log("res", res);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+  const [notes, setNotes] = useState(null);
+  const getNotes = (userId) => {
+    userController
+      .getNotes(userId)
+      .then((res) => {
+        const response = res.data.data;
+        setNotes(response);
+      })
+      .catch((err) => {
+        console.log("Err", err);
+      });
+  };
+
+  useEffect(() => {
+    if (user) {
+      getNotes(user?.id);
+    }
+  }, [user]);
 
   return (
     <div>
@@ -130,7 +184,12 @@ const ManualNotes = () => {
       ))}
       <form onSubmit={formik.handleSubmit}>
         <Box>
-          <ReactQuill style={{ height: 150 }} />
+          <ReactQuill
+            style={{ height: 150 }}
+            onChange={handleChangeNote}
+            value={value}
+            id="notes"
+          />
         </Box>
         <Box sx={{ mt: 10, textAlign: "end" }}>
           <Button
