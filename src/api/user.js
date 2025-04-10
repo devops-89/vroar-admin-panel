@@ -8,7 +8,7 @@ const userController = {
         `/api/userReports/downloadCSV/${role}`
       );
       return result;
-    } catch (error) {
+    } catch (error) { 
       throw error;
     }
   },

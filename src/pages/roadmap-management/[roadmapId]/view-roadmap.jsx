@@ -51,11 +51,10 @@ const ViewRoadmap = () => {
     }
   }, [roadmapId]);
   const dispatch = useDispatch();
-  const pdfviewer = (fileUrl) => {
-    dispatch(showModal(<ViewPdf fileUrl={fileUrl} />));
+  const pdfviewer = async (pdfUrl) => {
+    dispatch(showModal(<ViewPdf fileUrl={pdfUrl} />));
   };
 
-  console.log("roadmap", roadmapData);
 
   const arrayData = [
     {

@@ -129,26 +129,6 @@ const ManualNotes = () => {
         </Stack>
       ))}
       <form onSubmit={formik.handleSubmit}>
-        {/* <TextField
-          sx={{
-            ...loginTextField,
-            fieldset: {
-              height: 110,
-            },
-            "& .MuiOutlinedInput-input": {
-              height: "100px !important",
-            },
-            mt: 2,
-          }}
-          fullWidth
-          multiline
-          label="Enter your text (max 500 characters)"
-          onChange={formik.handleChange}
-          value={formik.values.notes}
-          id="notes"
-          error={formik.touched.notes && Boolean(formik.errors.notes)}
-          helperText={formik.touched.notes && formik.errors.notes}
-        /> */}
         <Box>
           <ReactQuill style={{ height: 150 }} />
         </Box>
