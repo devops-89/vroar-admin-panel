@@ -54,7 +54,7 @@ const RewardPoints = () => {
           setToast({
             open: true,
             message: res.data.message,
-            variant: ToastStatus.SUCCESS,
+            severity: ToastStatus.SUCCESS,
           })
         );
         handleCloseModal();
@@ -68,7 +68,7 @@ const RewardPoints = () => {
           setToast({
             open: true,
             messsage: errMessage,
-            variant: ToastStatus.ERROR,
+            severity: ToastStatus.ERROR,
           })
         );
         setLoading(false);

@@ -1,3 +1,6 @@
+import { PointsHeader } from "@/assests/studentData";
+import coins from "@/icons/coins.png";
+import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
   Box,
@@ -10,15 +13,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
-import coins from "@/icons/coins.png";
-import Image from "next/image";
-import { COLORS } from "@/utils/enum";
-import { PointsHeader } from "@/assests/studentData";
-import { useSelector } from "react-redux";
 import moment from "moment";
-import { data } from "@/assests/data";
-const Points = ({ getUserRewardPoint, rewardData }) => {
+import Image from "next/image";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+const Points = ({ getUserRewardPoint, rewardData, loading }) => {
   const userId = useSelector((state) => state.USER.id);
 
   useEffect(() => {

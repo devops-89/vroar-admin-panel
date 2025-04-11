@@ -58,13 +58,14 @@ const UserProfile = () => {
   };
 
   const [rewardData, setRewardData] = useState(null);
-
+  const [coinsLoading, setCoinsLoading] = useState(true);
   const getRewardCoins = (id) => {
     userController
       .getRewardsCoins(id)
       .then((res) => {
-        console.log("res", res);
+        // console.log("res", res);
         setRewardData(res.data.data);
+        setCoinsLoading(false);
       })
       .catch((err) => {
         console.log("err", err);
@@ -88,7 +89,7 @@ const UserProfile = () => {
       .catch((err) => {
         let errMessage =
           (err.response && err.response.data.message) || err.message;
-        console.log("Err", errMessage);
+        console.log("error in get student information", errMessage);
         setLoading(false);
       });
   };
@@ -203,7 +204,11 @@ const UserProfile = () => {
               </TabPanel>
               <TabPanel value={value} index={2}>
                 <Box sx={{ mt: 2 }}>
-                  <Points getUserRewardPoint={getRewardCoins} rewardData={rewardData} />
+                  <Points
+                    getUserRewardPoint={getRewardCoins}
+                    rewardData={rewardData}
+                    loading={coinsLoading}
+                  />
                 </Box>
               </TabPanel>
               <TabPanel value={value} index={3}>
