@@ -16,6 +16,7 @@ import {
 import moment from "moment";
 import Image from "next/image";
 import { useEffect } from "react";
+import Loading from "react-loading";
 import { useSelector } from "react-redux";
 const Points = ({ getUserRewardPoint, rewardData, loading }) => {
   const userId = useSelector((state) => state.USER.id);
@@ -26,7 +27,6 @@ const Points = ({ getUserRewardPoint, rewardData, loading }) => {
     }
   }, [userId]);
 
-  //   console.log("sstststs", user);
   return (
     <div>
       <Stack
@@ -87,41 +87,67 @@ const Points = ({ getUserRewardPoint, rewardData, loading }) => {
                 ))}
               </TableRow>
             </TableHead>
-            <TableBody>
-              {rewardData?.docs.map((val, i) => (
-                <TableRow key={i}>
-                  <TableCell>
-                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {moment.unix(val.createdAt).format("DD-MM-YYYY")}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {val.description}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {val.earnedFrom}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                      <Image src={coins} width={20} alt="" />
-                      <Typography
-                        sx={{
-                          fontSize: 14,
-                          fontFamily: roboto.style,
-                          color: COLORS.PRIMARY,
-                        }}
-                      >
-                        +{val.rewardValue}
-                      </Typography>
-                    </Stack>
+            {loading ? (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={12}>
+                    <Loading
+                      type="bars"
+                      width={20}
+                      height={20}
+                      color={COLORS.BLACK}
+                      className="m-auto"
+                    />
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
+              </TableBody>
+            ) : (
+              <TableBody>
+                {rewardData?.docs.map((val, i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      <Typography
+                        sx={{ fontSize: 14, fontFamily: roboto.style }}
+                      >
+                        {moment.unix(val.createdAt).format("DD-MM-YYYY")}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography
+                        sx={{ fontSize: 14, fontFamily: roboto.style }}
+                      >
+                        {val.description}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography
+                        sx={{ fontSize: 14, fontFamily: roboto.style }}
+                      >
+                        {val.earnedFrom}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        spacing={1}
+                      >
+                        <Image src={coins} width={20} alt="" />
+                        <Typography
+                          sx={{
+                            fontSize: 14,
+                            fontFamily: roboto.style,
+                            color: COLORS.PRIMARY,
+                          }}
+                        >
+                          +{val.rewardValue}
+                        </Typography>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
       </Box>
