@@ -57,7 +57,7 @@ const EditMetaData = ({ value, getMetaData, metaDataBody }) => {
           );
           setLoading(false);
           getMetaData(metaDataBody);
-          dispatch(closeModal());
+          closeModal();
         })
         .catch((err) => {
           const errMessage =

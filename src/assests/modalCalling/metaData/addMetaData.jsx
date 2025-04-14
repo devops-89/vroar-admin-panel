@@ -47,6 +47,8 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
     if (newValue) {
       setState({ ...state, metadataType: newValue.label });
       setErrors({ ...errors, metadataType: "" });
+    } else {
+      setState({ ...state, metadataType: "" });
     }
   };
 
@@ -160,7 +162,7 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
                 fontFamily: roboto.style,
               },
             }}
-            label="Enter Free Text"
+            label="Enter Meta Data Name"
             id="name"
             value={state.name}
             onChange={inputHandler}

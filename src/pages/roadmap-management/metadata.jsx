@@ -53,20 +53,31 @@ const Metadata = () => {
       setMetaDataType(METADATA_TYPE.CAREER);
       setLoading(true);
       body.type = METADATA_TYPE.CAREER;
+      body.page = 0;
+      setPage(0);
     }
     if (text === METADATA_TYPE.INDUSTRY) {
       body.type = METADATA_TYPE.INDUSTRY;
+      body.page = 0;
+      setPage(0);
+
       setLoading(true);
       setMetaDataType(METADATA_TYPE.INDUSTRY);
     }
     if (text === METADATA_TYPE.SOFT_SKILLS) {
       body.type = METADATA_TYPE.SOFT_SKILLS;
+      body.page = 0;
+      setPage(0);
+
       setLoading(true);
       setMetaDataType(METADATA_TYPE.SOFT_SKILLS);
     }
 
     if (text === METADATA_TYPE.STRENGTHS) {
       body.type = METADATA_TYPE.STRENGTHS;
+      body.page = 0;
+      setPage(0);
+
       setLoading(true);
       setMetaDataType(METADATA_TYPE.STRENGTHS);
     }

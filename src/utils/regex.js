@@ -7,6 +7,10 @@ export function isValidURL(url) {
 export function isYoutubeUrl(url) {
   const youtubeRegex =
     /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/gm;
-  console.log("Youtube URL", youtubeRegex.test(url), url);
   return youtubeRegex.test(url);
+}
+
+export function hasSpecialCharacters(string) {
+  const specialCharacter = /^[^A-Za-z0-9 ]+$/;
+  return specialCharacter.test(string);
 }

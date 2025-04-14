@@ -1,8 +1,8 @@
 import { hideModal } from "@/redux/reducers/modal";
-import { COLORS } from "@/utils/enum";
+import { COLORS, USER_ROADMAP_REVIEW_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Close } from "@mui/icons-material";
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Divider, IconButton, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
 
@@ -13,6 +13,22 @@ const RoadmapTileDetails = ({ value }) => {
   const closeModal = () => {
     dispatch(hideModal());
   };
+
+  const details = [
+    {
+      label: "Tile Name",
+      value: value.name,
+    },
+    value.status === USER_ROADMAP_REVIEW_STATUS.COMPLETED && {
+      label: "Coins Earned",
+      value: `${value.points} coins`,
+    },
+    {
+      label: "Uploaded Doc",
+      value: "Show Result",
+      url: value?.content?.contentLink,
+    },
+  ];
   return (
     <Box sx={{ minWidth: 900 }}>
       <Stack
@@ -27,6 +43,28 @@ const RoadmapTileDetails = ({ value }) => {
           <Close sx={{ color: COLORS.PRIMARY }} />
         </IconButton>
       </Stack>
+      <Divider />
+      <Box sx={{ mt: 3 }}>
+        <Stack spacing={2}>
+          {details.map((val, index) => (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              spacing={5}
+              key={index}
+            >
+              <Typography
+                sx={{ fontSize: 16, fontFamily: roboto.style, width: 200 }}
+              >
+                {val.label}{" "}
+              </Typography>
+              <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                {val.value}
+              </Typography>
+            </Stack>
+          ))}
+        </Stack>
+      </Box>
     </Box>
   );
 };

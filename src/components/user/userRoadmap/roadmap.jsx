@@ -146,7 +146,7 @@ const Roadmap = () => {
                     </TableSortLabel>
                   </TableCell>
                 ) : (
-                  <TableCell key={i} align="center" size="small">
+                  <TableCell key={i} align="start" size="small">
                     <Typography
                       sx={{
                         fontSize: 15,

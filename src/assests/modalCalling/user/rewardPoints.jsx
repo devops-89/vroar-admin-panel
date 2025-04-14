@@ -19,9 +19,10 @@ import { useState } from "react";
 import Loading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
 
-const RewardPoints = () => {
+const RewardPoints = ({ getPoints }) => {
+  // console.log("first", getPoints);
   const userId = useSelector((state) => state.USER.id);
-
+  // console.log("userId", userId);
   const formik = useFormik({
     initialValues: {
       points: "",
@@ -59,9 +60,9 @@ const RewardPoints = () => {
         );
         handleCloseModal();
         setLoading(false);
+        getPoints(userId);
       })
       .catch((err) => {
-        // console.log("err", err);
         let errMessage =
           (err.response && err.response.data.message) || err.message;
         dispatch(

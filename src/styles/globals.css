@@ -1,12 +1,9 @@
 body {
   background-image: url("https://vroar-bucket.s3.us-west-1.amazonaws.com/background/main_bg.png");
-
   padding: 0;
   background-position: 50% 50%, 0 0;
   background-size: 3.125rem, auto;
-
   overflow-x: hidden;
-  /* background-color: transparent; */
 }
 
 body {
@@ -14,6 +11,12 @@ body {
 }
 
 ::-webkit-scrollbar {
+  width: 0;
+}
+::-moz-scrollbar {
+  width: 0;
+}
+::-ms-scrollbar {
   width: 0;
 }
 
@@ -26,7 +29,7 @@ body {
 }
 
 .custom-description p {
-  margin-bottom: 8px; /* Space between paragraphs */
+  margin-bottom: 8px;
 }
 
 .custom-description ul {
@@ -39,7 +42,7 @@ body {
 }
 
 .custom-description li {
-  margin-bottom: 2px; /* Space between list items */
+  margin-bottom: 2px;
   font-size: 12px;
 }
 
@@ -52,9 +55,6 @@ body {
   font-size: 20px;
   margin-bottom: 18px;
 }
-/* .quill {
-  height: 200px;
-} */
 
 .m-auto {
   margin: auto;

@@ -1,4 +1,6 @@
+import AddRoadmapJourney from "@/assests/modalCalling/user/AddRoadmapJourney";
 import CustomChip from "@/components/customChip";
+import { showModal } from "@/redux/reducers/modal";
 import { roboto } from "@/utils/fonts";
 import {
   AddCircleOutline,
@@ -15,10 +17,8 @@ import {
 } from "@mui/material";
 import moment from "moment";
 import React from "react";
-import CollapseTableCell from "./CollapseTableCell";
 import { useDispatch } from "react-redux";
-import { showModal } from "@/redux/reducers/modal";
-import AddRoadmapJourney from "@/assests/modalCalling/user/AddRoadmapJourney";
+import CollapseTableCell from "./CollapseTableCell";
 
 const RoadmapTableRow = ({ i, val, handleToggle, open }) => {
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const RoadmapTableRow = ({ i, val, handleToggle, open }) => {
             {open === i ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="start">
           <Typography
             sx={{
               fontSize: 14,
@@ -54,7 +54,7 @@ const RoadmapTableRow = ({ i, val, handleToggle, open }) => {
             {val.roadmapJourneys.length}
           </Typography>
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="start">
           <CustomChip label={val.status} variant={val.status} />
         </TableCell>
         <TableCell>

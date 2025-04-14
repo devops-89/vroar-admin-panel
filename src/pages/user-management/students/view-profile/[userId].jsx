@@ -60,6 +60,7 @@ const UserProfile = () => {
   const [rewardData, setRewardData] = useState(null);
   const [coinsLoading, setCoinsLoading] = useState(true);
   const getRewardCoins = (id) => {
+    // const userID = id ? id : userId;
     userController
       .getRewardsCoins(id)
       .then((res) => {
@@ -73,7 +74,7 @@ const UserProfile = () => {
   };
 
   const rewardPoints = () => {
-    dispatch(showModal(<RewardPoints />));
+    dispatch(showModal(<RewardPoints getPoints={getRewardCoins} />));
   };
 
   const dispatch = useDispatch();

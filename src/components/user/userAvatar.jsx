@@ -17,7 +17,13 @@ const UserAvatar = (props) => {
             style={{ objectFit: "cover" }}
           />
         </Avatar>
-        <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
+        <Typography
+          sx={{
+            fontSize: 14,
+            fontFamily: roboto.style,
+            textTransform: "capitalize",
+          }}
+        >
           {name ? name : `${firstName} ${lastName}`}
         </Typography>
       </Stack>

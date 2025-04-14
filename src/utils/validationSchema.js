@@ -8,7 +8,9 @@ export const loginValidationSchema = Yup.object({
 
 export const AddMetaDataValiationSchema = Yup.object({
   metadataType: Yup.string().required("Please Select Valid MetaData Type"),
-  name: Yup.string().required("Please Enter MetaData Name"),
+  name: Yup.string()
+    .required("Please Enter MetaData Name")
+    .max(255, "Name is Too Long!"),
 });
 
 export const AddContentValidationSchema = ({ state, errors, setErrors }) => {
@@ -110,7 +112,12 @@ export const pointsValidation = Yup.object().shape({
 
 export const newAddContentValidationSchema = Yup.object().shape({
   contentName: Yup.string().required("Please Enter Content Name"),
-  description: Yup.string().required("Please Enter Description"),
+  description: Yup.string()
+    .required("Please Enter Description")
+    .matches(
+      /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
+      "Description cannot contain special characters except for basic punctuation"
+    ),
   contentType: Yup.string().required("Please Select Content Type"),
   // career: Yup.array()
   //   .required("Please Select Career")

@@ -4,6 +4,7 @@ import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
   Box,
+  Skeleton,
   Stack,
   Table,
   TableBody,
@@ -42,30 +43,33 @@ const Points = ({ getUserRewardPoint, rewardData, loading }) => {
         >
           Total Coins Earned
         </Typography>
-
-        <Stack direction={"row"} alignItems={"center"} spacing={1}>
-          <Image src={coins} />
-          <Typography
-            sx={{
-              color: COLORS.PRIMARY,
-              fontSize: 45,
-              fontFamily: roboto.style,
-              fontWeight: 600,
-            }}
-          >
-            {rewardData?.totalCoinEarn}{" "}
+        {loading ? (
+          <Skeleton />
+        ) : (
+          <Stack direction={"row"} alignItems={"center"} spacing={1}>
+            <Image src={coins} />
             <Typography
-              component={"span"}
               sx={{
-                color: COLORS.BLACK,
-                fontSize: 18,
+                color: COLORS.PRIMARY,
+                fontSize: 45,
                 fontFamily: roboto.style,
+                fontWeight: 600,
               }}
             >
-              Coins
+              {rewardData?.totalCoinEarn}{" "}
+              <Typography
+                component={"span"}
+                sx={{
+                  color: COLORS.BLACK,
+                  fontSize: 18,
+                  fontFamily: roboto.style,
+                }}
+              >
+                Coins
+              </Typography>
             </Typography>
-          </Typography>
-        </Stack>
+          </Stack>
+        )}
       </Stack>
       <Box sx={{ mt: 2 }}>
         <TableContainer>
