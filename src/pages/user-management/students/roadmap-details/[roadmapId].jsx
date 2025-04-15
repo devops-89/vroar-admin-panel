@@ -1,10 +1,15 @@
 import userController from "@/api/user";
 import { data } from "@/assests/data";
+import ProvideFeedback from "@/assests/modalCalling/user/ProvideFeedback";
 import RoadmapTileDetails from "@/assests/modalCalling/user/RoadmapTileDetails";
 import CustomChip from "@/components/customChip";
 import Wrapper from "@/components/wrapper";
 import { showModal } from "@/redux/reducers/modal";
-import { COLORS, USER_ROADMAP_REVIEW_STATUS } from "@/utils/enum";
+import {
+  COLORS,
+  ROADMAP_STATUS,
+  USER_ROADMAP_REVIEW_STATUS,
+} from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Visibility } from "@mui/icons-material";
 import {
@@ -73,6 +78,9 @@ const UserRoadmapDetails = () => {
   const showRoadmapTilesData = (value) => {
     dispatch(showModal(<RoadmapTileDetails value={value} />));
   };
+  const provideFeedback = (value) => {
+    dispatch(showModal(<ProvideFeedback value={value} />));
+  };
 
   useEffect(() => {
     if (roadmapId && userId) {
@@ -136,11 +144,6 @@ const UserRoadmapDetails = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        {/* <Typography
-                        sx={{ fontFamily: roboto.style, fontSize: 15 }}
-                      >
-                        {val.status}
-                      </Typography> */}
                         <CustomChip label={val.status} variant={val.status} />
                       </TableCell>
                       <TableCell>
@@ -155,28 +158,43 @@ const UserRoadmapDetails = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        {val.review_status ? (
-                          <Button
+                        {val.adminFeedback ? (
+                          <Typography
                             sx={{
                               fontFamily: roboto.style,
                               fontSize: 13,
                               cursor: "pointer",
-                              color:
-                                val.review_status ===
-                                USER_ROADMAP_REVIEW_STATUS.FEEDBACK_PROVIDED
-                                  ? COLORS.DONE_TEXT
-                                  : COLORS.SIGNED_UP_TEXT,
+                              color: val.adminFeedback
+                                ? COLORS.DONE_TEXT
+                                : COLORS.SIGNED_UP_TEXT,
                               p: 0,
                             }}
                           >
-                            {val.review_status}
-                          </Button>
-                        ) : (
-                          <Typography
-                            sx={{ fontFamily: roboto.style, fontSize: 15 }}
-                          >
-                            --
+                            {val.status === USER_ROADMAP_REVIEW_STATUS.COMPLETED
+                              ? val.adminFeedback
+                                ? USER_ROADMAP_REVIEW_STATUS.FEEDBACK_PROVIDED
+                                : USER_ROADMAP_REVIEW_STATUS.PROVIDE_FEEDBACK
+                              : ""}
                           </Typography>
+                        ) : (
+                          val.status ===
+                            USER_ROADMAP_REVIEW_STATUS.COMPLETED && (
+                            <Button
+                              sx={{
+                                fontFamily: roboto.style,
+                                fontSize: 15,
+                                color: val.adminFeedback
+                                  ? COLORS.DONE_TEXT
+                                  : COLORS.SIGNED_UP_TEXT,
+                                fontFamily: roboto.style,
+                                fontSize: 13,
+                                cursor: "pointer",
+                              }}
+                              onClick={() => provideFeedback(val)}
+                            >
+                              {USER_ROADMAP_REVIEW_STATUS.PROVIDE_FEEDBACK}
+                            </Button>
+                          )
                         )}
                       </TableCell>
                       <TableCell>

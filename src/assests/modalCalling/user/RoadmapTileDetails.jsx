@@ -28,6 +28,10 @@ const RoadmapTileDetails = ({ value }) => {
       value: "Show Result",
       url: value?.content?.contentLink,
     },
+    value?.adminFeedback && {
+      label: "Feedback",
+      value: value?.adminFeedback,
+    },
   ];
   return (
     <Box sx={{ minWidth: 900 }}>
@@ -54,11 +58,22 @@ const RoadmapTileDetails = ({ value }) => {
               key={index}
             >
               <Typography
-                sx={{ fontSize: 16, fontFamily: roboto.style, width: 200 }}
+                sx={{
+                  fontSize: 16,
+                  fontFamily: roboto.style,
+                  width: 200,
+                  textTransform: "capitalize",
+                }}
               >
                 {val.label}{" "}
               </Typography>
-              <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontFamily: roboto.style,
+                  textTransform: "capitalize",
+                }}
+              >
                 {val.value}
               </Typography>
             </Stack>

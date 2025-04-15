@@ -19,17 +19,18 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
-const AddRoadmapJourney = ({ getJourney }) => {
+const AddRoadmapJourney = ({ getJourney, journeyData }) => {
+  console.log("test", journeyData);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { userId } = router.query;
   const formik = useFormik({
     initialValues: {
-      journey_name: "",
+      journey_name: journeyData ? journeyData?.name : "",
       careerRoadmap: [],
       strengthRoadmap: [],
       industryRoadmap: [],
@@ -40,13 +41,18 @@ const AddRoadmapJourney = ({ getJourney }) => {
       const body = {
         name: values.journey_name,
         roadmapJourneyIds: [
-          ...values.careerRoadmap,
-          ...values.industryRoadmap,
-          ...values.softSkillsRoadmap,
-          ...values.strengthRoadmap,
+          values.careerRoadmap,
+          values.industryRoadmap,
+          values.softSkillsRoadmap,
+          values.strengthRoadmap,
         ],
         userId: userId,
       };
+      if (journeyData) {
+        body.journeyId = journeyData.id;
+      }
+
+      // console.log("body", body);
       try {
         await studentJourneyValidationSchema.validate(body, {
           abortEarly: false,
@@ -166,6 +172,87 @@ const AddRoadmapJourney = ({ getJourney }) => {
   const closeModal = () => {
     dispatch(hideModal());
   };
+
+  useEffect(() => {
+    if (journeyData?.roadmapJourneys?.length) {
+      const careerJourneyNames = [];
+      const strengthJourneyNames = [];
+      const industryJourneyNames = [];
+      const softSkillJourneyNames = [];
+
+      const careerTags = [];
+      const strengthTags = [];
+      const industryTags = [];
+      const softSkillTags = [];
+
+      journeyData.roadmapJourneys.forEach((journey) => {
+        let hasCareer = false;
+        let hasStrength = false;
+        let hasIndustry = false;
+        let hasSoftSkill = false;
+
+        journey.metadataTags?.forEach((tag) => {
+          switch (tag.type) {
+            case METADATA_TYPE.CAREER:
+              if (!careerTags.find((t) => t.id === tag.id))
+                careerTags.push(tag);
+              hasCareer = true;
+              break;
+            case METADATA_TYPE.STRENGTHS:
+              if (!strengthTags.find((t) => t.id === tag.id))
+                strengthTags.push(tag);
+              hasStrength = true;
+              break;
+            case METADATA_TYPE.INDUSTRY:
+              if (!industryTags.find((t) => t.id === tag.id))
+                industryTags.push(tag);
+              hasIndustry = true;
+              break;
+            case METADATA_TYPE.SOFT_SKILLS:
+              if (!softSkillTags.find((t) => t.id === tag.id))
+                softSkillTags.push(tag);
+              hasSoftSkill = true;
+              break;
+          }
+        });
+
+        if (hasCareer && !careerJourneyNames.includes(journey.name)) {
+          careerJourneyNames.push({ id: journey.id, name: journey.name });
+        }
+        if (hasStrength && !strengthJourneyNames.includes(journey.name)) {
+          strengthJourneyNames.push({ id: journey.id, name: journey.name });
+        }
+        if (hasIndustry && !industryJourneyNames.includes(journey.name)) {
+          industryJourneyNames.push({ id: journey.id, name: journey.name });
+        }
+        if (hasSoftSkill && !softSkillJourneyNames.includes(journey.name)) {
+          softSkillJourneyNames.push({ id: journey.id, name: journey.name });
+        }
+      });
+
+      setCareer(careerJourneyNames);
+      setStrength(strengthJourneyNames);
+      setIndustry(industryJourneyNames);
+      setSoftSkills(softSkillJourneyNames);
+      formik.setFieldValue(
+        "careerRoadmap",
+        careerJourneyNames.map((val) => val.id)
+      );
+      formik.setFieldValue(
+        "strengthRoadmap",
+        strengthJourneyNames.map((val) => val.id)
+      );
+      formik.setFieldValue(
+        "industryRoadmap",
+        industryJourneyNames.map((val) => val.id)
+      );
+      formik.setFieldValue(
+        "softSkillsRoadmap",
+        softSkillJourneyNames.map((val) => val.id)
+      );
+    }
+  }, [journeyData]);
+
 
   return (
     <Box sx={{ width: 400 }}>

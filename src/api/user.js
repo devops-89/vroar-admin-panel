@@ -178,6 +178,16 @@ const userController = {
     } catch (error) {
       throw error;
     }
-  }, 
+  },
+  provideFeedback: async (data) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "/api/userRoadmapJourney/adminFeedback"
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;

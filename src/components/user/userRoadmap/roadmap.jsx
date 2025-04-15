@@ -63,8 +63,6 @@ const Roadmap = () => {
     });
   };
 
-  // console.log("roadmapData", roadmapData);
-
   useEffect(() => {
     if (userId) {
       getRoadmapData();
@@ -184,6 +182,7 @@ const Roadmap = () => {
                     i={i}
                     open={open}
                     handleToggle={handletoggle}
+                    getJourney={getRoadmapData}
                   />
                 );
               })}

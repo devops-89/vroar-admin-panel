@@ -111,26 +111,39 @@ export const pointsValidation = Yup.object().shape({
 });
 
 export const newAddContentValidationSchema = Yup.object().shape({
-  contentName: Yup.string().required("Please Enter Content Name"),
+  contentName: Yup.string()
+    .required("Please Enter Content Name")
+    .test(
+      "not-empty",
+      "Content Name cannot be only whitespace",
+      (value) => value && value.trim().length > 0
+    )
+    .matches(
+      /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
+      "Name cannot contain special characters except for basic punctuation"
+    ),
+
   description: Yup.string()
     .required("Please Enter Description")
+    .test(
+      "not-empty",
+      "Description cannot be only whitespace",
+      (value) => value && value.trim().length > 0
+    )
     .matches(
       /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
       "Description cannot contain special characters except for basic punctuation"
+    )
+    .max(500, "Only 500 characters allowed"),
+
+  contentType: Yup.string()
+    .required("Please Select Content Type")
+    .test(
+      "not-empty",
+      "Please Select Content Type",
+      (value) => value && value.trim().length > 0
     ),
-  contentType: Yup.string().required("Please Select Content Type"),
-  // career: Yup.array()
-  //   .required("Please Select Career")
-  //   .min(1, "Please Select Career"),
-  // industry: Yup.array()
-  //   .required("Please Select Industry")
-  //   .min(1, "Please Select Industry"),
-  // strengths: Yup.array()
-  //   .required("Please Select Strengths")
-  //   .min(1, "Please Select Strengths"),
-  // softSkills: Yup.array()
-  //   .required("Please Select Soft Skills")
-  //   .min(1, "Please Select Soft Skills"),
+
   isQuizEnabled: Yup.boolean(),
 });
 
