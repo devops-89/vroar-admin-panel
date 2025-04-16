@@ -35,11 +35,8 @@ const UserRoadmapDetails = () => {
   const { roadmapId, userId } = router.query;
   const [userAssignedRoadmap, setUserAssignedRoadmap] = useState(null);
   const [loading, setLoading] = useState(true);
-  const body = {
-    roadmapId: roadmapId,
-    userId: userId,
-  };
-  const getUserRoadmapDetails = () => {
+
+  const getUserRoadmapDetails = (body) => {
     userController
       .getUserRoadmapDetails(body)
       .then((res) => {
@@ -79,12 +76,23 @@ const UserRoadmapDetails = () => {
     dispatch(showModal(<RoadmapTileDetails value={value} />));
   };
   const provideFeedback = (value) => {
-    dispatch(showModal(<ProvideFeedback value={value} />));
+    dispatch(
+      showModal(
+        <ProvideFeedback
+          value={value}
+          getRoadmapTiles={getUserRoadmapDetails}
+        />
+      )
+    );
   };
 
   useEffect(() => {
     if (roadmapId && userId) {
-      getUserRoadmapDetails();
+      const body = {
+        roadmapId: roadmapId,
+        userId: userId,
+      };
+      getUserRoadmapDetails(body);
     }
   }, [roadmapId, userId]);
 
@@ -162,7 +170,7 @@ const UserRoadmapDetails = () => {
                           <Typography
                             sx={{
                               fontFamily: roboto.style,
-                              fontSize: 13,
+                              fontSize: 15,
                               cursor: "pointer",
                               color: val.adminFeedback
                                 ? COLORS.DONE_TEXT

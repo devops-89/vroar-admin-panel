@@ -182,7 +182,8 @@ const userController = {
   provideFeedback: async (data) => {
     try {
       let result = await userSecuredApi.userSecuredApi.post(
-        "/api/userRoadmapJourney/adminFeedback"
+        "/api/userRoadmapJourney/adminFeedback",
+        data
       );
       return result;
     } catch (error) {

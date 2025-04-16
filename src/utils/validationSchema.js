@@ -179,3 +179,7 @@ export const manualNotesValidationSchema = Yup.object().shape({
     .required("Please Enter Notes")
     .max(500, "Notes must be less than 500 characters"),
 });
+
+export const feedbackValidationSchema = Yup.object().shape({
+  feedback: Yup.string().required("Please Enter Feedback"),
+});
