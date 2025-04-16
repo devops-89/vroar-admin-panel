@@ -24,7 +24,6 @@ import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
 const AddRoadmapJourney = ({ getJourney, journeyData }) => {
-  console.log("test", journeyData);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { userId } = router.query;
@@ -41,10 +40,10 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
       const body = {
         name: values.journey_name,
         roadmapJourneyIds: [
-          values.careerRoadmap,
-          values.industryRoadmap,
-          values.softSkillsRoadmap,
-          values.strengthRoadmap,
+          ...values.careerRoadmap,
+          ...values.industryRoadmap,
+          ...values.softSkillsRoadmap,
+          ...values.strengthRoadmap,
         ],
         userId: userId,
       };
@@ -52,7 +51,6 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
         body.journeyId = journeyData.id;
       }
 
-      // console.log("body", body);
       try {
         await studentJourneyValidationSchema.validate(body, {
           abortEarly: false,
@@ -234,25 +232,8 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
       setStrength(strengthJourneyNames);
       setIndustry(industryJourneyNames);
       setSoftSkills(softSkillJourneyNames);
-      formik.setFieldValue(
-        "careerRoadmap",
-        careerJourneyNames.map((val) => val.id)
-      );
-      formik.setFieldValue(
-        "strengthRoadmap",
-        strengthJourneyNames.map((val) => val.id)
-      );
-      formik.setFieldValue(
-        "industryRoadmap",
-        industryJourneyNames.map((val) => val.id)
-      );
-      formik.setFieldValue(
-        "softSkillsRoadmap",
-        softSkillJourneyNames.map((val) => val.id)
-      );
     }
   }, [journeyData]);
-
 
   return (
     <Box sx={{ width: 400 }}>
