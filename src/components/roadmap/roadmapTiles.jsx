@@ -30,7 +30,7 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
     handleInputChange(id, "contentLibraryId", null);
 
     if (newValue) {
-      const body = { page: 1, pageSize: 100 };
+      const body = { page: 1, pageSize: 500 };
       setContentLoading(true);
 
       getContentList({

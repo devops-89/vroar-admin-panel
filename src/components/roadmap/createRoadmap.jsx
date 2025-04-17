@@ -50,7 +50,7 @@ const Createroadmap = () => {
     if (newValue) {
       const body = {
         page: 1,
-        pageSize: 100,
+        pageSize: 500,
         type: newValue?.label,
       };
       setMetaDataList([]);
@@ -83,7 +83,6 @@ const Createroadmap = () => {
     metaDataController
       .createRoadmapJourney(body)
       .then((res) => {
-        console.log("res", res);
         setLoading(false);
         dispatch(
           setToast({
