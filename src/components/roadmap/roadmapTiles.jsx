@@ -139,6 +139,7 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
                 contentTypeHandler(val.id, e, newValue)
               }
               value={val.contentType}
+              filterSelectedOptions
             />
 
             <Autocomplete
@@ -167,6 +168,7 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
               value={val.contentLibraryId || null}
               loading={contentLoading}
               getOptionLabel={(option) => option.name}
+              filterSelectedOptions
             />
 
             <TextField
