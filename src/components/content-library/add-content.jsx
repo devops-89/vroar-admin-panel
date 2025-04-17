@@ -109,8 +109,8 @@ const AddContent = () => {
         id === "contentLink"
           ? state.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK
             ? isYoutubeUrl(value)
-              ? ""
-              : "Please Enter Native Video link"
+              ? "Please Enter Native Video Link"
+              : ""
             : ""
           : "",
     });
@@ -271,62 +271,7 @@ const AddContent = () => {
       }
       if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
       }
-      // try {
-      //   await quizValidationSchema.validate(
-      //     { quizQuestions: questions },
-      //     { abortEarly: false }
-      //   );
-      //   metaDataController.addContentLibrary(body).then((res) => {
-      //     const contentLibraryId = res.data.data.id;
 
-      //     dispatch(
-      //       setToast({
-      //         open: true,
-      //         message: res.data.message,
-      //         severity: ToastStatus.SUCCESS,
-      //       })
-      //     );
-      //     const modifiedData = questions.map(({ id, options, ...rest }) => ({
-      //       ...rest,
-      //       options: options.map(({ id, ...optionRest }) => optionRest),
-      //     }));
-
-      //     const data = {
-      //       contentLibraryId: contentLibraryId,
-      //       quizType: state.quizType,
-      //     };
-      //     if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
-      //       data.quizSet = modifiedData;
-      //     }
-      //     if (state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
-      //       const quiz = {
-      //         question: sia.question,
-      //         subText: sia.subText,
-      //       };
-
-      //       data.quizSet = quiz;
-      //     }
-
-      //     addQuizHandler(data);
-      //   });
-      // } catch (error) {
-      //   if (error.inner) {
-      //     const validationErrors = {};
-      //     error.inner.forEach((err) => {
-      //       validationErrors[err.path] = err.message;
-      //     });
-
-      //     setErrors(validationErrors);
-      //   }
-
-      //   dispatch(
-      //     setToast({
-      //       open: true,
-      //       message: "Please fix validation errors",
-      //       severity: ToastStatus.ERROR,
-      //     })
-      //   );
-      // }
       try {
         if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
           await quizValidationSchema.validate(

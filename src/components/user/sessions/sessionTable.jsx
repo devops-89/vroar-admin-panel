@@ -1,4 +1,3 @@
-import { data } from "@/assests/data";
 import { sessionTableHead } from "@/assests/studentData";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
@@ -12,9 +11,9 @@ import {
   Typography,
 } from "@mui/material";
 import moment from "moment";
-import React from "react";
+import Loading from "react-loading";
 
-const SessionTable = () => {
+const SessionTable = ({ sessionData, loading }) => {
   return (
     <div>
       <TableContainer>
@@ -30,27 +29,48 @@ const SessionTable = () => {
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {data.sessionsData.map((val, i) => (
-              <TableRow>
-                <TableCell>
-                  <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                    {val.mentorName}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                    {moment.unix(val.sessionDate).format("YYYY-MMM-DD")}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                    {val.sessionTime}
-                  </Typography>
+          {loading ? (
+            <TableBody>
+              <TableRow >
+                <TableCell colSpan={12} align="center">
+                  <Loading
+                    type="bars"
+                    width={20}
+                    height={20}
+                    color={COLORS.BLACK}
+                    className="m-auto"
+                  />
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
+            </TableBody>
+          ) : (
+            <TableBody>
+              {sessionData.map((val, i) => (
+                <TableRow>
+                  <TableCell>
+                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                      {val?.mentor?.firstName} {val?.mentor?.lastName}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                      {moment(val.meetingTime).format("YYYY-MMM-DD")}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                      {moment(val.meetingTime).format("hh:mm A")}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                      {val.sessionAgenda}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
         </Table>
       </TableContainer>
     </div>

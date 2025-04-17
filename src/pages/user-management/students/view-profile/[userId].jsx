@@ -1,13 +1,16 @@
 import userController from "@/api/user";
+import { getUserRoadMapJourney } from "@/assests/apiCalling/userController";
 import AddRoadmap from "@/assests/modalCalling/user/addRoadmap";
 import RewardPoints from "@/assests/modalCalling/user/rewardPoints";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import TabPanel from "@/components/tabPanel";
+import InterestedInternshipList from "@/components/user/InterestedInternshipList";
 import Notes from "@/components/user/notes";
+import ManualNotes from "@/components/user/notes/ManualNotes";
 import Points from "@/components/user/points";
-import Roadmap from "@/components/user/userRoadmap/roadmap";
 import Sessions from "@/components/user/sessions";
 import StudentProfile from "@/components/user/studentProfile";
+import Roadmap from "@/components/user/userRoadmap/roadmap";
 import Wrapper from "@/components/wrapper";
 import { showModal } from "@/redux/reducers/modal";
 import { setUserDetails } from "@/redux/reducers/userInformation";
@@ -30,8 +33,6 @@ import {
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { getUserRoadMapJourney } from "@/assests/apiCalling/userController";
-import ManualNotes from "@/components/user/notes/ManualNotes";
 
 const UserProfile = () => {
   const router = useRouter();
@@ -218,7 +219,9 @@ const UserProfile = () => {
                 </Box>
               </TabPanel>
               <TabPanel value={value} index={4}>
-                <Box sx={{ mt: 2 }}></Box>
+                <Box sx={{ mt: 2 }}>
+                  <InterestedInternshipList />
+                </Box>
               </TabPanel>
               <TabPanel value={value} index={5}>
                 <Box sx={{ mt: 2 }}>

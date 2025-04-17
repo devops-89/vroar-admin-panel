@@ -2248,4 +2248,7 @@ export const sessionTableHead = [
   {
     label: "Session Start Time",
   },
+  {
+    label: "Session Agenda",
+  },
 ];

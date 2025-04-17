@@ -145,4 +145,14 @@ export const internshipController = {
       throw error;
     }
   },
+  getInterestedInternshipList: async (userId) => {
+    try {
+      let result = await internshipSecuredApi.internshipSecuredApi.get(
+        `/api/internship/getUserInterestedInternships/${userId}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
