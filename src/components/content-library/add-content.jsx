@@ -471,7 +471,7 @@ const AddContent = () => {
                 })
               );
             } else {
-              addContentApi();
+              addContentApi(body);
             }
           }
         } else {
