@@ -167,7 +167,6 @@ const AddContent = () => {
     }
   };
 
-  console.log("errors", errors);
   const softSkillsHandler = (e, newValue) => {
     setSoftSkills(newValue);
     if (newValue) {
@@ -190,7 +189,6 @@ const AddContent = () => {
   const [isUploading, setIsUploading] = useState(false);
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    // console.log("selected", selectedFile);
     if (selectedFile) {
       if (selectedFile.type === "application/pdf") {
         setFile(selectedFile);
@@ -271,11 +269,93 @@ const AddContent = () => {
         setLoading(false);
         return;
       }
+      if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+      }
+      // try {
+      //   await quizValidationSchema.validate(
+      //     { quizQuestions: questions },
+      //     { abortEarly: false }
+      //   );
+      //   metaDataController.addContentLibrary(body).then((res) => {
+      //     const contentLibraryId = res.data.data.id;
+
+      //     dispatch(
+      //       setToast({
+      //         open: true,
+      //         message: res.data.message,
+      //         severity: ToastStatus.SUCCESS,
+      //       })
+      //     );
+      //     const modifiedData = questions.map(({ id, options, ...rest }) => ({
+      //       ...rest,
+      //       options: options.map(({ id, ...optionRest }) => optionRest),
+      //     }));
+
+      //     const data = {
+      //       contentLibraryId: contentLibraryId,
+      //       quizType: state.quizType,
+      //     };
+      //     if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+      //       data.quizSet = modifiedData;
+      //     }
+      //     if (state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
+      //       const quiz = {
+      //         question: sia.question,
+      //         subText: sia.subText,
+      //       };
+
+      //       data.quizSet = quiz;
+      //     }
+
+      //     addQuizHandler(data);
+      //   });
+      // } catch (error) {
+      //   if (error.inner) {
+      //     const validationErrors = {};
+      //     error.inner.forEach((err) => {
+      //       validationErrors[err.path] = err.message;
+      //     });
+
+      //     setErrors(validationErrors);
+      //   }
+
+      //   dispatch(
+      //     setToast({
+      //       open: true,
+      //       message: "Please fix validation errors",
+      //       severity: ToastStatus.ERROR,
+      //     })
+      //   );
+      // }
       try {
-        await quizValidationSchema.validate(
-          { quizQuestions: questions },
-          { abortEarly: false }
-        );
+        if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+          await quizValidationSchema.validate(
+            { quizQuestions: questions },
+            { abortEarly: false }
+          );
+        } else if (
+          state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ &&
+          (!sia.question?.trim() || !sia.subText?.trim())
+        ) {
+          // If subjective and question/subText is empty
+          setErrors({
+            question: !sia.question?.trim()
+              ? "Question is required"
+              : undefined,
+            subText: !sia.subText?.trim() ? "Subtext is required" : undefined,
+          });
+
+          dispatch(
+            setToast({
+              open: true,
+              message: "Please fix validation errors",
+              severity: ToastStatus.ERROR,
+            })
+          );
+          return; // Stop execution
+        }
+
+        // API call
         metaDataController.addContentLibrary(body).then((res) => {
           const contentLibraryId = res.data.data.id;
 
@@ -286,6 +366,7 @@ const AddContent = () => {
               severity: ToastStatus.SUCCESS,
             })
           );
+
           const modifiedData = questions.map(({ id, options, ...rest }) => ({
             ...rest,
             options: options.map(({ id, ...optionRest }) => optionRest),
@@ -295,15 +376,16 @@ const AddContent = () => {
             contentLibraryId: contentLibraryId,
             quizType: state.quizType,
           };
+
           if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
             data.quizSet = modifiedData;
           }
+
           if (state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
             const quiz = {
               question: sia.question,
               subText: sia.subText,
             };
-
             data.quizSet = quiz;
           }
 
@@ -409,30 +491,43 @@ const AddContent = () => {
             setLoading(false);
             return;
           }
-          try {
-            await quizValidationSchema.validate(
-              { quizQuestions: questions },
-              { abortEarly: true }
-            );
-            addContentApi(body);
-          } catch (error) {
-            if (error.inner) {
-              const validationErrors = {};
-              error.inner.forEach((err) => {
-                validationErrors[err.path] = err.message;
-              });
+          if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+            try {
+              await quizValidationSchema.validate(
+                { quizQuestions: questions },
+                { abortEarly: true }
+              );
+              addContentApi(body);
+            } catch (error) {
+              if (error.inner) {
+                const validationErrors = {};
+                error.inner.forEach((err) => {
+                  validationErrors[err.path] = err.message;
+                });
 
-              setErrors(validationErrors);
+                setErrors(validationErrors);
+              }
+
+              dispatch(
+                setToast({
+                  open: true,
+                  message: "Please Enter All Fields",
+                  severity: ToastStatus.ERROR,
+                })
+              );
+              setLoading(false);
             }
-
-            dispatch(
-              setToast({
-                open: true,
-                message: "Please Enter All Fields",
-                severity: ToastStatus.ERROR,
-              })
-            );
-            setLoading(false);
+          } else {
+            if (sia.question === "" || sia.subText === "") {
+              dispatch(
+                setToast({
+                  open: true,
+                  message: "Please Enter Subjective Question or Subtext",
+                })
+              );
+            } else {
+              addContentApi();
+            }
           }
         } else {
           addContentApi(body);
@@ -444,29 +539,42 @@ const AddContent = () => {
             setLoading(false);
             return;
           }
-          try {
-            await quizValidationSchema.validate(
-              { quizQuestions: questions },
-              { abortEarly: true }
-            );
-            uploadContentFile();
-          } catch (error) {
-            if (error.inner) {
-              const validationErrors = {};
-              error.inner.forEach((err) => {
-                validationErrors[err.path] = err.message;
-              });
+          if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+            try {
+              await quizValidationSchema.validate(
+                { quizQuestions: questions },
+                { abortEarly: true }
+              );
+              uploadContentFile();
+            } catch (error) {
+              if (error.inner) {
+                const validationErrors = {};
+                error.inner.forEach((err) => {
+                  validationErrors[err.path] = err.message;
+                });
 
-              setErrors(validationErrors);
+                setErrors(validationErrors);
+              }
+
+              dispatch(
+                setToast({
+                  open: true,
+                  message: "Please Enter Required Fields",
+                  severity: ToastStatus.ERROR,
+                })
+              );
             }
-
-            dispatch(
-              setToast({
-                open: true,
-                message: "Please Enter Required Fields",
-                severity: ToastStatus.ERROR,
-              })
-            );
+          } else {
+            if (sia.question === "" || sia.subText === "") {
+              dispatch(
+                setToast({
+                  open: true,
+                  message: "Please Enter Subjective Question or Subtext",
+                })
+              );
+            } else {
+              uploadContentFile();
+            }
           }
         } else {
           uploadContentFile();
@@ -661,19 +769,21 @@ const AddContent = () => {
             error={Boolean(errors.contentName)}
             helperText={errors.contentName}
           />
-          <FormControlLabel
-            label={
-              <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
-                Enable Quiz
-              </Typography>
-            }
-            control={<Checkbox onChange={quizHandler} />}
-            sx={{
-              "& .Mui-checked": {
-                color: `${COLORS.PRIMARY} !important`,
-              },
-            }}
-          />
+          {content?.label !== CONTENT_TYPE.ASSIGNMENT && (
+            <FormControlLabel
+              label={
+                <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                  Enable Quiz
+                </Typography>
+              }
+              control={<Checkbox onChange={quizHandler} />}
+              sx={{
+                "& .Mui-checked": {
+                  color: `${COLORS.PRIMARY} !important`,
+                },
+              }}
+            />
+          )}
           {isQuizEnabled && (
             <Autocomplete
               renderInput={(params) => (
@@ -730,6 +840,7 @@ const AddContent = () => {
               alignSelf: "flex-end",
             }}
             type="submit"
+            disabled={loading}
           >
             {loading ? (
               <Loading

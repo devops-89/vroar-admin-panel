@@ -190,5 +190,15 @@ const userController = {
       throw error;
     }
   },
+  getSessions: async (userId) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.get(
+        `/api/user/admin/get-sessions/${userId}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;
