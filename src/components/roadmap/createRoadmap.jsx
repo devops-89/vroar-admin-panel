@@ -245,6 +245,7 @@ const Createroadmap = () => {
             width: 120,
           }}
           onClick={submitHandler}
+          disabled={loading}
         >
           {loading ? (
             <Loading type="bars" width={20} height={20} color={COLORS.BLACK} />
