@@ -246,4 +246,25 @@ export const metaDataController = {
       throw error;
     }
   },
+  editContentQuestion: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        "/api/quiz/editQuestion",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteQuestion: async (id) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.get(
+        `api/quiz/deleteQuestion/${id}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

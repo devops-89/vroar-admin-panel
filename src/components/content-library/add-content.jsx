@@ -499,15 +499,16 @@ const AddContent = () => {
                 });
 
                 setErrors(validationErrors);
-              }
 
-              dispatch(
-                setToast({
-                  open: true,
-                  message: "Please Enter Required Fields",
-                  severity: ToastStatus.ERROR,
-                })
-              );
+                dispatch(
+                  setToast({
+                    open: true,
+                    message: "Please Enter Questions and options",
+                    severity: ToastStatus.ERROR,
+                  })
+                );
+                setLoading(false);
+              }
             }
           } else {
             if (sia.question === "" || sia.subText === "") {
@@ -558,6 +559,20 @@ const AddContent = () => {
           spacing={2}
           width={"100%"}
         >
+          <TextField
+            label="Add Name"
+            fullWidth
+            sx={{
+              ...loginTextField,
+              "& .MuiOutlinedInput-input": {
+                fontFamily: roboto.style,
+              },
+            }}
+            id="contentName"
+            onChange={inputHandler}
+            error={Boolean(errors.contentName)}
+            helperText={errors.contentName}
+          />
           <Autocomplete
             renderInput={(params) => (
               <TextField
@@ -622,9 +637,9 @@ const AddContent = () => {
                 />
               </Button>
 
-              <FormHelperText sx={{ fontSize: 14 }}>
+              {/* <FormHelperText sx={{ fontSize: 14 }}>
                 *Maximum file size: 10 MB
-              </FormHelperText>
+              </FormHelperText> */}
             </Box>
           )}
 
@@ -700,20 +715,7 @@ const AddContent = () => {
             helperText={errors.softSkills}
             colors={{ bg: COLORS.PURPLE, text: COLORS.PURPLE_TEXT }}
           />
-          <TextField
-            label="Add Name"
-            fullWidth
-            sx={{
-              ...loginTextField,
-              "& .MuiOutlinedInput-input": {
-                fontFamily: roboto.style,
-              },
-            }}
-            id="contentName"
-            onChange={inputHandler}
-            error={Boolean(errors.contentName)}
-            helperText={errors.contentName}
-          />
+
           {content?.label !== CONTENT_TYPE.ASSIGNMENT && (
             <FormControlLabel
               label={

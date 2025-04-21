@@ -200,5 +200,19 @@ const userController = {
       throw error;
     }
   },
+  deleteAssignRoadmap: async (data) => {
+    // console.log("data in api ", data);
+    try {
+      let result = await userSecuredApi.userSecuredApi.delete(
+        "/api/userRoadmapJourney/deleteRoadmap",
+        {
+          data: data,
+        }
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;

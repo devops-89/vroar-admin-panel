@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-const OptionBox = ({ options, onOptionsChange }) => {
+const OptionBox = ({ options, onOptionsChange, canEdit }) => {
   const [optionList, setOptionList] = useState(options);
 
   const handleOptionChange = (index, key, value) => {
@@ -36,6 +36,7 @@ const OptionBox = ({ options, onOptionsChange }) => {
                 onChange={(e) =>
                   handleOptionChange(index, "isCorrect", e.target.checked)
                 }
+                disabled={canEdit}
               />
             }
           />
@@ -50,6 +51,11 @@ const OptionBox = ({ options, onOptionsChange }) => {
               ...loginTextField,
               "& .MuiOutlinedInput-input": {
                 fontFamily: roboto.style,
+              },
+            }}
+            slotProps={{
+              input: {
+                readOnly: canEdit,
               },
             }}
           />

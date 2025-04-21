@@ -1,4 +1,4 @@
-import { COLORS } from "@/utils/enum";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
   DndContext,
@@ -12,8 +12,18 @@ import { AddCircleOutlined } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
 import { useState } from "react";
 import SortableItem from "./dnd";
+import { useDispatch } from "react-redux";
+import { showModal } from "@/redux/reducers/modal";
+import EditQuizQuestion from "@/assests/modalCalling/metaData/EditQuizQuestion";
+import { metaDataController } from "@/api/metaDataController";
+import { setToast } from "@/redux/reducers/toast";
 
-const ObjectiveQuestion = ({ questions, setQuestions }) => {
+const ObjectiveQuestion = ({
+  questions,
+  setQuestions,
+  canEdit,
+  getDetails,
+}) => {
   const [openIndex, setOpenIndex] = useState(null);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -49,10 +59,44 @@ const ObjectiveQuestion = ({ questions, setQuestions }) => {
       },
     ]);
   };
-
+  const [deleteLoading, setDeleteLoading] = useState(false);
   // Delete a question
   const handleDeleteQuestion = (id) => {
-    setQuestions((prev) => prev.filter((q) => q.id !== id));
+    // console.log("teste", id);
+    setDeleteLoading(true);
+    metaDataController
+      .deleteQuestion(id)
+      .then((res) => {
+        // console.log("res", res);
+        dispatch(
+          setToast({
+            open: true,
+            message: res.data.message,
+            severity: ToastStatus.SUCCESS,
+          })
+        );
+        setDeleteLoading(false);
+        setQuestions((prev) => prev.filter((q) => q.id !== id));
+      })
+      .catch((err) => {
+        // console.log("err", err);
+        let errMessage =
+          (err.response && err.response.data.message) || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+      });
+    setDeleteLoading(false);
+  };
+  const dispatch = useDispatch();
+  const handleEdit = (value) => {
+    dispatch(
+      showModal(<EditQuizQuestion value={value} getDetails={getDetails} />)
+    );
   };
 
   // Update a question text
@@ -89,6 +133,9 @@ const ObjectiveQuestion = ({ questions, setQuestions }) => {
               openIndex={openIndex}
               setOpenIndex={setOpenIndex}
               canDelete={questions.length > 1}
+              canEdit={canEdit}
+              onEdit={handleEdit}
+              deleteLoading={deleteLoading}
             />
           ))}
         </SortableContext>

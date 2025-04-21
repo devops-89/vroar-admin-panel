@@ -29,6 +29,7 @@ const RoadmapTableRow = ({ i, val, handleToggle, open, getJourney }) => {
       )
     );
   };
+
   return (
     <React.Fragment>
       <TableRow key={i}>
@@ -84,7 +85,7 @@ const RoadmapTableRow = ({ i, val, handleToggle, open, getJourney }) => {
           colSpan={6}
         >
           <Collapse in={open === i} timeout="auto" unmountOnExit>
-            <CollapseTableCell data={val.roadmapJourneys} />
+            <CollapseTableCell data={val.roadmapJourneys} journey={val} getJourney={getJourney} />
           </Collapse>
         </TableCell>
       </TableRow>

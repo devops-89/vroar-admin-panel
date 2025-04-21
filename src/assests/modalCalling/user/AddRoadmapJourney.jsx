@@ -328,64 +328,6 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
           loading={listLoading}
         />
 
-        {/* strength roadmap selectbar */}
-        <Autocomplete
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Tag Strength Roadmap"
-              sx={{ ...loginTextField }}
-              error={
-                formik.touched.strengthRoadmap &&
-                Boolean(formik.errors.strengthRoadmap)
-              }
-              helperText={
-                formik.touched.strengthRoadmap && formik.errors.strengthRoadmap
-              }
-            />
-          )}
-          options={strengthData}
-          getOptionLabel={(option) => option.name}
-          renderOption={(props, option) => (
-            <Box component={"li"} {...props}>
-              <Typography sx={{ fontFamily: roboto.style, fontSize: 14 }}>
-                {option.name}
-              </Typography>
-            </Box>
-          )}
-          onChange={strengthSelectHandler}
-          value={strength}
-          multiple
-          renderTags={(value, getTagProps) =>
-            value.map((option, index) => {
-              const { key, ...tagProps } = getTagProps({ index });
-              return (
-                <CustomChip
-                  label={option.name}
-                  variant={METADATA_TYPE.STRENGTHS}
-                  {...tagProps}
-                  key={key}
-                  removable={true}
-                  onDelete={() => {
-                    const newStrengths = strength.filter((_, i) => i !== index);
-                    setStrength(newStrengths);
-                  }}
-                />
-              );
-            })
-          }
-          limitTags={1}
-          filterSelectedOptions
-          onFocus={() =>
-            getAllRoadmapJourney({
-              type: METADATA_TYPE.STRENGTHS,
-              setLoading: setListLoading,
-              setData: setStrengthData,
-            })
-          }
-          loading={listLoading}
-        />
-
         {/* Industry roadmap selectbar */}
         <Autocomplete
           renderInput={(params) => (
@@ -439,6 +381,64 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
               type: METADATA_TYPE.INDUSTRY,
               setLoading: setListLoading,
               setData: setIndustryData,
+            })
+          }
+          loading={listLoading}
+        />
+
+        {/* strength roadmap selectbar */}
+        <Autocomplete
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Tag Strength Roadmap"
+              sx={{ ...loginTextField }}
+              error={
+                formik.touched.strengthRoadmap &&
+                Boolean(formik.errors.strengthRoadmap)
+              }
+              helperText={
+                formik.touched.strengthRoadmap && formik.errors.strengthRoadmap
+              }
+            />
+          )}
+          options={strengthData}
+          getOptionLabel={(option) => option.name}
+          renderOption={(props, option) => (
+            <Box component={"li"} {...props}>
+              <Typography sx={{ fontFamily: roboto.style, fontSize: 14 }}>
+                {option.name}
+              </Typography>
+            </Box>
+          )}
+          onChange={strengthSelectHandler}
+          value={strength}
+          multiple
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => {
+              const { key, ...tagProps } = getTagProps({ index });
+              return (
+                <CustomChip
+                  label={option.name}
+                  variant={METADATA_TYPE.STRENGTHS}
+                  {...tagProps}
+                  key={key}
+                  removable={true}
+                  onDelete={() => {
+                    const newStrengths = strength.filter((_, i) => i !== index);
+                    setStrength(newStrengths);
+                  }}
+                />
+              );
+            })
+          }
+          limitTags={1}
+          filterSelectedOptions
+          onFocus={() =>
+            getAllRoadmapJourney({
+              type: METADATA_TYPE.STRENGTHS,
+              setLoading: setListLoading,
+              setData: setStrengthData,
             })
           }
           loading={listLoading}
