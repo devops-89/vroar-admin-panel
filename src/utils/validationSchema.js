@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { EVENT_TYPE } from "./enum";
 export const loginValidationSchema = Yup.object({
   email: Yup.string()
     .email("Please Enter Valid Email")
@@ -69,6 +70,14 @@ export const AddAdListValidationSchema = Yup.object({
   zoomLink: Yup.string()
     .required("Please Enter Zoom Link")
     .url("Please Enter Valid Url"),
+  eventType: Yup.string().required("Please Select Event Type"),
+  coins: Yup.number()
+    .nullable()
+    .when("eventType", {
+      is: EVENT_TYPE.PAID,
+      then: (schema) => schema.required("Please Enter Coins"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
 });
 
 export const studentJourneyValidationSchema = Yup.object({

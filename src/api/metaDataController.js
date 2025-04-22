@@ -267,4 +267,27 @@ export const metaDataController = {
       throw error;
     }
   },
+  updateEventStatus: async ({ eventId, status }) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        `/api/event/updateEventStatus/${eventId}`,
+        {
+          status: status,
+        }
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteRoadmap: async (id) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.delete(
+        `/api/roadmapJourney/delete/${id}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

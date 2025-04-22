@@ -32,7 +32,12 @@ const AdList = () => {
   return (
     <div>
       <Wrapper>
-        <AdListTable tableData={adListData} loading={loading} />
+        <AdListTable
+          tableData={adListData}
+          loading={loading}
+          setLoading={setLoading}
+          getEventType={()=>getEventType(body)}
+        />
       </Wrapper>
     </div>
   );

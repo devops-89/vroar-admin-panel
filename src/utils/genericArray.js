@@ -3,6 +3,7 @@ const {
   CONTENT_TYPE,
   ASSESSMENTS_TYPE,
   USER_STATUS,
+  EVENT_TYPE,
 } = require("./enum");
 
 export const profileTabs = [
@@ -81,5 +82,16 @@ export const APPROVAL_ARRAY = [
   },
   {
     label: USER_STATUS.REJECT,
+  },
+];
+
+export const Event_Type_Array = [
+  {
+    label: "Paid Events",
+    value: EVENT_TYPE.PAID,
+  },
+  {
+    label: "Free Events",
+    value: EVENT_TYPE.FREE,
   },
 ];

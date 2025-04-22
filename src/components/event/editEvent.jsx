@@ -2,11 +2,13 @@ import { metaDataController } from "@/api/metaDataController";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS, ToastStatus } from "@/utils/enum";
+import { COLORS, EVENT_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import { Event_Type_Array } from "@/utils/genericArray";
 import { loginTextField } from "@/utils/styles";
 import { AddAdListValidationSchema } from "@/utils/validationSchema";
 import {
+  Autocomplete,
   Backdrop,
   Button,
   Card,
@@ -42,6 +44,8 @@ const EditEventForm = ({ details }) => {
       sessionEndDate: "",
       sessionEndTime: "",
       zoomLink: "",
+      coins: "",
+      eventType: "",
     },
     validationSchema: AddAdListValidationSchema,
     onSubmit: (values) => {
@@ -168,6 +172,17 @@ const EditEventForm = ({ details }) => {
       formik.errors.sessionEndTime = "Please Select Valid Time";
     }
   };
+  const [eventType, setEventType] = useState(null);
+  const handleEventType = (e, newValue) => {
+    setEventType(newValue);
+    if (newValue) {
+      formik.setFieldValue("eventType", newValue?.value);
+      formik.setFieldError("eventType", "");
+    } else {
+      formik.setFieldValue("eventType", "");
+      formik.setFieldError("eventType", "Please Select Event Type");
+    }
+  };
 
   const [detailLoaing, setDetailLoading] = useState(true);
 
@@ -186,6 +201,8 @@ const EditEventForm = ({ details }) => {
         sessionEndDate: details.sessionEndDate ? details.sessionEndDate : null,
         sessionEndTime: details.sessionEndTime || "",
         zoomLink: details.zoomLink || "",
+        eventType: details.eventType || null,
+        coins: details?.coins || null,
       });
       setSessionStartDate(moment.unix(details?.sessionStartDate));
       setSessionEndDate(moment.unix(details?.sessionEndDate));
@@ -199,7 +216,15 @@ const EditEventForm = ({ details }) => {
           ? moment(details.sessionStartTime, "hh:mm A")
           : null
       );
+      setEventType({
+        label:
+          details?.eventType === EVENT_TYPE.FREE
+            ? "Free Events"
+            : "Paid Events",
+        value: details?.eventType,
+      });
       setDetailLoading(false);
+      console.log("ddetyaosa", details);
     }
   }, [details]);
 
@@ -229,6 +254,53 @@ const EditEventForm = ({ details }) => {
           <Divider sx={{ mt: 2 }} />
           <form onSubmit={formik.handleSubmit}>
             <Grid2 container spacing={3} mt={2}>
+              <Grid2 size={12}>
+                <Autocomplete
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Event Type"
+                      sx={{ ...loginTextField }}
+                      error={
+                        formik.touched.eventType &&
+                        Boolean(formik.errors.eventType)
+                      }
+                      helperText={
+                        formik.touched.eventType && formik.errors.eventType
+                      }
+                      id="eventType"
+                    />
+                  )}
+                  onChange={handleEventType}
+                  value={eventType}
+                  options={Event_Type_Array}
+                  getOptionLabel={(option) => option.label}
+                  renderOption={(props, option) => (
+                    <Box {...props} component={"li"}>
+                      <Typography
+                        sx={{ fontSize: 14, fontFamily: roboto.style }}
+                      >
+                        {option.label}
+                      </Typography>
+                    </Box>
+                  )}
+                />
+              </Grid2>
+              {eventType?.value === EVENT_TYPE.PAID && (
+                <Grid2 size={12}>
+                  <TextField
+                    sx={{ ...loginTextField }}
+                    fullWidth
+                    label="Coins"
+                    type="number"
+                    id="coins"
+                    onChange={formik.handleChange}
+                    error={formik.touched.coins && Boolean(formik.errors.coins)}
+                    helperText={formik.touched.coins && formik.errors.coins}
+                    value={formik.values.coins}
+                  />
+                </Grid2>
+              )}
               <Grid2 size={6}>
                 <TextField
                   sx={{ ...loginTextField }}

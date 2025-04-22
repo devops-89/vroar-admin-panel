@@ -203,8 +203,8 @@ export const ROADMAP_STATUS = {
   PENDING_APPROVAL: "Pending Approval",
   UPCOMING: "UPCOMING",
   In_PROGRESS: "In Progress",
-  COMPLETED: "Completed",
-  CANCELLED: "Cancelled",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
 };
 
 export const RELATIONSHIP_DATA = {
@@ -313,14 +313,15 @@ export const METADATA_TYPE = {
   INDUSTRY: "INDUSTRY",
   STRENGTHS: "STRENGTHS",
   SOFT_SKILLS: "SOFT SKILLS",
+  MY_TREKS: "MY_TREKS",
 };
 
 export const CONTENT_TYPE = {
   ARTICLE_PDF: "Article PDF",
-  ARTICLE_WRITEUP: "Article writeup",
+  // ARTICLE_WRITEUP: "Article writeup",
   NATIVE_VIDEO_LINK: "Native video link",
   YOUTUBE_VIDEO_LINK: "Youtube video link",
-  JOURNAL_LINK: "Journal Link",
+  JOURNAL_LINK: "Article Link",
   ASSIGNMENT: "Assignment",
 };
 
@@ -384,4 +385,23 @@ export const USER_ROADMAP_REVIEW_STATUS = {
   PENDING: "PENDING",
   COMPLETED: "COMPLETED",
   IN_PROGRESS: "IN PROGRESS",
+};
+
+export const EVENT_STATUS = {
+  UPCOMING: "UPCOMING",
+  IN_PROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
+};
+export const EVENT_TYPE = {
+  FREE: "FREE",
+  PAID: "PAID",
+};
+
+export const EVENT_TABLE_DATA = {
+  View: "View",
+  Edit: "Edit",
+  Copy: "Copy",
+  Cancel: "Cancel",
+  Completed: "Completed",
 };

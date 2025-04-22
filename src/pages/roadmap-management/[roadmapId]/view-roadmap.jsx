@@ -55,7 +55,6 @@ const ViewRoadmap = () => {
     dispatch(showModal(<ViewPdf fileUrl={pdfUrl} />));
   };
 
-
   const arrayData = [
     {
       label: "Roadmap Name",
@@ -237,7 +236,6 @@ const ViewRoadmap = () => {
                                 {val.label}
                               </Typography>
                               {val.type === CONTENT_TYPE.ARTICLE_PDF ||
-                              val.type === CONTENT_TYPE.ARTICLE_WRITEUP ||
                               val.type === CONTENT_TYPE.ASSIGNMENT ? (
                                 <Typography
                                   sx={{
@@ -247,7 +245,11 @@ const ViewRoadmap = () => {
                                     textDecoration: "underline",
                                     color: COLORS.DARKBLUE,
                                   }}
-                                  onClick={() => pdfviewer(val.url)}
+                                  // onClick={() => pdfviewer(val.url)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  component={"a"}
+                                  href={val.url}
                                 >
                                   {val.value}
                                 </Typography>
