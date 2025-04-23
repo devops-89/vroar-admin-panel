@@ -12,6 +12,7 @@ import { Delete, DragIndicator, WidthFull } from "@mui/icons-material";
 import OptionBox from "./quiz-option/option";
 import { loginTextField } from "@/utils/styles";
 import { roboto } from "@/utils/fonts";
+import { FaRegEdit } from "react-icons/fa";
 
 const SortableItem = ({
   id,
@@ -23,6 +24,9 @@ const SortableItem = ({
   openIndex,
   setOpenIndex,
   canDelete,
+  canEdit,
+  onEdit,
+  deleteLoading,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -55,8 +59,13 @@ const SortableItem = ({
           <IconButton {...listeners}>
             <DragIndicator />
           </IconButton>
+          {canEdit && (
+            <IconButton onClick={() => onEdit(question)}>
+              <FaRegEdit />
+            </IconButton>
+          )}
           {canDelete && (
-            <IconButton onClick={() => onDelete(id)}>
+            <IconButton onClick={() => onDelete(id)} disabled={deleteLoading}>
               <Delete />
             </IconButton>
           )}
@@ -77,12 +86,18 @@ const SortableItem = ({
               fontFamily: roboto.style,
             },
           }}
+          slotProps={{
+            input: {
+              readOnly: canEdit,
+            },
+          }}
         />
 
         <Box sx={{ mt: 3, p: 1 }}>
           <OptionBox
             options={question.options}
             onOptionsChange={(newOptions) => onOptionsChange(id, newOptions)}
+            canEdit={canEdit}
           />
         </Box>
       </Collapse>

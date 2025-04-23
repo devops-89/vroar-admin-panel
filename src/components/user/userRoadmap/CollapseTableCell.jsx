@@ -1,7 +1,7 @@
 import { roadMapTableHeader } from "@/assests/studentData";
 import CustomChip from "@/components/customChip";
 import { roboto } from "@/utils/fonts";
-import { Remove, VisibilityOutlined } from "@mui/icons-material";
+import { Delete, Remove, VisibilityOutlined } from "@mui/icons-material";
 import {
   Button,
   Collapse,
@@ -19,12 +19,17 @@ import { useState } from "react";
 import UserRoadmapProgress from "../user-roadmap-progress";
 import { COLORS } from "@/utils/enum";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { showModal } from "@/redux/reducers/modal";
+import DeleteAssignRoadmap from "@/assests/modalCalling/user/DeleteAssignRoadmap";
 
-const CollapseTableCell = ({ data }) => {
+const CollapseTableCell = ({ data, journey,getJourney }) => {
+  console.log("data", journey);
   const [open, setOpen] = useState(null);
   const handleToggle = (index) => {
     setOpen((prev) => (prev === index ? null : index));
   };
+  const dispatch = useDispatch();
   const router = useRouter();
   const { userId } = router.query;
   const handleRouter = (roadmapId) => {
@@ -32,12 +37,20 @@ const CollapseTableCell = ({ data }) => {
       `/user-management/students/roadmap-details/${roadmapId}?userId=${userId}`
     );
   };
+  const handleDelete = (id) => {
+    const body = {
+      userId: userId,
+      roadmapId: id,
+      journeyId: journey?.id,
+    };
+    dispatch(showModal(<DeleteAssignRoadmap value={body} getJourney={getJourney} />));
+  };
   return (
     <Table>
       <TableHead>
         <TableRow>
           {roadMapTableHeader.map((val, i) => (
-            <TableCell>
+            <TableCell key={i}>
               <Typography
                 sx={{ fontSize: 15, fontFamily: roboto.style, fontWeight: 550 }}
               >
@@ -115,11 +128,18 @@ const CollapseTableCell = ({ data }) => {
               />
             </TableCell>
             <TableCell>
-              <IconButton onClick={() => handleRouter(val.id)}>
-                <VisibilityOutlined
-                  sx={{ fontSize: 20, color: COLORS.BLACK }}
-                />
-              </IconButton>
+              <Stack direction="row" alignItems={"center"} spacing={2}>
+                <IconButton onClick={() => handleRouter(val.id)}>
+                  <VisibilityOutlined
+                    sx={{ fontSize: 20, color: COLORS.BLACK }}
+                  />
+                </IconButton>
+                {(val.completedSteps / val.totalSteps) * 100 === 0 && (
+                  <IconButton onClick={() => handleDelete(val.id)}>
+                    <Delete />
+                  </IconButton>
+                )}
+              </Stack>
             </TableCell>
           </TableRow>
         ))}

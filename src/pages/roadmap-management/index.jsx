@@ -1,19 +1,19 @@
 import { metaDataController } from "@/api/metaDataController";
-import { ROADMAP_DATA, ROADMAP_HEADER } from "@/assests/roadmapData";
+import DeleteRoadmap from "@/assests/modalCalling/metaData/DeleteRoadmap";
+import { ROADMAP_HEADER } from "@/assests/roadmapData";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import CustomChip from "@/components/customChip";
 import CustomTable from "@/components/customTable";
 import Wrapper from "@/components/wrapper";
-import { COLORS, METADATA_TYPE, ROADMAP_STATUS } from "@/utils/enum";
+import { showModal } from "@/redux/reducers/modal";
+import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import withAuth from "@/utils/withAuth";
-import { AddCircle, Remove } from "@mui/icons-material";
+import { AddCircle, Delete, Remove, Visibility } from "@mui/icons-material";
 import {
-  Avatar,
   Box,
   Button,
   Card,
-  Chip,
   Collapse,
   IconButton,
   Stack,
@@ -28,13 +28,14 @@ import {
   Typography,
 } from "@mui/material";
 import moment from "moment";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Loading from "react-loading";
+import { useDispatch } from "react-redux";
 
 const Roadmap = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [roadmapData, setRoadmapData] = useState(null);
@@ -43,9 +44,9 @@ const Roadmap = () => {
     page: page,
     pageSize: pageSize,
   };
-  const pageChangeHandler = (e,newPage) => {
+  const pageChangeHandler = (e, newPage) => {
     setLoading(true);
-   
+
     setPage(newPage);
     if (newPage) {
       body.page = newPage + 1;
@@ -75,6 +76,10 @@ const Roadmap = () => {
       .catch((err) => {
         console.log("err", err);
       });
+  };
+
+  const deleteRoadmap = (id) => {
+    dispatch(showModal(<DeleteRoadmap id={id} />));
   };
 
   const addRoadmap = () => {
@@ -265,12 +270,18 @@ const Roadmap = () => {
                           <CustomChip label={val.status} variant={val.status} />
                         </TableCell>
                         <TableCell>
-                          <Button
-                            sx={{ fontSize: 12, fontFamily: roboto.style }}
-                            onClick={() => viewRoadmap(val.id)}
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={2}
                           >
-                            View Roadmap
-                          </Button>
+                            <IconButton onClick={() => viewRoadmap(val.id)}>
+                              <Visibility sx={{ fontSize: 20 }} />
+                            </IconButton>
+                            <IconButton onClick={() => deleteRoadmap(val.id)}>
+                              <Delete sx={{ fontSize: 20 }} />
+                            </IconButton>
+                          </Stack>
                         </TableCell>
                       </TableRow>
                     ))}

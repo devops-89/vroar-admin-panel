@@ -1,5 +1,11 @@
 import { data } from "@/assests/data";
-import { COLORS, ROADMAP_STATUS } from "@/utils/enum";
+import {
+  COLORS,
+  EVENT_STATUS,
+  EVENT_TABLE_DATA,
+  ROADMAP_STATUS,
+  ToastStatus,
+} from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { AddCircle, MoreHoriz } from "@mui/icons-material";
 import {
@@ -31,39 +37,79 @@ import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import { showModal } from "@/redux/reducers/modal";
 import CopyAd from "@/assests/modalCalling/notification/copyAd";
+import { metaDataController } from "@/api/metaDataController";
+import { setToast } from "@/redux/reducers/toast";
 
-const AdListTable = ({ tableData, loading }) => {
+const AdListTable = ({ tableData, loading, setLoading, getEventType }) => {
   const [id, setId] = useState("");
   const options = [
     {
-      label: "View",
-      url: `/notification-management/ad-list/${id}/event-details`,
+      label: EVENT_TABLE_DATA.View,
     },
     {
-      label: "Edit",
-      url: `/notification-management/ad-list/${id}/edit-event`,
+      label: EVENT_TABLE_DATA.Edit,
     },
     {
-      label: "Copy",
+      label: EVENT_TABLE_DATA.Copy,
     },
     {
-      label: "Cancel",
+      label: EVENT_TABLE_DATA.Cancel,
     },
     {
-      label: "Completed",
+      label: EVENT_TABLE_DATA.Completed,
     },
   ];
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const router = useRouter();
-  const handleChangePage = (path) => {
-    if (path) {
-      router.push(path);
-    } else {
+  const handleChangePage = (label) => {
+    setAnchorEl(null);
+    if (label === EVENT_TABLE_DATA.Edit) {
+      router.push(`/notification-management/ad-list/${id}/edit-event`);
+    }
+    if (label === EVENT_TABLE_DATA.View) {
+      router.push(`/notification-management/ad-list/${id}/event-details`);
+    }
+    if (label === EVENT_TABLE_DATA.Copy) {
       dispatch(showModal(<CopyAd id={id} />));
-      setAnchorEl(null);
+    }
+    if (label === EVENT_TABLE_DATA.Cancel) {
+      changeStatus(EVENT_STATUS.CANCELLED);
+    }
+    if (label === EVENT_TABLE_DATA.Completed) {
+      changeStatus(EVENT_STATUS.COMPLETED);
     }
   };
+
+  const changeStatus = (status) => {
+    setLoading(true);
+    metaDataController
+      .updateEventStatus({ eventId: id, status: status })
+      .then((res) => {
+        dispatch(
+          setToast({
+            open: true,
+            message: res.data.message,
+            severity: ToastStatus.SUCCESS,
+          })
+        );
+        // setLoading(false);
+        getEventType();
+      })
+      .catch((err) => {
+        let errMessage =
+          (err.response && err.response.data.message) || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.SUCCESS,
+          })
+        );
+        setLoading(false);
+      });
+  };
+
   const open = Boolean(anchorEl);
   const handlePopover = (e, id) => {
     setAnchorEl(e.currentTarget);
@@ -222,10 +268,10 @@ const AdListTable = ({ tableData, loading }) => {
                           anchorEl={anchorEl}
                           sx={{
                             "& .MuiPopover-paper": {
-                              boxShadow: "0px 0px 3px 3px rgb(0,0,0,0.08)",
+                              boxShadow: "0px 0px 2px 2px #d7d7d750",
                               width: 150,
-                              backgroundColor: "#ffffff59",
-                              backdropFilter: "blur(5px)",
+                              backgroundColor: "#ffffff",
+                              // backdropFilter: "blur(5px)",
                             },
                           }}
                           anchorOrigin={{
@@ -239,7 +285,7 @@ const AdListTable = ({ tableData, loading }) => {
                               <ListItemButton
                                 sx={{ padding: 0, pl: 2 }}
                                 key={i}
-                                onClick={() => handleChangePage(val.url)}
+                                onClick={() => handleChangePage(val.label)}
                               >
                                 <ListItemText
                                   primary={

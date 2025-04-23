@@ -217,7 +217,7 @@ const EditContent = () => {
           filePath: response.data.data.filePath,
         });
         setState({ ...state, contentLink: filePath });
-        
+
         let body = {
           name: state.contentName,
           contentType: state.contentType,
@@ -230,8 +230,10 @@ const EditContent = () => {
             ...(Array.isArray(state.softSkills) ? state.softSkills : []),
           ],
           contentLink: file.filePath,
-          contentFileName: file.fileName,
         };
+        if (file && file.fileName) {
+          body.contentFileName = file.fileName;
+        }
         addContentApi(body);
       })
       .catch((err) => {
@@ -284,7 +286,7 @@ const EditContent = () => {
             data.quizSet = quiz;
           }
 
-          addQuizHandler(data);
+          // addQuizHandler(data);
         }
         router.back();
       })
@@ -342,9 +344,12 @@ const EditContent = () => {
             ...(Array.isArray(state.softSkills) ? state.softSkills : []),
           ],
           contentLink: file.filePath,
-          contentFileName: file.fileName,
+          // contentFileName: file.fileName,
           id: id,
         };
+        if (file && file.fileName) {
+          body.contentFileName = file.fileName;
+        }
         addContentApi(body);
       } else {
         uploadContentFile();
@@ -478,7 +483,6 @@ const EditContent = () => {
     }
   }, [id]);
 
-  // console.log("state", state);
   return (
     <Box mt={3}>
       <Backdrop open={isDetailsLoading} sx={{ zIndex: 998 }}>
@@ -563,6 +567,7 @@ const EditContent = () => {
               sx={{ ...loginTextField }}
               onChange={inputHandler}
               id="contentLink"
+              value={state.contentLink}
             />
           )}
 
@@ -671,7 +676,12 @@ const EditContent = () => {
           )}
 
           {state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && isQuizEnabled && (
-            <ObjectiveQuiz questions={questions} setQuestions={setQuestions} />
+            <ObjectiveQuiz
+              questions={questions}
+              setQuestions={setQuestions}
+              canEdit={true}
+              getDetails={getContentDetails}
+            />
           )}
 
           {state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && isQuizEnabled && (
@@ -679,6 +689,8 @@ const EditContent = () => {
               <SubjectiveQuiz
                 subjectiveHandler={subjectiveHandler}
                 state={sia}
+                canEdit={true}
+                getDetails={getContentDetails}
               />
             </Box>
           )}

@@ -307,9 +307,9 @@ export const CONTENT_TYPE_DATA = [
   {
     label: CONTENT_TYPE.ARTICLE_PDF,
   },
-  {
-    label: CONTENT_TYPE.ARTICLE_WRITEUP,
-  },
+  // {
+  //   label: CONTENT_TYPE.ARTICLE_WRITEUP,
+  // },
   {
     label: CONTENT_TYPE.ASSIGNMENT,
   },

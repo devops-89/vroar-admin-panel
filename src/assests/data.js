@@ -147,6 +147,9 @@ export const data = {
     {
       label: METADATA_TYPE.SOFT_SKILLS,
     },
+    {
+      label: METADATA_TYPE.MY_TREKS,
+    },
   ],
 
   QUIZ_TYPE_DATA: [

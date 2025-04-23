@@ -246,4 +246,48 @@ export const metaDataController = {
       throw error;
     }
   },
+  editContentQuestion: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        "/api/quiz/editQuestion",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteQuestion: async (id) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.get(
+        `api/quiz/deleteQuestion/${id}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateEventStatus: async ({ eventId, status }) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        `/api/event/updateEventStatus/${eventId}`,
+        {
+          status: status,
+        }
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteRoadmap: async (id) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.delete(
+        `/api/roadmapJourney/delete/${id}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
