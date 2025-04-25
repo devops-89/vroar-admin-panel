@@ -637,9 +637,7 @@ const AddContent = () => {
                 />
               </Button>
 
-              {/* <FormHelperText sx={{ fontSize: 14 }}>
-                *Maximum file size: 10 MB
-              </FormHelperText> */}
+             
             </Box>
           )}
 

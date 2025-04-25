@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RoadmapTiles from "./roadmapTiles";
 import { metaDataController } from "@/api/metaDataController";
 import { useDispatch } from "react-redux";
@@ -154,6 +154,12 @@ const EditRoadmapTiles = () => {
         );
       });
   };
+
+  useEffect(() => {
+    if (roadmapId) {
+      getRoadmapDetails(roadmapId);
+    }
+  }, [roadmapId]);
 
   return (
     <div>

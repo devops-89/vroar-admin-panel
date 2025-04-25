@@ -1,17 +1,46 @@
+import userController from "@/api/user";
 import { hideModal } from "@/redux/reducers/modal";
 import { COLORS, USER_ROADMAP_REVIEW_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { Close } from "@mui/icons-material";
-import { Box, Divider, IconButton, Stack, Typography } from "@mui/material";
-import React from "react";
+import { Close, ExpandLess, ExpandMore } from "@mui/icons-material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
 const RoadmapTileDetails = ({ value }) => {
-  console.log("value", value);
+  const router = useRouter();
+
+  const [quizResults, setQuizResults] = useState(null);
+  const { userId } = router.query;
   const dispatch = useDispatch();
 
   const closeModal = () => {
     dispatch(hideModal());
+  };
+  const [loading, setLoading] = useState(true);
+
+  const getQuizAnswers = (body) => {
+    userController
+      .getStudentResponse(body)
+      .then((res) => {
+        const response = res.data.data;
+        setQuizResults(response);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("Err", err);
+      });
   };
 
   const details = [
@@ -23,18 +52,24 @@ const RoadmapTileDetails = ({ value }) => {
       label: "Coins Earned",
       value: `${value.points} coins`,
     },
-    {
-      label: "Uploaded Doc",
-      value: "Show Result",
-      url: value?.content?.contentLink,
-    },
+
     value?.adminFeedback && {
       label: "Feedback",
       value: value?.adminFeedback,
     },
   ];
+
+  useEffect(() => {
+    if (value && userId) {
+      const body = {
+        userId: userId,
+        quizId: value?.content?.quiz?.id,
+      };
+      getQuizAnswers(body);
+    }
+  }, [value, userId]);
   return (
-    <Box sx={{ minWidth: 900 }}>
+    <Box sx={{ minWidth: 600 }}>
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -48,38 +83,92 @@ const RoadmapTileDetails = ({ value }) => {
         </IconButton>
       </Stack>
       <Divider />
-      <Box sx={{ mt: 3 }}>
-        <Stack spacing={2}>
-          {details.map((val, index) => (
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              spacing={5}
-              key={index}
-            >
-              <Typography
-                sx={{
-                  fontSize: 16,
-                  fontFamily: roboto.style,
-                  width: 200,
-                  textTransform: "capitalize",
-                }}
+      {loading ? (
+        <Box sx={{ mt: 3 }}>
+          <Loading
+            type="bars"
+            width={20}
+            height={20}
+            className="m-auto"
+            color={COLORS.BLACK}
+          />
+        </Box>
+      ) : (
+        <Box sx={{ mt: 3 }}>
+          <Stack spacing={2}>
+            {details.map((val, index) => (
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                spacing={5}
+                key={index}
               >
-                {val.label}{" "}
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: 16,
-                  fontFamily: roboto.style,
-                  textTransform: "capitalize",
-                }}
-              >
-                {val.value}
-              </Typography>
-            </Stack>
-          ))}
-        </Stack>
-      </Box>
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    fontFamily: roboto.style,
+                    width: 200,
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {val.label}{" "}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    fontFamily: roboto.style,
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {val.value}
+                </Typography>
+              </Stack>
+            ))}
+            {quizResults?.quizResult?.map((val, index) => (
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMore />}>
+                  <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                    {index + 1}. {val.questionText}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {val.selectedOptions.map((option, index) => (
+                    <Stack spacing={2} sx={{ mb: 1 }} key={index}>
+                      <Box
+                        sx={{
+                          border: option.isCorrect
+                            ? "1px solid green"
+                            : option.isSelected
+                            ? `1px solid ${COLORS.DANGER}`
+                            : "1px solid #d7d7d7",
+                          p: 2,
+                          backgroundColor: option.isCorrect
+                            ? COLORS.DONE
+                            : option.isSelected
+                            ? COLORS.DANGER_BOX
+                            : COLORS.TRANSPARENT,
+                          borderRadius: 4,
+                          color: option.isCorrect
+                            ? COLORS.DONE_TEXT
+                            : option.isSelected
+                            ? COLORS.DANGER
+                            : "#000",
+                        }}
+                      >
+                        <Typography
+                          sx={{ fontSize: 14, fontFamily: roboto.style }}
+                        >
+                          {option.optionText}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  ))}
+                </AccordionDetails>
+              </Accordion>
+            ))}
+          </Stack>
+        </Box>
+      )}
     </Box>
   );
 };
