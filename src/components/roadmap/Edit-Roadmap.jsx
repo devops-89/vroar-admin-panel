@@ -22,6 +22,7 @@ import Loading from "react-loading";
 import { roadmapValidationSchema } from "@/utils/validationSchema";
 import { useRouter } from "next/router";
 import CustomChip from "../customChip";
+import EditRoadmapTilesData from "./EditRoadmapTilesData";
 
 const EditRoadmapTiles = () => {
   //   const router = useRouter();
@@ -36,6 +37,10 @@ const EditRoadmapTiles = () => {
       description: "",
     },
   ]);
+  const [selectedMetaDataType, setSelectedMetaDataType] = useState(null);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [listLoading, setListLoading] = useState(false);
+  const [metaDataList, setMetaDataList] = useState([]);
   const [state, setState] = useState({
     roadmapName: "",
     metaDataType: "",
@@ -43,22 +48,56 @@ const EditRoadmapTiles = () => {
   });
   const router = useRouter();
   const { roadmapId } = router.query;
-
+  const [roadmapData, setRoadmapData] = useState(null);
   const getRoadmapDetails = (id) => {
     metaDataController
       .getRoadmapDetails(id)
       .then((res) => {
-        console.log("test", res);
+        const response = res.data.data;
+        console.log("test", response);
+        // console.log("test[0]", response.metadataTags[0].type);
+        setRoadmapData(response);
+        if (response) {
+          setState({
+            ...state,
+            roadmapName: response.name,
+            metaDataType: response.metadataTags[0]?.type,
+            metaDataTag: response.metadataTags.map((val) => val.id),
+          });
+          setSelectedMetaDataType({ label: response.metadataTags[0].type });
+          setSelectedTags(
+            response.metadataTags.map((val) => ({
+              name: val.name,
+              id: val.id,
+            }))
+          );
+          setTiles(
+            response.roadmapSteps.map((val) => ({
+              id: val.id,
+              tileName: val.name,
+              contentType: { label: val.content?.contentType },
+              contentLibraryId:{name:val  }
+            }))
+          );
+          const body = {
+            page: 1,
+            pageSize: 500,
+            type: response.metadataTags[0].type,
+          };
+          getMetaDataType({
+            body,
+            setData: setMetaDataList,
+            isLoading: setListLoading,
+          });
+        }
       })
       .catch((err) => {
         console.log("err", err);
       });
   };
 
-  const [selectedMetaDataType, setSelectedMetaDataType] = useState(null);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [listLoading, setListLoading] = useState(false);
-  const [metaDataList, setMetaDataList] = useState([]);
+  //   console.log("")
+
   const metaTagTypeHandler = (e, newValue) => {
     setSelectedMetaDataType(newValue);
     if (newValue) {
@@ -175,6 +214,7 @@ const EditRoadmapTiles = () => {
           fullWidth
           id="roadmapName"
           onChange={inputHandler}
+          value={state.roadmapName}
         />
         <Autocomplete
           renderInput={(params) => (
@@ -250,7 +290,7 @@ const EditRoadmapTiles = () => {
           }
         />
 
-        <RoadmapTiles tiles={tiles} setTiles={setTiles} />
+        <EditRoadmapTilesData tiles={tiles} setTiles={setTiles} />
       </Stack>
       <Divider sx={{ mt: 2 }} />
       <Box sx={{ textAlign: "end" }}>

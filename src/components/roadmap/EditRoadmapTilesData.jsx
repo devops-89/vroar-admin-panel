@@ -16,8 +16,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 
-const RoadmapTiles = ({ tiles, setTiles }) => {
-  const [contentList, setContentList] = useState([]);
+const EditRoadmapTilesData = ({ tiles, setTiles }) => {
+  const [contentList, setContentList] = useState({});
   const [contentLoading, setContentLoading] = useState(false);
   const handleInputChange = (id, field, value) => {
     setTiles((prevTiles) =>
@@ -27,25 +27,25 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
     );
   };
 
+  console.log("test", contentList);
+
   const contentTypeHandler = (id, e, newValue) => {
     handleInputChange(id, "contentType", newValue);
     handleInputChange(id, "contentLibraryId", null);
 
     if (newValue) {
-      const body = { page: 1, pageSize: 500 };
+      const body = { page: 1, pageSize: 500, contentType: [newValue.label] };
       setContentLoading(true);
-      const type = [];
-
-      type.push(newValue?.label);
-
-      body.contentType = type;
       getContentList({
         body,
         setData: (data) => {
           const filteredData = data.filter(
             (val) => val.contentType === newValue.label
           );
-          setContentList(filteredData);
+          setContentList((prev) => ({
+            ...prev,
+            [newValue.label]: filteredData,
+          }));
           setContentLoading(false);
         },
         setLoading: setContentLoading,
@@ -74,6 +74,32 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
   const handleDeleteTiles = (id) => {
     setTiles((prev) => prev.filter((q) => q.id !== id));
   };
+  useEffect(() => {
+    if (tiles.length > 0) {
+      const uniqueContentTypes = [
+        ...new Set(
+          tiles.map((tile) => tile.contentType?.label).filter(Boolean)
+        ),
+      ];
+
+      uniqueContentTypes.forEach((type) => {
+        if (!contentList[type]) {
+          // Fetch only if not already fetched
+          const body = { page: 1, pageSize: 500, contentType: [type] };
+          getContentList({
+            body,
+            setData: (data) => {
+              setContentList((prev) => ({
+                ...prev,
+                [type]: data,
+              }));
+            },
+            setLoading: setContentLoading,
+          });
+        }
+      });
+    }
+  }, [tiles]);
 
   return (
     <div>
@@ -174,7 +200,11 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
                 />
               )}
               fullWidth
-              options={contentList}
+              options={
+                val.contentType?.label && contentList[val.contentType.label]
+                  ? contentList[val.contentType.label]
+                  : []
+              }
               renderOption={(props, option) => (
                 <Box {...props}>
                   <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
@@ -185,7 +215,7 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
               onChange={(e, newValue) => contentTagHandler(val.id, e, newValue)}
               value={val.contentLibraryId || null}
               loading={contentLoading}
-              getOptionLabel={(option) => option.name}
+              getOptionLabel={(option) => option.name || ""}
               filterSelectedOptions
             />
 
@@ -265,4 +295,4 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
   );
 };
 
-export default RoadmapTiles;
+export default EditRoadmapTilesData;

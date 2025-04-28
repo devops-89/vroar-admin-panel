@@ -46,9 +46,11 @@ const Metadata = () => {
     pageSize: pageSize,
     type: metaDataType,
   };
+  // console.log("eeee", metaDataType);
   const tabChangeHandler = (e, newValue) => {
     setValue(newValue);
     const text = e.target.textContent;
+    // console.log("test", text);
     if (text === METADATA_TYPE.CAREER) {
       setMetaDataType(METADATA_TYPE.CAREER);
       setLoading(true);
@@ -81,10 +83,21 @@ const Metadata = () => {
       setLoading(true);
       setMetaDataType(METADATA_TYPE.STRENGTHS);
     }
+    if (text === METADATA_TYPE.MY_TREKS) {
+      console.log("new Data",text === METADATA_TYPE.MY_TREKS)
+      console.log("test2", text);
+      body.type = METADATA_TYPE.MY_TREKS;
+      body.page = 0;
+      setPage(0);
+      setLoading(true);
+      setMetaDataType(METADATA_TYPE.MY_TREKS);
+    }
+    console.log("testes", body);
     getMetaData(body);
   };
 
   const getMetaData = (body) => {
+    // console.log("p", body);
     metaDataController
       .getMetaData(body)
       .then((res) => {
@@ -170,6 +183,7 @@ const Metadata = () => {
   };
 
   useEffect(() => {
+    // console.log("body", body);
     getMetaData(body);
   }, []);
 
