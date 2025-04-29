@@ -1,4 +1,7 @@
 import { getContentList } from "@/assests/apiCalling/metaDataController";
+import AddRoadmapTile from "@/assests/modalCalling/metaData/AddroadmapTiles";
+import EditRoadmap from "@/assests/modalCalling/metaData/EditRoadmap";
+import { showModal } from "@/redux/reducers/modal";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { contentType } from "@/utils/genericArray";
@@ -15,10 +18,12 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 
-const EditRoadmapTilesData = ({ tiles, setTiles }) => {
+const EditRoadmapTilesData = ({ tiles, setTiles, getRoadmapDetails }) => {
   const [contentList, setContentList] = useState({});
   const [contentLoading, setContentLoading] = useState(false);
+  const dispatch = useDispatch();
   const handleInputChange = (id, field, value) => {
     setTiles((prevTiles) =>
       prevTiles.map((tile) =>
@@ -27,7 +32,17 @@ const EditRoadmapTilesData = ({ tiles, setTiles }) => {
     );
   };
 
-  console.log("test", contentList);
+  const handleEditTile = (value, sequence) => {
+    dispatch(
+      showModal(
+        <EditRoadmap
+          value={value}
+          sequence={sequence}
+          getRoadmapDetails={getRoadmapDetails}
+        />
+      )
+    );
+  };
 
   const contentTypeHandler = (id, e, newValue) => {
     handleInputChange(id, "contentType", newValue);
@@ -57,18 +72,26 @@ const EditRoadmapTilesData = ({ tiles, setTiles }) => {
     handleInputChange(id, "contentLibraryId", newValue);
   };
 
-  const addTile = () => {
-    setTiles((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        tileName: "",
-        contentType: null,
-        contentLibraryId: null,
-        time: "",
-        points: "",
-      },
-    ]);
+  const addTile = (sequence) => {
+    // setTiles((prev) => [
+    //   ...prev,
+    //   {
+    //     id: prev.length + 1,
+    //     tileName: "",
+    //     contentType: null,
+    //     contentLibraryId: null,
+    //     time: "",
+    //     points: "",
+    //   },
+    // ]);
+    dispatch(
+      showModal(
+        <AddRoadmapTile
+          sequence={tiles.length + 1}
+          getRoadmapDetails={getRoadmapDetails}
+        />
+      )
+    );
   };
 
   const handleDeleteTiles = (id) => {
@@ -135,6 +158,7 @@ const EditRoadmapTilesData = ({ tiles, setTiles }) => {
                   color: COLORS.DONE_TEXT,
                   border: `1px solid ${COLORS.DONE_TEXT}`,
                 }}
+                onClick={() => handleEditTile(val, i + 1)}
               >
                 Edit
               </Button>
@@ -155,6 +179,11 @@ const EditRoadmapTilesData = ({ tiles, setTiles }) => {
               onChange={(e) =>
                 handleInputChange(val.id, "tileName", e.target.value)
               }
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
             />
 
             <Autocomplete
@@ -168,6 +197,11 @@ const EditRoadmapTilesData = ({ tiles, setTiles }) => {
                     },
                   }}
                   label="Select Content Type"
+                  slotProps={{
+                    input: {
+                      readOnly: true,
+                    },
+                  }}
                 />
               )}
               fullWidth
@@ -197,6 +231,11 @@ const EditRoadmapTilesData = ({ tiles, setTiles }) => {
                     },
                   }}
                   label="Select Content"
+                  slotProps={{
+                    input: {
+                      readOnly: true,
+                    },
+                  }}
                 />
               )}
               fullWidth
@@ -233,6 +272,11 @@ const EditRoadmapTilesData = ({ tiles, setTiles }) => {
               onChange={(e) =>
                 handleInputChange(val.id, "time", e.target.value)
               }
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
             />
 
             <TextField
@@ -248,6 +292,11 @@ const EditRoadmapTilesData = ({ tiles, setTiles }) => {
               onChange={(e) =>
                 handleInputChange(val.id, "points", e.target.value)
               }
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
             />
 
             <TextField
@@ -270,6 +319,11 @@ const EditRoadmapTilesData = ({ tiles, setTiles }) => {
                 handleInputChange(val.id, "description", e.target.value)
               }
               multiline
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
             />
           </Stack>
         </Box>

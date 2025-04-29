@@ -1,8 +1,11 @@
+import { metaDataController } from "@/api/metaDataController";
 import { getMetaDataType } from "@/assests/apiCalling/metaDataController";
 import { data } from "@/assests/data";
-import { COLORS, METADATA_TYPE, ToastStatus } from "@/utils/enum";
+import { setToast } from "@/redux/reducers/toast";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
+import { roadmapValidationSchema } from "@/utils/validationSchema";
 import {
   Autocomplete,
   Box,
@@ -12,17 +15,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useFormik } from "formik";
-import { useEffect, useState } from "react";
-import RoadmapTiles from "./roadmapTiles";
-import { metaDataController } from "@/api/metaDataController";
-import { useDispatch } from "react-redux";
-import { setToast } from "@/redux/reducers/toast";
-import Loading from "react-loading";
-import { roadmapValidationSchema } from "@/utils/validationSchema";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import Loading from "react-loading";
+import { useDispatch } from "react-redux";
 import CustomChip from "../customChip";
 import EditRoadmapTilesData from "./EditRoadmapTilesData";
+import moment from "moment";
 
 const EditRoadmapTiles = () => {
   //   const router = useRouter();
@@ -54,7 +53,7 @@ const EditRoadmapTiles = () => {
       .getRoadmapDetails(id)
       .then((res) => {
         const response = res.data.data;
-        console.log("test", response);
+        // console.log("test", response);
         // console.log("test[0]", response.metadataTags[0].type);
         setRoadmapData(response);
         if (response) {
@@ -76,7 +75,13 @@ const EditRoadmapTiles = () => {
               id: val.id,
               tileName: val.name,
               contentType: { label: val.content?.contentType },
-              contentLibraryId:{name:val  }
+              contentLibraryId: {
+                name: val.content.name,
+                contentLibraryId: val.content.id,
+              },
+              time: val.time,
+              points: val.points,
+              description: val.description,
             }))
           );
           const body = {
@@ -290,7 +295,11 @@ const EditRoadmapTiles = () => {
           }
         />
 
-        <EditRoadmapTilesData tiles={tiles} setTiles={setTiles} />
+        <EditRoadmapTilesData
+          tiles={tiles}
+          setTiles={setTiles}
+          getRoadmapDetails={getRoadmapDetails}
+        />
       </Stack>
       <Divider sx={{ mt: 2 }} />
       <Box sx={{ textAlign: "end" }}>
