@@ -41,10 +41,9 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
       description: "",
     },
     onSubmit: (values) => {
-      //   console.log("values", values);
+  
       const body = {
         roadmapId: roadmapId,
-        // tileId: values.id,
         sequenceNo: sequence,
         tileName: values?.tileName,
         time: values?.time,
@@ -62,7 +61,6 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
     metaDataController
       .addRoadmapTile(body)
       .then((res) => {
-        // console.log("res", res);
         dispatch(
           setToast({
             open: true,
@@ -75,7 +73,6 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
         setLoading(false);
       })
       .catch((err) => {
-        // console.log("err", err);
         let errMessage =
           (err.response && err.response.data.message) || err.message;
         dispatch(
@@ -90,6 +87,7 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
   };
   const handleChangeContentType = (e, newValue, id) => {
     if (id === "contentType") {
+        setContentLoading(true)
       formik.setFieldValue(id, newValue?.label);
       setContent(newValue);
       setContentLibraryId(null);
@@ -127,7 +125,7 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
         <Typography
           sx={{ fontSize: 20, fontFamily: roboto.style, fontWeight: 550 }}
         >
-          Edit Roadmap Tile
+          Add Roadmap Tile
         </Typography>
         <IconButton onClick={handleCloseModal}>
           <Close sx={{ fill: COLORS.PRIMARY }} />
@@ -243,19 +241,7 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
                 "Submit"
               )}
             </Button>
-            {/* <Button
-              sx={{
-                fontSize: 16,
-                fontFamily: roboto.style,
-                backgroundColor: COLORS.TRANSPARENT,
-                color: COLORS.PRIMARY,
-                border: `1px solid ${COLORS.PRIMARY}`,
-              }}
-              fullWidth
-              onClick={handleCloseModal}
-            >
-              Cancel
-            </Button> */}
+            
           </Stack>
         </Stack>
       </form>
