@@ -1,4 +1,7 @@
 import { getContentList } from "@/assests/apiCalling/metaDataController";
+import AddRoadmapTile from "@/assests/modalCalling/metaData/AddroadmapTiles";
+import EditRoadmap from "@/assests/modalCalling/metaData/EditRoadmap";
+import { showModal } from "@/redux/reducers/modal";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { contentType } from "@/utils/genericArray";
@@ -15,14 +18,28 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 
-const RoadmapTiles = ({ tiles, setTiles }) => {
-  const [contentList, setContentList] = useState([]);
+const EditRoadmapTilesData = ({ tiles, setTiles, getRoadmapDetails }) => {
+  const [contentList, setContentList] = useState({});
   const [contentLoading, setContentLoading] = useState(false);
+  const dispatch = useDispatch();
   const handleInputChange = (id, field, value) => {
     setTiles((prevTiles) =>
       prevTiles.map((tile) =>
         tile.id === id ? { ...tile, [field]: value } : tile
+      )
+    );
+  };
+
+  const handleEditTile = (value, sequence) => {
+    dispatch(
+      showModal(
+        <EditRoadmap
+          value={value}
+          sequence={sequence}
+          getRoadmapDetails={getRoadmapDetails}
+        />
       )
     );
   };
@@ -32,20 +49,18 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
     handleInputChange(id, "contentLibraryId", null);
 
     if (newValue) {
-      const body = { page: 1, pageSize: 500 };
+      const body = { page: 1, pageSize: 500, contentType: [newValue.label] };
       setContentLoading(true);
-      const type = [];
-
-      type.push(newValue?.label);
-
-      body.contentType = type;
       getContentList({
         body,
         setData: (data) => {
           const filteredData = data.filter(
             (val) => val.contentType === newValue.label
           );
-          setContentList(filteredData);
+          setContentList((prev) => ({
+            ...prev,
+            [newValue.label]: filteredData,
+          }));
           setContentLoading(false);
         },
         setLoading: setContentLoading,
@@ -57,23 +72,57 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
     handleInputChange(id, "contentLibraryId", newValue);
   };
 
-  const addTile = () => {
-    setTiles((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        tileName: "",
-        contentType: null,
-        contentLibraryId: null,
-        time: "",
-        points: "",
-      },
-    ]);
+  const addTile = (sequence) => {
+    // setTiles((prev) => [
+    //   ...prev,
+    //   {
+    //     id: prev.length + 1,
+    //     tileName: "",
+    //     contentType: null,
+    //     contentLibraryId: null,
+    //     time: "",
+    //     points: "",
+    //   },
+    // ]);
+    dispatch(
+      showModal(
+        <AddRoadmapTile
+          sequence={tiles.length + 1}
+          getRoadmapDetails={getRoadmapDetails}
+        />
+      )
+    );
   };
 
   const handleDeleteTiles = (id) => {
     setTiles((prev) => prev.filter((q) => q.id !== id));
   };
+  useEffect(() => {
+    if (tiles.length > 0) {
+      const uniqueContentTypes = [
+        ...new Set(
+          tiles.map((tile) => tile.contentType?.label).filter(Boolean)
+        ),
+      ];
+
+      uniqueContentTypes.forEach((type) => {
+        if (!contentList[type]) {
+          // Fetch only if not already fetched
+          const body = { page: 1, pageSize: 500, contentType: [type] };
+          getContentList({
+            body,
+            setData: (data) => {
+              setContentList((prev) => ({
+                ...prev,
+                [type]: data,
+              }));
+            },
+            setLoading: setContentLoading,
+          });
+        }
+      });
+    }
+  }, [tiles]);
 
   return (
     <div>
@@ -109,6 +158,7 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
                   color: COLORS.DONE_TEXT,
                   border: `1px solid ${COLORS.DONE_TEXT}`,
                 }}
+                onClick={() => handleEditTile(val, i + 1)}
               >
                 Edit
               </Button>
@@ -129,6 +179,11 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
               onChange={(e) =>
                 handleInputChange(val.id, "tileName", e.target.value)
               }
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
             />
 
             <Autocomplete
@@ -142,6 +197,11 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
                     },
                   }}
                   label="Select Content Type"
+                  slotProps={{
+                    input: {
+                      readOnly: true,
+                    },
+                  }}
                 />
               )}
               fullWidth
@@ -171,10 +231,19 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
                     },
                   }}
                   label="Select Content"
+                  slotProps={{
+                    input: {
+                      readOnly: true,
+                    },
+                  }}
                 />
               )}
               fullWidth
-              options={contentList}
+              options={
+                val.contentType?.label && contentList[val.contentType.label]
+                  ? contentList[val.contentType.label]
+                  : []
+              }
               renderOption={(props, option) => (
                 <Box {...props}>
                   <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
@@ -185,7 +254,7 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
               onChange={(e, newValue) => contentTagHandler(val.id, e, newValue)}
               value={val.contentLibraryId || null}
               loading={contentLoading}
-              getOptionLabel={(option) => option.name}
+              getOptionLabel={(option) => option.name || ""}
               filterSelectedOptions
             />
 
@@ -203,6 +272,11 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
               onChange={(e) =>
                 handleInputChange(val.id, "time", e.target.value)
               }
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
             />
 
             <TextField
@@ -218,6 +292,11 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
               onChange={(e) =>
                 handleInputChange(val.id, "points", e.target.value)
               }
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
             />
 
             <TextField
@@ -240,6 +319,11 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
                 handleInputChange(val.id, "description", e.target.value)
               }
               multiline
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
             />
           </Stack>
         </Box>
@@ -265,4 +349,4 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
   );
 };
 
-export default RoadmapTiles;
+export default EditRoadmapTilesData;

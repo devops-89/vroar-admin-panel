@@ -36,9 +36,9 @@ export const contentType = [
   {
     label: CONTENT_TYPE.ARTICLE_PDF,
   },
-  {
-    label: CONTENT_TYPE.ARTICLE_WRITEUP,
-  },
+  // {
+  //   label: CONTENT_TYPE.ARTICLE_WRITEUP,
+  // },
   {
     label: CONTENT_TYPE.ASSIGNMENT,
   },

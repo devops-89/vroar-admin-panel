@@ -1,8 +1,11 @@
+import { metaDataController } from "@/api/metaDataController";
 import { getMetaDataType } from "@/assests/apiCalling/metaDataController";
 import { data } from "@/assests/data";
-import { COLORS, METADATA_TYPE, ToastStatus } from "@/utils/enum";
+import { setToast } from "@/redux/reducers/toast";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
+import { roadmapValidationSchema } from "@/utils/validationSchema";
 import {
   Autocomplete,
   Box,
@@ -12,16 +15,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useFormik } from "formik";
-import { useState } from "react";
-import RoadmapTiles from "./roadmapTiles";
-import { metaDataController } from "@/api/metaDataController";
-import { useDispatch } from "react-redux";
-import { setToast } from "@/redux/reducers/toast";
-import Loading from "react-loading";
-import { roadmapValidationSchema } from "@/utils/validationSchema";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import Loading from "react-loading";
+import { useDispatch } from "react-redux";
 import CustomChip from "../customChip";
+import EditRoadmapTilesData from "./EditRoadmapTilesData";
+import moment from "moment";
 
 const EditRoadmapTiles = () => {
   //   const router = useRouter();
@@ -36,6 +36,10 @@ const EditRoadmapTiles = () => {
       description: "",
     },
   ]);
+  const [selectedMetaDataType, setSelectedMetaDataType] = useState(null);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [listLoading, setListLoading] = useState(false);
+  const [metaDataList, setMetaDataList] = useState([]);
   const [state, setState] = useState({
     roadmapName: "",
     metaDataType: "",
@@ -43,22 +47,62 @@ const EditRoadmapTiles = () => {
   });
   const router = useRouter();
   const { roadmapId } = router.query;
-
+  const [roadmapData, setRoadmapData] = useState(null);
   const getRoadmapDetails = (id) => {
     metaDataController
       .getRoadmapDetails(id)
       .then((res) => {
-        console.log("test", res);
+        const response = res.data.data;
+        // console.log("test", response);
+        // console.log("test[0]", response.metadataTags[0].type);
+        setRoadmapData(response);
+        if (response) {
+          setState({
+            ...state,
+            roadmapName: response.name,
+            metaDataType: response.metadataTags[0]?.type,
+            metaDataTag: response.metadataTags.map((val) => val.id),
+          });
+          setSelectedMetaDataType({ label: response.metadataTags[0].type });
+          setSelectedTags(
+            response.metadataTags.map((val) => ({
+              name: val.name,
+              id: val.id,
+            }))
+          );
+          setTiles(
+            response.roadmapSteps.map((val) => ({
+              id: val.id,
+              tileName: val.name,
+              contentType: { label: val.content?.contentType },
+              contentLibraryId: {
+                name: val.content.name,
+                contentLibraryId: val.content.id,
+              },
+              time: val.time,
+              points: val.points,
+              description: val.description,
+            }))
+          );
+          const body = {
+            page: 1,
+            pageSize: 500,
+            type: response.metadataTags[0].type,
+          };
+          getMetaDataType({
+            body,
+            setData: setMetaDataList,
+            isLoading: setListLoading,
+          });
+        }
       })
       .catch((err) => {
         console.log("err", err);
       });
   };
 
-  const [selectedMetaDataType, setSelectedMetaDataType] = useState(null);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [listLoading, setListLoading] = useState(false);
-  const [metaDataList, setMetaDataList] = useState([]);
+  //   console.log("")
+
   const metaTagTypeHandler = (e, newValue) => {
     setSelectedMetaDataType(newValue);
     if (newValue) {
@@ -155,6 +199,12 @@ const EditRoadmapTiles = () => {
       });
   };
 
+  useEffect(() => {
+    if (roadmapId) {
+      getRoadmapDetails(roadmapId);
+    }
+  }, [roadmapId]);
+
   return (
     <div>
       <Stack spacing={2}>
@@ -169,6 +219,7 @@ const EditRoadmapTiles = () => {
           fullWidth
           id="roadmapName"
           onChange={inputHandler}
+          value={state.roadmapName}
         />
         <Autocomplete
           renderInput={(params) => (
@@ -244,7 +295,11 @@ const EditRoadmapTiles = () => {
           }
         />
 
-        <RoadmapTiles tiles={tiles} setTiles={setTiles} />
+        <EditRoadmapTilesData
+          tiles={tiles}
+          setTiles={setTiles}
+          getRoadmapDetails={getRoadmapDetails}
+        />
       </Stack>
       <Divider sx={{ mt: 2 }} />
       <Box sx={{ textAlign: "end" }}>

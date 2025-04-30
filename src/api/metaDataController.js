@@ -290,4 +290,26 @@ export const metaDataController = {
       throw error;
     }
   },
+  editRoadmapTile: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        "/api/roadmapJourney/editTile",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addRoadmapTile: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.post(
+        "api/roadmapJourney/addTile",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

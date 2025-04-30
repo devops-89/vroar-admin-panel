@@ -111,6 +111,8 @@ const EditContent = () => {
     setErrors({ ...errors, [id]: "" });
   };
 
+  // console.log("teste", state.contentLink);
+
   const quizHandler = (e) => {
     setState({ ...state, isQuizEnabled: e.target.checked });
     setIsQuizEnabled(e.target.checked);
@@ -185,6 +187,13 @@ const EditContent = () => {
     if (selectedFile) {
       if (selectedFile.type === "application/pdf") {
         setState({ ...state, contentLink: selectedFile });
+
+        setFile({
+          filePath: URL.createObjectURL(selectedFile), // temporary URL for preview
+          fileName: selectedFile.name,
+        });
+
+        console.log("selected", selectedFile);
       } else {
         dispatch(
           setToast({
@@ -196,6 +205,8 @@ const EditContent = () => {
       }
     }
   };
+
+  // console.log("new pdf file", state.contentLink);
 
   const subjectiveHandler = (e) => {
     let { id, value } = e.target;
@@ -211,17 +222,18 @@ const EditContent = () => {
     metaDataController
       .getUploadContentFile(data)
       .then((response) => {
+        // console.log("response upload content", response);
         setFile({
           ...file,
           fileName: response.data.data.fileName,
           filePath: response.data.data.filePath,
         });
-        setState({ ...state, contentLink: filePath });
+        setState({ ...state, contentLink: response.data.data.filePath });
 
         let body = {
           name: state.contentName,
           contentType: state.contentType,
-          contentLink: state.contentLink,
+          contentLink: response.data.data.filePath,
           description: state.description,
           metadataTags: [
             ...(Array.isArray(state.career) ? state.career : []),
@@ -229,7 +241,7 @@ const EditContent = () => {
             ...(Array.isArray(state.strengths) ? state.strengths : []),
             ...(Array.isArray(state.softSkills) ? state.softSkills : []),
           ],
-          contentLink: file.filePath,
+          id: id,
         };
         if (file && file.fileName) {
           body.contentFileName = file.fileName;
@@ -255,6 +267,7 @@ const EditContent = () => {
     metaDataController
       .editContent(body)
       .then((res) => {
+        console.log("response of add content", res);
         dispatch(
           setToast({
             open: true,
@@ -305,27 +318,27 @@ const EditContent = () => {
       });
   };
 
-  const addQuizHandler = (data) => {
-    metaDataController
-      .addQuiz(data)
-      .then((result) => {
-        setLoading(false);
-        router.back();
-      })
-      .catch((err) => {
-        let errMessage =
-          (err.response && err.response.data.message) || err.message;
+  // const addQuizHandler = (data) => {
+  //   metaDataController
+  //     .addQuiz(data)
+  //     .then((result) => {
+  //       setLoading(false);
+  //       router.back();
+  //     })
+  //     .catch((err) => {
+  //       let errMessage =
+  //         (err.response && err.response.data.message) || err.message;
 
-        dispatch(
-          setToast({
-            open: true,
-            message: errMessage,
-            severity: ToastStatus.ERROR,
-          })
-        );
-        setLoading(false);
-      });
-  };
+  //       dispatch(
+  //         setToast({
+  //           open: true,
+  //           message: errMessage,
+  //           severity: ToastStatus.ERROR,
+  //         })
+  //       );
+  //       setLoading(false);
+  //     });
+  // };
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -343,14 +356,15 @@ const EditContent = () => {
             ...(Array.isArray(state.strengths) ? state.strengths : []),
             ...(Array.isArray(state.softSkills) ? state.softSkills : []),
           ],
-          contentLink: file.filePath,
-          // contentFileName: file.fileName,
+
           id: id,
         };
         if (file && file.fileName) {
           body.contentFileName = file.fileName;
         }
         addContentApi(body);
+        // console.log("body", body);
+        // console.log("state.contentlink", state.contentLink);
       } else {
         uploadContentFile();
       }

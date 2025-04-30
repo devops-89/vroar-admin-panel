@@ -214,5 +214,16 @@ const userController = {
       throw error;
     }
   },
+  getStudentResponse: async (data) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "/api/userRoadmapJourney/quizResult",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;
