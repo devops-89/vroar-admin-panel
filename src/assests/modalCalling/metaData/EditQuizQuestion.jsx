@@ -17,39 +17,49 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
 const EditQuizQuestion = ({ value, getDetails }) => {
-  // console.log("value", value);
   const dispatch = useDispatch();
   const router = useRouter();
-
   const { slug } = router.query;
 
-  // console.log("roadmap", router.query);
   const [state, setState] = useState({
     question: value.question,
     options: value.options,
     subText: value.subText,
   });
 
+  useEffect(() => {
+    setState({
+      question: value.question,
+      options: value.options,
+      subText: value.subText,
+    });
+  }, [value]);
+
   const changeHandler = (e) => {
     const { id, value } = e.target;
-    setState({ ...state, [id]: value });
+    setState((prev) => ({ ...prev, [id]: value }));
   };
+
   const optionChangeHandler = (index, e) => {
-    const { type, value, checked, id } = e.target;
-    const newOptions = [...state.options];
+    const { type, value, checked } = e.target;
 
-    if (type === "checkbox") {
-      newOptions[index].isCorrect = checked;
-    } else if (id === "optionText") {
-      newOptions[index].optionText = value;
-    }
+    const updatedOptions = state.options.map((opt, i) =>
+      i === index
+        ? {
+            ...opt,
+            ...(type === "checkbox"
+              ? { isCorrect: checked }
+              : { optionText: value }),
+          }
+        : opt
+    );
 
-    setState({ ...state, options: newOptions });
+    setState((prev) => ({ ...prev, options: updatedOptions }));
   };
 
   const closeModal = () => {
@@ -59,22 +69,17 @@ const EditQuizQuestion = ({ value, getDetails }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
-    var cleanedOptions = [];
-    if (state.options) {
-      cleanedOptions = state.options.map(
-        ({ createdAt, updatedAt, ...rest }) => rest
-      );
-    }
-    let body = {
+    const cleanedOptions = state.options
+      ? state.options.map(({ createdAt, updatedAt, ...rest }) => rest)
+      : [];
+
+    const body = {
       questionId: value.id,
       question: state.question,
+      ...(cleanedOptions.length && { options: cleanedOptions }),
+      ...(state.subText && { subText: state.subText }),
     };
-    if (cleanedOptions.length) {
-      body.options = cleanedOptions;
-    }
-    if (state.subText) {
-      body.subText = state.subText;
-    }
+
     setLoading(true);
 
     metaDataController
@@ -92,7 +97,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
         closeModal();
       })
       .catch((err) => {
-        let errMessage =
+        const errMessage =
           (err.response && err.response.data.message) || err.message;
         dispatch(
           setToast({
@@ -104,13 +109,10 @@ const EditQuizQuestion = ({ value, getDetails }) => {
         setLoading(false);
       });
   };
+
   return (
     <Box sx={{ width: 800 }}>
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-      >
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography sx={{ fontSize: 20, fontFamily: roboto.style }}>
           Edit Question
         </Typography>
@@ -118,6 +120,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
           <Close sx={{ fill: COLORS.PRIMARY }} />
         </IconButton>
       </Stack>
+
       <Stack spacing={2} mt={2}>
         <TextField
           sx={{ ...loginTextField }}
@@ -126,11 +129,12 @@ const EditQuizQuestion = ({ value, getDetails }) => {
           onChange={changeHandler}
           id="question"
         />
+
         <Box mt={1}>
           {state.options ? (
             state.options.map((val, i) => (
-              <Stack mt={3}>
-                <Stack direction={"row"} alignItems={"center"} spacing={2}>
+              <Stack mt={3} key={val.id || i}>
+                <Stack direction="row" alignItems="center" spacing={2}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -138,12 +142,13 @@ const EditQuizQuestion = ({ value, getDetails }) => {
                         onChange={(e) => optionChangeHandler(i, e)}
                       />
                     }
+                    label=""
                   />
 
                   <TextField
                     sx={{ ...loginTextField }}
                     fullWidth
-                    id="optionText"
+                    id={`optionText-${i}`}
                     value={val.optionText}
                     label={`Option ${i + 1}`}
                     onChange={(e) => optionChangeHandler(i, e)}
@@ -161,8 +166,9 @@ const EditQuizQuestion = ({ value, getDetails }) => {
             />
           )}
         </Box>
+
         <Grid2 container spacing={2}>
-          <Grid2 size={6}>
+          <Grid2 xs={6}>
             <Button
               sx={{
                 fontSize: 17,
@@ -186,7 +192,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
               )}
             </Button>
           </Grid2>
-          <Grid2 size={6}>
+          <Grid2 xs={6}>
             <Button
               sx={{
                 color: COLORS.PRIMARY,
