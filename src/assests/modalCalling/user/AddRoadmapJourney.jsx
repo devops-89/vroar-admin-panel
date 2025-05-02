@@ -236,7 +236,7 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
   }, [journeyData]);
 
   return (
-    <Box sx={{ width: 400 }}>
+    <Box sx={{ minWidth: 400 }}>
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -459,6 +459,7 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
                 formik.touched.softSkillsRoadmap &&
                 formik.errors.softSkillsRoadmap
               }
+              fullWidth
             />
           )}
           options={softSkillsData}
@@ -503,6 +504,7 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
             })
           }
           loading={listLoading}
+          
         />
         <Button
           sx={{
