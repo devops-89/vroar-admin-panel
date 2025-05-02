@@ -62,6 +62,7 @@ const CustomChip = ({ label, variant, removable, onDelete }) => {
             color: `${color} !important`,
             fontSize: 15,
           },
+         
         }}
         label={
           <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>

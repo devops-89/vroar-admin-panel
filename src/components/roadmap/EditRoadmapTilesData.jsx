@@ -107,7 +107,6 @@ const EditRoadmapTilesData = ({ tiles, setTiles, getRoadmapDetails }) => {
 
       uniqueContentTypes.forEach((type) => {
         if (!contentList[type]) {
-          // Fetch only if not already fetched
           const body = { page: 1, pageSize: 500, contentType: [type] };
           getContentList({
             body,
