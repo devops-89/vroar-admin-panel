@@ -167,36 +167,37 @@ const EditRoadmapTiles = () => {
   };
 
   const submitHandler = () => {
-    const transformedData = tiles.map(
-      ({ id, contentType, contentLibraryId, ...rest }) => ({
-        ...rest,
+    // const transformedData = tiles.map(
+    //   ({ id, contentType, contentLibraryId, ...rest }) => ({
+    //     ...rest,
 
-        contentLibraryId: contentLibraryId?.id || null,
-      })
-    );
+    //     contentLibraryId: contentLibraryId?.id || null,
+    //   })
+    // );
 
-    const body = {
-      roadmapName: state.roadmapName,
+    // const body = {
+    //   roadmapName: state.roadmapName,
 
-      metadataIds: state.metaDataTag,
-      tiles: transformedData,
-    };
+    //   metadataIds: state.metaDataTag,
+    //   tiles: transformedData,
+    // };
 
-    roadmapValidationSchema
-      .validate(body, { abortEarly: false })
-      .then(() => {
-        createRoadmap(body);
-      })
-      .catch((err) => {
-        const errorMessages = err.inner.map((e) => e.message).join("\n");
-        dispatch(
-          setToast({
-            open: true,
-            message: errorMessages,
-            severity: ToastStatus.ERROR,
-          })
-        );
-      });
+    // roadmapValidationSchema
+    //   .validate(body, { abortEarly: false })
+    //   .then(() => {
+    //     createRoadmap(body);
+    //   })
+    //   .catch((err) => {
+    //     const errorMessages = err.inner.map((e) => e.message).join("\n");
+    //     dispatch(
+    //       setToast({
+    //         open: true,
+    //         message: errorMessages,
+    //         severity: ToastStatus.ERROR,
+    //       })
+    //     );
+    //   });
+    router.back();
   };
 
   useEffect(() => {
