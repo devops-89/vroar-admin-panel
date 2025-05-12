@@ -119,8 +119,8 @@ const StudentTable = ({
                   <TableCell>
                     <UserAvatar
                       avatar={val?.avatar}
-                      firstName={val.firstName.slice(0, 10) || "--"}
-                      lastName={val.lastName.slice(0, 10) || "--"}
+                      firstName={val.firstName?.slice(0, 10) || "--"}
+                      lastName={val.lastName?.slice(0, 10) || "--"}
                     />
                   </TableCell>
                   <TableCell>
