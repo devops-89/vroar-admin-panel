@@ -1,6 +1,6 @@
 import { Authcontrollers } from "@/api/authControllers";
 import LoginBg from "@/banner/vroar_half.svg";
-import logo from "@/logo/logo.svg";
+import logo from "@/logo/logo_mytreks.png";
 import { setToast } from "@/redux/reducers/toast";
 import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
