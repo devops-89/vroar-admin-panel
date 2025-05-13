@@ -223,8 +223,8 @@ const CreateAssessment = () => {
         type: assessmentType?.value,
       };
 
-      console.log("test", body);
-      // addAssessment(body);
+      // console.log("test", body);
+      addAssessment(body);
     } catch (err) {
       if (err) {
         // const parsedErrors = parseYupErrors(err);
