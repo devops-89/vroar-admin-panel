@@ -8,6 +8,10 @@ import { COLORS, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { assessmentTypeArray } from "@/utils/genericArray";
 import { loginTextField } from "@/utils/styles";
+import {
+  assessmentValidationSchema,
+  parseYupErrors,
+} from "@/utils/validationSchema";
 import withAuth from "@/utils/withAuth";
 import { AddCircleOutlineOutlined, Delete } from "@mui/icons-material";
 import {
@@ -86,6 +90,7 @@ const CreateAssessment = () => {
   };
 
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleAddQuestion = () => {
     if (questions.length < 10) {
@@ -171,48 +176,30 @@ const CreateAssessment = () => {
       });
   };
 
-  const handleSubmit = () => {
-    let isOptionEmpty = false;
-
-    for (const ques of questions) {
-      if (ques.question === "") {
-        isOptionEmpty = true;
-        break;
+  const handleSubmit = async () => {
+    const cleanedQuestions = questions.map((item) => {
+      // Remove options if the question is subjective
+      if (item.questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
+        const { options, ...rest } = item;
+        return rest;
       }
+      return item;
+    });
 
-      let currentOptEmt = true;
-      for (const opt of ques.options) {
-        if (opt.optionText === "") {
-          currentOptEmt = false;
-        }
-        if (!currentOptEmt) {
-          isOptionEmpty = true;
-          break;
-        }
-      }
-    }
+    const formData = {
+      role: role,
+      assessmentName: assessmentName,
+      assessmentType: assessmentType,
+      question: cleanedQuestions,
+    };
 
-    if (
-      assessmentName === "" ||
-      role === "" ||
-      questions.length === 0 ||
-      isOptionEmpty
-    ) {
-      dispatch(
-        setToast({
-          open: true,
-          message: "Please Enter Required Details",
-          severity: ToastStatus.ERROR,
-        })
-      );
-    } else {
-      const filteredData = questions.map((item) =>
-        item.questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ
-          ? (({ options, ...rest }) => rest)(item)
-          : item
-      );
+    try {
+      await assessmentValidationSchema.validate(formData, {
+        abortEarly: false,
+      });
+      setErrors({});
 
-      const updatedData = filteredData.map(
+      const updatedData = cleanedQuestions.map(
         ({ id, questionType, options, ...rest }) => {
           const updatedItem = {
             ...rest,
@@ -236,7 +223,24 @@ const CreateAssessment = () => {
         type: assessmentType?.value,
       };
 
+      // console.log("test", body);
       addAssessment(body);
+    } catch (err) {
+      if (err) {
+        // const parsedErrors = parseYupErrors(err);
+        // console.log("aseee", parsedErrors);
+        // setErrors(parsedErrors);
+        console.log("first", err.question);
+        console.log("firstll", err.question);
+
+        dispatch(
+          setToast({
+            open: true,
+            message: "All Fields are Required",
+            severity: ToastStatus.ERROR,
+          })
+        );
+      }
     }
   };
 
@@ -271,6 +275,8 @@ const CreateAssessment = () => {
                     fontFamily: roboto.style,
                   },
                 }}
+                error={Boolean(errors.assessmentType)}
+                helperText={errors.assessmentType}
               />
             )}
             options={assessmentTypeArray}
@@ -296,6 +302,8 @@ const CreateAssessment = () => {
             fullWidth
             label="Assessment Name"
             onChange={(e) => setAssessmentName(e.target.value)}
+            error={Boolean(errors.assessmentName)}
+            helperText={errors.assessmentName}
           />
           <Autocomplete
             renderInput={(params) => (
@@ -308,6 +316,8 @@ const CreateAssessment = () => {
                     fontFamily: roboto.style,
                   },
                 }}
+                error={Boolean(errors.role)}
+                helperText={errors.role}
               />
             )}
             renderOption={(props, option) => (
@@ -357,6 +367,8 @@ const CreateAssessment = () => {
                       fontFamily: roboto.style,
                     },
                   }}
+                  error={!!errors?.questions?.[i]?.question}
+                  helperText={errors?.questions?.[i]?.question}
                 />
               )}
             />
@@ -373,6 +385,8 @@ const CreateAssessment = () => {
               fullWidth
               value={val.question}
               onChange={(e) => handleInputChange(i, "question", e.target.value)}
+              error={Boolean(errors?.questions?.[i]?.question)}
+              helperText={errors?.questions?.[i]?.question}
             />
 
             {val.questionType.label === QUIZ_TYPE.OBJECTIVE_QUIZ && (
@@ -399,6 +413,12 @@ const CreateAssessment = () => {
                       value={item.optionText}
                       onChange={(e) =>
                         handleOptionChange(i, index, e.target.value)
+                      }
+                      error={Boolean(
+                        errors?.questions?.[i]?.options?.[index]?.optionText
+                      )}
+                      helperText={
+                        errors?.questions?.[i]?.options?.[index]?.optionText
                       }
                     />
                     {val.options.length > 1 && (

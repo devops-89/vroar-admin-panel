@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { EVENT_TYPE } from "./enum";
+import { ASSESSMENTS_TYPE, EVENT_TYPE, QUIZ_TYPE } from "./enum";
 export const loginValidationSchema = Yup.object({
   email: Yup.string()
     .email("Please Enter Valid Email")
@@ -192,3 +192,67 @@ export const manualNotesValidationSchema = Yup.object().shape({
 export const feedbackValidationSchema = Yup.object().shape({
   feedback: Yup.string().required("Please Enter Feedback"),
 });
+
+export const assessmentValidationSchema = Yup.object().shape({
+  role: Yup.object().required("Role is required"),
+  assessmentName: Yup.string().required("Assessment name is required"),
+  assessmentType: Yup.object().required("Assessment type is required"),
+  question: Yup.array()
+    .of(
+      Yup.object().shape({
+        id: Yup.number().required(),
+        questionType: Yup.object().required(),
+        question: Yup.string().required("Question is required"),
+        options: Yup.array()
+          .when("questionType", (questionType, schema) => {
+            const isSubjective =
+              questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ;
+            return isSubjective
+              ? schema.notRequired()
+              : schema
+                  .of(
+                    Yup.object().shape({
+                      id: Yup.number().required(),
+                      optionText: Yup.string().required("Option text is required"),
+                    })
+                  )
+                  .min(1, "At least one option is required");
+          }),
+      })
+    )
+    .min(1, "At least one question is required"),
+});
+
+export const parseYupErrors = (yupError) => {
+  const fieldErrors = {};
+
+  yupError.inner.forEach((error) => {
+    const path = error.path;
+    if (!path) return;
+
+    const match = path.match(/questions\[(\d+)\]\.(\w+)(\[(\d+)\])?/);
+
+    if (match) {
+      const qIndex = Number(match[1]);
+      const field = match[2];
+      const optIndex = match[4] ? Number(match[4]) : null;
+
+      if (!fieldErrors.questions) fieldErrors.questions = {};
+
+      if (!fieldErrors.questions[qIndex]) fieldErrors.questions[qIndex] = {};
+
+      if (field === "options" && optIndex !== null) {
+        if (!fieldErrors.questions[qIndex].options) {
+          fieldErrors.questions[qIndex].options = {};
+        }
+        fieldErrors.questions[qIndex].options[optIndex] = error.message;
+      } else {
+        fieldErrors.questions[qIndex][field] = error.message;
+      }
+    } else {
+      fieldErrors[path] = error.message;
+    }
+  });
+
+  return fieldErrors;
+};
