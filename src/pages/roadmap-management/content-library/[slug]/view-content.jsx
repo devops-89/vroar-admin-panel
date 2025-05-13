@@ -5,9 +5,18 @@ import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import withAuth from "@/utils/withAuth";
 import { Box, Button, Card, Divider, Stack, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 import React from "react";
 import { FaRegEdit } from "react-icons/fa";
 const ViewContent = () => {
+  const router = useRouter();
+
+  const { slug } = router.query;
+
+  const editContent = () => {
+    router.push(`/roadmap-management/content-library/${slug}/edit-content`);
+  };
+
   return (
     <div>
       <Wrapper>
@@ -25,7 +34,7 @@ const ViewContent = () => {
                 },
                 {
                   label: "view Content",
-                  url: "/roadmap-management/content-library/view-content",
+                  url: `/roadmap-management/content-library/${slug}/view-content`,
                 },
               ]}
             />
@@ -50,6 +59,7 @@ const ViewContent = () => {
                 backgroundColor: COLORS.TRANSPARENT,
                 color: COLORS.PRIMARY,
               }}
+              onClick={editContent}
             >
               Edit
             </Button>
