@@ -230,8 +230,8 @@ const CreateAssessment = () => {
         // const parsedErrors = parseYupErrors(err);
         // console.log("aseee", parsedErrors);
         // setErrors(parsedErrors);
-        console.log("first", err.question);
-        console.log("firstll", err.question);
+        // console.log("first", err.question);
+        // console.log("firstll", err.question);
 
         dispatch(
           setToast({
