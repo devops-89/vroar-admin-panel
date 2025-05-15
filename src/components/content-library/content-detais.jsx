@@ -40,8 +40,6 @@ const ContentDetails = () => {
     }
   }, [router.query.slug]);
 
-  console.log("test", details);
-
   const viewData = [
     {
       label: "ID",
@@ -138,42 +136,44 @@ const ContentDetails = () => {
               </Stack>
             ))}
           </Stack>
-          <Stack
-            alignItems={"flex-start"}
-            spacing={3}
-            sx={{ mt: 2, width: "100%" }}
-          >
-            <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
-              Quiz
-            </Typography>
-            {details?.quiz?.quizQuestions?.map((val, i) => (
-              <Accordion sx={{ mt: 2, width: "100%" }}>
-                <AccordionSummary>
-                  <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                    {i + 1}. {val.questionText}
-                  </Typography>
-                </AccordionSummary>
-                {val.subText ? (
-                  <AccordionDetails>
-                    <Typography>{val.subText}</Typography>
-                  </AccordionDetails>
-                ) : (
-                  <AccordionDetails>
-                    {val.options.map((item, i) => (
-                      <Stack
-                        direction={"row"}
-                        alignItems={"center"}
-                        spacing={2}
-                      >
-                        <Checkbox checked={item.isCorrect} />
-                        <Typography>{item.optionText}</Typography>
-                      </Stack>
-                    ))}
-                  </AccordionDetails>
-                )}
-              </Accordion>
-            ))}
-          </Stack>
+          {details?.quiz && (
+            <Stack
+              alignItems={"flex-start"}
+              spacing={3}
+              sx={{ mt: 2, width: "100%" }}
+            >
+              <Typography sx={{ fontFamily: roboto.style, width: 45 }}>
+                Quiz
+              </Typography>
+              {details?.quiz?.quizQuestions?.map((val, i) => (
+                <Accordion sx={{ mt: 2, width: "100%" }}>
+                  <AccordionSummary>
+                    <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                      {i + 1}. {val.questionText}
+                    </Typography>
+                  </AccordionSummary>
+                  {val.subText ? (
+                    <AccordionDetails>
+                      <Typography>{val.subText}</Typography>
+                    </AccordionDetails>
+                  ) : (
+                    <AccordionDetails>
+                      {val.options.map((item, i) => (
+                        <Stack
+                          direction={"row"}
+                          alignItems={"center"}
+                          spacing={2}
+                        >
+                          <Checkbox checked={item.isCorrect} />
+                          <Typography>{item.optionText}</Typography>
+                        </Stack>
+                      ))}
+                    </AccordionDetails>
+                  )}
+                </Accordion>
+              ))}
+            </Stack>
+          )}
         </>
       )}
     </div>

@@ -144,7 +144,7 @@ const Points = ({ getUserRewardPoint, rewardData, loading }) => {
                             color: COLORS.PRIMARY,
                           }}
                         >
-                          +{val.rewardValue}
+                          {val.rewardValue}
                         </Typography>
                       </Stack>
                     </TableCell>
