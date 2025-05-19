@@ -102,7 +102,7 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
                   Delete
                 </Button>
               )}
-              <Button
+              {/* <Button
                 endIcon={<FaRegEdit />}
                 sx={{
                   fontFamily: roboto.style,
@@ -111,7 +111,7 @@ const RoadmapTiles = ({ tiles, setTiles }) => {
                 }}
               >
                 Edit
-              </Button>
+              </Button> */}
             </Stack>
           </Stack>
 

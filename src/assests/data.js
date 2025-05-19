@@ -430,9 +430,9 @@ export const data = {
     {
       label: ASSESSMENT_TYPE.VIEW_STRENGTHS,
     },
-    {
-      label: ASSESSMENT_TYPE.SELECTED_PATHS,
-    },
+    // {
+    //   label: ASSESSMENT_TYPE.SELECTED_PATHS,
+    // },
     // {
     //   label: ASSESSMENT_TYPE.MANUAL_NOTES,
     // },

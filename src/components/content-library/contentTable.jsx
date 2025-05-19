@@ -111,7 +111,7 @@ const ContentTable = ({
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {moment.unix(val.createdAt).format("YYYY-MM-DD")}
+                      {moment.unix(val.createdAt).format("DD-MM-YYYY")}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -119,10 +119,10 @@ const ContentTable = ({
                       {val.contentType}
                     </Typography>
                   </TableCell>
-                  <TableCell sx={{width:200}}>
+                  <TableCell sx={{ width: 200 }}>
                     <Stack
                       direction={"row"}
-                      alignItems={"center"}
+                      alignItems={"center"} 
                       spacing={1}
                       // flexWrap={"wrap"}
                     >
@@ -157,7 +157,11 @@ const ContentTable = ({
                         columnGap={2}
                       >
                         {val.metadataTags.slice(1).map((tag, i) => (
-                          <CustomChip label={tag.name} variant={tag.type} key={i} />
+                          <CustomChip
+                            label={tag.name}
+                            variant={tag.type}
+                            key={i}
+                          />
                         ))}
                       </Stack>
                     </Collapse>

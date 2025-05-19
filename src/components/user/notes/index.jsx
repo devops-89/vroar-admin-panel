@@ -62,9 +62,9 @@ const Notes = () => {
       <TabPanel value={value} index={3}>
         <Strengths />
       </TabPanel>
-      <TabPanel value={value} index={4}>
+      {/* <TabPanel value={value} index={4}>
         <SelectedPaths />
-      </TabPanel>
+      </TabPanel> */}
     </div>
   );
 };

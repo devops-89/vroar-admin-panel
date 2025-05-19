@@ -11,7 +11,18 @@ export const AddMetaDataValiationSchema = Yup.object({
   metadataType: Yup.string().required("Please Select Valid MetaData Type"),
   name: Yup.string()
     .required("Please Enter MetaData Name")
-    .max(255, "Name is Too Long!"),
+    .test(
+      "no-leading-trailing-whitespace",
+      "Name must not have leading or trailing spaces",
+      (value) => value?.trim() === value
+    )
+    .test(
+      "not-empty-or-spaces",
+      "Name cannot be empty or just spaces",
+      (value) => !!value?.trim()
+    )
+    .min(2, "Name must be at least 2 characters")
+    .max(55, "Name must be at most 55 characters"),
 });
 
 export const AddContentValidationSchema = ({ state, errors, setErrors }) => {
@@ -203,21 +214,22 @@ export const assessmentValidationSchema = Yup.object().shape({
         id: Yup.number().required(),
         questionType: Yup.object().required(),
         question: Yup.string().required("Question is required"),
-        options: Yup.array()
-          .when("questionType", (questionType, schema) => {
-            const isSubjective =
-              questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ;
-            return isSubjective
-              ? schema.notRequired()
-              : schema
-                  .of(
-                    Yup.object().shape({
-                      id: Yup.number().required(),
-                      optionText: Yup.string().required("Option text is required"),
-                    })
-                  )
-                  .min(1, "At least one option is required");
-          }),
+        options: Yup.array().when("questionType", (questionType, schema) => {
+          const isSubjective =
+            questionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ;
+          return isSubjective
+            ? schema.notRequired()
+            : schema
+                .of(
+                  Yup.object().shape({
+                    id: Yup.number().required(),
+                    optionText: Yup.string().required(
+                      "Option text is required"
+                    ),
+                  })
+                )
+                .min(1, "At least one option is required");
+        }),
       })
     )
     .min(1, "At least one question is required"),

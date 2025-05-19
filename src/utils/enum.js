@@ -361,6 +361,7 @@ export const ASSESSMENT_TYPE = {
   VIEW_STRENGTHS: "View Strengths",
   SELECTED_PATHS: "Selected Paths",
   MANUAL_NOTES: "Manual Notes",
+  GALLUP_RESULT: "GALLUP_RESULT",
 };
 
 export const PAYMENT_STATUS = {

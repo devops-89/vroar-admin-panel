@@ -41,6 +41,7 @@ const StudentTable = ({
   const router = useRouter();
   const viewProfile = (userId) => {
     router.push(`/user-management/students/view-profile/${userId}`);
+    // console.log("first", userId);
   };
   const dispatch = useDispatch();
   const body = {

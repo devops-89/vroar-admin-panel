@@ -1,5 +1,5 @@
 import { SIDEBARADATA } from "@/assests/sidebarData";
-import logo from "@/logo/logo.svg";
+import logo from "@/logo/logo_mytreks.png";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
@@ -19,7 +19,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import lionFace from "@/logo/logo.png";
+import lionFace from "@/logo/logo_mytreks.png";
 const Sidebar = () => {
   const [openIndex, setOpenIndex] = useState(null);
 
@@ -82,7 +82,7 @@ const Sidebar = () => {
               src={logo}
               alt=""
               width={100}
-              height={40}
+              height={50}
               style={{ opacity: sidebarCollapse ? 0 : 1 }}
             />
           )}
