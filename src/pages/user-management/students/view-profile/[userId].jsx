@@ -158,7 +158,7 @@ const UserProfile = () => {
                   }}
                   onClick={rewardPoints}
                 >
-                  Reward Points
+                  Reward Coins
                 </Button>
               )}
             </Stack>

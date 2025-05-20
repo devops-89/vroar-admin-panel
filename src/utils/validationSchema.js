@@ -105,29 +105,73 @@ export const changePasswordValidation = Yup.object({
 });
 
 export const roadmapValidationSchema = Yup.object().shape({
-  roadmapName: Yup.string().required("Roadmap name is required"),
+  roadmapName: Yup.string()
+    .required("Roadmap name is required")
+    .test(
+      "not-empty",
+      "Content Name cannot be only whitespace",
+      (value) => value && value.trim().length > 0
+    )
+    .matches(
+      /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
+      "Name cannot contain special characters except for basic punctuation"
+    )
+    .min(2, "Name should be more than 2 characters")
+    .max(255, "Name is Too Long!"),
   metadataIds: Yup.array()
     .of(Yup.string().required("Metadata tag is required"))
     .min(1, "At least one metadata tag is required"),
   tiles: Yup.array()
     .of(
       Yup.object().shape({
-        tileName: Yup.string().required("Tile name is required"),
+        tileName: Yup.string()
+          .required("Tile name is required")
+          .test(
+            "not-empty",
+            "Tile Name cannot be only whitespace",
+            (value) => value && value.trim().length > 0
+          )
+          .matches(
+            /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
+            "Name cannot contain special characters except for basic punctuation"
+          )
+          .min(2, "Name should be more than 2 characters")
+          .max(255, "Name is Too Long!"),
 
         contentLibraryId: Yup.string().required(
           "Content Library ID is required"
         ),
         time: Yup.string().required("Time is required"),
         points: Yup.string().required("Points are required"),
-        description: Yup.string().required("Description is Required"),
+        description: Yup.string()
+          .required("Description is Required")
+          .test(
+            "not-empty",
+            "Description cannot be only whitespace",
+            (value) => value && value.trim().length > 0
+          )
+          .matches(
+            /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
+            "Description cannot contain special characters except for basic punctuation"
+          )
+          .min(2, "Description should be more than 2 characters")
+          .max(500, "Description is Too Long!"),
       })
     )
     .min(1, "At least one tile must be added"),
 });
 
 export const pointsValidation = Yup.object().shape({
-  points: Yup.string().required("Please Enter Points"),
-  reason: Yup.string().required("Please Enter Reason"),
+  points: Yup.number()
+    .typeError("Coins must be a valid number")
+    .integer("Coins must be a whole number")
+    .positive("Coins must be a positive number")
+    .required("Please Enter Coins"),
+
+  reason: Yup.string()
+    .trim("Reason cannot be empty or just spaces")
+    .strict(true)
+    .required("Please Enter Reason"),
 });
 
 export const newAddContentValidationSchema = Yup.object().shape({
@@ -141,7 +185,9 @@ export const newAddContentValidationSchema = Yup.object().shape({
     .matches(
       /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
       "Name cannot contain special characters except for basic punctuation"
-    ),
+    )
+    .min(2, "Name should be more than 2 characters")
+    .max(255, "Name is Too Long!"),
 
   description: Yup.string()
     .required("Please Enter Description")
@@ -154,7 +200,8 @@ export const newAddContentValidationSchema = Yup.object().shape({
       /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
       "Description cannot contain special characters except for basic punctuation"
     )
-    .max(500, "Only 500 characters allowed"),
+    .max(500, "Only 500 characters allowed")
+    .min(2, "description is too short!"),
 
   contentType: Yup.string()
     .required("Please Select Content Type")
@@ -171,11 +218,35 @@ export const quizValidationSchema = Yup.object().shape({
   quizQuestions: Yup.array()
     .of(
       Yup.object().shape({
-        question: Yup.string().required("Question is required"),
+        question: Yup.string()
+          .required("Question is required")
+          .test(
+            "not-empty",
+            "Question  cannot be only whitespace",
+            (value) => value && value.trim().length > 0
+          )
+          .matches(
+            /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
+            "Question cannot contain special characters except for basic punctuation"
+          )
+          .min(2, "Question should be more than 2 characters")
+          .max(255, "Question is Too Long!"),
         options: Yup.array()
           .of(
             Yup.object().shape({
-              optionText: Yup.string().required("Option text is required"),
+              optionText: Yup.string()
+                .required("Option text is required")
+                .test(
+                  "not-empty",
+                  "Option text cannot be only whitespace",
+                  (value) => value && value.trim().length > 0
+                )
+                .matches(
+                  /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
+                  "option cannot contain special characters except for basic punctuation"
+                )
+                .min(2, "option should be more than 2 characters")
+                .max(255, "option is Too Long!"),
               isCorrect: Yup.boolean().required("isCorrect is required"),
             })
           )

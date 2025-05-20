@@ -151,7 +151,7 @@ const StudentTable = ({
                   </TableCell>
                   <TableCell align="center">
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {moment.unix(val.createdAt).format("YYYY-MM-DD")}
+                      {moment.unix(val.createdAt).format("DD-MM-YYYY")}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">

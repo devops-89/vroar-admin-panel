@@ -125,7 +125,7 @@ const RewardPoints = ({ getPoints }) => {
           {loading ? (
             <Loading width={20} height={20} color={COLORS.BLACK} type="bars" />
           ) : (
-            "Add Points"
+            "Add Coins"
           )}
         </Button>
       </Stack>

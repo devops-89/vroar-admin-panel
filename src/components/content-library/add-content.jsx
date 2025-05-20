@@ -297,10 +297,9 @@ const AddContent = () => {
               severity: ToastStatus.ERROR,
             })
           );
-          return; // Stop execution
+          return; 
         }
 
-        // API call
         metaDataController.addContentLibrary(body).then((res) => {
           const contentLibraryId = res.data.data.id;
 
