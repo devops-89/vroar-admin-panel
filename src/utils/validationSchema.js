@@ -62,8 +62,41 @@ export const AddContentValidationSchema = ({ state, errors, setErrors }) => {
   }
 };
 
+// export const AddAdListValidationSchema = Yup.object({
+//   eventName: Yup.string().required("Please Enter Event Name"),
+//   speakerName: Yup.string().required("Please Enter Speaker Name"),
+//   eventDescription: Yup.string()
+//     .max(1000, "Event Description is too Long!")
+//     .required("Please Enter Event Description"),
+//   speakerSummary: Yup.string()
+//     .max(1000, "Speaker Summary is too Long!")
+//     .required("Please Enter Speaker Summary"),
+//   sessionDetails: Yup.string()
+//     .max(1000, "Session Details is too Long!")
+//     .required("Please Enter Session Details"),
+//   sessionStartDate: Yup.string().required("Please Enter Session Start Date"),
+//   sessionStartTime: Yup.string().required("Please Enter Session Start Time"),
+//   sessionEndTime: Yup.string().required("Please Enter Session End Time"),
+//   sessionEndDate: Yup.string().required("Please Enter Session End Time"),
+//   zoomLink: Yup.string()
+//     .required("Please Enter Zoom Link")
+//     .url("Please Enter Valid Url"),
+//   eventType: Yup.string().required("Please Select Event Type"),
+//   coins: Yup.number()
+//     .nullable()
+//     .when("eventType", {
+//       is: EVENT_TYPE.PAID,
+//       then: (schema) => schema.required("Please Enter Coins"),
+//       otherwise: (schema) => schema.notRequired(),
+//     }),
+// });
+
 export const AddAdListValidationSchema = Yup.object({
-  eventName: Yup.string().required("Please Enter Event Name"),
+  eventName: Yup.string()
+    .required("Please Enter Event Name")
+    .trim()
+    .min(2, "Event name is too short!")
+    .max(50, "Event name is too long!"),
   speakerName: Yup.string().required("Please Enter Speaker Name"),
   eventDescription: Yup.string()
     .max(1000, "Event Description is too Long!")
@@ -76,8 +109,17 @@ export const AddAdListValidationSchema = Yup.object({
     .required("Please Enter Session Details"),
   sessionStartDate: Yup.string().required("Please Enter Session Start Date"),
   sessionStartTime: Yup.string().required("Please Enter Session Start Time"),
-  sessionEndTime: Yup.string().required("Please Enter Session End Time"),
-  sessionEndDate: Yup.string().required("Please Enter Session End Time"),
+  sessionEndTime: Yup.string()
+    .required("Please Enter Session End Time")
+    .test(
+      "is-different-time",
+      "End time must be different from start time",
+      function (value) {
+        const { sessionStartTime } = this.parent;
+        return value && sessionStartTime && value !== sessionStartTime;
+      }
+    ),
+  sessionEndDate: Yup.string().required("Please Enter Session End Date"),
   zoomLink: Yup.string()
     .required("Please Enter Zoom Link")
     .url("Please Enter Valid Url"),
@@ -85,10 +127,11 @@ export const AddAdListValidationSchema = Yup.object({
   coins: Yup.number()
     .nullable()
     .when("eventType", {
-      is: EVENT_TYPE.PAID,
+      is: "Paid",
       then: (schema) => schema.required("Please Enter Coins"),
       otherwise: (schema) => schema.notRequired(),
-    }),
+    })
+    .positive(),
 });
 
 export const studentJourneyValidationSchema = Yup.object({

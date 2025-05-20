@@ -6,7 +6,7 @@ import ParentTable from "@/components/user/parent/parentTable";
 import Wrapper from "@/components/wrapper";
 import { USER_GROUP } from "@/utils/enum";
 import withAuth from "@/utils/withAuth";
-import { Box, Card } from "@mui/material";
+import { Box, Card, TablePagination } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 const Parents = () => {
@@ -23,6 +23,35 @@ const Parents = () => {
     userRole: USER_GROUP.PARENT,
   };
 
+  const pageChangeHandler = (e, newPage) => {
+    setLoading(true);
+    setPage(newPage);
+    if (newPage) {
+      body.page = newPage + 1;
+    }
+    getUserList({
+      body,
+      setData: setUserData,
+      isLoading: setLoading,
+      setErrMessage,
+    });
+  };
+
+  const pagePerSizeChangeHandler = (e) => {
+    setPageSize(e.target.value);
+    setLoading(true);
+    if (e.target.value) {
+      body.pageSize = e.target.value;
+    }
+
+    getUserList({
+      body,
+      setData: setUserData,
+      isLoading: setLoading,
+      setErrMessage,
+    });
+  };
+
   useEffect(() => {
     getUserList({
       body,
@@ -32,7 +61,7 @@ const Parents = () => {
     });
   }, []);
 
-  console.log("userdata", userData);
+  // console.log("userdata", userData);
   return (
     <div>
       <Wrapper>
@@ -54,6 +83,23 @@ const Parents = () => {
           </Box>
           <Box sx={{ mt: 2 }}>
             <ParentTable userData={userData} loading={loading} />
+            {!loading && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <TablePagination
+                  page={page}
+                  rowsPerPage={pageSize}
+                  count={userData?.totalDocs}
+                  onPageChange={pageChangeHandler}
+                  onRowsPerPageChange={pagePerSizeChangeHandler}
+                />
+              </Box>
+            )}
           </Box>
         </Card>
       </Wrapper>

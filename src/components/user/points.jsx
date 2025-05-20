@@ -11,22 +11,59 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
 } from "@mui/material";
 import moment from "moment";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useSelector } from "react-redux";
-const Points = ({ getUserRewardPoint, rewardData, loading }) => {
+const Points = ({
+  getUserRewardPoint,
+  rewardData,
+  loading,
+  page,
+  pageSize,
+  setPage,
+  setPageSize,
+  setLoading,
+}) => {
   const userId = useSelector((state) => state.USER.id);
-
+  const body = {
+    userId: userId,
+    page: page,
+    pageSize: pageSize,
+  };
   useEffect(() => {
     if (userId) {
-      getUserRewardPoint(userId);
+      getUserRewardPoint(body);
     }
   }, [userId]);
+  console.log("first", rewardData);
+
+  const pageChangeHandler = (e, newPage) => {
+    // console.log("newPage", newPage);
+    setLoading(true);
+    setPage(newPage);
+
+    if (newPage) {
+      body.page = newPage + 1;
+    }
+
+    getUserRewardPoint(body);
+  };
+
+  const pageSizeHandler = (e) => {
+    setPageSize(e.target.value);
+    setLoading(true);
+    if (e.target.value) {
+      body.pageSize = e.target.value;
+    }
+
+    getUserRewardPoint(body);
+  };
 
   return (
     <div>
@@ -154,6 +191,21 @@ const Points = ({ getUserRewardPoint, rewardData, loading }) => {
             )}
           </Table>
         </TableContainer>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}
+        >
+          <TablePagination
+            page={page}
+            rowsPerPage={pageSize}
+            count={rewardData?.totalDocs}
+            onPageChange={pageChangeHandler}
+            onRowsPerPageChange={pageSizeHandler}
+          />
+        </Box>
       </Box>
     </div>
   );
