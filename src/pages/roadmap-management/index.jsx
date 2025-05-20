@@ -27,9 +27,10 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
+import { debounce } from "lodash";
 import moment from "moment";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
@@ -40,10 +41,28 @@ const Roadmap = () => {
   const [pageSize, setPageSize] = useState(10);
   const [roadmapData, setRoadmapData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   let body = {
     page: page,
     pageSize: pageSize,
   };
+
+  const debouncedSearch = useCallback(
+    debounce((body) => getAllRoadmapJourney(body), 300),
+    []
+  );
+
+  const searchHandler = (e) => {
+    setSearch(e.target.value);
+    setLoading(true);
+    if (e.target.value) {
+      body.search = e.target.value;
+      debouncedSearch(body);
+    } else {
+      getAllRoadmapJourney(body);
+    }
+  };
+
   const pageChangeHandler = (e, newPage) => {
     setLoading(true);
 
@@ -138,7 +157,7 @@ const Roadmap = () => {
             </Button>
           </Stack>
           <Box sx={{ p: 1 }}>
-            <CustomTable />
+            <CustomTable onSearch={searchHandler} />
           </Box>
           <Box sx={{ mt: 2 }}>
             <TableContainer>

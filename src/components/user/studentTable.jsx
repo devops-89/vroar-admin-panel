@@ -41,6 +41,7 @@ const StudentTable = ({
   const router = useRouter();
   const viewProfile = (userId) => {
     router.push(`/user-management/students/view-profile/${userId}`);
+    // console.log("first", userId);
   };
   const dispatch = useDispatch();
   const body = {
@@ -150,7 +151,7 @@ const StudentTable = ({
                   </TableCell>
                   <TableCell align="center">
                     <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                      {moment.unix(val.createdAt).format("YYYY-MM-DD")}
+                      {moment.unix(val.createdAt).format("DD-MM-YYYY")}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">

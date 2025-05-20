@@ -61,6 +61,10 @@ const ContentDetails = () => {
       label: "Status",
       value: details?.status,
     },
+    {
+      label: "Description",
+      value: details?.description,
+    },
   ];
 
   return (

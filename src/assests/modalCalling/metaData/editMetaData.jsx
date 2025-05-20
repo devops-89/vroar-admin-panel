@@ -99,7 +99,7 @@ const EditMetaData = ({ value, getMetaData, metaDataBody }) => {
           <Typography
             sx={{ fontSize: 18, fontFamily: roboto.style, fontWeight: 550 }}
           >
-            Add New Metadata
+            Edit Metadata
           </Typography>
           <IconButton onClick={closeModal}>
             <Close htmlColor={COLORS.PRIMARY} />

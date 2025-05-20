@@ -1,6 +1,6 @@
 import { Authcontrollers } from "@/api/authControllers";
 import { AdminDrawerData } from "@/assests/sidebarData";
-import logo from "@/logo/logo.png";
+import logo from "../../public/favicon_mytreks.png";
 import { setToast } from "@/redux/reducers/toast";
 import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
@@ -79,7 +79,7 @@ const Header = () => {
           top: 0,
           left: 0,
           width: "100%",
-          height: "60px",
+          height: "70px",
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
@@ -91,7 +91,7 @@ const Header = () => {
       >
         <Button sx={{ mr: 2 }} onClick={showDrawer}>
           <Stack direction={"row"} alignItems={"center"} spacing={1}>
-            <Image src={logo} width={50} />
+            <Image src={logo} width={50} style={{ borderRadius: "50%" }} />
 
             <Box>
               <Typography

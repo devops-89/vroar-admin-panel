@@ -22,7 +22,7 @@ const Layout = ({ children }) => {
   return (
     <div>
       <Head>
-        <link href="/favicon.png" rel="icon" />
+        <link href="/favicon_mytreks.png" rel="icon" />
       </Head>
       <Analytics />
       {/* {router.pathname !== "/" && (

@@ -1,22 +1,22 @@
 import { getContentList } from "@/assests/apiCalling/metaDataController";
 import AddRoadmapTile from "@/assests/modalCalling/metaData/AddroadmapTiles";
+import DeleteRoadmapTile from "@/assests/modalCalling/metaData/DeleteRoadmapTile";
 import EditRoadmap from "@/assests/modalCalling/metaData/EditRoadmap";
 import { showModal } from "@/redux/reducers/modal";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { contentType } from "@/utils/genericArray";
 import { loginTextField } from "@/utils/styles";
-import { AddCircleOutline, DeleteOutlined, Edit } from "@mui/icons-material";
+import { AddCircleOutline, DeleteOutlined } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
   Button,
-  IconButton,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 
@@ -95,7 +95,9 @@ const EditRoadmapTilesData = ({ tiles, setTiles, getRoadmapDetails }) => {
   };
 
   const handleDeleteTiles = (id) => {
-    setTiles((prev) => prev.filter((q) => q.id !== id));
+    // console.log("first", id);
+    // setTiles((prev) => prev.filter((q) => q.id !== id));
+    dispatch(showModal(<DeleteRoadmapTile tileId={id} />));
   };
   useEffect(() => {
     if (tiles.length > 0) {

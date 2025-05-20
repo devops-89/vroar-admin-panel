@@ -1,4 +1,4 @@
-import logo from "@/logo/logo.png";
+import logo from "@/favicon_mytreks.png";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import withAuth from "@/utils/withAuth";
