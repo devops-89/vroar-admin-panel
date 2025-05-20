@@ -236,7 +236,7 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
   }, [journeyData]);
 
   return (
-    <Box sx={{ minWidth: 400 }}>
+    <Box sx={{ width: 600 }}>
       <Stack
         direction={"row"}
         alignItems={"center"}
