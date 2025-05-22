@@ -6,10 +6,14 @@ import { COLORS, EVENT_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Event_Type_Array } from "@/utils/genericArray";
 import { loginTextField } from "@/utils/styles";
-import { AddAdListValidationSchema } from "@/utils/validationSchema";
+import {
+  AddAdListValidationSchema,
+  editAdListValidataitonSchema,
+} from "@/utils/validationSchema";
 import {
   Autocomplete,
   Backdrop,
+  Box,
   Button,
   Card,
   CircularProgress,
@@ -47,22 +51,22 @@ const EditEventForm = ({ details }) => {
       coins: "",
       eventType: "",
     },
-    validationSchema: AddAdListValidationSchema,
+    validationSchema: editAdListValidataitonSchema,
     onSubmit: (values) => {
-      if (values.sessionStartTime < moment().unix()) {
-        formik.errors.sessionStartDate = "Session";
-        return false;
-      } else {
-        addNewEvent(values);
+      const newValues = { ...values };
+
+      if (newValues.eventType !== EVENT_TYPE.PAID) {
+        delete newValues.coins;
       }
+      addNewEvent(newValues);
     },
   });
 
   const id = router.query.slug;
-
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const addNewEvent = (values) => {
+    console.log("values", values);
     setLoading(true);
     if (router.query.event) {
       metaDataController
@@ -122,13 +126,13 @@ const EditEventForm = ({ details }) => {
   const sessionStartDateHandler = (newDate) => {
     setSessionStartDate(newDate);
 
-    const valid = moment(newDate).isValid();
-
-    if (valid) {
-      formik.values.sessionStartDate = moment(newDate?._d).unix();
-      formik.errors.sessionStartDate = "";
+    if (moment(newDate).isValid()) {
+      const timestamp = moment(newDate).unix();
+      formik.setFieldValue("sessionStartDate", timestamp);
+      formik.setFieldError("sessionStartDate", "");
     } else {
-      formik.errors.sessionStartDate = "Please Enter Valid Date";
+      formik.setFieldValue("sessionStartDate", "");
+      formik.setFieldError("sessionStartDate", "Please enter a valid date");
     }
   };
 
@@ -148,13 +152,14 @@ const EditEventForm = ({ details }) => {
   const [sessionEndDate, setSessionEndDate] = useState(null);
   const sessionEndDateHandler = (newDate) => {
     setSessionEndDate(newDate);
-    const validDate = moment(newDate).isValid();
 
-    if (validDate) {
-      formik.values.sessionEndDate = moment(newDate?._d).unix();
-      formik.errors.sessionEndDate = "";
+    if (moment(newDate).isValid()) {
+      const timestamp = moment(newDate).unix();
+      formik.setFieldValue("sessionEndDate", timestamp);
+      formik.setFieldError("sessionEndDate", "");
     } else {
-      formik.errors.sessionEndDate = "Please Enter valid Date";
+      formik.setFieldValue("sessionEndDate", "");
+      formik.setFieldError("sessionEndDate", "Please enter a valid date");
     }
   };
 
@@ -166,7 +171,6 @@ const EditEventForm = ({ details }) => {
     const validTime = moment(newTime).isValid();
     if (validTime) {
       formik.values.sessionEndTime = moment(newTime).format("hh:mm A");
-      // formik.setValues("")
       formik.errors.sessionEndTime = "";
     } else {
       formik.errors.sessionEndTime = "Please Select Valid Time";
@@ -183,6 +187,17 @@ const EditEventForm = ({ details }) => {
       formik.setFieldError("eventType", "Please Select Event Type");
     }
   };
+
+  // const editEvent = (body) => {
+  //   metaDataController
+  //     .editEvent(body, id)
+  //     .then((res) => {
+  //       console.log("res", res);
+  //     })
+  //     .catch((err) => {
+  //       console.log("err", err);
+  //     });
+  // };
 
   const [detailLoaing, setDetailLoading] = useState(true);
 
@@ -224,7 +239,6 @@ const EditEventForm = ({ details }) => {
         value: details?.eventType,
       });
       setDetailLoading(false);
-      console.log("ddetyaosa", details);
     }
   }, [details]);
 
@@ -427,7 +441,7 @@ const EditEventForm = ({ details }) => {
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                   <DatePicker
                     label="Session Start Date"
-                    format="MM-DD-YYYY"
+                    format="DD-MM-YYYY"
                     sx={{ ...loginTextField, width: "100%" }}
                     disablePast
                     slotProps={{
@@ -469,7 +483,7 @@ const EditEventForm = ({ details }) => {
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                   <DatePicker
                     label="Session End Date"
-                    format="MM-DD-YYYY"
+                    format="DD-MM-YYYY"
                     sx={{ ...loginTextField, width: "100%" }}
                     disablePast
                     value={sessionEndDate}
