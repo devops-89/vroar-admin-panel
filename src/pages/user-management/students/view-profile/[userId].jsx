@@ -60,10 +60,17 @@ const UserProfile = () => {
 
   const [rewardData, setRewardData] = useState(null);
   const [coinsLoading, setCoinsLoading] = useState(true);
-  const getRewardCoins = (id) => {
+  const [rewardPage, setRewardPage] = useState(0);
+  const [rewardPageSize, setRewardPageSize] = useState(10);
+  const getRewardCoins = () => {
     // const userID = id ? id : userId;
+    const body = {
+      page: rewardPage,
+      pageSize: rewardPageSize,
+      id: userId,
+    };
     userController
-      .getRewardsCoins(id)
+      .getRewardsCoins(body)
       .then((res) => {
         // console.log("res", res);
         setRewardData(res.data.data);
@@ -210,6 +217,11 @@ const UserProfile = () => {
                     getUserRewardPoint={getRewardCoins}
                     rewardData={rewardData}
                     loading={coinsLoading}
+                    page={rewardPage}
+                    pageSize={rewardPageSize}
+                    setPage={setRewardPage}
+                    setPageSize={setRewardPageSize}
+                    setLoading={setLoading}
                   />
                 </Box>
               </TabPanel>

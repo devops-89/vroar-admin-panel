@@ -138,16 +138,27 @@ const userController = {
       throw error;
     }
   },
-  getRewardsCoins: async (userId) => {
+  getRewardsCoins: async (body) => {
+    // console.log("body", body);
+    const { page, pageSize, id } = body;
     try {
-      let result = await userSecuredApi.userSecuredApi.get(
-        `api/rewards/get?userId=${userId}`
+      const params = new URLSearchParams();
+
+      if (id) params.append("userId", id);
+      if (page !== null && page !== undefined)
+        params.append("page", page === 0 ? 1 : page);
+      if (pageSize !== null && pageSize !== undefined)
+        params.append("pageSize", pageSize);
+
+      const result = await userSecuredApi.userSecuredApi.get(
+        `api/rewards/get?${params.toString()}`
       );
       return result;
     } catch (error) {
       throw error;
     }
   },
+
   addNotes: async (data) => {
     try {
       let result = await userSecuredApi.userSecuredApi.post(

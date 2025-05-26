@@ -1,6 +1,6 @@
 import { metaDataController } from "@/api/metaDataController";
 import Wrapper from "@/components/wrapper";
-import { COLORS } from "@/utils/enum";
+import { COLORS, EVENT_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import withAuth from "@/utils/withAuth";
 import {
@@ -50,6 +50,14 @@ const EventDetails = () => {
     {
       label: "Event Name",
       value: details?.eventName,
+    },
+    {
+      label: "Event Type",
+      value: details?.eventType,
+    },
+    details?.eventType === EVENT_TYPE.PAID && {
+      label: "Coins",
+      value: details?.coins,
     },
     {
       label: "Speaker Name",

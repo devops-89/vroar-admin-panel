@@ -1,12 +1,9 @@
-import { metaDataController } from "@/api/metaDataController";
 import AddContent from "@/components/content-library/add-content";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import Wrapper from "@/components/wrapper";
-import { METADATA_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import withAuth from "@/utils/withAuth";
-import { Box, Card, Divider, Stack, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import { Box, Card, Divider, Typography } from "@mui/material";
 
 const AddNewContent = () => {
   return (

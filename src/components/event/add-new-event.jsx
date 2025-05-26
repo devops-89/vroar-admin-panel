@@ -49,7 +49,13 @@ const AddEvent = () => {
     },
     validationSchema: AddAdListValidationSchema,
     onSubmit: (values) => {
-      addNewEvent(values);
+      const submitValues = { ...values };
+
+      if (submitValues.eventType !== EVENT_TYPE.PAID) {
+        delete submitValues.coins;
+      }
+
+      addNewEvent(submitValues);
     },
   });
 
@@ -138,7 +144,7 @@ const AddEvent = () => {
 
   const sessionEndTimeHandler = (newTime) => {
     setSessionEndTime(newTime);
-
+    // console.log("eeee", newTime);
     const validTime = moment(newTime).isValid();
     if (validTime) {
       formik.values.sessionEndTime = moment(newTime).format("hh:mm A");

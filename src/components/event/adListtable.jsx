@@ -118,7 +118,7 @@ const AdListTable = ({ tableData, loading, setLoading, getEventType }) => {
 
   return (
     <div>
-      <Card sx={{ p: 3 }}>
+    
         <Stack
           direction={"row"}
           alignItems={"center"}
@@ -312,7 +312,6 @@ const AdListTable = ({ tableData, loading, setLoading, getEventType }) => {
             </TableContainer>
           )}
         </Box>
-      </Card>
     </div>
   );
 };

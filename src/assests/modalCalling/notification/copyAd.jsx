@@ -98,7 +98,7 @@ const CopyAd = ({ id }) => {
   }, [id]);
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: 500 }}>
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -153,11 +153,11 @@ const CopyAd = ({ id }) => {
               </Stack>
             ))}
           </Stack>
-          <Stack direction={"row"} alignItems={"center"} spacing={4} mt={3}>
+          <Stack direction={"column"} alignItems={"center"} spacing={2} mt={3}>
             <Button
               sx={{
-                backgroundColor: COLORS.TRANSPARENT,
-                color: COLORS.PRIMARY,
+                backgroundColor: COLORS.PRIMARY,
+                color: COLORS.WHITE,
                 border: `1px solid ${COLORS.PRIMARY}`,
                 textTransform: "initial",
                 fontFamily: roboto.style,
@@ -167,7 +167,7 @@ const CopyAd = ({ id }) => {
             >
               Edit Event
             </Button>
-            <Button
+            {/* <Button
               sx={{
                 backgroundColor: COLORS.PRIMARY,
                 color: COLORS.WHITE,
@@ -178,7 +178,7 @@ const CopyAd = ({ id }) => {
               fullWidth
             >
               Publish Event
-            </Button>
+            </Button> */}
           </Stack>
         </>
       )}
