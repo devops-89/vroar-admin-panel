@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import file from "@/icons/file.png";
 import Image from "next/image";
 import { roboto } from "@/utils/fonts";
-import { Visibility } from "@mui/icons-material";
+import { Download, Visibility } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import userController from "@/api/user";
 const GSPResults = () => {
@@ -33,7 +33,7 @@ const GSPResults = () => {
   };
 
   const viewPdf = (url) => {
-    window.open(url, "_blank");
+    window.open(url);
   };
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const GSPResults = () => {
           height={50}
           sx={{ mt: 2, borderRadius: 2, p: 1 }}
         />
-      ) : (
+      ) : url ? (
         <Box sx={{ backgroundColor: "#ebebeb", borderRadius: 2, p: 1, mt: 2 }}>
           <Stack
             direction={"row"}
@@ -62,22 +62,17 @@ const GSPResults = () => {
                 <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
                   GSP Test Result
                 </Typography>
-                {/* <Typography
-                sx={{
-                  fontSize: 12,
-                  fontFamily: roboto.style,
-                  color: COLORS.grey,
-                }}
-              >
-                500kb
-              </Typography> */}
               </Box>
             </Stack>
             <IconButton onClick={() => viewPdf(url)}>
-              <Visibility htmlColor={COLORS.BLACK} />
+              <Download htmlColor={COLORS.BLACK} />
             </IconButton>
           </Stack>
         </Box>
+      ) : (
+        <Typography sx={{ fontSize: 20, fontFamily: roboto.style, mt: 2 }}>
+          No Gallup Result Found
+        </Typography>
       )}
     </div>
   );

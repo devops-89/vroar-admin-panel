@@ -2,16 +2,22 @@ import { data } from "@/assests/data";
 import { COLORS, USER_GROUP } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
+import { KeyboardArrowDown } from "@mui/icons-material";
 import {
   Autocomplete,
   Avatar,
   Box,
   Grid2,
+  InputAdornment,
   InputLabel,
   TextField,
   Typography,
 } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  CalendarIcon,
+  DatePicker,
+  LocalizationProvider,
+} from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
 import Image from "next/image";
@@ -21,9 +27,12 @@ import { useSelector } from "react-redux";
 const PersonalInformation = () => {
   const user = useSelector((state) => state.USER);
 
-  
   const gender = { label: user?.gender };
-  const studentDob = moment.unix(user?.birthDate);
+  const studentDob = user?.birthDate
+    ? moment.unix(user?.birthDate).format("DD-MM-YYYY")
+    : "-";
+
+  // console.log("sdsf", studentDob);
 
   const grade = { label: user?.grade };
 
@@ -74,14 +83,23 @@ const PersonalInformation = () => {
                   Date Of Birth
                 </Typography>
               </InputLabel>
-              <LocalizationProvider dateAdapter={AdapterMoment}>
-                <DatePicker
-                  sx={{ width: "100%", ...loginTextField }}
-                  value={studentDob}
-                  format="DD-MM-YYYY"
-                  readOnly
-                />
-              </LocalizationProvider>
+
+              <TextField
+                sx={{ ...loginTextField }}
+                slotProps={{
+                  input: {
+                    readOnly: true,
+
+                    endAdornment: (
+                      <InputAdornment>
+                        <CalendarIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                fullWidth
+                value={studentDob}
+              />
             </Grid2>
             <Grid2 size={6}>
               <InputLabel>
@@ -96,7 +114,7 @@ const PersonalInformation = () => {
                   Gender
                 </Typography>
               </InputLabel>
-              <Autocomplete
+              {/* <Autocomplete
                 renderInput={(params) => (
                   <TextField {...params} sx={{ ...loginTextField }} />
                 )}
@@ -111,6 +129,22 @@ const PersonalInformation = () => {
                 )}
                 value={gender}
                 readOnly
+              /> */}
+
+              <TextField
+                sx={{ ...loginTextField }}
+                fullWidth
+                value={user?.gender ?? "--"}
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                    endAdornment: (
+                      <InputAdornment>
+                        <KeyboardArrowDown />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
             </Grid2>
             {user?.group === USER_GROUP.STUDENT && (
