@@ -49,7 +49,7 @@ const GSPResults = () => {
           height={50}
           sx={{ mt: 2, borderRadius: 2, p: 1 }}
         />
-      ) : (
+      ) : url ? (
         <Box sx={{ backgroundColor: "#ebebeb", borderRadius: 2, p: 1, mt: 2 }}>
           <Stack
             direction={"row"}
@@ -62,15 +62,6 @@ const GSPResults = () => {
                 <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
                   GSP Test Result
                 </Typography>
-                {/* <Typography
-                sx={{
-                  fontSize: 12,
-                  fontFamily: roboto.style,
-                  color: COLORS.grey,
-                }}
-              >
-                500kb
-              </Typography> */}
               </Box>
             </Stack>
             <IconButton onClick={() => viewPdf(url)}>
@@ -78,6 +69,10 @@ const GSPResults = () => {
             </IconButton>
           </Stack>
         </Box>
+      ) : (
+        <Typography sx={{ fontSize: 20, fontFamily: roboto.style, mt: 2 }}>
+          No Gallup Result Found
+        </Typography>
       )}
     </div>
   );

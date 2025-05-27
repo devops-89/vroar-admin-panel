@@ -65,7 +65,7 @@ const Strengths = () => {
             color={COLORS.BLACK}
           />
         </Box>
-      ) : (
+      ) : strengthsTags?.length ? (
         strengthsTags.map((val, i) => (
           <Box
             sx={{ border: "1px solid #d7d7d7", borderRadius: 2, p: 2, mt: 2 }}
@@ -81,6 +81,17 @@ const Strengths = () => {
             </Typography>
           </Box>
         ))
+      ) : (
+        <Typography
+          sx={{
+            fontFamily: roboto.style,
+            fontSize: 20,
+            mt: 2,
+            textAlign: "center",
+          }}
+        >
+          No Strengths Found
+        </Typography>
       )}
     </div>
   );
