@@ -267,7 +267,7 @@ const EditContent = () => {
     metaDataController
       .editContent(body)
       .then((res) => {
-        console.log("response of add content", res);
+        // console.log("response of add content", res);
         dispatch(
           setToast({
             open: true,
@@ -471,6 +471,7 @@ const EditContent = () => {
                   ...sia,
                   question: val.questionText,
                   subText: val.subText,
+                  id: val.id,
                 });
               }
 
