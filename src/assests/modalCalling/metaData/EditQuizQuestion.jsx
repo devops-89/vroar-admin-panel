@@ -26,6 +26,10 @@ const EditQuizQuestion = ({ value, getDetails }) => {
   const router = useRouter();
   const { slug } = router.query;
 
+
+  // console.log("value",value)
+  // console.log("ge",value)
+
   const [state, setState] = useState({
     question: value.question,
     options: value.options,

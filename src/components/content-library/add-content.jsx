@@ -280,14 +280,14 @@ const AddContent = () => {
           );
         } else if (
           state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ &&
-          (!sia.question?.trim() || !sia.subText?.trim())
+          !sia.question?.trim()
         ) {
           // If subjective and question/subText is empty
           setErrors({
             question: !sia.question?.trim()
               ? "Question is required"
               : undefined,
-            subText: !sia.subText?.trim() ? "Subtext is required" : undefined,
+            // subText: !sia.subText?.trim() ? "Subtext is required" : undefined,
           });
 
           dispatch(
@@ -297,7 +297,7 @@ const AddContent = () => {
               severity: ToastStatus.ERROR,
             })
           );
-          return; 
+          return;
         }
 
         metaDataController.addContentLibrary(body).then((res) => {
@@ -462,11 +462,12 @@ const AddContent = () => {
               setLoading(false);
             }
           } else {
-            if (sia.question === "" || sia.subText === "") {
+            if (sia.question === "") {
               dispatch(
                 setToast({
                   open: true,
                   message: "Please Enter Subjective Question or Subtext",
+                  severity: ToastStatus.ERROR,
                 })
               );
             } else {
@@ -635,8 +636,6 @@ const AddContent = () => {
                   sx={{ transform: "rotate(45deg)" }}
                 />
               </Button>
-
-             
             </Box>
           )}
 
