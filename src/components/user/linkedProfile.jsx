@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 const LinkedProfile = () => {
   const user = useSelector((state) => state.USER);
 
-  const phoneNumber = `${user?.guardian?.countryCode} ${user?.guardian?.phoneNumber}`;
+  const phoneNumber = `${user?.guardian?.countryCode} ${user?.guardian?.phoneNo}`;
   const dob = moment.unix(user?.guardian?.birthDate);
 
   const gender = { label: user?.guardian?.gender };
@@ -48,7 +48,7 @@ const LinkedProfile = () => {
               <TextField
                 fullWidth
                 sx={{ ...loginTextField }}
-                value={user?.guardian?.firstName}
+                value={user?.guardian?.firstName ?? "--"}
                 slotProps={{
                   input: {
                     readOnly: true,
@@ -60,7 +60,7 @@ const LinkedProfile = () => {
               <TextField
                 fullWidth
                 sx={{ ...loginTextField }}
-                value={user?.guardian?.lastName}
+                value={user?.guardian?.lastName ?? "--"}
                 slotProps={{
                   input: {
                     readOnly: true,
