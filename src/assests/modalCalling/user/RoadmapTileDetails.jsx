@@ -2,6 +2,7 @@ import userController from "@/api/user";
 import { hideModal } from "@/redux/reducers/modal";
 import { COLORS, USER_ROADMAP_REVIEW_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import { isValidURL } from "@/utils/regex";
 import { Close, ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Accordion,
@@ -20,7 +21,7 @@ import { useDispatch } from "react-redux";
 
 const RoadmapTileDetails = ({ value }) => {
   const router = useRouter();
-
+  console.log("first", value);
   const [quizResults, setQuizResults] = useState(null);
   const { userId } = router.query;
   const dispatch = useDispatch();
@@ -28,7 +29,9 @@ const RoadmapTileDetails = ({ value }) => {
   const closeModal = () => {
     dispatch(hideModal());
   };
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(
+    value?.assignmentAnswerLink ? false : true
+  );
 
   const getQuizAnswers = (body) => {
     userController
@@ -57,10 +60,22 @@ const RoadmapTileDetails = ({ value }) => {
       label: "Feedback",
       value: value?.adminFeedback,
     },
+    value?.assignmentAnswerLink && {
+      label: "Uploaded Assignment",
+      value: value?.assignmentAnswerLink,
+    },
+    value?.assignmentAnswer && {
+      label: "Assignment Answer",
+      value: value?.assignmentAnswer,
+    },
   ];
 
+  const openPdf = (url) => {
+    window.open(url);
+  };
+
   useEffect(() => {
-    if (value && userId) {
+    if (value && userId && value?.content?.quiz?.id) {
       const body = {
         userId: userId,
         quizId: value?.content?.quiz?.id,
@@ -111,16 +126,23 @@ const RoadmapTileDetails = ({ value }) => {
                     textTransform: "capitalize",
                   }}
                 >
-                  {val.label}{" "}
+                  {val?.label}{" "}
                 </Typography>
                 <Typography
                   sx={{
                     fontSize: 16,
                     fontFamily: roboto.style,
-                    textTransform: "capitalize",
+                    // textTransform: "capitalize",
+                    color: isValidURL(val?.value) ? COLORS.SIGNED_UP_TEXT : "",
+                    textDecoration: isValidURL(val?.value) && "underline",
                   }}
+                  onClick={
+                    isValidURL(val?.value)
+                      ? () => openPdf(val.value)
+                      : undefined
+                  }
                 >
-                  {val.value}
+                  {val?.value}
                 </Typography>
               </Stack>
             ))}

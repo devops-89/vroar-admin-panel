@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import file from "@/icons/file.png";
 import Image from "next/image";
 import { roboto } from "@/utils/fonts";
-import { Visibility } from "@mui/icons-material";
+import { Download, Visibility } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import userController from "@/api/user";
 const GSPResults = () => {
@@ -33,7 +33,7 @@ const GSPResults = () => {
   };
 
   const viewPdf = (url) => {
-    window.open(url, "_blank");
+    window.open(url);
   };
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const GSPResults = () => {
               </Box>
             </Stack>
             <IconButton onClick={() => viewPdf(url)}>
-              <Visibility htmlColor={COLORS.BLACK} />
+              <Download htmlColor={COLORS.BLACK} />
             </IconButton>
           </Stack>
         </Box>
