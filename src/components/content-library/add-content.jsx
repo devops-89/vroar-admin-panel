@@ -49,19 +49,11 @@ const contentTypeConfig = {
   [CONTENT_TYPE.YOUTUBE_VIDEO_LINK]: { showFile: false, showLink: true },
 };
 const AddContent = () => {
-  const inputRef = useRef();
-  const [content, setContent] = useState(null);
-  const [career, setCareer] = useState([]);
-  const [industry, setIndustry] = useState([]);
-  const [strengths, setStrengths] = useState([]);
-  const [softSkills, setSoftSkills] = useState([]);
-  const [file, setFile] = useState(null);
-  const [showFile, setShowFile] = useState(false);
-  const [showLink, setShowLink] = useState(false);
+  const router = useRouter();
   const dispatch = useDispatch();
-  const [isQuizEnabled, setIsQuizEnabled] = useState(false);
+  const inputRef = useRef();
 
-  const initialValues = {
+  const [state, setState] = useState({
     contentType: "",
     career: [],
     industry: [],
@@ -72,470 +64,219 @@ const AddContent = () => {
     contentLink: "",
     quizType: "",
     contentFileName: "",
-  };
+    description: "",
+  });
 
+  const [sia, setSia] = useState({ question: "", subText: "" });
   const [questions, setQuestions] = useState([
     {
       id: 1,
       question: "",
-      options: [
-        { id: 1, optionText: "", isCorrect: false },
-        { id: 2, optionText: "", isCorrect: false },
-        { id: 3, optionText: "", isCorrect: false },
-        { id: 4, optionText: "", isCorrect: false },
-      ],
+      options: new Array(4)
+        .fill(null)
+        .map((_, i) => ({ id: i + 1, optionText: "", isCorrect: false })),
     },
   ]);
 
-  const [sia, setSia] = useState({
-    question: "",
-    subText: "",
-  });
-
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-
-  const [state, setState] = useState(initialValues);
-
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [showFile, setShowFile] = useState(false);
+  const [showLink, setShowLink] = useState(false);
+  const [content, setContent] = useState(null);
+  const [quizType, setQuizType] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const inputHandler = (e) => {
     const { id, value } = e.target;
+    setState((prev) => ({ ...prev, [id]: value }));
 
-    setState({ ...state, [id]: value });
-    setErrors({
-      ...errors,
-      [id]:
-        id === "contentLink"
-          ? state.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK
-            ? isYoutubeUrl(value)
-              ? "Please Enter Native Video Link"
-              : ""
-            : ""
-          : "",
-    });
+    if (
+      id === "contentLink" &&
+      state.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK
+    ) {
+      setErrors((prev) => ({
+        ...prev,
+        [id]: isYoutubeUrl(value) ? "Please Enter Native Video Link" : "",
+      }));
+    }
   };
 
-  const quizHandler = (e) => {
-    setState({ ...state, isQuizEnabled: e.target.checked });
-    setIsQuizEnabled(e.target.checked);
+  const multiSelectHandler = (key, setFunc, errorKey) => (e, newValue) => {
+    setFunc(newValue);
+    if (newValue) {
+      setState((prev) => ({ ...prev, [key]: newValue })); // Store full object
+      setErrors((prev) => ({ ...prev, [errorKey]: "" }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        [errorKey]: `Please Select Valid ${errorKey.replace(
+          /([A-Z])/g,
+          " $1"
+        )}`,
+      }));
+    }
   };
 
   const contentTypeHandler = (e, newValue) => {
     setContent(newValue);
-
-    if (newValue?.label) {
-      const { showFile = false, showLink = false } =
-        contentTypeConfig[newValue.label] || {};
-      setShowFile(showFile);
-      setShowLink(showLink);
-      setState({ ...state, contentType: newValue.label });
-
-      setErrors({ ...errors, contentType: "" });
-    } else {
-      setShowFile(false);
-      setShowLink(false);
-
-      setErrors({ ...errors, contentType: "" });
-    }
-  };
-  const careerHandler = (e, newValue) => {
-    setCareer(newValue);
-    if (newValue) {
-      setState({ ...state, career: newValue.map((val) => val.id) });
-      setErrors({ ...errors, career: "" });
-    } else {
-      setErrors({ ...errors, career: "" });
-    }
-  };
-  const industryHandler = (e, newValue) => {
-    setIndustry(newValue);
-    if (newValue) {
-      setState({ ...state, industry: newValue.map((val) => val.id) });
-      setErrors({ ...errors, industry: "" });
-    } else {
-      setErrors({ ...ErrorSharp, industry: "Please Select Valid Career" });
-    }
-  };
-  const strengthHandler = (e, newValue) => {
-    setStrengths(newValue);
-    if (newValue) {
-      setState({ ...state, strengths: newValue.map((val) => val.id) });
-      setErrors({ ...errors, strengths: "" });
-    } else {
-      setErrors({ ...errors, strengths: "Please Select Valid Strengths" });
-    }
+    const config = contentTypeConfig[newValue?.label] || {};
+    setShowFile(config.showFile);
+    setShowLink(config.showLink);
+    setState((prev) => ({ ...prev, contentType: newValue?.label || "" }));
   };
 
-  const softSkillsHandler = (e, newValue) => {
-    setSoftSkills(newValue);
-    if (newValue) {
-      setState({ ...state, softSkills: newValue.map((val) => val.id) });
-      setErrors({ ...errors, softSkills: "" });
-    } else {
-      setErrors({ ...errors, softSkills: "Please Select Valid Soft skills" });
-    }
-  };
-  const [quizType, setQuizType] = useState(null);
   const quizTypeHandler = (e, newValue) => {
     setQuizType(newValue);
-    if (newValue) {
-      setState({ ...state, quizType: newValue.label });
-      setErrors({ ...errors, quizType: "" });
-    } else {
-      setErrors({ ...errors, quizType: "Please Select Quiz Type" });
-    }
-  };
-  const [isUploading, setIsUploading] = useState(false);
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      if (selectedFile.type === "application/pdf") {
-        setFile(selectedFile);
-        setState({
-          ...state,
-          contentLink: selectedFile,
-          contentFileName: selectedFile.name,
-        });
-        setFile(selectedFile);
-      } else {
-        dispatch(
-          setToast({
-            open: true,
-            severity: ToastStatus.ERROR,
-            message: "Please Select Valid PDF File",
-          })
-        );
-      }
-    }
+    setState((prev) => ({ ...prev, quizType: newValue?.label || "" }));
+    setErrors((prev) => ({
+      ...prev,
+      quizType: newValue ? "" : "Please Select Quiz Type",
+    }));
   };
 
   const subjectiveHandler = (e) => {
-    let { id, value } = e.target;
-    setSia({ ...sia, [id]: value });
+    const { id, value } = e.target;
+    setSia((prev) => ({ ...prev, [id]: value }));
   };
 
-  const uploadContentFile = () => {
-    let data = {
-      type: state.contentType,
-      contentFile: state.contentLink,
-    };
-
-    metaDataController
-      .getUploadContentFile(data)
-      .then((response) => {
-        const fileName = response.data.data.fileName;
-        const filePath = response.data.data.filePath;
-        setState({
-          ...state,
-          contentLink: filePath,
-          contentFileName: filePath,
-        });
-        let body = {
-          name: state.contentName,
-          contentType: state.contentType,
-          contentLink: state.contentLink,
-          description: state.description,
-          metadataTags: [
-            ...(Array.isArray(state.career) ? state.career : []),
-            ...(Array.isArray(state.industry) ? state.industry : []),
-            ...(Array.isArray(state.strengths) ? state.strengths : []),
-            ...(Array.isArray(state.softSkills) ? state.softSkills : []),
-          ],
-          contentLink: filePath,
-          contentFileName: fileName,
-        };
-        addContentApi(body);
-      })
-      .catch((err) => {
-        let errMessage =
-          (err.response && err.response.data.message) || err.message;
-
-        dispatch(
-          setToast({
-            open: true,
-            message: errMessage,
-            severity: ToastStatus.ERROR,
-          })
-        );
-        setLoading(false);
-      });
-  };
-
-  const addContentApi = async (body) => {
-    if (isQuizEnabled) {
-      if (state.quizType === "") {
-        setErrors({ ...errors, quizType: "Please Select Quiz Type" });
-        setLoading(false);
-        return;
-      }
-      if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
-      }
-
-      try {
-        if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
-          await quizValidationSchema.validate(
-            { quizQuestions: questions },
-            { abortEarly: false }
-          );
-        } else if (
-          state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ &&
-          !sia.question?.trim()
-        ) {
-          // If subjective and question/subText is empty
-          setErrors({
-            question: !sia.question?.trim()
-              ? "Question is required"
-              : undefined,
-            // subText: !sia.subText?.trim() ? "Subtext is required" : undefined,
-          });
-
-          dispatch(
-            setToast({
-              open: true,
-              message: "Please fix validation errors",
-              severity: ToastStatus.ERROR,
-            })
-          );
-          return;
-        }
-
-        metaDataController.addContentLibrary(body).then((res) => {
-          const contentLibraryId = res.data.data.id;
-
-          dispatch(
-            setToast({
-              open: true,
-              message: res.data.message,
-              severity: ToastStatus.SUCCESS,
-            })
-          );
-
-          const modifiedData = questions.map(({ id, options, ...rest }) => ({
-            ...rest,
-            options: options.map(({ id, ...optionRest }) => optionRest),
-          }));
-
-          const data = {
-            contentLibraryId: contentLibraryId,
-            quizType: state.quizType,
-          };
-
-          if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
-            data.quizSet = modifiedData;
-          }
-
-          if (state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
-            const quiz = {
-              question: sia.question,
-              subText: sia.subText,
-            };
-            data.quizSet = quiz;
-          }
-
-          addQuizHandler(data);
-        });
-      } catch (error) {
-        if (error.inner) {
-          const validationErrors = {};
-          error.inner.forEach((err) => {
-            validationErrors[err.path] = err.message;
-          });
-
-          setErrors(validationErrors);
-        }
-
-        dispatch(
-          setToast({
-            open: true,
-            message: "Please fix validation errors",
-            severity: ToastStatus.ERROR,
-          })
-        );
-      }
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile?.type === "application/pdf") {
+      setState((prev) => ({
+        ...prev,
+        contentLink: selectedFile,
+        contentFileName: selectedFile.name,
+      }));
     } else {
-      metaDataController
-        .addContentLibrary(body)
-        .then((res) => {
-          dispatch(
-            setToast({
-              open: true,
-              message: res.data.message,
-              severity: ToastStatus.SUCCESS,
-            })
-          );
-          setLoading(false);
-          router.back();
+      dispatch(
+        setToast({
+          open: true,
+          severity: ToastStatus.ERROR,
+          message: "Please Select Valid PDF File",
         })
-        .catch((err) => {
-          let errMessage =
-            (err.response && err.response.data.message) || err.message;
-          dispatch(
-            setToast({
-              open: true,
-              message: errMessage,
-              severity: ToastStatus.ERROR,
-            })
-          );
-          setLoading(false);
-        });
+      );
     }
   };
-  const addQuizHandler = (data) => {
-    metaDataController
-      .addQuiz(data)
-      .then((result) => {
-        setLoading(false);
-        router.back();
-      })
-      .catch((err) => {
-        let errMessage =
-          (err.response && err.response.data.message) || err.message;
 
-        dispatch(
-          setToast({
-            open: true,
-            message: errMessage,
-            severity: ToastStatus.ERROR,
-          })
-        );
-        setLoading(false);
-      });
+  const validateQuizSection = async () => {
+    if (!state.quizType) {
+      setErrors((prev) => ({ ...prev, quizType: "Please Select Quiz Type" }));
+      return false;
+    }
+    if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+      await quizValidationSchema.validate(
+        { quizQuestions: questions },
+        { abortEarly: false }
+      );
+      return true;
+    }
+    if (state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && !sia.question.trim()) {
+      setErrors({ question: "Question is required" });
+      return false;
+    }
+    return true;
+  };
+
+  const getQuizData = () => {
+    if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+      return questions.map(({ id, options, ...rest }) => ({
+        ...rest,
+        options: options.map(({ id, ...opt }) => opt),
+      }));
+    }
+    const quiz = { question: sia.question };
+    if (sia.subText.trim()) quiz.subText = sia.subText;
+    return quiz;
+  };
+
+  const uploadContentFile = async () => {
+    const res = await metaDataController.getUploadContentFile({
+      type: state.contentType,
+      contentFile: state.contentLink,
+    });
+    return res.data.data;
+  };
+
+  const addQuizHandler = async (quizData) => {
+    try {
+      await metaDataController.addQuiz(quizData);
+      setLoading(false);
+      router.back();
+    } catch (err) {
+      dispatch(
+        setToast({
+          open: true,
+          message: err?.response?.data?.message || err.message,
+          severity: ToastStatus.ERROR,
+        })
+      );
+      setLoading(false);
+    }
   };
 
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       await newAddContentValidationSchema.validate(state, {
         abortEarly: false,
       });
-      if (errors.contentLink) {
-        setLoading(false);
-        return;
+      if (errors.contentLink) return setLoading(false);
+
+      let contentLink = state.contentLink;
+      let contentFileName = state.contentFileName;
+
+      if (!showLink) {
+        const { filePath, fileName } = await uploadContentFile();
+        contentLink = filePath;
+        contentFileName = fileName;
       }
 
-      let body = {
+      const body = {
         name: state.contentName,
         contentType: state.contentType,
-        contentLink: state.contentLink,
+        contentLink,
         description: state.description,
+        contentFileName,
         metadataTags: [
-          ...(Array.isArray(state.career) ? state.career : []),
-          ...(Array.isArray(state.industry) ? state.industry : []),
-          ...(Array.isArray(state.strengths) ? state.strengths : []),
-          ...(Array.isArray(state.softSkills) ? state.softSkills : []),
+          ...(state.career.map((item) => item.id) || []),
+          ...(state.industry.map((item) => item.id) || []),
+          ...(state.strengths.map((item) => item.id) || []),
+          ...(state.softSkills.map((item) => item.id) || []),
         ],
       };
 
-      if (showLink) {
-        if (isQuizEnabled && state.isQuizEnabled) {
-          if (state.quizType === "") {
-            setErrors({ ...errors, quizType: "Please Select Quiz Type" });
-            setLoading(false);
-            return;
-          }
-          if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
-            try {
-              await quizValidationSchema.validate(
-                { quizQuestions: questions },
-                { abortEarly: true }
-              );
-              addContentApi(body);
-            } catch (error) {
-              if (error.inner) {
-                const validationErrors = {};
-                error.inner.forEach((err) => {
-                  validationErrors[err.path] = err.message;
-                });
+      const res = await metaDataController.addContentLibrary(body);
+      const contentLibraryId = res.data.data.id;
 
-                setErrors(validationErrors);
-              }
+      if (state.isQuizEnabled) {
+        const isValid = await validateQuizSection();
+        if (!isValid) return setLoading(false);
 
-              dispatch(
-                setToast({
-                  open: true,
-                  message: "Please Enter All Fields",
-                  severity: ToastStatus.ERROR,
-                })
-              );
-              setLoading(false);
-            }
-          } else {
-            if (sia.question === "") {
-              dispatch(
-                setToast({
-                  open: true,
-                  message: "Please Enter Subjective Question or Subtext",
-                  severity: ToastStatus.ERROR,
-                })
-              );
-            } else {
-              addContentApi(body);
-            }
-          }
-        } else {
-          addContentApi(body);
-        }
+        await addQuizHandler({
+          contentLibraryId,
+          quizType: state.quizType,
+          quizSet: getQuizData(),
+        });
       } else {
-        if (isQuizEnabled && state.isQuizEnabled) {
-          if (state.quizType === "") {
-            setErrors({ ...errors, quizType: "Please Select Quiz Type" });
-            setLoading(false);
-            return;
-          }
-          if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
-            try {
-              await quizValidationSchema.validate(
-                { quizQuestions: questions },
-                { abortEarly: true }
-              );
-              uploadContentFile();
-            } catch (error) {
-              if (error.inner) {
-                const validationErrors = {};
-                error.inner.forEach((err) => {
-                  validationErrors[err.path] = err.message;
-                });
-
-                setErrors(validationErrors);
-
-                dispatch(
-                  setToast({
-                    open: true,
-                    message: "Please Enter Questions and options",
-                    severity: ToastStatus.ERROR,
-                  })
-                );
-                setLoading(false);
-              }
-            }
-          } else {
-            if (sia.question === "" ) {
-              dispatch(
-                setToast({
-                  open: true,
-                  message: "Please Enter Subjective Question or Subtext",
-                })
-              );
-            } else {
-              uploadContentFile();
-            }
-          }
-        } else {
-          uploadContentFile();
-        }
+        dispatch(
+          setToast({
+            open: true,
+            message: res.data.message,
+            severity: ToastStatus.SUCCESS,
+          })
+        );
+        setLoading(false);
+        router.back();
       }
     } catch (error) {
-      if (error.inner) {
-        const validationErrors = {};
-        error.inner.forEach((err) => {
-          validationErrors[err.path] = err.message;
-        });
-
-        setErrors(validationErrors);
-      }
-
+      const validationErrors = {};
+      if (error.inner)
+        error.inner.forEach(
+          (err) => (validationErrors[err.path] = err.message)
+        );
+      setErrors(validationErrors);
       dispatch(
         setToast({
           open: true,
@@ -548,7 +289,7 @@ const AddContent = () => {
   };
 
   return (
-    <Box mt={3}>
+    <Box mt={3} sx={{ width: "100%" }}>
       <Backdrop open={isUploading}>
         <CircularProgress />
       </Backdrop>
@@ -672,7 +413,7 @@ const AddContent = () => {
             helperText={errors.description}
           />
 
-          <MetaDataAutocomplete
+          {/* <MetaDataAutocomplete
             label="Career"
             metaDataType={METADATA_TYPE.CAREER}
             value={career}
@@ -710,68 +451,98 @@ const AddContent = () => {
             error={errors.softSkills}
             helperText={errors.softSkills}
             colors={{ bg: COLORS.PURPLE, text: COLORS.PURPLE_TEXT }}
+          /> */}
+
+          <MetaDataAutocomplete
+            label="Career"
+            metaDataType={METADATA_TYPE.CAREER}
+            value={state.career}
+            onChange={multiSelectHandler("career", () => {}, "career")}
+            error={errors.career}
+            helperText={errors.career}
+            colors={{ bg: COLORS.PENDING, text: COLORS.PENDING_TEXT }}
+          />
+          <MetaDataAutocomplete
+            label="Industry"
+            metaDataType={METADATA_TYPE.INDUSTRY}
+            value={state.industry}
+            onChange={multiSelectHandler("industry", () => {}, "industry")}
+            error={errors.industry}
+            helperText={errors.industry}
+            colors={{ bg: COLORS.DONE, text: COLORS.DONE_TEXT }}
+          />
+          <MetaDataAutocomplete
+            label="Strengths"
+            metaDataType={METADATA_TYPE.STRENGTHS}
+            value={state.strengths}
+            onChange={multiSelectHandler("strengths", () => {}, "strengths")}
+            error={errors.strengths}
+            helperText={errors.strengths}
+            colors={{ bg: COLORS.SIGNED_UP, text: COLORS.SIGNED_UP_TEXT }}
+          />
+          <MetaDataAutocomplete
+            label="Soft Skills"
+            metaDataType={METADATA_TYPE.SOFT_SKILLS}
+            value={state.softSkills}
+            onChange={multiSelectHandler("softSkills", () => {}, "softSkills")}
+            error={errors.softSkills}
+            helperText={errors.softSkills}
+            colors={{ bg: COLORS.PURPLE, text: COLORS.PURPLE_TEXT }}
           />
 
           {content?.label !== CONTENT_TYPE.ASSIGNMENT && (
             <FormControlLabel
-              label={
-                <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
-                  Enable Quiz
-                </Typography>
+              control={
+                <Checkbox
+                  checked={state.isQuizEnabled}
+                  onChange={(e) =>
+                    setState((prev) => ({
+                      ...prev,
+                      isQuizEnabled: e.target.checked,
+                    }))
+                  }
+                />
               }
-              control={<Checkbox onChange={quizHandler} />}
-              sx={{
-                "& .Mui-checked": {
-                  color: `${COLORS.PRIMARY} !important`,
-                },
-              }}
+              label="Enable Quiz"
             />
           )}
-          {isQuizEnabled && (
+          {state.isQuizEnabled && (
             <Autocomplete
+              options={data.QUIZ_TYPE_DATA}
+              value={quizType}
+              onChange={quizTypeHandler}
+              getOptionLabel={(o) => o.label}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Select Quiz Type"
-                  sx={{
-                    ...loginTextField,
-                    mt: 1,
-                    "& .MuiOutlinedInput-input": {
-                      fontFamily: roboto.style,
-                    },
-                  }}
+                  label="Quiz Type"
                   error={Boolean(errors.quizType)}
                   helperText={errors.quizType}
-                  fullWidth
+                  sx={loginTextField}
                 />
               )}
-              renderOption={(props, options) => (
-                <Box {...props}>
-                  <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                    {options.label}
-                  </Typography>
-                </Box>
-              )}
-              options={data.QUIZ_TYPE_DATA}
-              getOptionLabel={(option) => option.label}
-              onChange={quizTypeHandler}
-              value={quizType}
               fullWidth
             />
           )}
 
-          {state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && isQuizEnabled && (
-            <ObjectiveQuiz questions={questions} setQuestions={setQuestions} />
-          )}
-
-          {state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && isQuizEnabled && (
-            <Box sx={{ width: "100%" }}>
-              <SubjectiveQuiz
-                subjectiveHandler={subjectiveHandler}
-                state={sia}
-              />
-            </Box>
-          )}
+          {state.isQuizEnabled &&
+            state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && (
+              <Box sx={{ width: "100%" }}>
+                <ObjectiveQuiz
+                  questions={questions}
+                  setQuestions={setQuestions}
+                />
+              </Box>
+            )}
+          {state.isQuizEnabled &&
+            state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
+              <Box sx={{ width: "100%" }}>
+                <SubjectiveQuiz
+                  state={sia}
+                  subjectiveHandler={subjectiveHandler}
+                />
+              </Box>
+            )}
 
           <Button
             sx={{
