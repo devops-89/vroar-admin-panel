@@ -276,6 +276,7 @@ const AddContent = () => {
         error.inner.forEach(
           (err) => (validationErrors[err.path] = err.message)
         );
+      console.log("first", validationErrors);
       setErrors(validationErrors);
       dispatch(
         setToast({
@@ -287,6 +288,8 @@ const AddContent = () => {
       setLoading(false);
     }
   };
+
+  console.log("err", errors);
 
   return (
     <Box mt={3} sx={{ width: "100%" }}>
