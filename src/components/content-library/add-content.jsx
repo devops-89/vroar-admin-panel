@@ -232,13 +232,16 @@ const AddContent = () => {
         contentLink = filePath;
         contentFileName = fileName;
       }
+      if (contentFileName !== "") {
+        body.contentFileName = contentFileName;
+      }
 
       const body = {
         name: state.contentName,
         contentType: state.contentType,
         contentLink,
         description: state.description,
-        contentFileName,
+
         metadataTags: [
           ...(state.career.map((item) => item.id) || []),
           ...(state.industry.map((item) => item.id) || []),
