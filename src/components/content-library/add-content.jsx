@@ -511,7 +511,7 @@ const AddContent = () => {
               }
             }
           } else {
-            if (sia.question === "" || sia.subText === "") {
+            if (sia.question === "" ) {
               dispatch(
                 setToast({
                   open: true,
