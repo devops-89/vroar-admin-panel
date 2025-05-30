@@ -287,7 +287,6 @@ const AddContent = () => {
             question: !sia.question?.trim()
               ? "Question is required"
               : undefined,
-            // subText: !sia.subText?.trim() ? "Subtext is required" : undefined,
           });
 
           dispatch(
