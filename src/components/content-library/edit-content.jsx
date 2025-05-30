@@ -36,6 +36,7 @@ import MetaDataAutocomplete from "./metadataAutocomplete";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
 import { isValidURL } from "@/utils/regex";
+import { setContentDetails } from "@/redux/reducers/contentDetails";
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -223,6 +224,7 @@ const EditContent = () => {
       .getUploadContentFile(data)
       .then((response) => {
         // console.log("response upload content", response);
+
         setFile({
           ...file,
           fileName: response.data.data.fileName,
@@ -318,28 +320,6 @@ const EditContent = () => {
       });
   };
 
-  // const addQuizHandler = (data) => {
-  //   metaDataController
-  //     .addQuiz(data)
-  //     .then((result) => {
-  //       setLoading(false);
-  //       router.back();
-  //     })
-  //     .catch((err) => {
-  //       let errMessage =
-  //         (err.response && err.response.data.message) || err.message;
-
-  //       dispatch(
-  //         setToast({
-  //           open: true,
-  //           message: errMessage,
-  //           severity: ToastStatus.ERROR,
-  //         })
-  //       );
-  //       setLoading(false);
-  //     });
-  // };
-
   const submitHandler = (e) => {
     e.preventDefault();
     if (AddContentValidationSchema({ state, setErrors, errors })) {
@@ -363,15 +343,17 @@ const EditContent = () => {
           body.contentFileName = file.fileName;
         }
         addContentApi(body);
-        // console.log("body", body);
-        // console.log("state.contentlink", state.contentLink);
       } else {
         uploadContentFile();
       }
     } else {
-      console.log("error");
+      // console.log("error");
     }
   };
+
+  // let canEdit = true;
+
+  const [canEdit, setCanEdit] = useState(true);
 
   const getContentDetails = (id) => {
     metaDataController
@@ -379,6 +361,8 @@ const EditContent = () => {
       .then((res) => {
         setContentData(res.data.data);
         const response = res.data.data;
+
+        dispatch(setContentDetails({ ...response }));
 
         const career = response.metadataTags.filter(
           (val) => val.type === METADATA_TYPE.CAREER
@@ -393,7 +377,6 @@ const EditContent = () => {
           (val) => val.type === METADATA_TYPE.SOFT_SKILLS
         );
         if (response) {
-          // console.log("response",response)
           setState({
             ...state,
             contentType: response.contentType,
@@ -407,7 +390,6 @@ const EditContent = () => {
             quizType: response?.quiz?.quizType,
             quizId: response?.quiz?.id,
           });
-          // console.log("test", response);
           setContent({ label: response.contentType });
           const { showFile = false, showLink = false } =
             contentTypeConfig[response.contentType] || {};
@@ -418,7 +400,6 @@ const EditContent = () => {
             fileName: response?.contentFileName,
             filePath: response?.contentLink,
           });
-
           setCareer(
             career.map((val) => {
               return {
@@ -427,6 +408,7 @@ const EditContent = () => {
               };
             })
           );
+          response.quiz === null && setCanEdit(false);
 
           setIndustry(
             industry.map((val) => {
@@ -483,13 +465,17 @@ const EditContent = () => {
 
             setQuestions(newQuestions);
           }
-          // setFile({...file,fileName:})
         }
         setIsDetailsLoading(false);
       })
       .catch((err) => {
         console.log("err", err);
       });
+  };
+
+  const addQuiz = (id) => {
+    // console.log("id", id);
+    router.push(`/roadmap-management/content-library/${id}/add-quiz`);
   };
 
   useEffect(() => {
@@ -569,9 +555,9 @@ const EditContent = () => {
                 />
               </Button>
 
-              <FormHelperText sx={{ fontSize: 14 }}>
+              {/* <FormHelperText sx={{ fontSize: 14 }}>
                 *Maximum file size: 10 MB
-              </FormHelperText>
+              </FormHelperText> */}
             </Box>
           )}
 
@@ -648,21 +634,44 @@ const EditContent = () => {
             helperText={errors.contentName}
             value={state.contentName}
           />
-          <FormControlLabel
-            label={
-              <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
-                Enable Quiz
-              </Typography>
-            }
-            control={
-              <Checkbox onChange={quizHandler} checked={isQuizEnabled} />
-            }
-            sx={{
-              "& .Mui-checked": {
-                color: `${COLORS.PRIMARY} !important`,
-              },
-            }}
-          />
+          {!canEdit ? (
+            <Button
+              sx={{
+                backgroundColor: COLORS.TRANSPARENT,
+                color: COLORS.PRIMARY,
+                border: `1px solid ${COLORS.PRIMARY}`,
+                mt: 2,
+                width: 150,
+                fontFamily: roboto.style,
+                fontSize: 16,
+                fontWeight: 600,
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: COLORS.TRANSPARENT,
+                },
+              }}
+              onClick={() => addQuiz(id)}
+            >
+              Add Quiz
+            </Button>
+          ) : (
+            <FormControlLabel
+              label={
+                <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                  Enable Quiz
+                </Typography>
+              }
+              control={
+                <Checkbox onChange={quizHandler} checked={isQuizEnabled} />
+              }
+              sx={{
+                "& .Mui-checked": {
+                  color: `${COLORS.PRIMARY} !important`,
+                },
+              }}
+            />
+          )}
+
           {isQuizEnabled && (
             <Autocomplete
               renderInput={(params) => (
@@ -694,7 +703,7 @@ const EditContent = () => {
             <ObjectiveQuiz
               questions={questions}
               setQuestions={setQuestions}
-              canEdit={true}
+              canEdit={canEdit}
               getDetails={getContentDetails}
             />
           )}
@@ -704,7 +713,7 @@ const EditContent = () => {
               <SubjectiveQuiz
                 subjectiveHandler={subjectiveHandler}
                 state={sia}
-                canEdit={true}
+                canEdit={canEdit}
                 getDetails={getContentDetails}
               />
             </Box>

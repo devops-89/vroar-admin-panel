@@ -135,8 +135,12 @@ const AddContent = () => {
   };
 
   const subjectiveHandler = (e) => {
-    const { id, value } = e.target;
-    setSia((prev) => ({ ...prev, [id]: value }));
+    const { name, value } = e.target;
+    setSia((prev) => ({ ...prev, [name]: value }));
+    // Clear error when question has value
+    if (name === "question" && value.trim()) {
+      setErrors((prev) => ({ ...prev, question: false }));
+    }
   };
 
   const handleFileChange = (event) => {
@@ -246,8 +250,6 @@ const AddContent = () => {
           ...(state.softSkills.map((item) => item.id) || []),
         ],
       };
-
-      console.log("body", body);
 
       const res = await metaDataController.addContentLibrary(body);
       const contentLibraryId = res.data.data.id;
@@ -415,46 +417,6 @@ const AddContent = () => {
             helperText={errors.description}
           />
 
-          {/* <MetaDataAutocomplete
-            label="Career"
-            metaDataType={METADATA_TYPE.CAREER}
-            value={career}
-            onChange={careerHandler}
-            error={errors.career}
-            helperText={errors.career}
-            colors={{ bg: COLORS.PENDING, text: COLORS.PENDING_TEXT }}
-          />
-
-          <MetaDataAutocomplete
-            label="Industry"
-            metaDataType={METADATA_TYPE.INDUSTRY}
-            value={industry}
-            onChange={industryHandler}
-            error={errors.industry}
-            helperText={errors.industry}
-            colors={{ bg: COLORS.DONE, text: COLORS.DONE_TEXT }}
-          />
-
-          <MetaDataAutocomplete
-            label="Strengths"
-            metaDataType={METADATA_TYPE.STRENGTHS}
-            value={strengths}
-            onChange={strengthHandler}
-            error={errors.strengths}
-            helperText={errors.strengths}
-            colors={{ bg: COLORS.SIGNED_UP, text: COLORS.SIGNED_UP_TEXT }}
-          />
-
-          <MetaDataAutocomplete
-            label="Soft Skills"
-            metaDataType={METADATA_TYPE.SOFT_SKILLS}
-            value={softSkills}
-            onChange={softSkillsHandler}
-            error={errors.softSkills}
-            helperText={errors.softSkills}
-            colors={{ bg: COLORS.PURPLE, text: COLORS.PURPLE_TEXT }}
-          /> */}
-
           <MetaDataAutocomplete
             label="Career"
             metaDataType={METADATA_TYPE.CAREER}
@@ -542,6 +504,8 @@ const AddContent = () => {
                 <SubjectiveQuiz
                   state={sia}
                   subjectiveHandler={subjectiveHandler}
+                  errors={errors}
+                  setErrors={setErrors}
                 />
               </Box>
             )}

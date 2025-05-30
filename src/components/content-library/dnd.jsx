@@ -27,6 +27,7 @@ const SortableItem = ({
   canEdit,
   onEdit,
   deleteLoading,
+  onAddQuestion,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -60,7 +61,7 @@ const SortableItem = ({
             <DragIndicator />
           </IconButton>
           {canEdit && question.question === "" ? (
-            <IconButton>
+            <IconButton onClick={onAddQuestion}>
               <Add />
             </IconButton>
           ) : (
