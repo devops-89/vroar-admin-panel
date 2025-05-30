@@ -111,7 +111,21 @@ export const AddAdListValidationSchema = Yup.object({
   zoomLink: Yup.string()
     .required("Please Enter Zoom Link")
     .url("Please Enter Valid Url")
-    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
+    .test(
+      "is-zoom-link",
+      "Please enter a valid Zoom meeting link",
+      (value) => {
+        if (!value) return false;
+        const zoomPatterns = [
+          /^https:\/\/zoom\.us\/j\/\d+/, 
+          /^https:\/\/us\d+\.web\.zoom\.us\/j\/\d+/, 
+          /^https:\/\/zoom\.us\/s\/\d+/, 
+          /^https:\/\/us\d+\.web\.zoom\.us\/s\/\d+/,
+        ];
+        return zoomPatterns.some((pattern) => pattern.test(value));
+      }
+    ),
   eventType: Yup.string()
     .required("Please Select Event Type")
     .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
