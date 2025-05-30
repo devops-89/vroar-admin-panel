@@ -67,22 +67,36 @@ export const AddAdListValidationSchema = Yup.object({
   eventName: Yup.string()
     .required("Please Enter Event Name")
     .trim()
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
     .min(2, "Event name is too short!")
     .max(50, "Event name is too long!"),
-  speakerName: Yup.string().required("Please Enter Speaker Name"),
+  speakerName: Yup.string()
+    .required("Please Enter Speaker Name")
+    .trim()
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
+    .min(2, "Speaker name is too short!")
+    .max(50, "Speaker name is too long!"),
   eventDescription: Yup.string()
     .max(1000, "Event Description is too Long!")
-    .required("Please Enter Event Description"),
+    .required("Please Enter Event Description")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   speakerSummary: Yup.string()
     .max(1000, "Speaker Summary is too Long!")
-    .required("Please Enter Speaker Summary"),
+    .required("Please Enter Speaker Summary")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   sessionDetails: Yup.string()
     .max(1000, "Session Details is too Long!")
-    .required("Please Enter Session Details"),
-  sessionStartDate: Yup.string().required("Please Enter Session Start Date"),
-  sessionStartTime: Yup.string().required("Please Enter Session Start Time"),
+    .required("Please Enter Session Details")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
+  sessionStartDate: Yup.string()
+    .required("Please Enter Session Start Date")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
+  sessionStartTime: Yup.string()
+    .required("Please Enter Session Start Time")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   sessionEndTime: Yup.string()
     .required("Please Enter Session End Time")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
     .test(
       "is-different-time",
       "End time must be different from start time",
@@ -91,11 +105,16 @@ export const AddAdListValidationSchema = Yup.object({
         return value && sessionStartTime && value !== sessionStartTime;
       }
     ),
-  sessionEndDate: Yup.string().required("Please Enter Session End Date"),
+  sessionEndDate: Yup.string()
+    .required("Please Enter Session End Date")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   zoomLink: Yup.string()
     .required("Please Enter Zoom Link")
-    .url("Please Enter Valid Url"),
-  eventType: Yup.string().required("Please Select Event Type"),
+    .url("Please Enter Valid Url")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
+  eventType: Yup.string()
+    .required("Please Select Event Type")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   coins: Yup.number()
     .nullable()
     .when("eventType", {
@@ -134,7 +153,7 @@ export const editAdListValidataitonSchema = Yup.object({
       "Start date must be today or in the future",
       function (value) {
         if (!value) return false;
-        const today = moment().startOf("day").unix(); 
+        const today = moment().startOf("day").unix();
         return value >= today;
       }
     ),
