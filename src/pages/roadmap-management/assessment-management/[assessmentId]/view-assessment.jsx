@@ -44,7 +44,6 @@ const ViewAssessment = () => {
     }
   }, [assessmentId]);
 
-  console.log("details", details);
   const detailsArray = [
     {
       label: "Assessment Name",
@@ -55,6 +54,12 @@ const ViewAssessment = () => {
       value: details?.role,
     },
   ];
+
+  const handleEditAssessment = () => {
+    router.push(
+      `/roadmap-management/assessment-management/${assessmentId}/edit-assessment`
+    );
+  };
 
   return (
     <div>
@@ -108,6 +113,7 @@ const ViewAssessment = () => {
                     fontSize: 16,
                     fontFamily: roboto.style,
                   }}
+                  onClick={handleEditAssessment}
                 >
                   Edit
                 </Button>
