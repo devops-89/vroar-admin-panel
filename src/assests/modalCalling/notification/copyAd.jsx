@@ -1,6 +1,6 @@
 import { metaDataController } from "@/api/metaDataController";
 import { hideModal } from "@/redux/reducers/modal";
-import { COLORS } from "@/utils/enum";
+import { COLORS, EVENT_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Close } from "@mui/icons-material";
 import {
@@ -74,6 +74,14 @@ const CopyAd = ({ id }) => {
       label: "Zoom Link",
       value: details?.zoomLink,
       url: true,
+    },
+    {
+      label: "Event Type",
+      value: details?.eventType,
+    },
+    details?.eventType === EVENT_TYPE.PAID && {
+      label: "Event Coins",
+      value: details?.coins,
     },
   ];
 

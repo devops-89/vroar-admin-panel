@@ -422,35 +422,29 @@ export const quizValidationSchema = Yup.object().shape({
     .of(
       Yup.object().shape({
         question: Yup.string()
-          .required("Question is required")
+          .required("Question cannot be empty")
           .test(
             "not-empty",
-            "Question  cannot be only whitespace",
+            "Question cannot be only whitespace",
             (value) => value && value.trim().length > 0
           )
-          .matches(
-            /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
-            "Question cannot contain special characters except for basic punctuation"
-          )
+          .matches(/^\S.*\S$/, "Question cannot start or end with spaces")
           .min(2, "Question should be more than 2 characters")
-          .max(255, "Question is Too Long!"),
+          .max(255, "Question is too long!"),
         options: Yup.array()
           .of(
             Yup.object().shape({
               optionText: Yup.string()
-                .required("Option text is required")
+                .required("Option text cannot be empty")
                 .test(
                   "not-empty",
                   "Option text cannot be only whitespace",
                   (value) => value && value.trim().length > 0
                 )
-                .matches(
-                  /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
-                  "option cannot contain special characters except for basic punctuation"
-                )
-                .min(2, "option should be more than 2 characters")
-                .max(255, "option is Too Long!"),
-              isCorrect: Yup.boolean().required("isCorrect is required"),
+                .matches(/^\S.*\S$/, "Option text cannot start or end with spaces")
+                .min(2, "Option text should be more than 2 characters")
+                .max(255, "Option text is too long!"),
+              isCorrect: Yup.boolean().required("Please select if this option is correct or not"),
             })
           )
           .min(2, "At least two options are required")
@@ -458,6 +452,15 @@ export const quizValidationSchema = Yup.object().shape({
             "at-least-one-correct",
             "At least one option must be marked as correct",
             (options) => options?.some((option) => option.isCorrect === true)
+          )
+          .test(
+            "no-duplicate-options",
+            "Duplicate options are not allowed",
+            (options) => {
+              if (!options) return true;
+              const optionTexts = options.map(opt => opt.optionText.trim().toLowerCase());
+              return new Set(optionTexts).size === optionTexts.length;
+            }
           ),
       })
     )

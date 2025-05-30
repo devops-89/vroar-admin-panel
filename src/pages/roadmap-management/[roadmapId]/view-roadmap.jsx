@@ -68,7 +68,13 @@ const ViewRoadmap = () => {
       label: "Tiles",
       value: roadmapData?.roadmapSteps?.length,
     },
+    {
+      label: "Metadata Type",
+      value: roadmapData?.metadataTags?.map((data) => data.type),
+    },
   ];
+
+  console.log("roadmapData", roadmapData);
 
   return (
     <div>
@@ -169,6 +175,7 @@ const ViewRoadmap = () => {
                 </Typography>
                 <Stack alignItems={"flex-start"} spacing={4} sx={{ mt: 2 }}>
                   {roadmapData?.roadmapSteps.map((data, index) => {
+                    // console.log("first", data);
                     const newData = [
                       {
                         label: "Name",
@@ -201,6 +208,10 @@ const ViewRoadmap = () => {
                       {
                         label: "Points Allocated",
                         value: data.points,
+                      },
+                      {
+                        label: "Description",
+                        value: data.description,
                       },
                     ];
 
