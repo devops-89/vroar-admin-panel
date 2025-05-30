@@ -104,7 +104,7 @@ const ViewAssessment = () => {
                 >
                   Assessment Details
                 </Typography>
-                <Button
+                {/* <Button
                   startIcon={<FaRegEdit />}
                   sx={{
                     color: COLORS.PRIMARY,
@@ -116,7 +116,7 @@ const ViewAssessment = () => {
                   onClick={handleEditAssessment}
                 >
                   Edit
-                </Button>
+                </Button> */}
               </Stack>
               <Box sx={{ mt: 2 }}>
                 <Stack alignItems={"flex-start"} spacing={4}>

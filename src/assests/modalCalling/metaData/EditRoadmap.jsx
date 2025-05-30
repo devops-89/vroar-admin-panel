@@ -21,11 +21,11 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
+import { editRoadmapValidationSchema } from "@/utils/validationSchema";
 
 const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  // console.log("test", sequence);
   const { roadmapId } = router.query;
   const [content, setContent] = useState(null);
   const [contentList, setContentList] = useState([]);
@@ -42,15 +42,15 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
       id: "",
       roadmapId: roadmapId,
     },
+    validationSchema: editRoadmapValidationSchema,
     onSubmit: (values) => {
-      //   console.log("values", values);
       const body = {
         roadmapId: roadmapId,
         tileId: values.id,
         sequenceNo: sequence,
         tileName: values?.tileName,
-        time: values?.time,
-        points: values.points,
+        time: String(values?.time),
+        points: Number(values.points),
         description: values.description,
         contentLibraryId: values.contentLibraryId,
       };
@@ -174,6 +174,8 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
             id="tileName"
             value={formik.values.tileName}
             onChange={formik.handleChange}
+            error={formik.touched.tileName && Boolean(formik.errors.tileName)}
+            helperText={formik.touched.tileName && formik.errors.tileName}
           />
           <Autocomplete
             renderInput={(params) => (
@@ -181,6 +183,13 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
                 {...params}
                 sx={{ ...loginTextField }}
                 label="Select Content Type"
+                error={
+                  formik.touched.contentType &&
+                  Boolean(formik.errors.contentType)
+                }
+                helperText={
+                  formik.touched.contentType && formik.errors.contentType
+                }
               />
             )}
             options={contentType}
@@ -204,6 +213,14 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
                 {...params}
                 sx={{ ...loginTextField }}
                 label="Select Content"
+                error={
+                  formik.touched.contentLibraryId &&
+                  Boolean(formik.errors.contentLibraryId)
+                }
+                helperText={
+                  formik.touched.contentLibraryId &&
+                  formik.errors.contentLibraryId
+                }
               />
             )}
             options={contentList}
@@ -226,6 +243,10 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
             value={formik.values.time}
             id="time"
             onChange={formik.handleChange}
+            error={formik.touched.time && Boolean(formik.errors.time)}
+            helperText={formik.touched.time && formik.errors.time}
+            type="number"
+            inputProps={{ min: 1 }}
           />
           <TextField
             label="Coins"
@@ -233,6 +254,10 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
             value={formik.values.points}
             id="points"
             onChange={formik.handleChange}
+            error={formik.touched.points && Boolean(formik.errors.points)}
+            helperText={formik.touched.points && formik.errors.points}
+            type="number"
+            inputProps={{ min: 1 }}
           />
           <TextField
             label="Enter Tile Description"
@@ -253,6 +278,10 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
             onChange={formik.handleChange}
             multiline
             id="description"
+            error={
+              formik.touched.description && Boolean(formik.errors.description)
+            }
+            helperText={formik.touched.description && formik.errors.description}
           />
           <Stack direction={"row"} alignItems={"center"} spacing={2}>
             <Button

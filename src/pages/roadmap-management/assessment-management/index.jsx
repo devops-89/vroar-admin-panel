@@ -216,9 +216,9 @@ const Assessment = () => {
                           />
                         </TableCell>
                         <TableCell>
-                          <IconButton onClick={() => editAssessment(val.id)}>
+                          {/* <IconButton onClick={() => editAssessment(val.id)}>
                             <FaRegEdit fontSize={20} color={COLORS.BLACK} />
-                          </IconButton>
+                          </IconButton> */}
                           <IconButton onClick={() => viewAssessment(val.id)}>
                             <Visibility
                               sx={{ fontSize: 20 }}

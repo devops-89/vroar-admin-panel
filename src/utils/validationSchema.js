@@ -112,20 +112,16 @@ export const AddAdListValidationSchema = Yup.object({
     .required("Please Enter Zoom Link")
     .url("Please Enter Valid Url")
     .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
-    .test(
-      "is-zoom-link",
-      "Please enter a valid Zoom meeting link",
-      (value) => {
-        if (!value) return false;
-        const zoomPatterns = [
-          /^https:\/\/zoom\.us\/j\/\d+/, 
-          /^https:\/\/us\d+\.web\.zoom\.us\/j\/\d+/, 
-          /^https:\/\/zoom\.us\/s\/\d+/, 
-          /^https:\/\/us\d+\.web\.zoom\.us\/s\/\d+/,
-        ];
-        return zoomPatterns.some((pattern) => pattern.test(value));
-      }
-    ),
+    .test("is-zoom-link", "Please enter a valid Zoom meeting link", (value) => {
+      if (!value) return false;
+      const zoomPatterns = [
+        /^https:\/\/zoom\.us\/j\/\d+/,
+        /^https:\/\/us\d+\.web\.zoom\.us\/j\/\d+/,
+        /^https:\/\/zoom\.us\/s\/\d+/,
+        /^https:\/\/us\d+\.web\.zoom\.us\/s\/\d+/,
+      ];
+      return zoomPatterns.some((pattern) => pattern.test(value));
+    }),
   eventType: Yup.string()
     .required("Please Select Event Type")
     .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
@@ -546,3 +542,58 @@ export const parseYupErrors = (yupError) => {
 
   return fieldErrors;
 };
+
+
+export const editRoadmapValidationSchema = Yup.object().shape({
+  tileName: Yup.string()
+    .required("Tile name is required")
+    .test(
+      "not-empty",
+      "Tile name cannot be only whitespace",
+      (value) => value && value.trim().length > 0
+    )
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
+    .min(2, "Tile name should be more than 2 characters")
+    .max(255, "Tile name is too long!"),
+
+  contentType: Yup.string()
+    .required("Content type is required")
+    .test(
+      "not-empty",
+      "Content type cannot be empty",
+      (value) => value && value.trim().length > 0
+    ),
+
+  contentLibraryId: Yup.string()
+    .required("Content is required")
+    .test(
+      "not-empty",
+      "Content cannot be empty",
+      (value) => value && value.trim().length > 0
+    ),
+
+  time: Yup.number()
+    .typeError("Time must be a number")
+    .required("Time is required")
+    .positive("Time must be positive")
+    .integer("Time must be a whole number")
+    .min(1, "Time must be at least 1 minute"),
+
+  points: Yup.number()
+    .typeError("Coins must be a number")
+    .required("Coins are required")
+    .positive("Coins must be positive")
+    .integer("Coins must be a whole number")
+    .min(1, "Coins must be at least 1"),
+
+  description: Yup.string()
+    .required("Description is required")
+    .test(
+      "not-empty",
+      "Description cannot be only whitespace",
+      (value) => value && value.trim().length > 0
+    )
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
+    .min(2, "Description should be more than 2 characters")
+    .max(1000, "Description is too long!"),
+});
