@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Delete, DragIndicator, WidthFull } from "@mui/icons-material";
+import { Add, Delete, DragIndicator, WidthFull } from "@mui/icons-material";
 import OptionBox from "./quiz-option/option";
 import { loginTextField } from "@/utils/styles";
 import { roboto } from "@/utils/fonts";
@@ -27,6 +27,7 @@ const SortableItem = ({
   canEdit,
   onEdit,
   deleteLoading,
+  onAddQuestion,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -59,10 +60,16 @@ const SortableItem = ({
           <IconButton {...listeners}>
             <DragIndicator />
           </IconButton>
-          {canEdit && (
-            <IconButton onClick={() => onEdit(question)}>
-              <FaRegEdit />
+          {canEdit && question.question === "" ? (
+            <IconButton onClick={onAddQuestion}>
+              <Add />
             </IconButton>
+          ) : (
+            canEdit && (
+              <IconButton onClick={() => onEdit(question)}>
+                <FaRegEdit />
+              </IconButton>
+            )
           )}
           {canDelete && (
             <IconButton onClick={() => onDelete(id)} disabled={deleteLoading}>

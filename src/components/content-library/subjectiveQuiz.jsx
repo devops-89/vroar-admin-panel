@@ -6,14 +6,24 @@ import React from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 
-const SubjectiveQuiz = ({ subjectiveHandler, state, canEdit, getDetails }) => {
+const SubjectiveQuiz = ({ 
+  subjectiveHandler, 
+  state, 
+  canEdit = false, 
+  getDetails, 
+  errors, 
+  setErrors 
+}) => {
   const dispatch = useDispatch();
 
   const handleEditQuestion = (value) => {
-    dispatch(
-      showModal(<EditQuizQuestion value={value} getDetails={getDetails} />)
-    );
+    if (getDetails) {
+      dispatch(
+        showModal(<EditQuizQuestion value={value} getDetails={getDetails} />)
+      );
+    }
   };
+
   return (
     <div>
       <Stack spacing={3} sx={{ width: "100%" }} justifyContent={"flex-end"}>
@@ -24,8 +34,10 @@ const SubjectiveQuiz = ({ subjectiveHandler, state, canEdit, getDetails }) => {
               fullWidth
               label="Enter Question ?"
               onChange={subjectiveHandler}
-              id="question"
-              value={state?.question}
+              name="question"
+              value={state?.question || ""}
+              error={Boolean(errors?.question)}
+              helperText={errors?.question}
               slotProps={{
                 input: {
                   readOnly: true,
@@ -42,8 +54,10 @@ const SubjectiveQuiz = ({ subjectiveHandler, state, canEdit, getDetails }) => {
             fullWidth
             label="Enter Question ?"
             onChange={subjectiveHandler}
-            id="question"
-            value={state?.question}
+            name="question"
+            value={state?.question || ""}
+            error={Boolean(errors?.question)}
+            helperText={errors?.question}
           />
         )}
 
@@ -51,8 +65,8 @@ const SubjectiveQuiz = ({ subjectiveHandler, state, canEdit, getDetails }) => {
           sx={{ ...loginTextField }}
           label="Subtext"
           onChange={subjectiveHandler}
-          id="subText"
-          value={state?.subText}
+          name="subText"
+          value={state?.subText || ""}
           focused={Boolean(state?.subText)}
           slotProps={{
             input: {

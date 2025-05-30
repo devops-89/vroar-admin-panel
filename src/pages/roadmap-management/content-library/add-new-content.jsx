@@ -36,6 +36,7 @@ const AddNewContent = () => {
             >
               Add Content
             </Typography>
+            {/* add content */}
             <AddContent />
           </Box>
         </Card>
