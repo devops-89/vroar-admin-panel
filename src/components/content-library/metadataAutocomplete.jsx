@@ -23,6 +23,7 @@ const MetaDataAutocomplete = ({
         page: 1,
         pageSize: 100,
         type: metaDataType,
+        status: "USER_STATUS.ACTIVE"
       });
       setData(res.data.data.docs);
     } catch (err) {

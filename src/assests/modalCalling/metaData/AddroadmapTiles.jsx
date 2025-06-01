@@ -41,7 +41,6 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
       description: "",
     },
     onSubmit: (values) => {
-  
       const body = {
         roadmapId: roadmapId,
         sequenceNo: sequence,
@@ -87,12 +86,13 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
   };
   const handleChangeContentType = (e, newValue, id) => {
     if (id === "contentType") {
-        setContentLoading(true)
+      setContentLoading(true);
       formik.setFieldValue(id, newValue?.label);
       setContent(newValue);
       setContentLibraryId(null);
       const type = [];
-      type.push = newValue?.label;
+      type.push(newValue?.label);
+      // console.log("type", type);
       const body = {
         page: 1,
         pageSize: 500,
@@ -113,7 +113,6 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
   const handleCloseModal = () => {
     dispatch(hideModal());
   };
-  
 
   return (
     <Box sx={{ width: 600 }}>
@@ -241,7 +240,6 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
                 "Submit"
               )}
             </Button>
-            
           </Stack>
         </Stack>
       </form>

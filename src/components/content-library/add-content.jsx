@@ -10,10 +10,11 @@ import {
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import {
+  AddContentValidationSchema,
   newAddContentValidationSchema,
-  quizValidationSchema
+  quizValidationSchema,
 } from "@/utils/validationSchema";
-import { AttachFile } from "@mui/icons-material";
+import { AttachFile, ErrorSharp } from "@mui/icons-material";
 import {
   Autocomplete,
   Backdrop,
@@ -30,14 +31,15 @@ import {
 
 import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
-import { isYoutubeUrl } from "@/utils/regex";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
+import ToastBar from "../toastBar";
 import MetaDataAutocomplete from "./metadataAutocomplete";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
+import { isYoutubeUrl } from "@/utils/regex";
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -584,7 +586,6 @@ const AddContent = () => {
     }
   };
 
-  console.log("err", errors);
 
   return (
     <Box mt={3} sx={{ width: "100%" }}>

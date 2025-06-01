@@ -313,11 +313,12 @@ export const metaDataController = {
     }
   },
   deleteRoadmapTile: async (data) => {
+    console.log("data", data);
     try {
       let result = await contentSecuredApi.contentSecuredApi.delete(
         "api/roadmapJourney/deleteTile",
-        data
-      );
+        { data: data }
+      ); 
       return result;
     } catch (error) {
       throw error;
