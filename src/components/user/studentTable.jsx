@@ -154,7 +154,7 @@ const StudentTable = ({
                       {moment.unix(val.createdAt).format("DD-MM-YYYY")}
                     </Typography>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="start">
                     <CustomChip
                       variant={val.roadmapStatus}
                       label={val.roadmapStatus || "Not disclosed"}

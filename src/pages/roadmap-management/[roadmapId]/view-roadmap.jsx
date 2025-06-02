@@ -74,7 +74,7 @@ const ViewRoadmap = () => {
     },
   ];
 
-  console.log("roadmapData", roadmapData);
+  // console.log("roadmapData", roadmapData);
 
   return (
     <div>
@@ -206,7 +206,7 @@ const ViewRoadmap = () => {
                         value: data.time,
                       },
                       {
-                        label: "Points Allocated",
+                        label: "Coins Allocated",
                         value: data.points,
                       },
                       {
