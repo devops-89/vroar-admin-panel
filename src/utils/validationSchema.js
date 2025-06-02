@@ -369,6 +369,8 @@ export const pointsValidation = Yup.object().shape({
     .typeError("Coins must be a valid number")
     .integer("Coins must be a whole number")
     .positive("Coins must be a positive number")
+    .min(1, "Coins must be at least 1")
+    .max(999, "Coins cannot exceed 999")
     .required("Please Enter Coins"),
 
   reason: Yup.string()
