@@ -1,6 +1,5 @@
 import { metaDataController } from "@/api/metaDataController";
-import { CONTENT_DATA } from "@/assests/roadmapData";
-import { COLORS, CONTENT_TYPE, METADATA_TYPE } from "@/utils/enum";
+import { COLORS, METADATA_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
   Accordion,
@@ -8,19 +7,18 @@ import {
   AccordionSummary,
   Backdrop,
   Box,
+  Button,
   Checkbox,
   Chip,
   CircularProgress,
   Stack,
   Typography,
-  Button,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import YouTube from 'react-youtube';
-import { Document, Page } from 'react-pdf';
+import { useEffect, useState } from "react";
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import YouTube from 'react-youtube';
 
 const ContentDetails = () => {
   const router = useRouter();
@@ -39,7 +37,6 @@ const ContentDetails = () => {
       });
   };
 
-  console.log("details", details);
 
   useEffect(() => {
     if (router.query.slug) {
