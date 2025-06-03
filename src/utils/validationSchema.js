@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 import { ASSESSMENTS_TYPE, EVENT_TYPE, QUIZ_TYPE } from "./enum";
 import moment from "moment";
+import { useMemo } from "react";
 export const loginValidationSchema = Yup.object({
   email: Yup.string()
     .email("Please Enter Valid Email")
@@ -513,3 +514,116 @@ export const parseYupErrors = (yupError) => {
 
   return fieldErrors;
 };
+
+
+export const editRoadmapValidationSchema = Yup.object().shape({
+  tileName: Yup.string()
+    .required("Tile name is required")
+    .test(
+      "not-empty",
+      "Tile name cannot be only whitespace",
+      (value) => value && value.trim().length > 0
+    )
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
+    .min(2, "Tile name should be more than 2 characters")
+    .max(255, "Tile name is too long!"),
+
+  contentType: Yup.string()
+    .required("Content type is required")
+    .test(
+      "not-empty",
+      "Content type cannot be empty",
+      (value) => value && value.trim().length > 0
+    ),
+
+  contentLibraryId: Yup.string()
+    .required("Content is required")
+    .test(
+      "not-empty",
+      "Content cannot be empty",
+      (value) => value && value.trim().length > 0
+    ),
+
+  time: Yup.number()
+    .typeError("Time must be a number")
+    .required("Time is required")
+    .positive("Time must be positive")
+    .integer("Time must be a whole number")
+    .min(1, "Time must be at least 1 minute"),
+
+  points: Yup.number()
+    .typeError("Coins must be a number")
+    .required("Coins are required")
+    .positive("Coins must be positive")
+    .integer("Coins must be a whole number")
+    .min(1, "Coins must be at least 1"),
+
+  description: Yup.string()
+    .required("Description is required")
+    .test(
+      "not-empty",
+      "Description cannot be only whitespace",
+      (value) => value && value.trim().length > 0
+    )
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
+    .min(2, "Description should be more than 2 characters")
+    .max(1000, "Description is too long!"),
+});
+
+// export const editContentValidationSchema = useMemo(() => Yup.object().shape({
+//   contentType: Yup.string().required("Content type is required"),
+//   contentName: Yup.string()
+//     .required("Content name is required")
+//     .min(2, "Content name must be at least 2 characters")
+//     .max(100, "Content name must not exceed 100 characters")
+//     .test(
+//       "no-leading-trailing-space",
+//       "Content name cannot start or end with spaces",
+//       (value) => !value || value.trim() === value
+//     ),
+//   description: Yup.string()
+//     .required("Description is required")
+//     .min(10, "Description must be at least 10 characters")
+//     .test(
+//       "no-leading-trailing-space",
+//       "Description cannot start or end with spaces",
+//       (value) => !value || value.trim() === value
+//     ),
+//   contentLink: Yup.string().when("contentType", {
+//     is: (type) =>
+//       [
+//         CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
+//         CONTENT_TYPE.JOURNAL_LINK,
+//         CONTENT_TYPE.NATIVE_VIDEO_LINK,
+//       ].includes(type),
+//     then: () =>
+//       Yup.string()
+//         .required("Content link is required")
+//         .url("Please enter a valid URL")
+//         .test(
+//           "no-leading-trailing-space",
+//           "Content link cannot start or end with spaces",
+//           (value) => !value || value.trim() === value
+//         ),
+//     otherwise: () => Yup.string(),
+//   }),
+//   metadataTags: Yup.array().test(
+//     "has-metadata",
+//     "At least one metadata tag is required",
+//     (value, context) => {
+//       const { career, industry, strengths, softSkills } = context.parent;
+//       return [career, industry, strengths, softSkills].some(
+//         (arr) => Array.isArray(arr) && arr.length > 0
+//       );
+//     }
+//   ),
+//   career: Yup.array(),
+//   industry: Yup.array(),
+//   strengths: Yup.array(),
+//   softSkills: Yup.array(),
+//   quizType: Yup.string().when("isQuizEnabled", {
+//     is: true,
+//     then: () => Yup.string().required("Quiz type is required"),
+//     otherwise: () => Yup.string(),
+//   }),
+// }), []);
