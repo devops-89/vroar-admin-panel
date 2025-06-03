@@ -204,7 +204,7 @@ const userController = {
   getSessions: async (userId) => {
     try {
       let result = await userSecuredApi.userSecuredApi.get(
-        `/api/user/admin/get-sessions?${userId}`
+        `/api/user/admin/get-sessions?id=${userId}`
       );
       return result;
     } catch (error) {
