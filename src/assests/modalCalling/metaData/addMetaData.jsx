@@ -24,8 +24,6 @@ import Loading from "react-loading";
 const AddMetaData = ({ getMetaData, metaDataBody }) => {
   const dispatch = useDispatch();
 
-  console.log("getmetadata",metaDataBody)
-
   const closeModal = () => {
     dispatch(hideModal());
   };
@@ -80,32 +78,37 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
         type: state.metadataType,
         status: USER_STATUS.ACTIVE,
       };
-      metaDataController
-        .addMetaData(body)
-        .then((res) => {
-          dispatch(
-            setToast({
-              open: true,
-              message: res.data.message,
-              severity: ToastStatus.SUCCESS,
-            })
-          );
-          getMetaData(metaDataBody);
-          setLoading(false);
-          dispatch(hideModal());
-        })
-        .catch((err) => {
-          let errMessage =
-            (err.response && err.response.data.message) || err.message;
-          dispatch(
-            setToast({
-              open: true,
-              message: errMessage,
-              severity: ToastStatus.ERROR,
-            })
-          );
-          setLoading(false);
-        });
+      try {
+        const res = await metaDataController.addMetaData(body);
+        dispatch(
+          setToast({
+            open: true,
+            message: res.data.message,
+            severity: ToastStatus.SUCCESS,
+          })
+        );
+        
+        // Ensure we're using the latest metaDataBody
+        const updatedMetaDataBody = {
+          ...metaDataBody,
+          page: 0, // Reset to first page after adding
+        };
+        
+        await getMetaData(updatedMetaDataBody);
+        setLoading(false);
+        dispatch(hideModal());
+      } catch (err) {
+        const errMessage =
+          (err.response && err.response.data.message) || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
+      }
     }
   };
 
