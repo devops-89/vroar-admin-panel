@@ -24,6 +24,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
 import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
@@ -37,6 +38,8 @@ import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
 import { isValidURL } from "@/utils/regex";
 import { setContentDetails } from "@/redux/reducers/contentDetails";
+import * as Yup from "yup";
+
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -45,6 +48,106 @@ const contentTypeConfig = {
   [CONTENT_TYPE.NATIVE_VIDEO_LINK]: { showFile: false, showLink: true },
   [CONTENT_TYPE.YOUTUBE_VIDEO_LINK]: { showFile: false, showLink: true },
 };
+
+const validationSchema = Yup.object().shape({
+  contentType: Yup.string().required("Content type is required"),
+  contentName: Yup.string()
+    .required("Content name is required")
+    .min(2, "Content name must be at least 2 characters")
+    .max(100, "Content name must not exceed 100 characters")
+    .test('no-leading-trailing-space', 'Content name cannot start or end with spaces', 
+      value => {
+        if (!value) return true; // Let required validation handle empty values
+        return value.trim() === value;
+      }
+    ),
+  description: Yup.string()
+    .required("Description is required")
+    .min(10, "Description must be at least 10 characters")
+    .test('no-leading-trailing-space', 'Description cannot start or end with spaces', 
+      value => {
+        if (!value) return true;
+        return value.trim() === value;
+      }
+    ),
+  contentLink: Yup.string().when('contentType', {
+    is: (type) => type === CONTENT_TYPE.YOUTUBE_VIDEO_LINK || 
+                  type === CONTENT_TYPE.JOURNAL_LINK || 
+                  type === CONTENT_TYPE.NATIVE_VIDEO_LINK,
+    then: () => Yup.string()
+      .required("Content link is required")
+      .url("Please enter a valid URL")
+      .test('no-leading-trailing-space', 'Content link cannot start or end with spaces', 
+        value => {
+          if (!value) return true;
+          return value.trim() === value;
+        }
+      ),
+    otherwise: () => Yup.string()
+  }),
+  metadataTags: Yup.array().test(
+    'has-metadata',
+    'At least one metadata tag is required',
+    (value, context) => {
+      const { career, industry, strengths, softSkills } = context.parent;
+      const hasMetadata = (
+        (Array.isArray(career) && career.length > 0) ||
+        (Array.isArray(industry) && industry.length > 0) ||
+        (Array.isArray(strengths) && strengths.length > 0) ||
+        (Array.isArray(softSkills) && softSkills.length > 0)
+      );
+      return hasMetadata;
+    }
+  ),
+  career: Yup.array(),
+  industry: Yup.array(),
+  strengths: Yup.array(),
+  softSkills: Yup.array(),
+  quizType: Yup.string().when('isQuizEnabled', {
+    is: true,
+    then: () => Yup.string().required("Quiz type is required"),
+    otherwise: () => Yup.string()
+  })
+});
+
+// Custom styled components for validation highlighting
+const RequiredLabel = styled(Typography)(({ theme }) => ({
+  '&::after': {
+    content: '" *"',
+    color: COLORS.ERROR,
+    marginLeft: 2,
+  },
+}));
+
+const ValidationTextField = styled(TextField)(({ theme, error }) => ({
+  '& .MuiOutlinedInput-root': {
+    '&.Mui-focused fieldset': {
+      borderColor: error ? COLORS.ERROR : COLORS.PRIMARY,
+      borderWidth: 2,
+    },
+    '&:hover fieldset': {
+      borderColor: error ? COLORS.ERROR : COLORS.PRIMARY,
+    },
+  },
+  '& .MuiFormHelperText-root': {
+    color: error ? COLORS.ERROR : COLORS.BLACK,
+    marginLeft: 0,
+    fontSize: '0.75rem',
+  },
+}));
+
+const CustomAutocomplete = styled(Autocomplete)(({ theme, error }) => ({
+  '& .MuiOutlinedInput-root': {
+    '&.Mui-focused fieldset': {
+      borderColor: error ? COLORS.ERROR : COLORS.PRIMARY,
+      borderWidth: 2,
+    },
+    '&:hover fieldset': {
+      borderColor: error ? COLORS.ERROR : COLORS.PRIMARY,
+    },
+  },
+}));
+
 const EditContent = () => {
   const inputRef = useRef();
   const [content, setContent] = useState(null);
@@ -94,7 +197,6 @@ const EditContent = () => {
     subText: "",
   });
 
-  // const dispatch = useDispatch();
   const router = useRouter();
 
   const id = router.query.slug;
@@ -107,12 +209,27 @@ const EditContent = () => {
 
   const inputHandler = (e) => {
     const { id, value } = e.target;
+    
+    // Remove leading/trailing spaces in real-time for text fields
+    let processedValue = value;
+    if (id === 'contentName' || id === 'description' || id === 'contentLink') {
+      // Only trim if the last character is a space (for real-time trimming)
+      if (value.endsWith(' ') || value.startsWith(' ')) {
+        processedValue = value.trim();
+      }
+    }
 
-    setState({ ...state, [id]: value });
+    setState({ ...state, [id]: processedValue });
     setErrors({ ...errors, [id]: "" });
-  };
 
-  // console.log("teste", state.contentLink);
+    // Show error if there are leading or trailing spaces
+    if (value !== processedValue) {
+      setErrors(prev => ({
+        ...prev,
+        [id]: "Cannot start or end with spaces"
+      }));
+    }
+  };
 
   const quizHandler = (e) => {
     setState({ ...state, isQuizEnabled: e.target.checked });
@@ -139,38 +256,42 @@ const EditContent = () => {
   };
   const careerHandler = (e, newValue) => {
     setCareer(newValue);
-    if (newValue) {
+    if (newValue && newValue.length > 0) {
       setState({ ...state, career: newValue.map((val) => val.id) });
       setErrors({ ...errors, career: "" });
     } else {
-      setErrors({ ...errors, career: "" });
+      setState({ ...state, career: [] });
+      setErrors({ ...errors, career: "Please select at least one career" });
     }
   };
   const industryHandler = (e, newValue) => {
     setIndustry(newValue);
-    if (newValue) {
+    if (newValue && newValue.length > 0) {
       setState({ ...state, industry: newValue.map((val) => val.id) });
       setErrors({ ...errors, industry: "" });
     } else {
-      setErrors({ ...ErrorSharp, industry: "Please Select Valid Career" });
+      setState({ ...state, industry: [] });
+      setErrors({ ...errors, industry: "Please select at least one industry" });
     }
   };
   const strengthHandler = (e, newValue) => {
     setStrengths(newValue);
-    if (newValue) {
+    if (newValue && newValue.length > 0) {
       setState({ ...state, strengths: newValue.map((val) => val.id) });
       setErrors({ ...errors, strengths: "" });
     } else {
-      setErrors({ ...errors, strengths: "Please Select Valid Strengths" });
+      setState({ ...state, strengths: [] });
+      setErrors({ ...errors, strengths: "Please select at least one strength" });
     }
   };
   const softSkillsHandler = (e, newValue) => {
     setSoftSkills(newValue);
-    if (newValue) {
+    if (newValue && newValue.length > 0) {
       setState({ ...state, softSkills: newValue.map((val) => val.id) });
       setErrors({ ...errors, softSkills: "" });
     } else {
-      setErrors({ ...errors, softSkills: "Please Select Valid Soft skills" });
+      setState({ ...state, softSkills: [] });
+      setErrors({ ...errors, softSkills: "Please select at least one soft skill" });
     }
   };
   const [quizType, setQuizType] = useState(null);
@@ -206,8 +327,6 @@ const EditContent = () => {
       }
     }
   };
-
-  // console.log("new pdf file", state.contentLink);
 
   const subjectiveHandler = (e) => {
     let { id, value } = e.target;
@@ -320,25 +439,110 @@ const EditContent = () => {
       });
   };
 
-  const submitHandler = (e) => {
+  const validateForm = async () => {
+    try {
+      // Trim all text fields before validation
+      const formData = {
+        ...state,
+        contentName: state.contentName?.trim(),
+        description: state.description?.trim(),
+        contentLink: state.contentLink?.trim(),
+        metadataTags: [
+          ...(Array.isArray(state.career) ? state.career : []),
+          ...(Array.isArray(state.industry) ? state.industry : []),
+          ...(Array.isArray(state.strengths) ? state.strengths : []),
+          ...(Array.isArray(state.softSkills) ? state.softSkills : []),
+        ]
+      };
+      
+      await validationSchema.validate(formData, { abortEarly: false });
+      
+      // Check for leading/trailing spaces
+      const hasSpaceErrors = ['contentName', 'description', 'contentLink'].some(field => {
+        const value = state[field];
+        return value && value.trim() !== value;
+      });
+
+      if (hasSpaceErrors) {
+        setErrors(prev => ({
+          ...prev,
+          ...(state.contentName?.trim() !== state.contentName && { contentName: "Cannot start or end with spaces" }),
+          ...(state.description?.trim() !== state.description && { description: "Cannot start or end with spaces" }),
+          ...(state.contentLink?.trim() !== state.contentLink && { contentLink: "Cannot start or end with spaces" })
+        }));
+        return false;
+      }
+
+      // Additional validation for file upload if required
+      if (showFile && !file.filePath && !state.contentLink) {
+        setErrors(prev => ({
+          ...prev,
+          contentLink: "Please upload a file"
+        }));
+        return false;
+      }
+
+      setErrors({});
+      return true;
+    } catch (validationErrors) {
+      const formErrors = {};
+      validationErrors.inner.forEach((error) => {
+        if (error.path === 'metadataTags') {
+          // Set error for all empty metadata fields
+          if (!state.career?.length) formErrors.career = "Please select at least one career";
+          if (!state.industry?.length) formErrors.industry = "Please select at least one industry";
+          if (!state.strengths?.length) formErrors.strengths = "Please select at least one strength";
+          if (!state.softSkills?.length) formErrors.softSkills = "Please select at least one soft skill";
+        } else {
+          formErrors[error.path] = error.message;
+        }
+      });
+      setErrors(formErrors);
+      
+      dispatch(
+        setToast({
+          open: true,
+          message: "Please fill all required fields correctly",
+          severity: ToastStatus.ERROR,
+        })
+      );
+      return false;
+    }
+  };
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    if (AddContentValidationSchema({ state, setErrors, errors })) {
+    const isValid = await validateForm();
+    
+    if (isValid) {
       setLoading(true);
       if (isValidURL(state.contentLink)) {
         let body = {
-          name: state.contentName,
+          name: state.contentName.trim(),
           contentType: state.contentType,
-          contentLink: state.contentLink,
-          description: state.description,
+          contentLink: state.contentLink.trim(),
+          description: state.description.trim(),
           metadataTags: [
             ...(Array.isArray(state.career) ? state.career : []),
             ...(Array.isArray(state.industry) ? state.industry : []),
             ...(Array.isArray(state.strengths) ? state.strengths : []),
             ...(Array.isArray(state.softSkills) ? state.softSkills : []),
           ],
-
           id: id,
         };
+        
+        // Check if metadataTags is empty
+        if (body.metadataTags.length === 0) {
+          setErrors({
+            career: "Please select at least one metadata tag",
+            industry: "Please select at least one metadata tag",
+            strengths: "Please select at least one metadata tag",
+            softSkills: "Please select at least one metadata tag"
+          });
+          setLoading(false);
+          return;
+        }
+
         if (file && file.fileName) {
           body.contentFileName = file.fileName;
         }
@@ -346,14 +550,8 @@ const EditContent = () => {
       } else {
         uploadContentFile();
       }
-    } else {
-      // console.log("error");
     }
   };
-
-  // let canEdit = true;
-
-  const [canEdit, setCanEdit] = useState(true);
 
   const getContentDetails = (id) => {
     metaDataController
@@ -408,7 +606,7 @@ const EditContent = () => {
               };
             })
           );
-          response.quiz === null && setCanEdit(false);
+          response.quiz === null && setIsQuizEnabled(false);
 
           setIndustry(
             industry.map((val) => {
@@ -484,27 +682,37 @@ const EditContent = () => {
     }
   }, [id]);
 
+  const getFieldError = (fieldName) => {
+    return errors[fieldName] ? {
+      error: true,
+      helperText: errors[fieldName]
+    } : {};
+  };
+
   return (
     <Box mt={3}>
       <Backdrop open={isDetailsLoading} sx={{ zIndex: 998 }}>
         <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Backdrop>
-      <form action="" onSubmit={submitHandler}>
+      <form onSubmit={submitHandler}>
         <Stack
           alignItems={"start"}
           justifyContent={"flex-end"}
           spacing={2}
           width={"100%"}
         >
-          <Autocomplete
+          <CustomAutocomplete
             renderInput={(params) => (
-              <TextField
+              <ValidationTextField
                 {...params}
-                label="Select Content Type"
+                label={
+                  <RequiredLabel sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                    Select Content Type
+                  </RequiredLabel>
+                }
                 fullWidth
                 sx={{ ...loginTextField }}
-                error={Boolean(errors.contentType)}
-                helperText={errors.contentType}
+                {...getFieldError('contentType')}
               />
             )}
             fullWidth
@@ -519,6 +727,7 @@ const EditContent = () => {
             )}
             onChange={contentTypeHandler}
             value={content}
+            error={Boolean(errors.contentType)}
           />
           {showFile && (
             <Box sx={{ width: "100%" }}>
@@ -528,7 +737,7 @@ const EditContent = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  border: "1px solid #d7d7d7",
+                  border: errors.contentLink ? `2px solid ${COLORS.ERROR}` : "1px solid #d7d7d7",
                   p: 1.5,
                 }}
                 onClick={() => inputRef.current.click()}
@@ -536,7 +745,7 @@ const EditContent = () => {
                 <Typography
                   sx={{
                     fontSize: 15,
-                    color: COLORS.BLACK,
+                    color: errors.contentLink ? COLORS.ERROR : COLORS.BLACK,
                     fontFamily: roboto.style,
                     textTransform: "initial",
                   }}
@@ -550,39 +759,46 @@ const EditContent = () => {
                   onChange={handleFileChange}
                 />
                 <AttachFile
-                  htmlColor={COLORS.BLACK}
+                  htmlColor={errors.contentLink ? COLORS.ERROR : COLORS.BLACK}
                   sx={{ transform: "rotate(45deg)" }}
                 />
               </Button>
-
-              {/* <FormHelperText sx={{ fontSize: 14 }}>
-                *Maximum file size: 10 MB
-              </FormHelperText> */}
+              {errors.contentLink && (
+                <FormHelperText error>{errors.contentLink}</FormHelperText>
+              )}
             </Box>
           )}
 
           {showLink && (
-            <TextField
-              label="Insert Link "
+            <ValidationTextField
+              label={
+                <RequiredLabel sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                  Insert Link
+                </RequiredLabel>
+              }
               fullWidth
               sx={{ ...loginTextField }}
               onChange={inputHandler}
               id="contentLink"
               value={state.contentLink}
+              {...getFieldError('contentLink')}
             />
           )}
 
-          <TextField
+          <ValidationTextField
             sx={{ ...loginTextField }}
-            label="Description"
+            label={
+              <RequiredLabel sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                Description
+              </RequiredLabel>
+            }
             multiline
             fullWidth
             id="description"
             onChange={inputHandler}
-            error={Boolean(errors.description)}
-            helperText={errors.description}
             value={state.description}
             focused={Boolean(state.description)}
+            {...getFieldError('description')}
           />
 
           <MetaDataAutocomplete
@@ -590,9 +806,21 @@ const EditContent = () => {
             metaDataType={METADATA_TYPE.CAREER}
             value={career}
             onChange={careerHandler}
-            error={errors.career}
+            error={Boolean(errors.career)}
             helperText={errors.career}
             colors={{ bg: COLORS.PENDING, text: COLORS.PENDING_TEXT }}
+            required
+            customStyles={{
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused fieldset': {
+                  borderColor: errors.career ? COLORS.ERROR : COLORS.PRIMARY,
+                  borderWidth: 2,
+                },
+                '&:hover fieldset': {
+                  borderColor: errors.career ? COLORS.ERROR : COLORS.PRIMARY,
+                },
+              },
+            }}
           />
 
           <MetaDataAutocomplete
@@ -600,9 +828,21 @@ const EditContent = () => {
             metaDataType={METADATA_TYPE.INDUSTRY}
             value={industry}
             onChange={industryHandler}
-            error={errors.industry}
+            error={Boolean(errors.industry)}
             helperText={errors.industry}
             colors={{ bg: COLORS.DONE, text: COLORS.DONE_TEXT }}
+            required
+            customStyles={{
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused fieldset': {
+                  borderColor: errors.industry ? COLORS.ERROR : COLORS.PRIMARY,
+                  borderWidth: 2,
+                },
+                '&:hover fieldset': {
+                  borderColor: errors.industry ? COLORS.ERROR : COLORS.PRIMARY,
+                },
+              },
+            }}
           />
 
           <MetaDataAutocomplete
@@ -610,9 +850,21 @@ const EditContent = () => {
             metaDataType={METADATA_TYPE.STRENGTHS}
             value={strengths}
             onChange={strengthHandler}
-            error={errors.strengths}
+            error={Boolean(errors.strengths)}
             helperText={errors.strengths}
             colors={{ bg: COLORS.SIGNED_UP, text: COLORS.SIGNED_UP_TEXT }}
+            required
+            customStyles={{
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused fieldset': {
+                  borderColor: errors.strengths ? COLORS.ERROR : COLORS.PRIMARY,
+                  borderWidth: 2,
+                },
+                '&:hover fieldset': {
+                  borderColor: errors.strengths ? COLORS.ERROR : COLORS.PRIMARY,
+                },
+              },
+            }}
           />
 
           <MetaDataAutocomplete
@@ -620,21 +872,38 @@ const EditContent = () => {
             metaDataType={METADATA_TYPE.SOFT_SKILLS}
             value={softSkills}
             onChange={softSkillsHandler}
-            error={errors.softSkills}
+            error={Boolean(errors.softSkills)}
             helperText={errors.softSkills}
             colors={{ bg: COLORS.PURPLE, text: COLORS.PURPLE_TEXT }}
+            required
+            customStyles={{
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused fieldset': {
+                  borderColor: errors.softSkills ? COLORS.ERROR : COLORS.PRIMARY,
+                  borderWidth: 2,
+                },
+                '&:hover fieldset': {
+                  borderColor: errors.softSkills ? COLORS.ERROR : COLORS.PRIMARY,
+                },
+              },
+            }}
           />
-          <TextField
-            label="Add Name"
+
+          <ValidationTextField
+            label={
+              <RequiredLabel sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                Add Name
+              </RequiredLabel>
+            }
             fullWidth
             sx={{ ...loginTextField }}
             id="contentName"
             onChange={inputHandler}
-            error={Boolean(errors.contentName)}
-            helperText={errors.contentName}
             value={state.contentName}
+            {...getFieldError('contentName')}
           />
-          {!canEdit ? (
+
+          {!isQuizEnabled && (
             <Button
               sx={{
                 backgroundColor: COLORS.TRANSPARENT,
@@ -654,33 +923,20 @@ const EditContent = () => {
             >
               Add Quiz
             </Button>
-          ) : (
-            <FormControlLabel
-              label={
-                <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
-                  Enable Quiz
-                </Typography>
-              }
-              control={
-                <Checkbox onChange={quizHandler} checked={isQuizEnabled} />
-              }
-              sx={{
-                "& .Mui-checked": {
-                  color: `${COLORS.PRIMARY} !important`,
-                },
-              }}
-            />
           )}
 
           {isQuizEnabled && (
-            <Autocomplete
+            <CustomAutocomplete
               renderInput={(params) => (
-                <TextField
+                <ValidationTextField
                   {...params}
-                  label="Select Quiz Type"
+                  label={
+                    <RequiredLabel sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                      Select Quiz Type
+                    </RequiredLabel>
+                  }
                   sx={{ ...loginTextField, mt: 1 }}
-                  error={Boolean(errors.quizType)}
-                  helperText={errors.quizType}
+                  {...getFieldError('quizType')}
                   fullWidth
                 />
               )}
@@ -696,6 +952,7 @@ const EditContent = () => {
               onChange={quizTypeHandler}
               value={quizType}
               fullWidth
+              error={Boolean(errors.quizType)}
             />
           )}
 
@@ -703,7 +960,7 @@ const EditContent = () => {
             <ObjectiveQuiz
               questions={questions}
               setQuestions={setQuestions}
-              canEdit={canEdit}
+              canEdit={isQuizEnabled}
               getDetails={getContentDetails}
             />
           )}
@@ -713,7 +970,7 @@ const EditContent = () => {
               <SubjectiveQuiz
                 subjectiveHandler={subjectiveHandler}
                 state={sia}
-                canEdit={canEdit}
+                canEdit={isQuizEnabled}
                 getDetails={getContentDetails}
               />
             </Box>
@@ -727,16 +984,16 @@ const EditContent = () => {
               mt: 2,
               justifySelf: "flex-end",
               alignSelf: "flex-end",
+              "&:disabled": {
+                backgroundColor: COLORS.PRIMARY,
+                opacity: 0.7,
+              },
             }}
             type="submit"
+            disabled={loading}
           >
             {loading ? (
-              <Loading
-                type="bars"
-                color={COLORS.BLACK}
-                width={20}
-                height={20}
-              />
+              <Loading type="bars" color={COLORS.BLACK} width={20} height={20} />
             ) : (
               "Save"
             )}
