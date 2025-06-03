@@ -55,8 +55,10 @@ const validationSchema = Yup.object().shape({
     .required("Content name is required")
     .min(2, "Content name must be at least 2 characters")
     .max(100, "Content name must not exceed 100 characters")
-    .test('no-leading-trailing-space', 'Content name cannot start or end with spaces', 
-      value => {
+    .test(
+      "no-leading-trailing-space",
+      "Content name cannot start or end with spaces",
+      (value) => {
         if (!value) return true; // Let required validation handle empty values
         return value.trim() === value;
       }
@@ -64,38 +66,43 @@ const validationSchema = Yup.object().shape({
   description: Yup.string()
     .required("Description is required")
     .min(10, "Description must be at least 10 characters")
-    .test('no-leading-trailing-space', 'Description cannot start or end with spaces', 
-      value => {
+    .test(
+      "no-leading-trailing-space",
+      "Description cannot start or end with spaces",
+      (value) => {
         if (!value) return true;
         return value.trim() === value;
       }
     ),
-  contentLink: Yup.string().when('contentType', {
-    is: (type) => type === CONTENT_TYPE.YOUTUBE_VIDEO_LINK || 
-                  type === CONTENT_TYPE.JOURNAL_LINK || 
-                  type === CONTENT_TYPE.NATIVE_VIDEO_LINK,
-    then: () => Yup.string()
-      .required("Content link is required")
-      .url("Please enter a valid URL")
-      .test('no-leading-trailing-space', 'Content link cannot start or end with spaces', 
-        value => {
-          if (!value) return true;
-          return value.trim() === value;
-        }
-      ),
-    otherwise: () => Yup.string()
+  contentLink: Yup.string().when("contentType", {
+    is: (type) =>
+      type === CONTENT_TYPE.YOUTUBE_VIDEO_LINK ||
+      type === CONTENT_TYPE.JOURNAL_LINK ||
+      type === CONTENT_TYPE.NATIVE_VIDEO_LINK,
+    then: () =>
+      Yup.string()
+        .required("Content link is required")
+        .url("Please enter a valid URL")
+        .test(
+          "no-leading-trailing-space",
+          "Content link cannot start or end with spaces",
+          (value) => {
+            if (!value) return true;
+            return value.trim() === value;
+          }
+        ),
+    otherwise: () => Yup.string(),
   }),
   metadataTags: Yup.array().test(
-    'has-metadata',
-    'At least one metadata tag is required',
+    "has-metadata",
+    "At least one metadata tag is required",
     (value, context) => {
       const { career, industry, strengths, softSkills } = context.parent;
-      const hasMetadata = (
+      const hasMetadata =
         (Array.isArray(career) && career.length > 0) ||
         (Array.isArray(industry) && industry.length > 0) ||
         (Array.isArray(strengths) && strengths.length > 0) ||
-        (Array.isArray(softSkills) && softSkills.length > 0)
-      );
+        (Array.isArray(softSkills) && softSkills.length > 0);
       return hasMetadata;
     }
   ),
@@ -103,16 +110,16 @@ const validationSchema = Yup.object().shape({
   industry: Yup.array(),
   strengths: Yup.array(),
   softSkills: Yup.array(),
-  quizType: Yup.string().when('isQuizEnabled', {
+  quizType: Yup.string().when("isQuizEnabled", {
     is: true,
     then: () => Yup.string().required("Quiz type is required"),
-    otherwise: () => Yup.string()
-  })
+    otherwise: () => Yup.string(),
+  }),
 });
 
 // Custom styled components for validation highlighting
 const RequiredLabel = styled(Typography)(({ theme }) => ({
-  '&::after': {
+  "&::after": {
     content: '" *"',
     color: COLORS.ERROR,
     marginLeft: 2,
@@ -120,31 +127,40 @@ const RequiredLabel = styled(Typography)(({ theme }) => ({
 }));
 
 const ValidationTextField = styled(TextField)(({ theme, error }) => ({
-  '& .MuiOutlinedInput-root': {
-    '&.Mui-focused fieldset': {
+  "& .MuiOutlinedInput-root": {
+    "&.Mui-focused fieldset": {
       borderColor: error ? COLORS.ERROR : COLORS.PRIMARY,
       borderWidth: 2,
     },
-    '&:hover fieldset': {
+    "&:hover fieldset": {
       borderColor: error ? COLORS.ERROR : COLORS.PRIMARY,
     },
   },
-  '& .MuiFormHelperText-root': {
+  "& .MuiFormHelperText-root": {
     color: error ? COLORS.ERROR : COLORS.BLACK,
     marginLeft: 0,
-    fontSize: '0.75rem',
+    fontSize: "0.75rem",
   },
 }));
 
 const CustomAutocomplete = styled(Autocomplete)(({ theme, error }) => ({
-  '& .MuiOutlinedInput-root': {
-    '&.Mui-focused fieldset': {
+  "& .MuiOutlinedInput-root": {
+    "&.Mui-focused fieldset": {
       borderColor: error ? COLORS.ERROR : COLORS.PRIMARY,
       borderWidth: 2,
     },
-    '&:hover fieldset': {
+    "&:hover fieldset": {
       borderColor: error ? COLORS.ERROR : COLORS.PRIMARY,
     },
+    "&.Mui-disabled": {
+      backgroundColor: "#f5f5f5",
+      "& fieldset": {
+        borderColor: "#e0e0e0",
+      },
+      "& input": {
+        color: "rgba(0, 0, 0, 0.38)",
+      },
+    }
   },
 }));
 
@@ -165,6 +181,7 @@ const EditContent = () => {
   const [isQuizEnabled, setIsQuizEnabled] = useState(false);
   const [contentData, setContentData] = useState(null);
   const [isDetailsLoading, setIsDetailsLoading] = useState(true);
+  const [isFormDisabled, setIsFormDisabled] = useState(true);
 
   const initialValues = {
     contentType: "",
@@ -209,12 +226,12 @@ const EditContent = () => {
 
   const inputHandler = (e) => {
     const { id, value } = e.target;
-    
+
     // Remove leading/trailing spaces in real-time for text fields
     let processedValue = value;
-    if (id === 'contentName' || id === 'description' || id === 'contentLink') {
+    if (id === "contentName" || id === "description" || id === "contentLink") {
       // Only trim if the last character is a space (for real-time trimming)
-      if (value.endsWith(' ') || value.startsWith(' ')) {
+      if (value.endsWith(" ") || value.startsWith(" ")) {
         processedValue = value.trim();
       }
     }
@@ -224,9 +241,9 @@ const EditContent = () => {
 
     // Show error if there are leading or trailing spaces
     if (value !== processedValue) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [id]: "Cannot start or end with spaces"
+        [id]: "Cannot start or end with spaces",
       }));
     }
   };
@@ -281,7 +298,10 @@ const EditContent = () => {
       setErrors({ ...errors, strengths: "" });
     } else {
       setState({ ...state, strengths: [] });
-      setErrors({ ...errors, strengths: "Please select at least one strength" });
+      setErrors({
+        ...errors,
+        strengths: "Please select at least one strength",
+      });
     }
   };
   const softSkillsHandler = (e, newValue) => {
@@ -291,7 +311,10 @@ const EditContent = () => {
       setErrors({ ...errors, softSkills: "" });
     } else {
       setState({ ...state, softSkills: [] });
-      setErrors({ ...errors, softSkills: "Please select at least one soft skill" });
+      setErrors({
+        ...errors,
+        softSkills: "Please select at least one soft skill",
+      });
     }
   };
   const [quizType, setQuizType] = useState(null);
@@ -452,32 +475,40 @@ const EditContent = () => {
           ...(Array.isArray(state.industry) ? state.industry : []),
           ...(Array.isArray(state.strengths) ? state.strengths : []),
           ...(Array.isArray(state.softSkills) ? state.softSkills : []),
-        ]
+        ],
       };
-      
+
       await validationSchema.validate(formData, { abortEarly: false });
-      
+
       // Check for leading/trailing spaces
-      const hasSpaceErrors = ['contentName', 'description', 'contentLink'].some(field => {
-        const value = state[field];
-        return value && value.trim() !== value;
-      });
+      const hasSpaceErrors = ["contentName", "description", "contentLink"].some(
+        (field) => {
+          const value = state[field];
+          return value && value.trim() !== value;
+        }
+      );
 
       if (hasSpaceErrors) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          ...(state.contentName?.trim() !== state.contentName && { contentName: "Cannot start or end with spaces" }),
-          ...(state.description?.trim() !== state.description && { description: "Cannot start or end with spaces" }),
-          ...(state.contentLink?.trim() !== state.contentLink && { contentLink: "Cannot start or end with spaces" })
+          ...(state.contentName?.trim() !== state.contentName && {
+            contentName: "Cannot start or end with spaces",
+          }),
+          ...(state.description?.trim() !== state.description && {
+            description: "Cannot start or end with spaces",
+          }),
+          ...(state.contentLink?.trim() !== state.contentLink && {
+            contentLink: "Cannot start or end with spaces",
+          }),
         }));
         return false;
       }
 
       // Additional validation for file upload if required
       if (showFile && !file.filePath && !state.contentLink) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          contentLink: "Please upload a file"
+          contentLink: "Please upload a file",
         }));
         return false;
       }
@@ -487,18 +518,22 @@ const EditContent = () => {
     } catch (validationErrors) {
       const formErrors = {};
       validationErrors.inner.forEach((error) => {
-        if (error.path === 'metadataTags') {
+        if (error.path === "metadataTags") {
           // Set error for all empty metadata fields
-          if (!state.career?.length) formErrors.career = "Please select at least one career";
-          if (!state.industry?.length) formErrors.industry = "Please select at least one industry";
-          if (!state.strengths?.length) formErrors.strengths = "Please select at least one strength";
-          if (!state.softSkills?.length) formErrors.softSkills = "Please select at least one soft skill";
+          if (!state.career?.length)
+            formErrors.career = "Please select at least one career";
+          if (!state.industry?.length)
+            formErrors.industry = "Please select at least one industry";
+          if (!state.strengths?.length)
+            formErrors.strengths = "Please select at least one strength";
+          if (!state.softSkills?.length)
+            formErrors.softSkills = "Please select at least one soft skill";
         } else {
           formErrors[error.path] = error.message;
         }
       });
       setErrors(formErrors);
-      
+
       dispatch(
         setToast({
           open: true,
@@ -513,7 +548,7 @@ const EditContent = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     const isValid = await validateForm();
-    
+
     if (isValid) {
       setLoading(true);
       if (isValidURL(state.contentLink)) {
@@ -530,14 +565,14 @@ const EditContent = () => {
           ],
           id: id,
         };
-        
+
         // Check if metadataTags is empty
         if (body.metadataTags.length === 0) {
           setErrors({
             career: "Please select at least one metadata tag",
             industry: "Please select at least one metadata tag",
             strengths: "Please select at least one metadata tag",
-            softSkills: "Please select at least one metadata tag"
+            softSkills: "Please select at least one metadata tag",
           });
           setLoading(false);
           return;
@@ -682,11 +717,18 @@ const EditContent = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    // Set form to disabled by default
+    setIsFormDisabled(true);
+  }, []);
+
   const getFieldError = (fieldName) => {
-    return errors[fieldName] ? {
-      error: true,
-      helperText: errors[fieldName]
-    } : {};
+    return errors[fieldName]
+      ? {
+          error: true,
+          helperText: errors[fieldName],
+        }
+      : {};
   };
 
   return (
@@ -706,13 +748,15 @@ const EditContent = () => {
               <ValidationTextField
                 {...params}
                 label={
-                  <RequiredLabel sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                  <RequiredLabel
+                    sx={{ fontSize: 14, fontFamily: roboto.style }}
+                  >
                     Select Content Type
                   </RequiredLabel>
                 }
                 fullWidth
                 sx={{ ...loginTextField }}
-                {...getFieldError('contentType')}
+                {...getFieldError("contentType")}
               />
             )}
             fullWidth
@@ -728,6 +772,18 @@ const EditContent = () => {
             onChange={contentTypeHandler}
             value={content}
             error={Boolean(errors.contentType)}
+            disabled={true}
+            sx={{
+              "& .MuiInputBase-root": {
+                backgroundColor: "#f5f5f5",
+                "& fieldset": {
+                  borderColor: "#e0e0e0",
+                },
+                "& input": {
+                  color: "rgba(0, 0, 0, 0.38)",
+                },
+              },
+            }}
           />
           {showFile && (
             <Box sx={{ width: "100%" }}>
@@ -737,10 +793,14 @@ const EditContent = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  border: errors.contentLink ? `2px solid ${COLORS.ERROR}` : "1px solid #d7d7d7",
+                  border: errors.contentLink
+                    ? `2px solid ${COLORS.ERROR}`
+                    : "1px solid #d7d7d7",
                   p: 1.5,
+                  opacity: loading || isDetailsLoading ? 0.7 : 1,
                 }}
                 onClick={() => inputRef.current.click()}
+                disabled={loading || isDetailsLoading}
               >
                 <Typography
                   sx={{
@@ -757,6 +817,7 @@ const EditContent = () => {
                   style={{ display: "none" }}
                   ref={inputRef}
                   onChange={handleFileChange}
+                  disabled={loading || isDetailsLoading}
                 />
                 <AttachFile
                   htmlColor={errors.contentLink ? COLORS.ERROR : COLORS.BLACK}
@@ -781,7 +842,8 @@ const EditContent = () => {
               onChange={inputHandler}
               id="contentLink"
               value={state.contentLink}
-              {...getFieldError('contentLink')}
+              {...getFieldError("contentLink")}
+              disabled={loading || isDetailsLoading}
             />
           )}
 
@@ -798,7 +860,8 @@ const EditContent = () => {
             onChange={inputHandler}
             value={state.description}
             focused={Boolean(state.description)}
-            {...getFieldError('description')}
+            {...getFieldError("description")}
+            disabled={loading || isDetailsLoading}
           />
 
           <MetaDataAutocomplete
@@ -810,13 +873,14 @@ const EditContent = () => {
             helperText={errors.career}
             colors={{ bg: COLORS.PENDING, text: COLORS.PENDING_TEXT }}
             required
+            disabled={loading || isDetailsLoading}
             customStyles={{
-              '& .MuiOutlinedInput-root': {
-                '&.Mui-focused fieldset': {
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
                   borderColor: errors.career ? COLORS.ERROR : COLORS.PRIMARY,
                   borderWidth: 2,
                 },
-                '&:hover fieldset': {
+                "&:hover fieldset": {
                   borderColor: errors.career ? COLORS.ERROR : COLORS.PRIMARY,
                 },
               },
@@ -832,13 +896,14 @@ const EditContent = () => {
             helperText={errors.industry}
             colors={{ bg: COLORS.DONE, text: COLORS.DONE_TEXT }}
             required
+            disabled={loading || isDetailsLoading}
             customStyles={{
-              '& .MuiOutlinedInput-root': {
-                '&.Mui-focused fieldset': {
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
                   borderColor: errors.industry ? COLORS.ERROR : COLORS.PRIMARY,
                   borderWidth: 2,
                 },
-                '&:hover fieldset': {
+                "&:hover fieldset": {
                   borderColor: errors.industry ? COLORS.ERROR : COLORS.PRIMARY,
                 },
               },
@@ -854,13 +919,14 @@ const EditContent = () => {
             helperText={errors.strengths}
             colors={{ bg: COLORS.SIGNED_UP, text: COLORS.SIGNED_UP_TEXT }}
             required
+            disabled={loading || isDetailsLoading}
             customStyles={{
-              '& .MuiOutlinedInput-root': {
-                '&.Mui-focused fieldset': {
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
                   borderColor: errors.strengths ? COLORS.ERROR : COLORS.PRIMARY,
                   borderWidth: 2,
                 },
-                '&:hover fieldset': {
+                "&:hover fieldset": {
                   borderColor: errors.strengths ? COLORS.ERROR : COLORS.PRIMARY,
                 },
               },
@@ -876,14 +942,19 @@ const EditContent = () => {
             helperText={errors.softSkills}
             colors={{ bg: COLORS.PURPLE, text: COLORS.PURPLE_TEXT }}
             required
+            disabled={loading || isDetailsLoading}
             customStyles={{
-              '& .MuiOutlinedInput-root': {
-                '&.Mui-focused fieldset': {
-                  borderColor: errors.softSkills ? COLORS.ERROR : COLORS.PRIMARY,
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor: errors.softSkills
+                    ? COLORS.ERROR
+                    : COLORS.PRIMARY,
                   borderWidth: 2,
                 },
-                '&:hover fieldset': {
-                  borderColor: errors.softSkills ? COLORS.ERROR : COLORS.PRIMARY,
+                "&:hover fieldset": {
+                  borderColor: errors.softSkills
+                    ? COLORS.ERROR
+                    : COLORS.PRIMARY,
                 },
               },
             }}
@@ -900,7 +971,8 @@ const EditContent = () => {
             id="contentName"
             onChange={inputHandler}
             value={state.contentName}
-            {...getFieldError('contentName')}
+            {...getFieldError("contentName")}
+            disabled={loading || isDetailsLoading}
           />
 
           {!isQuizEnabled && (
@@ -918,8 +990,10 @@ const EditContent = () => {
                 "&:hover": {
                   backgroundColor: COLORS.TRANSPARENT,
                 },
+                opacity: loading || isDetailsLoading ? 0.7 : 1,
               }}
               onClick={() => addQuiz(id)}
+              disabled={loading || isDetailsLoading}
             >
               Add Quiz
             </Button>
@@ -931,12 +1005,14 @@ const EditContent = () => {
                 <ValidationTextField
                   {...params}
                   label={
-                    <RequiredLabel sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                    <RequiredLabel
+                      sx={{ fontSize: 14, fontFamily: roboto.style }}
+                    >
                       Select Quiz Type
                     </RequiredLabel>
                   }
                   sx={{ ...loginTextField, mt: 1 }}
-                  {...getFieldError('quizType')}
+                  {...getFieldError("quizType")}
                   fullWidth
                 />
               )}
@@ -953,6 +1029,18 @@ const EditContent = () => {
               value={quizType}
               fullWidth
               error={Boolean(errors.quizType)}
+              disabled={true}
+              sx={{
+                "& .MuiInputBase-root": {
+                  backgroundColor: "#f5f5f5",
+                  "& fieldset": {
+                    borderColor: "#e0e0e0",
+                  },
+                  "& input": {
+                    color: "rgba(0, 0, 0, 0.38)",
+                  },
+                },
+              }}
             />
           )}
 
@@ -960,7 +1048,7 @@ const EditContent = () => {
             <ObjectiveQuiz
               questions={questions}
               setQuestions={setQuestions}
-              canEdit={isQuizEnabled}
+              canEdit={isQuizEnabled && !loading && !isDetailsLoading}
               getDetails={getContentDetails}
             />
           )}
@@ -970,7 +1058,7 @@ const EditContent = () => {
               <SubjectiveQuiz
                 subjectiveHandler={subjectiveHandler}
                 state={sia}
-                canEdit={isQuizEnabled}
+                canEdit={isQuizEnabled && !loading && !isDetailsLoading}
                 getDetails={getContentDetails}
               />
             </Box>
@@ -990,10 +1078,15 @@ const EditContent = () => {
               },
             }}
             type="submit"
-            disabled={loading}
+            disabled={loading || isDetailsLoading}
           >
             {loading ? (
-              <Loading type="bars" color={COLORS.BLACK} width={20} height={20} />
+              <Loading
+                type="bars"
+                color={COLORS.BLACK}
+                width={20}
+                height={20}
+              />
             ) : (
               "Save"
             )}
