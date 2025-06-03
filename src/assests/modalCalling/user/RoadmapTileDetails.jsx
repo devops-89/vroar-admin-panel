@@ -1,6 +1,6 @@
 import userController from "@/api/user";
 import { hideModal } from "@/redux/reducers/modal";
-import { COLORS, USER_ROADMAP_REVIEW_STATUS } from "@/utils/enum";
+import { COLORS, QUIZ_TYPE, USER_ROADMAP_REVIEW_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { isValidURL } from "@/utils/regex";
 import { Close, ExpandLess, ExpandMore } from "@mui/icons-material";
@@ -36,6 +36,7 @@ const RoadmapTileDetails = ({ value }) => {
     userController
       .getStudentResponse(body)
       .then((res) => {
+        console.log("Quiz Response:", res.data.data);
         const response = res.data.data;
         setQuizResults(response);
         setLoading(false);
@@ -99,12 +100,7 @@ const RoadmapTileDetails = ({ value }) => {
   const renderDetails = (items) => (
     <Stack spacing={2}>
       {items.map((val, index) => (
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          spacing={5}
-          key={index}
-        >
+        <Stack direction={"row"} alignItems={"center"} spacing={5} key={index}>
           <Typography
             sx={{
               fontSize: 16,
@@ -124,9 +120,7 @@ const RoadmapTileDetails = ({ value }) => {
               cursor: isValidURL(val?.value) ? "pointer" : "default",
             }}
             onClick={
-              isValidURL(val?.value)
-                ? () => openPdf(val.value)
-                : undefined
+              isValidURL(val?.value) ? () => openPdf(val.value) : undefined
             }
           >
             {val?.value}
@@ -165,7 +159,7 @@ const RoadmapTileDetails = ({ value }) => {
         <Box sx={{ mt: 3 }}>
           <Stack spacing={3}>
             {renderDetails(details)}
-            
+
             {assignmentDetails.length > 0 && (
               <>
                 <Typography
@@ -194,45 +188,136 @@ const RoadmapTileDetails = ({ value }) => {
                 >
                   Quiz Results
                 </Typography>
-                {quizResults?.quizResult?.map((val, index) => (
+                {quizResults?.quizResult?.map((question, index) => (
                   <Accordion key={index}>
                     <AccordionSummary expandIcon={<ExpandMore />}>
-                      <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                        {index + 1}. {val.questionText}
+                      <Typography
+                        sx={{ fontSize: 14, fontFamily: roboto.style }}
+                      >
+                        {index + 1}. {question.questionText}
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      {val.selectedOptions.map((option, index) => (
-                        <Stack spacing={2} sx={{ mb: 1 }} key={index}>
-                          <Box
-                            sx={{
-                              border: option.isCorrect
-                                ? "1px solid green"
-                                : option.isSelected
-                                ? `1px solid ${COLORS.DANGER}`
-                                : "1px solid #d7d7d7",
-                              p: 2,
-                              backgroundColor: option.isCorrect
-                                ? COLORS.DONE
-                                : option.isSelected
-                                ? COLORS.DANGER_BOX
-                                : COLORS.TRANSPARENT,
-                              borderRadius: 4,
-                              color: option.isCorrect
-                                ? COLORS.DONE_TEXT
-                                : option.isSelected
-                                ? COLORS.DANGER
-                                : "#000",
-                            }}
-                          >
+                      <Stack spacing={2}>
+                        {question.questionType === QUIZ_TYPE.SUBJECTIVE_QUIZ ? (
+                          <>
                             <Typography
-                              sx={{ fontSize: 14, fontFamily: roboto.style }}
+                              sx={{
+                                fontSize: 14,
+                                fontFamily: roboto.style,
+                                fontWeight: 500,
+                              }}
                             >
-                              {option.optionText}
+                              Answer:
                             </Typography>
-                          </Box>
-                        </Stack>
-                      ))}
+                            <Box
+                              sx={{
+                                border: "1px solid #d7d7d7",
+                                p: 2,
+                                borderRadius: 4,
+                              }}
+                            >
+                              <Typography
+                                sx={{ fontSize: 14, fontFamily: roboto.style }}
+                              >
+                                {question.answerText || "--"}
+                              </Typography>
+                            </Box>
+                          </>
+                        ) : (
+                          <>
+                            <Typography
+                              sx={{
+                                fontSize: 14,
+                                fontFamily: roboto.style,
+                                fontWeight: 500,
+                              }}
+                            >
+                              Selected Answer:
+                            </Typography>
+                            {question.selectedOptions?.map(
+                              (option, optIndex) => (
+                                <Stack
+                                  spacing={2}
+                                  sx={{ mb: 1 }}
+                                  key={optIndex}
+                                >
+                                  <Box
+                                    sx={{
+                                      border: option.isCorrect
+                                        ? "1px solid green"
+                                        : option.isSelected
+                                        ? `1px solid ${COLORS.DANGER}`
+                                        : "1px solid #d7d7d7",
+                                      p: 2,
+                                      backgroundColor: option.isCorrect
+                                        ? COLORS.DONE
+                                        : option.isSelected
+                                        ? COLORS.DANGER_BOX
+                                        : COLORS.TRANSPARENT,
+                                      borderRadius: 4,
+                                      color: option.isCorrect
+                                        ? COLORS.DONE_TEXT
+                                        : option.isSelected
+                                        ? COLORS.DANGER
+                                        : "#000",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        fontSize: 14,
+                                        fontFamily: roboto.style,
+                                      }}
+                                    >
+                                      {option.optionText}
+                                    </Typography>
+                                  </Box>
+                                </Stack>
+                              )
+                            )}
+                            <Typography
+                              sx={{
+                                fontSize: 14,
+                                fontFamily: roboto.style,
+                                fontWeight: 500,
+                                mt: 2,
+                              }}
+                            >
+                              Correct Answer:
+                            </Typography>
+                            {question.selectedOptions?.map(
+                              (option, optIndex) => (
+                                <Stack
+                                  spacing={2}
+                                  sx={{ mb: 1 }}
+                                  key={optIndex}
+                                >
+                                  {option.isCorrect && (
+                                    <Box
+                                      sx={{
+                                        border: "1px solid green",
+                                        p: 2,
+                                        backgroundColor: COLORS.DONE,
+                                        borderRadius: 4,
+                                        color: COLORS.DONE_TEXT,
+                                      }}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontSize: 14,
+                                          fontFamily: roboto.style,
+                                        }}
+                                      >
+                                        {option.optionText}
+                                      </Typography>
+                                    </Box>
+                                  )}
+                                </Stack>
+                              )
+                            )}
+                          </>
+                        )}
+                      </Stack>
                     </AccordionDetails>
                   </Accordion>
                 ))}
