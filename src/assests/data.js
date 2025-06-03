@@ -594,4 +594,22 @@ export const data = {
       date: "10 Jan 2025",
     },
   ],
+
+  internshipApplicationHeader: [
+    {
+      label: "Internship Title",
+    },
+    {
+      label: "Company Name",
+    },
+    {
+      label: "Applied On",
+    },
+    {
+      label: "duration",
+    },
+    {
+      label: "Action",
+    },
+  ],
 };

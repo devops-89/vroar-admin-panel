@@ -24,6 +24,8 @@ import Loading from "react-loading";
 const AddMetaData = ({ getMetaData, metaDataBody }) => {
   const dispatch = useDispatch();
 
+  console.log("getmetadata",metaDataBody)
+
   const closeModal = () => {
     dispatch(hideModal());
   };
