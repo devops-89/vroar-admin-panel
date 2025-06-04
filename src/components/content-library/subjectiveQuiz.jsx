@@ -1,10 +1,12 @@
 import EditQuizQuestion from "@/assests/modalCalling/metaData/EditQuizQuestion";
 import { showModal } from "@/redux/reducers/modal";
+import { COLORS } from "@/utils/enum";
 import { loginTextField } from "@/utils/styles";
 import { IconButton, Stack, TextField } from "@mui/material";
 import React from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
+// import { COLORS } from "@/utils/colors";
 
 const SubjectiveQuiz = ({
   subjectiveHandler,
@@ -28,7 +30,15 @@ const SubjectiveQuiz = ({
         {canEdit ? (
           <Stack direction={"row"} alignItems={"center"} spacing={2}>
             <TextField
-              sx={{ ...loginTextField }}
+              sx={{
+                ...loginTextField,
+                "& .MuiOutlinedInput-root.Mui-error": {
+                  borderColor: COLORS.ERROR,
+                  "&:hover": {
+                    borderColor: COLORS.ERROR,
+                  },
+                },
+              }}
               fullWidth
               label="Enter Question ?"
               onChange={subjectiveHandler}
@@ -48,7 +58,15 @@ const SubjectiveQuiz = ({
           </Stack>
         ) : (
           <TextField
-            sx={{ ...loginTextField }}
+            sx={{
+              ...loginTextField,
+              "& .MuiOutlinedInput-root.Mui-error": {
+                borderColor: COLORS.ERROR,
+                "&:hover": {
+                  borderColor: COLORS.ERROR,
+                },
+              },
+            }}
             fullWidth
             label="Enter Question ?"
             onChange={subjectiveHandler}

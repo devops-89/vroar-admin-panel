@@ -313,10 +313,11 @@ export const metaDataController = {
     }
   },
   deleteRoadmapTile: async (data) => {
+    console.log("data", data);
     try {
       let result = await contentSecuredApi.contentSecuredApi.delete(
         "api/roadmapJourney/deleteTile",
-        data
+        { data: data }
       );
       return result;
     } catch (error) {
@@ -328,6 +329,27 @@ export const metaDataController = {
       let result = await contentSecuredApi.contentSecuredApi.post(
         "api/quiz/addQuestion",
         data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getInterestedApplication: async (internshipId) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.get(
+        `api/internship/getUserInterestedInternships/${internshipId}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getInternshipDetails: async (internshipId) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.get(
+        `api/internship/getInternshipById/${internshipId}`
       );
       return result;
     } catch (error) {

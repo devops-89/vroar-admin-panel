@@ -20,12 +20,21 @@ import { useSelector } from "react-redux";
 const LinkedProfile = () => {
   const user = useSelector((state) => state.USER);
 
-  const phoneNumber = `${user?.guardian?.countryCode} ${user?.guardian?.phoneNo}`;
-  const dob = moment.unix(user?.guardian?.birthDate);
+  const phoneNumber = user?.guardian?.countryCode && user?.guardian?.phoneNo 
+    ? `${user.guardian.countryCode} ${user.guardian.phoneNo}`
+    : "--";
 
-  const gender = { label: user?.guardian?.gender };
+  const dob = user?.guardian?.birthDate 
+    ? moment.unix(user.guardian.birthDate)
+    : "--";
 
-  const relation = { label: user?.guardian?.relationWithStudent };
+  const gender = user?.guardian?.gender 
+    ? { label: user.guardian.gender }
+    : { label: "--" };
+
+  const relation = user?.guardian?.relationWithStudent 
+    ? { label: user.guardian.relationWithStudent }
+    : { label: "--" };
 
   return (
     <div>
@@ -84,7 +93,7 @@ const LinkedProfile = () => {
               <TextField
                 sx={{ ...loginTextField }}
                 fullWidth
-                value={user?.guardian?.email}
+                value={user?.guardian?.email ?? "--"}
                 slotProps={{
                   input: {
                     readOnly: true,
@@ -129,14 +138,25 @@ const LinkedProfile = () => {
                   Date Of Birth
                 </Typography>
               </InputLabel>
-              <LocalizationProvider dateAdapter={AdapterMoment}>
-                <DatePicker
-                  sx={{ width: "100%", ...loginTextField }}
-                  value={dob}
-                  format="DD-MM-YYYY"
-                  readOnly
+              {user?.guardian?.birthDate ? (
+                <LocalizationProvider dateAdapter={AdapterMoment}>
+                  <DatePicker
+                    sx={{ width: "100%", ...loginTextField }}
+                    value={moment.unix(user.guardian.birthDate)}
+                    format="DD-MM-YYYY"
+                    readOnly
+                  />
+                </LocalizationProvider>
+              ) : (
+                <TextField
+                  sx={{ ...loginTextField }}
+                  fullWidth
+                  value="--"
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
-              </LocalizationProvider>
+              )}
             </Grid2>
             <Grid2 size={6}>
               <InputLabel>

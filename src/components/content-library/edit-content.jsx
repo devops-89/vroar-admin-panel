@@ -12,11 +12,12 @@ import {
   CircularProgress,
   Stack
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
 import { metaDataController } from "@/api/metaDataController";
 import { setContentDetails } from "@/redux/reducers/contentDetails";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import ToastBar from "../toastBar";
@@ -52,6 +53,43 @@ const EditContent = () => {
   const inputRef = useRef();
   const router = useRouter();
   const dispatch = useDispatch();
+  const [isQuizEnabled, setIsQuizEnabled] = useState(false);
+  const [contentData, setContentData] = useState(null);
+  // const [isDetailsLoading, setIsDetailsLoading] = useState(true);
+  const [isFormDisabled, setIsFormDisabled] = useState(true);
+
+  const initialValues = {
+    contentType: "",
+    career: [],
+    industry: [],
+    strengths: [],
+    softSkills: [],
+    contentName: "",
+    isQuizEnabled: false,
+    contentLink: "",
+    quizType: "",
+    quizId: "",
+  };
+
+  const [questions, setQuestions] = useState([
+    {
+      id: 1,
+      question: "",
+      options: [
+        { id: 1, optionText: "", isCorrect: false },
+        { id: 2, optionText: "", isCorrect: false },
+        { id: 3, optionText: "", isCorrect: false },
+        { id: 4, optionText: "", isCorrect: false },
+      ],
+    },
+  ]);
+
+  const [sia, setSia] = useState({
+    question: "",
+    subText: "",
+  });
+
+
   const id = router.query.slug;
 
   const initializeFormData = (response) => {
@@ -134,6 +172,20 @@ const EditContent = () => {
       getContentDetails(id);
     }
   }, [id]);
+
+  useEffect(() => {
+    // Set form to disabled by default
+    setIsFormDisabled(true);
+  }, []);
+
+  const getFieldError = (fieldName) => {
+    return errors[fieldName]
+      ? {
+          error: true,
+          helperText: errors[fieldName],
+        }
+      : {};
+  };
 
   return (
     <Box mt={3}>

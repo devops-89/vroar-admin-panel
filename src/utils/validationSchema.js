@@ -68,22 +68,36 @@ export const AddAdListValidationSchema = Yup.object({
   eventName: Yup.string()
     .required("Please Enter Event Name")
     .trim()
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
     .min(2, "Event name is too short!")
     .max(50, "Event name is too long!"),
-  speakerName: Yup.string().required("Please Enter Speaker Name"),
+  speakerName: Yup.string()
+    .required("Please Enter Speaker Name")
+    .trim()
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
+    .min(2, "Speaker name is too short!")
+    .max(50, "Speaker name is too long!"),
   eventDescription: Yup.string()
     .max(1000, "Event Description is too Long!")
-    .required("Please Enter Event Description"),
+    .required("Please Enter Event Description")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   speakerSummary: Yup.string()
     .max(1000, "Speaker Summary is too Long!")
-    .required("Please Enter Speaker Summary"),
+    .required("Please Enter Speaker Summary")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   sessionDetails: Yup.string()
     .max(1000, "Session Details is too Long!")
-    .required("Please Enter Session Details"),
-  sessionStartDate: Yup.string().required("Please Enter Session Start Date"),
-  sessionStartTime: Yup.string().required("Please Enter Session Start Time"),
+    .required("Please Enter Session Details")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
+  sessionStartDate: Yup.string()
+    .required("Please Enter Session Start Date")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
+  sessionStartTime: Yup.string()
+    .required("Please Enter Session Start Time")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   sessionEndTime: Yup.string()
     .required("Please Enter Session End Time")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
     .test(
       "is-different-time",
       "End time must be different from start time",
@@ -92,11 +106,26 @@ export const AddAdListValidationSchema = Yup.object({
         return value && sessionStartTime && value !== sessionStartTime;
       }
     ),
-  sessionEndDate: Yup.string().required("Please Enter Session End Date"),
+  sessionEndDate: Yup.string()
+    .required("Please Enter Session End Date")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   zoomLink: Yup.string()
     .required("Please Enter Zoom Link")
-    .url("Please Enter Valid Url"),
-  eventType: Yup.string().required("Please Select Event Type"),
+    .url("Please Enter Valid Url")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
+    .test("is-zoom-link", "Please enter a valid Zoom meeting link", (value) => {
+      if (!value) return false;
+      const zoomPatterns = [
+        /^https:\/\/zoom\.us\/j\/\d+/,
+        /^https:\/\/us\d+\.web\.zoom\.us\/j\/\d+/,
+        /^https:\/\/zoom\.us\/s\/\d+/,
+        /^https:\/\/us\d+\.web\.zoom\.us\/s\/\d+/,
+      ];
+      return zoomPatterns.some((pattern) => pattern.test(value));
+    }),
+  eventType: Yup.string()
+    .required("Please Select Event Type")
+    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   coins: Yup.number()
     .nullable()
     .when("eventType", {
@@ -135,7 +164,7 @@ export const editAdListValidataitonSchema = Yup.object({
       "Start date must be today or in the future",
       function (value) {
         if (!value) return false;
-        const today = moment().startOf("day").unix(); 
+        const today = moment().startOf("day").unix();
         return value >= today;
       }
     ),
@@ -341,6 +370,8 @@ export const pointsValidation = Yup.object().shape({
     .typeError("Coins must be a valid number")
     .integer("Coins must be a whole number")
     .positive("Coins must be a positive number")
+    .min(1, "Coins must be at least 1")
+    .max(999, "Coins cannot exceed 999")
     .required("Please Enter Coins"),
 
   reason: Yup.string()
@@ -394,35 +425,29 @@ export const quizValidationSchema = Yup.object().shape({
     .of(
       Yup.object().shape({
         question: Yup.string()
-          .required("Question is required")
+          .required("Question cannot be empty")
           .test(
             "not-empty",
-            "Question  cannot be only whitespace",
+            "Question cannot be only whitespace",
             (value) => value && value.trim().length > 0
           )
-          .matches(
-            /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
-            "Question cannot contain special characters except for basic punctuation"
-          )
+          .matches(/^\S.*\S$/, "Question cannot start or end with spaces")
           .min(2, "Question should be more than 2 characters")
-          .max(255, "Question is Too Long!"),
+          .max(255, "Question is too long!"),
         options: Yup.array()
           .of(
             Yup.object().shape({
               optionText: Yup.string()
-                .required("Option text is required")
+                .required("Option text cannot be empty")
                 .test(
                   "not-empty",
                   "Option text cannot be only whitespace",
                   (value) => value && value.trim().length > 0
                 )
-                .matches(
-                  /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
-                  "option cannot contain special characters except for basic punctuation"
-                )
-                .min(2, "option should be more than 2 characters")
-                .max(255, "option is Too Long!"),
-              isCorrect: Yup.boolean().required("isCorrect is required"),
+                .matches(/^\S.*\S$/, "Option text cannot start or end with spaces")
+                .min(2, "Option text should be more than 2 characters")
+                .max(255, "Option text is too long!"),
+              isCorrect: Yup.boolean().required("Please select if this option is correct or not"),
             })
           )
           .min(2, "At least two options are required")
@@ -430,6 +455,15 @@ export const quizValidationSchema = Yup.object().shape({
             "at-least-one-correct",
             "At least one option must be marked as correct",
             (options) => options?.some((option) => option.isCorrect === true)
+          )
+          .test(
+            "no-duplicate-options",
+            "Duplicate options are not allowed",
+            (options) => {
+              if (!options) return true;
+              const optionTexts = options.map(opt => opt.optionText.trim().toLowerCase());
+              return new Set(optionTexts).size === optionTexts.length;
+            }
           ),
       })
     )

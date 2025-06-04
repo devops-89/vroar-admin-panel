@@ -53,8 +53,7 @@ const EditRoadmapTiles = () => {
       .getRoadmapDetails(id)
       .then((res) => {
         const response = res.data.data;
-        // console.log("test", response);
-        // console.log("test[0]", response.metadataTags[0].type);
+
         setRoadmapData(response);
         if (response) {
           setState({
@@ -101,9 +100,6 @@ const EditRoadmapTiles = () => {
       });
   };
 
-  //   console.log("")
-
-  
 
   const metaTagTypeHandler = (e, newValue) => {
     setSelectedMetaDataType(newValue);
@@ -223,6 +219,9 @@ const EditRoadmapTiles = () => {
           id="roadmapName"
           onChange={inputHandler}
           value={state.roadmapName}
+          InputProps={{
+            readOnly: true,
+          }}
         />
         <Autocomplete
           renderInput={(params) => (
@@ -248,6 +247,7 @@ const EditRoadmapTiles = () => {
           fullWidth
           onChange={metaTagTypeHandler}
           value={selectedMetaDataType}
+          disabled
         />
         <Autocomplete
           renderInput={(params) => (
@@ -277,6 +277,7 @@ const EditRoadmapTiles = () => {
           value={selectedTags}
           multiple
           filterSelectedOptions
+          disabled
           renderTags={(value, getTagProps) =>
             value.map((option, index) => {
               const { key, ...tagProps } = getTagProps({ index });
@@ -291,7 +292,7 @@ const EditRoadmapTiles = () => {
                   }}
                   key={key}
                   {...tagProps}
-                  removable={true}
+                  removable={false}
                 />
               );
             })
