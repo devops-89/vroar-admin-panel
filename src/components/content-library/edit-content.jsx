@@ -1,18 +1,6 @@
 import { setToast } from "@/redux/reducers/toast";
-import {
-  COLORS,
-  CONTENT_TYPE,
-  ToastStatus,
-  METADATA_TYPE
-} from "@/utils/enum";
-import {
-  Backdrop,
-  Box,
-  Button,
-  CircularProgress,
-  Stack
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { COLORS, CONTENT_TYPE, ToastStatus, METADATA_TYPE } from "@/utils/enum";
+import { Backdrop, Box, Button, CircularProgress, Stack } from "@mui/material";
 
 import { metaDataController } from "@/api/metaDataController";
 import { setContentDetails } from "@/redux/reducers/contentDetails";
@@ -47,7 +35,7 @@ const EditContent = () => {
     handleFileChange,
     handleMetadataChange,
     setState,
-    setIsDetailsLoading
+    setIsDetailsLoading,
   } = useContentForm();
 
   const inputRef = useRef();
@@ -89,7 +77,6 @@ const EditContent = () => {
     subText: "",
   });
 
-
   const id = router.query.slug;
 
   const initializeFormData = (response) => {
@@ -113,19 +100,19 @@ const EditContent = () => {
       contentLink: response.contentLink,
       career: career.map((val) => ({
         id: val.id,
-        name: val.name
+        name: val.name,
       })),
       industry: industry.map((val) => ({
         id: val.id,
-        name: val.name
+        name: val.name,
       })),
       strengths: strengths.map((val) => ({
         id: val.id,
-        name: val.name
+        name: val.name,
       })),
       softSkills: softSkills.map((val) => ({
         id: val.id,
-        name: val.name
+        name: val.name,
       })),
       file: {
         fileName: response.contentFileName,
@@ -192,10 +179,10 @@ const EditContent = () => {
       <Backdrop open={isDetailsLoading} sx={{ zIndex: 998 }}>
         <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Backdrop>
-      
+
       <form onSubmit={handleSubmit}>
         <Stack spacing={2} width="100%">
-          <ContentTypeSelect 
+          <ContentTypeSelect
             value={state.contentType}
             onChange={handleInputChange}
             error={errors.contentType}
@@ -244,7 +231,12 @@ const EditContent = () => {
             disabled={loading || isDetailsLoading}
           >
             {loading ? (
-              <Loading type="bars" color={COLORS.BLACK} width={20} height={20} />
+              <Loading
+                type="bars"
+                color={COLORS.BLACK}
+                width={20}
+                height={20}
+              />
             ) : (
               "Save"
             )}
