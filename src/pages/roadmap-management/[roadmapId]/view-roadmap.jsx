@@ -41,11 +41,46 @@ const ContentViewer = ({ content, onClose }) => {
     return null;
   }
 
+  // Handle external article links by opening in new tab
+  if (content.contentType === CONTENT_TYPE.JOURNAL_LINK) {
+    window.open(content.contentLink, '_blank', 'noopener,noreferrer');
+    onClose();
+    return null;
+  }
+
   const getEmbedUrl = (url) => {
     if (content.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-      // Convert YouTube URL to embed URL
-      const videoId = url.split('v=')[1]?.split('&')[0];
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+      try {
+        // Handle different YouTube URL formats
+        let videoId = '';
+        
+        // Handle youtu.be format
+        if (url.includes('youtu.be')) {
+          videoId = url.split('youtu.be/')[1]?.split('?')[0];
+        } 
+        // Handle youtube.com format
+        else if (url.includes('youtube.com')) {
+          // Try to get ID from v parameter
+          const urlParams = new URLSearchParams(url.split('?')[1]);
+          videoId = urlParams.get('v');
+          
+          // If no v parameter, try to get from /embed/ or /v/ format
+          if (!videoId) {
+            const matches = url.match(/(?:embed\/|v\/|watch\?v=|watch\?.+&v=)([^&?/]+)/);
+            videoId = matches?.[1];
+          }
+        }
+
+        // Return embed URL if we found a video ID
+        if (videoId) {
+          return `https://www.youtube.com/embed/${videoId}`;
+        }
+      } catch (error) {
+        console.error('Error parsing YouTube URL:', error);
+      }
+      
+      // Return original URL if parsing fails
+      return url;
     }
     return url;
   };
@@ -68,8 +103,8 @@ const ContentViewer = ({ content, onClose }) => {
         </Stack>
       </DialogTitle>
       <DialogContent>
-        {content.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK || 
-         content.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK ? (
+        {(content.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK || 
+          content.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) && (
           <Box sx={{ position: 'relative', paddingTop: '56.25%', width: '100%' }}>
             <iframe
               style={{
@@ -83,13 +118,7 @@ const ContentViewer = ({ content, onClose }) => {
               src={getEmbedUrl(content.contentLink)}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-            />
-          </Box>
-        ) : (
-          <Box sx={{ height: '80vh', width: '100%' }}>
-            <iframe
-              src={content.contentLink}
-              style={{ width: '100%', height: '100%', border: 'none' }}
+              title="Video Content"
             />
           </Box>
         )}

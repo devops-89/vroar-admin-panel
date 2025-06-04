@@ -79,7 +79,7 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
         roadmapId: roadmapId,
         sequenceNo: sequence,
         tileName: values?.tileName?.trim(),
-        time: values?.time,
+        time: String(values?.time),
         points: values.points,
         description: values.description?.trim(),
         contentLibraryId: values.contentLibraryId,
