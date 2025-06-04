@@ -9,6 +9,7 @@ import {
   Checkbox,
   Button,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import React, { useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -90,9 +91,10 @@ const AddNewQuestion = ({ getDetails }) => {
     return !Object.values(newErrors).some((error) => error);
   }, [question, options]);
   const content = useSelector((state) => state.ContentDetails);
-
+  const [loading, setLoading] = useState(false);
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
+      setLoading(true);
       let body = {
         quizId: content.quiz.id,
         question: question,
@@ -109,6 +111,7 @@ const AddNewQuestion = ({ getDetails }) => {
           );
           dispatch(hideModal());
           getDetails(content.id);
+          setLoading(false);
         })
         .catch((err) => {
           dispatch(
@@ -118,6 +121,7 @@ const AddNewQuestion = ({ getDetails }) => {
               severity: ToastStatus.ERROR,
             })
           );
+          setLoading(false);
         });
     }
   }, [validateForm, question, options, dispatch]);
@@ -210,7 +214,11 @@ const AddNewQuestion = ({ getDetails }) => {
               background: COLORS.LinearGradient,
             }}
           >
-            Submit
+            {loading ? (
+              <CircularProgress size={20} sx={{ color: COLORS.BLACK }} />
+            ) : (
+              "Submit"
+            )}
           </Button>
         </Box>
       </Box>
