@@ -5,6 +5,7 @@ import { setToast } from "@/redux/reducers/toast";
 import { ToastStatus } from "@/utils/enum";
 import { isValidURL } from "@/utils/regex";
 import { validationSchema } from "../validation";
+import { useRouter } from "next/router";
 
 const initialState = {
   contentType: "",
@@ -27,6 +28,7 @@ export const useContentForm = () => {
   const [loading, setLoading] = useState(false);
   const [isDetailsLoading, setIsDetailsLoading] = useState(true);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -83,9 +85,13 @@ export const useContentForm = () => {
     try {
       const formData = {
         ...state,
+        contentType: state.contentType?.label || state.contentType,
         contentName: state.contentName?.trim(),
         description: state.description?.trim(),
-        contentLink: state.contentLink?.trim(),
+        contentLink:
+          typeof state.contentLink === "string"
+            ? state.contentLink.trim()
+            : state.contentLink,
         metadataTags: [
           ...state.career,
           ...state.industry,
@@ -116,25 +122,35 @@ export const useContentForm = () => {
       let contentLink = state.contentLink;
       if (!isValidURL(contentLink)) {
         const uploadResponse = await metaDataController.getUploadContentFile({
-          type: state.contentType,
+          type: state.contentType?.label || state.contentType,
           contentFile: state.contentLink,
         });
         contentLink = uploadResponse.data.data.filePath;
       }
 
-      await metaDataController.editContent({
+      const id = router.query.slug || state.id;
+
+      const fileTypes = ["ARTICLE_PDF", "ARTICLE_WRITEUP", "ASSIGNMENT"];
+      const contentTypeString = state.contentType?.label || state.contentType;
+      const payload = {
+        id: id,
         name: state.contentName.trim(),
-        contentType: state.contentType,
+        contentType: contentTypeString,
         contentLink,
         description: state.description.trim(),
         metadataTags: [
-          ...state.career,
-          ...state.industry,
-          ...state.strengths,
-          ...state.softSkills,
+          ...state.career.map((item) => item.id || item),
+          ...state.industry.map((item) => item.id || item),
+          ...state.strengths.map((item) => item.id || item),
+          ...state.softSkills.map((item) => item.id || item),
         ],
-        contentFileName: state.file?.fileName,
-      });
+      };
+      if (fileTypes.includes(contentTypeString)) {
+        payload.contentFileName = state.file?.fileName || "";
+      }
+
+      await metaDataController.editContent(payload);
+      router.push("/roadmap-management/content-library");
 
       dispatch(
         setToast({
@@ -168,4 +184,4 @@ export const useContentForm = () => {
     setState,
     setIsDetailsLoading,
   };
-}; 
+};

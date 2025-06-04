@@ -1,8 +1,7 @@
 import { COLORS, METADATA_TYPE } from "@/utils/enum";
 import { loginTextField } from "@/utils/styles";
-import { Stack } from "@mui/material";
-import { ValidationTextField } from "../styled-components";
 import MetaDataAutocomplete from "../metadataAutocomplete";
+import { ValidationTextField } from "../styled-components";
 
 export const ContentForm = ({
   state,

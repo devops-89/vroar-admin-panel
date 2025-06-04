@@ -1,6 +1,14 @@
 import { setToast } from "@/redux/reducers/toast";
 import { COLORS, CONTENT_TYPE, ToastStatus, METADATA_TYPE } from "@/utils/enum";
-import { Backdrop, Box, Button, CircularProgress, Stack } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 import { metaDataController } from "@/api/metaDataController";
 import { setContentDetails } from "@/redux/reducers/contentDetails";
@@ -14,6 +22,7 @@ import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
 import { FileUpload } from "./form-components/FileUpload";
 import { QuizSection } from "./form-components/QuizSection";
 import { useContentForm } from "./hooks/useContentForm";
+import { loginTextField } from "@/utils/styles";
 
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
@@ -174,6 +183,8 @@ const EditContent = () => {
       : {};
   };
 
+  // console.log("state.contentType", state.contentType, CONTENT_TYPE);
+
   return (
     <Box mt={3}>
       <Backdrop open={isDetailsLoading} sx={{ zIndex: 998 }}>
@@ -189,7 +200,23 @@ const EditContent = () => {
             disabled={true}
           />
 
-          {contentTypeConfig[state.contentType]?.showFile && (
+          
+
+          {contentTypeConfig[state.contentType.label]?.showLink && (
+            <TextField
+              fullWidth
+              value={state.contentLink}
+              onChange={handleInputChange}
+              disabled={loading || isDetailsLoading}
+              error={errors.contentLink}
+              helperText={errors.contentLink}
+              label="Content Link"
+              id="contentLink"
+              sx={{ ...loginTextField }}
+            />
+          )}
+
+          {contentTypeConfig[state.contentType.label]?.showFile && (
             <FileUpload
               inputRef={inputRef}
               file={state.file}
