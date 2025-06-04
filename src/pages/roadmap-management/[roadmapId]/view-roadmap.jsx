@@ -12,7 +12,11 @@ import {
   Button,
   Card,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
+  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -20,6 +24,79 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
+import { IoClose } from "react-icons/io5";
+
+// ContentViewer component to handle different content types
+const ContentViewer = ({ content, onClose }) => {
+  const dispatch = useDispatch();
+  
+  if (!content) return null;
+
+  // Handle PDF content types using the existing ViewPdf component
+  if (content.contentType === CONTENT_TYPE.ARTICLE_PDF || 
+      content.contentType === CONTENT_TYPE.ARTICLE_WRITEUP || 
+      content.contentType === CONTENT_TYPE.ASSIGNMENT) {
+    dispatch(showModal(<ViewPdf fileUrl={content.contentLink} />));
+    onClose();
+    return null;
+  }
+
+  const getEmbedUrl = (url) => {
+    if (content.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
+      // Convert YouTube URL to embed URL
+      const videoId = url.split('v=')[1]?.split('&')[0];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+    }
+    return url;
+  };
+
+  return (
+    <Dialog 
+      open={true} 
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+    >
+      <DialogTitle>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography sx={{ fontFamily: roboto.style, fontWeight: 500 }}>
+            {content.contentFileName || "Content Preview"}
+          </Typography>
+          <IconButton onClick={onClose}>
+            <IoClose />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+      <DialogContent>
+        {content.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK || 
+         content.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK ? (
+          <Box sx={{ position: 'relative', paddingTop: '56.25%', width: '100%' }}>
+            <iframe
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: 'none'
+              }}
+              src={getEmbedUrl(content.contentLink)}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </Box>
+        ) : (
+          <Box sx={{ height: '80vh', width: '100%' }}>
+            <iframe
+              src={content.contentLink}
+              style={{ width: '100%', height: '100%', border: 'none' }}
+            />
+          </Box>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const ViewRoadmap = () => {
   const router = useRouter();
@@ -27,6 +104,8 @@ const ViewRoadmap = () => {
 
   const [roadmapData, setRoadmapData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedContent, setSelectedContent] = useState(null);
+
   const viewRoadmapDetails = () => {
     metaDataController
       .getRoadmapDetails(roadmapId)
@@ -73,6 +152,10 @@ const ViewRoadmap = () => {
       value: roadmapData?.metadataTags?.map((data) => data.type),
     },
   ];
+
+  const handleContentClick = (content) => {
+    setSelectedContent(content);
+  };
 
   // console.log("roadmapData", roadmapData);
 
@@ -175,32 +258,22 @@ const ViewRoadmap = () => {
                 </Typography>
                 <Stack alignItems={"flex-start"} spacing={4} sx={{ mt: 2 }}>
                   {roadmapData?.roadmapSteps.map((data, index) => {
-                    // console.log("first", data);
                     const newData = [
                       {
                         label: "Name",
                         value: data.name,
                       },
                       {
-                        label: "content Type",
+                        label: "Content Type",
                         value: data.content?.contentType,
                       },
-                      data.content?.contentType === CONTENT_TYPE.ARTICLE_PDF ||
-                      data?.content?.contentType ===
-                        CONTENT_TYPE.ARTICLE_WRITEUP ||
-                      data?.content?.contentType === CONTENT_TYPE.ASSIGNMENT
-                        ? {
-                            label: "Uploaded Pdf",
-                            value: data.content?.contentFileName,
-                            url: data.content?.contentLink,
-                            type: data?.content?.contentType,
-                          }
-                        : {
-                            label: data?.content?.contentType,
-                            value: data.content?.contentFileName,
-                            url: data.content?.contentLink,
-                            type: data?.content?.contentType,
-                          },
+                      {
+                        label: "Content",
+                        value: data.content?.contentFileName || data.content?.contentLink,
+                        url: data.content?.contentLink,
+                        type: data.content?.contentType,
+                        content: data.content,
+                      },
                       {
                         label: "Time Required",
                         value: data.time,
@@ -217,6 +290,7 @@ const ViewRoadmap = () => {
 
                     return (
                       <Stack
+                        key={index}
                         direction={"row"}
                         alignItems={"flex-start"}
                         spacing={20}
@@ -246,8 +320,7 @@ const ViewRoadmap = () => {
                               >
                                 {val.label}
                               </Typography>
-                              {val.type === CONTENT_TYPE.ARTICLE_PDF ||
-                              val.type === CONTENT_TYPE.ASSIGNMENT ? (
+                              {val.content ? (
                                 <Typography
                                   sx={{
                                     fontSize: 14,
@@ -256,13 +329,9 @@ const ViewRoadmap = () => {
                                     textDecoration: "underline",
                                     color: COLORS.DARKBLUE,
                                   }}
-                                  // onClick={() => pdfviewer(val.url)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  component={"a"}
-                                  href={val.url}
+                                  onClick={() => handleContentClick(val.content)}
                                 >
-                                  {val.value}
+                                  {val.value || "View Content"}
                                 </Typography>
                               ) : (
                                 <Typography
@@ -270,10 +339,6 @@ const ViewRoadmap = () => {
                                     fontSize: 14,
                                     fontFamily: roboto.style,
                                   }}
-                                  component={"a"}
-                                  href={val.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
                                 >
                                   {val.value}
                                 </Typography>
@@ -287,6 +352,12 @@ const ViewRoadmap = () => {
                 </Stack>
               </Box>
             </Box>
+            {selectedContent && (
+              <ContentViewer
+                content={selectedContent}
+                onClose={() => setSelectedContent(null)}
+              />
+            )}
           </Card>
         )}
       </Wrapper>
