@@ -331,7 +331,7 @@ const AddRoadmapTile = ({ sequence, getRoadmapDetails }) => {
               }}
               fullWidth
               type="submit"
-              disabled={loading || !formik.isValid}
+              disabled={loading}
             >
               {loading ? (
                 <Loading
