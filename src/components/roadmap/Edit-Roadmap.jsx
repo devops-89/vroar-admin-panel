@@ -304,6 +304,38 @@ const EditRoadmapTiles = () => {
           setTiles={setTiles}
           getRoadmapDetails={getRoadmapDetails}
         />
+
+        {["YOUTUBE_VIDEO_LINK", "JOURNAL_LINK", "NATIVE_VIDEO_LINK"].includes(state.contentType) && (
+          <TextField
+            label={
+              <Typography sx={{ fontFamily: roboto.style }}>
+                {state.contentType === "YOUTUBE_VIDEO_LINK"
+                  ? "YouTube Link"
+                  : "Content Link"}{" "}
+                <span style={{ color: COLORS.ERROR }}>*</span>
+              </Typography>
+            }
+            sx={{
+              ...loginTextField,
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor:
+                    state.touched.contentLink && state.errors.contentLink
+                      ? COLORS.ERROR
+                      : COLORS.PRIMARY,
+                  borderWidth: 2,
+                },
+              },
+            }}
+            id="contentLink"
+            value={state.contentLink}
+            onChange={inputHandler}
+            onBlur={inputHandler}
+            error={state.touched.contentLink && Boolean(state.errors.contentLink)}
+            helperText={state.touched.contentLink && state.errors.contentLink}
+            fullWidth
+          />
+        )}
       </Stack>
       <Divider sx={{ mt: 2 }} />
       <Box sx={{ textAlign: "end" }}>

@@ -59,7 +59,7 @@ const validationSchema = Yup.object().shape({
       "no-leading-trailing-space",
       "Content name cannot start or end with spaces",
       (value) => {
-        if (!value) return true; // Let required validation handle empty values
+        if (!value) return true; 
         return value.trim() === value;
       }
     ),

@@ -2,7 +2,7 @@ import { metaDataController } from "@/api/metaDataController";
 import { getContentList } from "@/assests/apiCalling/metaDataController";
 import { hideModal } from "@/redux/reducers/modal";
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS, ToastStatus } from "@/utils/enum";
+import { COLORS, CONTENT_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { contentType } from "@/utils/genericArray";
 import { loginTextField } from "@/utils/styles";
@@ -26,10 +26,13 @@ import * as Yup from "yup";
 // Enhanced validation schema
 const editRoadmapValidationSchema = Yup.object().shape({
   tileName: Yup.string()
-    .required('Tile name is required')
+    .required("Tile name is required")
     .min(2, "Tile name must be at least 2 characters")
-    .test('no-leading-trailing-spaces', 'Tile name should not contain leading or trailing spaces', 
-      value => value === value?.trim())
+    .test(
+      "no-leading-trailing-spaces",
+      "Tile name should not contain leading or trailing spaces",
+      (value) => value === value?.trim()
+    )
     .test(
       "no-multiple-spaces",
       "Multiple consecutive spaces are not allowed",
@@ -38,32 +41,39 @@ const editRoadmapValidationSchema = Yup.object().shape({
         return !value.includes("  ");
       }
     ),
-  contentType: Yup.string()
-    .required('Content type is required'),
-  contentLibraryId: Yup.string()
-    .required('Content is required'),
+  contentType: Yup.string().required("Content type is required"),
+  contentLibraryId: Yup.string().required("Content is required"),
   time: Yup.number()
-    .required('Time is required')
-    .min(1, 'Time must be at least 1 minute')
-    .max(180, 'Time cannot exceed 180 minutes (3 hours)')
-    .integer('Time must be a whole number')
-    .test('no-leading-trailing-spaces', 'Time should not contain leading or trailing spaces', 
-      value => String(value) === String(value)?.trim())
-    .typeError('Time must be a number'),
+    .required("Time is required")
+    .min(1, "Time must be at least 1 minute")
+    .max(180, "Time cannot exceed 180 minutes (3 hours)")
+    .integer("Time must be a whole number")
+    .test(
+      "no-leading-trailing-spaces",
+      "Time should not contain leading or trailing spaces",
+      (value) => String(value) === String(value)?.trim()
+    )
+    .typeError("Time must be a number"),
   points: Yup.number()
-    .required('Coins are required')
-    .min(1, 'Coins must be at least 1')
-    .max(999, 'Coins cannot exceed 999')
-    .integer('Coins must be a whole number')
-    .test('no-leading-trailing-spaces', 'Coins should not contain leading or trailing spaces', 
-      value => String(value) === String(value)?.trim())
-    .typeError('Coins must be a number'),
+    .required("Coins are required")
+    .min(1, "Coins must be at least 1")
+    .max(999, "Coins cannot exceed 999")
+    .integer("Coins must be a whole number")
+    .test(
+      "no-leading-trailing-spaces",
+      "Coins should not contain leading or trailing spaces",
+      (value) => String(value) === String(value)?.trim()
+    )
+    .typeError("Coins must be a number"),
   description: Yup.string()
-    .required('Description is required')
-    .min(10, 'Description must contain at least 10 characters')
-    .max(500, 'Description must not exceed 500 characters')
-    .test('no-leading-trailing-spaces', 'Description should not contain leading or trailing spaces', 
-      value => value === value?.trim())
+    .required("Description is required")
+    .min(10, "Description must contain at least 10 characters")
+    .max(500, "Description must not exceed 500 characters")
+    .test(
+      "no-leading-trailing-spaces",
+      "Description should not contain leading or trailing spaces",
+      (value) => value === value?.trim()
+    )
     .test(
       "no-multiple-spaces",
       "Multiple consecutive spaces are not allowed",
@@ -72,6 +82,55 @@ const editRoadmapValidationSchema = Yup.object().shape({
         return !value.includes("  ");
       }
     ),
+  contentLink: Yup.string().when("contentType", {
+    is: (type) => type === CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
+    then: () =>
+      Yup.string()
+        .required("YouTube link is required")
+        .test("is-youtube", "Please enter a valid YouTube URL", (value) => {
+          if (!value) return false;
+          const youtubeRegex =
+            /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]{11}$/;
+          return youtubeRegex.test(value.trim());
+        })
+        .test(
+          "no-leading-trailing-spaces",
+          "YouTube link cannot have leading or trailing spaces",
+          (value) => {
+            if (!value) return true;
+            return value.trim() === value;
+          }
+        ),
+    otherwise: () =>
+      Yup.string().when("contentType", {
+        is: (type) =>
+          type === CONTENT_TYPE.JOURNAL_LINK ||
+          type === CONTENT_TYPE.NATIVE_VIDEO_LINK,
+        then: () =>
+          Yup.string()
+            .required("Content link is required")
+            .url("Please enter a valid URL")
+            .test(
+              "not-youtube",
+              "YouTube links are not allowed for this content type",
+              (value) => {
+                if (!value) return true;
+                const youtubeRegex =
+                  /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]{11}$/;
+                return !youtubeRegex.test(value.trim());
+              }
+            )
+            .test(
+              "no-leading-trailing-spaces",
+              "Content link cannot have leading or trailing spaces",
+              (value) => {
+                if (!value) return true;
+                return value.trim() === value;
+              }
+            ),
+        otherwise: () => Yup.string(),
+      }),
+  }),
 });
 
 const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
@@ -88,8 +147,8 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     // Remove multiple consecutive spaces in real-time
-    const processedValue = value.replace(/\s+/g, ' ');
-    
+    const processedValue = value.replace(/\s+/g, " ");
+
     formik.setFieldValue(id, processedValue);
     formik.setFieldTouched(id, true, false);
   };
@@ -168,7 +227,7 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
       formik.setFieldValue("contentType", newValue?.label || "");
       formik.setFieldTouched("contentType", true, false);
       setContent(newValue);
-      
+
       // Then fetch new content list if we have a content type
       if (newValue?.label) {
         setContentLoading(true);
@@ -177,7 +236,7 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
           pageSize: 500,
           contentType: [newValue.label], // Directly use array with label
         };
-        
+
         getContentList({
           body,
           setData: (data) => {
@@ -207,13 +266,13 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
       formik.setFieldValue("points", value?.points || "");
       formik.setFieldValue("id", value?.id || "");
       formik.setFieldValue("description", value?.description || "");
-      
+
       // Set content type state
       setContent(value?.contentType);
-      
+
       // Clear content list before fetching new one
       setContentList([]);
-      
+
       // Only fetch content list and set content if we have a content type
       if (value?.contentType?.label) {
         setContentLoading(true);
@@ -269,7 +328,10 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
               ...loginTextField,
               "& .MuiOutlinedInput-root": {
                 "&.Mui-focused fieldset": {
-                  borderColor: formik.touched.tileName && formik.errors.tileName ? COLORS.ERROR : COLORS.PRIMARY,
+                  borderColor:
+                    formik.touched.tileName && formik.errors.tileName
+                      ? COLORS.ERROR
+                      : COLORS.PRIMARY,
                   borderWidth: 2,
                 },
               },
@@ -294,18 +356,27 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
                   ...loginTextField,
                   "& .MuiOutlinedInput-root": {
                     "&.Mui-focused fieldset": {
-                      borderColor: formik.touched.contentType && formik.errors.contentType ? COLORS.ERROR : COLORS.PRIMARY,
+                      borderColor:
+                        formik.touched.contentType && formik.errors.contentType
+                          ? COLORS.ERROR
+                          : COLORS.PRIMARY,
                       borderWidth: 2,
                     },
                   },
                 }}
                 label={
                   <Typography sx={{ fontFamily: roboto.style }}>
-                    Select Content Type <span style={{ color: COLORS.ERROR }}>*</span>
+                    Select Content Type{" "}
+                    <span style={{ color: COLORS.ERROR }}>*</span>
                   </Typography>
                 }
-                error={formik.touched.contentType && Boolean(formik.errors.contentType)}
-                helperText={formik.touched.contentType && formik.errors.contentType}
+                error={
+                  formik.touched.contentType &&
+                  Boolean(formik.errors.contentType)
+                }
+                helperText={
+                  formik.touched.contentType && formik.errors.contentType
+                }
               />
             )}
             options={contentType}
@@ -318,7 +389,9 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
               </Box>
             )}
             value={content}
-            onChange={(e, newValue) => handleChangeContentType(e, newValue, "contentType")}
+            onChange={(e, newValue) =>
+              handleChangeContentType(e, newValue, "contentType")
+            }
             onBlur={() => formik.setFieldTouched("contentType", true)}
             loading={contentLoading}
           />
@@ -330,18 +403,29 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
                   ...loginTextField,
                   "& .MuiOutlinedInput-root": {
                     "&.Mui-focused fieldset": {
-                      borderColor: formik.touched.contentLibraryId && formik.errors.contentLibraryId ? COLORS.ERROR : COLORS.PRIMARY,
+                      borderColor:
+                        formik.touched.contentLibraryId &&
+                        formik.errors.contentLibraryId
+                          ? COLORS.ERROR
+                          : COLORS.PRIMARY,
                       borderWidth: 2,
                     },
                   },
                 }}
                 label={
                   <Typography sx={{ fontFamily: roboto.style }}>
-                    Select Content <span style={{ color: COLORS.ERROR }}>*</span>
+                    Select Content{" "}
+                    <span style={{ color: COLORS.ERROR }}>*</span>
                   </Typography>
                 }
-                error={formik.touched.contentLibraryId && Boolean(formik.errors.contentLibraryId)}
-                helperText={formik.touched.contentLibraryId && formik.errors.contentLibraryId}
+                error={
+                  formik.touched.contentLibraryId &&
+                  Boolean(formik.errors.contentLibraryId)
+                }
+                helperText={
+                  formik.touched.contentLibraryId &&
+                  formik.errors.contentLibraryId
+                }
               />
             )}
             options={contentList}
@@ -354,20 +438,26 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
               </Box>
             )}
             value={contentLibraryId}
-            onChange={(e, newValue) => handleChangeContentType(e, newValue, "contentLibraryId")}
+            onChange={(e, newValue) =>
+              handleChangeContentType(e, newValue, "contentLibraryId")
+            }
             onBlur={() => formik.setFieldTouched("contentLibraryId", true)}
           />
           <TextField
             label={
               <Typography sx={{ fontFamily: roboto.style }}>
-                Time (1-180 minutes) <span style={{ color: COLORS.ERROR }}>*</span>
+                Time (1-180 minutes){" "}
+                <span style={{ color: COLORS.ERROR }}>*</span>
               </Typography>
             }
             sx={{
               ...loginTextField,
               "& .MuiOutlinedInput-root": {
                 "&.Mui-focused fieldset": {
-                  borderColor: formik.touched.time && formik.errors.time ? COLORS.ERROR : COLORS.PRIMARY,
+                  borderColor:
+                    formik.touched.time && formik.errors.time
+                      ? COLORS.ERROR
+                      : COLORS.PRIMARY,
                   borderWidth: 2,
                 },
               },
@@ -378,9 +468,9 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
             onBlur={formik.handleBlur}
             error={formik.touched.time && Boolean(formik.errors.time)}
             helperText={formik.touched.time && formik.errors.time}
-            inputProps={{ 
-              inputMode: 'numeric',
-              pattern: '[0-9]*'
+            inputProps={{
+              inputMode: "numeric",
+              pattern: "[0-9]*",
             }}
           />
           <TextField
@@ -393,7 +483,10 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
               ...loginTextField,
               "& .MuiOutlinedInput-root": {
                 "&.Mui-focused fieldset": {
-                  borderColor: formik.touched.points && formik.errors.points ? COLORS.ERROR : COLORS.PRIMARY,
+                  borderColor:
+                    formik.touched.points && formik.errors.points
+                      ? COLORS.ERROR
+                      : COLORS.PRIMARY,
                   borderWidth: 2,
                 },
               },
@@ -404,15 +497,16 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
             onBlur={formik.handleBlur}
             error={formik.touched.points && Boolean(formik.errors.points)}
             helperText={formik.touched.points && formik.errors.points}
-            inputProps={{ 
-              inputMode: 'numeric',
-              pattern: '[0-9]*'
+            inputProps={{
+              inputMode: "numeric",
+              pattern: "[0-9]*",
             }}
           />
           <TextField
             label={
               <Typography sx={{ fontFamily: roboto.style }}>
-                Enter Tile Description <span style={{ color: COLORS.ERROR }}>*</span>
+                Enter Tile Description{" "}
+                <span style={{ color: COLORS.ERROR }}>*</span>
               </Typography>
             }
             sx={{
@@ -423,7 +517,10 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
               "& .MuiOutlinedInput-root": {
                 height: "200px",
                 "&.Mui-focused fieldset": {
-                  borderColor: formik.touched.description && formik.errors.description ? COLORS.ERROR : COLORS.PRIMARY,
+                  borderColor:
+                    formik.touched.description && formik.errors.description
+                      ? COLORS.ERROR
+                      : COLORS.PRIMARY,
                   borderWidth: 2,
                 },
               },
@@ -437,7 +534,9 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
             onBlur={formik.handleBlur}
             multiline
             id="description"
-            error={formik.touched.description && Boolean(formik.errors.description)}
+            error={
+              formik.touched.description && Boolean(formik.errors.description)
+            }
             helperText={formik.touched.description && formik.errors.description}
           />
           <Stack direction={"row"} alignItems={"center"} spacing={2}>
@@ -454,8 +553,8 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
                 "&.Mui-disabled": {
                   backgroundColor: COLORS.PRIMARY,
                   opacity: 0.6,
-                  color: COLORS.WHITE
-                }
+                  color: COLORS.WHITE,
+                },
               }}
               fullWidth
               type="submit"
