@@ -12,10 +12,8 @@ const Sessions = () => {
     userController
       .getSessions(id)
       .then((res) => {
-        // console.log("res", res);
         const response = res.data.data;
         setSessionData(response);
-
         setLoading(false);
       })
       .catch((err) => {

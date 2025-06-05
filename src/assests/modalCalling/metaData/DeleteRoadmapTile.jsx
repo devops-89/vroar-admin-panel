@@ -1,5 +1,6 @@
 import { metaDataController } from "@/api/metaDataController";
 import { hideModal } from "@/redux/reducers/modal";
+import { setToast } from "@/redux/reducers/toast";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Close } from "@mui/icons-material";
@@ -33,10 +34,25 @@ const DeleteRoadmapTile = ({ tileId }) => {
     metaDataController
       .deleteRoadmapTile(body)
       .then((res) => {
-        console.log("res", res);
+        // console.log("res", res);
+        dispatch(
+          setToast({
+            message: res.data.message,
+            severity: "success",
+          })
+        );
+        dispatch(hideModal());
       })
       .catch((err) => {
-        console.log("err", err);
+        // console.log("err", err);
+        let errMessge =
+          (err.response && err.response.data.message) || err.message;
+        dispatch(
+          setToast({
+            message: errMessge,
+            severity: "error",
+          })
+        );
       });
   };
 

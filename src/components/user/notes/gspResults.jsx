@@ -7,11 +7,13 @@ import { roboto } from "@/utils/fonts";
 import { Download, Visibility } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import userController from "@/api/user";
+
 const GSPResults = () => {
   const user = useSelector((state) => state.USER);
   const { id } = user;
-  let url = "";
   const [loading, setLoading] = useState(true);
+  const [pdfUrl, setPdfUrl] = useState("");
+
   const getAssessmentResults = () => {
     let body = {
       userId: id,
@@ -21,19 +23,20 @@ const GSPResults = () => {
     userController
       .getUserAssessmentResult(body)
       .then((res) => {
-        // console.log("user response", res);
         const result = res.data.data.gallupResult;
-        // console.log("first", result);
-        url = result;
+        setPdfUrl(result);
         setLoading(false);
       })
       .catch((err) => {
         console.log("error in gallup results", err);
+        setLoading(false);
       });
   };
 
-  const viewPdf = (url) => {
-    window.open(url);
+  const viewPdf = () => {
+    if (pdfUrl) {
+      window.open(pdfUrl);
+    }
   };
 
   useEffect(() => {
@@ -49,7 +52,7 @@ const GSPResults = () => {
           height={50}
           sx={{ mt: 2, borderRadius: 2, p: 1 }}
         />
-      ) : url ? (
+      ) : pdfUrl ? (
         <Box sx={{ backgroundColor: "#ebebeb", borderRadius: 2, p: 1, mt: 2 }}>
           <Stack
             direction={"row"}
@@ -64,7 +67,7 @@ const GSPResults = () => {
                 </Typography>
               </Box>
             </Stack>
-            <IconButton onClick={() => viewPdf(url)}>
+            <IconButton onClick={viewPdf}>
               <Download htmlColor={COLORS.BLACK} />
             </IconButton>
           </Stack>

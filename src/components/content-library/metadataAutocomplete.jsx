@@ -1,6 +1,7 @@
 import { metaDataController } from "@/api/metaDataController";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
+import { USER_STATUS } from "@/utils/enum";
 import { Close } from "@mui/icons-material";
 import { Autocomplete, Box, Chip, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
@@ -23,6 +24,7 @@ const MetaDataAutocomplete = ({
         page: 1,
         pageSize: 100,
         type: metaDataType,
+        status: USER_STATUS.ACTIVE
       });
       setData(res.data.data.docs);
     } catch (err) {

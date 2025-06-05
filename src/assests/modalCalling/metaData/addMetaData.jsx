@@ -16,10 +16,19 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { data } from "../../data";
 import { loginTextField } from "@/utils/styles";
-import { AddMetaDataValiationSchema } from "@/utils/validationSchema";
 import { metaDataController } from "@/api/metaDataController";
 import { setToast } from "@/redux/reducers/toast";
 import Loading from "react-loading";
+import * as Yup from "yup";
+
+const validationSchema = Yup.object().shape({
+  metadataType: Yup.string().required("Metadata type is required"),
+  name: Yup.string()
+    .required("Name is required")
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must not exceed 50 characters")
+    .matches(/^[a-zA-Z0-9\s-_]+$/, "Name can only contain letters, numbers, spaces, hyphens and underscores"),
+});
 
 const AddMetaData = ({ getMetaData, metaDataBody }) => {
   const dispatch = useDispatch();
@@ -29,19 +38,22 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
   };
 
   const initialState = {
-    metadataType: null,
+    metadataType: "",
     name: "",
   };
 
   const [state, setState] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  
   const inputHandler = (e) => {
     const { id, value } = e.target;
     setState({ ...state, [id]: value });
     setErrors({ ...errors, [id]: "" });
   };
+  
   const [metaDataType, setmetaDataType] = useState(null);
+  
   const metaSelectHandler = (e, newValue) => {
     setmetaDataType(newValue);
     if (newValue) {
@@ -49,12 +61,13 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
       setErrors({ ...errors, metadataType: "" });
     } else {
       setState({ ...state, metadataType: "" });
+      setErrors({ ...errors, metadataType: "Metadata type is required" });
     }
   };
 
   const validateForm = async () => {
     try {
-      await AddMetaDataValiationSchema.validate(state, { abortEarly: false });
+      await validationSchema.validate(state, { abortEarly: false });
       setErrors({});
       return true;
     } catch (validationErrors) {
@@ -62,7 +75,6 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
       validationErrors.inner.forEach((error) => {
         formErrors[error.path] = error.message;
       });
-
       setErrors(formErrors);
       return false;
     }
@@ -71,39 +83,46 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
   const submitHandler = async (e) => {
     e.preventDefault();
     const isValid = await validateForm();
+    
     if (isValid) {
       setLoading(true);
       let body = {
-        name: state.name,
+        name: state.name.trim(),
         type: state.metadataType,
         status: USER_STATUS.ACTIVE,
       };
-      metaDataController
-        .addMetaData(body)
-        .then((res) => {
-          dispatch(
-            setToast({
-              open: true,
-              message: res.data.message,
-              severity: ToastStatus.SUCCESS,
-            })
-          );
-          getMetaData(metaDataBody);
-          setLoading(false);
-          dispatch(hideModal());
-        })
-        .catch((err) => {
-          let errMessage =
-            (err.response && err.response.data.message) || err.message;
-          dispatch(
-            setToast({
-              open: true,
-              message: errMessage,
-              severity: ToastStatus.ERROR,
-            })
-          );
-          setLoading(false);
-        });
+      
+      try {
+        const res = await metaDataController.addMetaData(body);
+        dispatch(
+          setToast({
+            open: true,
+            message: res.data.message,
+            severity: ToastStatus.SUCCESS,
+          })
+        );
+
+        // Ensure we're using the latest metaDataBody
+        const updatedMetaDataBody = {
+          ...metaDataBody,
+          page: 0, // Reset to first page after adding
+        };
+
+        await getMetaData(updatedMetaDataBody);
+        setLoading(false);
+        dispatch(hideModal());
+      } catch (err) {
+        const errMessage =
+          (err.response && err.response.data.message) || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
+      }
     }
   };
 
@@ -140,6 +159,7 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
                 id="metadataType"
                 error={Boolean(errors.metadataType)}
                 helperText={errors.metadataType}
+                required
               />
             )}
             options={data.METATDATA}
@@ -168,6 +188,10 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
             onChange={inputHandler}
             error={Boolean(errors.name)}
             helperText={errors.name}
+            required
+            inputProps={{
+              maxLength: 50,
+            }}
           />
           <Button
             sx={{
@@ -175,6 +199,14 @@ const AddMetaData = ({ getMetaData, metaDataBody }) => {
               backgroundColor: COLORS.PRIMARY,
               color: COLORS.WHITE,
               fontFamily: roboto.style,
+              "&:hover": {
+                backgroundColor: COLORS.PRIMARY,
+                opacity: 0.9,
+              },
+              "&:disabled": {
+                backgroundColor: COLORS.PRIMARY,
+                opacity: 0.6,
+              },
             }}
             type="submit"
             disabled={loading}

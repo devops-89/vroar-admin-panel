@@ -7,7 +7,8 @@ import Wrapper from "@/components/wrapper";
 import { USER_GROUP } from "@/utils/enum";
 import withAuth from "@/utils/withAuth";
 import { Box, Card, TablePagination } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { debounce } from "lodash";
 
 const Parents = () => {
   const [page, setPage] = useState(0);
@@ -51,6 +52,35 @@ const Parents = () => {
       setErrMessage,
     });
   };
+  const debouncedSearch = useCallback(
+    debounce(
+      (body) =>
+        getUserList({
+          body,
+          setData: setUserData,
+          isLoading: setLoading,
+          setErrMessage: setErrMessage,
+        }),
+      300
+    ),
+    []
+  );
+
+  const searchHandler = (e) => {
+    setSearch(e.target.value);
+    setLoading(true);
+    if (e.target.value) {
+      body.search = e.target.value;
+      debouncedSearch(body);
+    } else {
+      getUserList({
+        body,
+        setData: setUserData,
+        isLoading: setLoading,
+        setErrMessage,
+      });
+    }
+  };
 
   useEffect(() => {
     getUserList({
@@ -79,7 +109,7 @@ const Parents = () => {
             ]}
           />
           <Box sx={{ mt: 2 }}>
-            <CustomTable button={true} />
+            <CustomTable button={true} onSearch={searchHandler} />
           </Box>
           <Box sx={{ mt: 2 }}>
             <ParentTable userData={userData} loading={loading} />

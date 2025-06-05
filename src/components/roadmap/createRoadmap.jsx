@@ -1,27 +1,23 @@
+import { metaDataController } from "@/api/metaDataController";
 import { getMetaDataType } from "@/assests/apiCalling/metaDataController";
 import { data } from "@/assests/data";
-import { COLORS, METADATA_TYPE, ToastStatus } from "@/utils/enum";
-import { roboto } from "@/utils/fonts";
-import { loginTextField } from "@/utils/styles";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Divider,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useFormik } from "formik";
-import { useState } from "react";
-import RoadmapTiles from "./roadmapTiles";
-import { metaDataController } from "@/api/metaDataController";
-import { useDispatch } from "react-redux";
 import { setToast } from "@/redux/reducers/toast";
-import Loading from "react-loading";
-import { roadmapValidationSchema } from "@/utils/validationSchema";
+import { ToastStatus } from "@/utils/enum";
+import { Divider, Stack } from "@mui/material";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import CustomChip from "../customChip";
+import {
+  validateMetaDataTag,
+  validateMetaDataType,
+  validateRoadmapName,
+  validateTile,
+} from "./components/FormValidator";
+import MetaDataSelector from "./components/MetaDataSelector";
+import RoadmapForm from "./components/RoadmapForm";
+import SubmitButton from "./components/SubmitButton";
+import RoadmapTiles from "./roadmapTiles";
 
 const Createroadmap = () => {
   const [tiles, setTiles] = useState([
@@ -40,13 +36,29 @@ const Createroadmap = () => {
     metaDataType: "",
     metaDataTag: [],
   });
+  const [errors, setErrors] = useState({
+    roadmapName: "",
+    metaDataType: "",
+    metaDataTag: "",
+    tiles: [],
+  });
+
   const router = useRouter();
   const [selectedMetaDataType, setSelectedMetaDataType] = useState(null);
   const [selectedTags, setSelectedTags] = useState([]);
   const [listLoading, setListLoading] = useState(false);
   const [metaDataList, setMetaDataList] = useState([]);
+  const dispatch = useDispatch();
+
   const metaTagTypeHandler = (e, newValue) => {
     setSelectedMetaDataType(newValue);
+    setSelectedTags([]);
+    setErrors((prev) => ({
+      ...prev,
+      metaDataType: "",
+      metaDataTag: "",
+    }));
+
     if (newValue) {
       const body = {
         page: 1,
@@ -60,24 +72,48 @@ const Createroadmap = () => {
         setData: setMetaDataList,
         isLoading: setListLoading,
       });
-      setState({ ...state, metaDataType: newValue?.label });
+      setState({
+        ...state,
+        metaDataType: newValue?.label,
+        metaDataTag: [],
+      });
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        metaDataType: "Please select a metadata type",
+        metaDataTag: "Please select at least one metadata tag",
+      }));
     }
   };
 
   const metaTagHandler = (e, newValue) => {
     setSelectedTags(newValue);
+    setErrors((prev) => ({ ...prev, metaDataTag: "" }));
 
     if (newValue) {
       setState({ ...state, metaDataTag: newValue.map((val) => val.id) });
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        metaDataTag: "Please select at least one metadata tag",
+      }));
     }
   };
-  const dispatch = useDispatch();
 
   const inputHandler = (e) => {
-    let { id, value } = e.target;
-    setState({ ...state, [id]: value });
+    const { id, value } = e.target;
+    setState((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      [id]: validateRoadmapName(value),
+    }));
   };
+
   const [loading, setLoading] = useState(false);
+
   const createRoadmap = (body) => {
     setLoading(true);
     metaDataController
@@ -108,107 +144,85 @@ const Createroadmap = () => {
       });
   };
 
+  const validateAllFields = () => {
+    const newErrors = {
+      roadmapName: validateRoadmapName(state.roadmapName),
+      metaDataType: validateMetaDataType(selectedMetaDataType),
+      metaDataTag: validateMetaDataTag(selectedTags),
+      tiles: tiles.map((tile) => validateTile(tile)),
+    };
+
+    setErrors(newErrors);
+
+    // Check if there are any errors
+    const hasErrors =
+      newErrors.roadmapName ||
+      newErrors.metaDataType ||
+      newErrors.metaDataTag ||
+      newErrors.tiles.some((tileErrors) => Object.keys(tileErrors).length > 0);
+
+    return !hasErrors;
+  };
+
   const submitHandler = () => {
+    if (!validateAllFields()) {
+      dispatch(
+        setToast({
+          open: true,
+          message: "Please fix all validation errors before proceeding",
+          severity: ToastStatus.ERROR,
+        })
+      );
+      return;
+    }
+
     const transformedData = tiles.map(
       ({ id, contentType, contentLibraryId, ...rest }) => ({
         ...rest,
-
         contentLibraryId: contentLibraryId?.id || null,
       })
     );
 
     const body = {
       roadmapName: state.roadmapName,
-
       metadataIds: state.metaDataTag,
       tiles: transformedData,
     };
 
-    roadmapValidationSchema
-      .validate(body, { abortEarly: false })
-      .then(() => {
-        createRoadmap(body);
-      })
-      .catch((err) => {
-        const errorMessages = err.inner.map((e) => e.message).join("\n");
-        dispatch(
-          setToast({
-            open: true,
-            message: errorMessages,
-            severity: ToastStatus.ERROR,
-          })
-        );
-      });
+    createRoadmap(body);
   };
 
   return (
     <div>
       <Stack spacing={2}>
-        <TextField
+        <RoadmapForm
           label="Enter Roadmap Name"
-          sx={{
-            ...loginTextField,
-            "& .MuiOutlinedInput-input": {
-              fontFamily: roboto.style,
-            },
-          }}
-          fullWidth
-          id="roadmapName"
+          value={state.roadmapName}
           onChange={inputHandler}
+          error={Boolean(errors.roadmapName)}
+          helperText={errors.roadmapName}
+          id="roadmapName"
         />
-        <Autocomplete
-          renderInput={(params) => (
-            <TextField
-              label="Select MetaData"
-              sx={{
-                ...loginTextField,
-                "& .MuiOutlinedInput-input": {
-                  fontFamily: roboto.style,
-                },
-              }}
-              {...params}
-            />
-          )}
+
+        <MetaDataSelector
+          label="Select MetaData"
           options={data.METATDATA}
-          renderOption={(props, option) => (
-            <Box {...props}>
-              <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                {option.label}
-              </Typography>
-            </Box>
-          )}
-          fullWidth
-          onChange={metaTagTypeHandler}
           value={selectedMetaDataType}
+          onChange={metaTagTypeHandler}
+          error={Boolean(errors.metaDataType)}
+          helperText={errors.metaDataType}
         />
-        <Autocomplete
-          renderInput={(params) => (
-            <TextField
-              label="Select Tags"
-              sx={{
-                ...loginTextField,
-                "& .MuiOutlinedInput-input": {
-                  fontFamily: roboto.style,
-                },
-              }}
-              {...params}
-            />
-          )}
+
+        <MetaDataSelector
+          label="Select Tags"
           options={metaDataList}
-          renderOption={(props, option) => (
-            <Box {...props}>
-              <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                {option.name}
-              </Typography>
-            </Box>
-          )}
-          fullWidth
-          loading={listLoading}
-          onChange={metaTagHandler}
-          getOptionLabel={(option) => option.name}
           value={selectedTags}
+          onChange={metaTagHandler}
+          error={Boolean(errors.metaDataTag)}
+          helperText={errors.metaDataTag}
           multiple
-          filterSelectedOptions
+          loading={listLoading}
+          getOptionLabel={(option) => option.name}
           renderTags={(value, getTagProps) =>
             value.map((option, index) => {
               const { key, ...tagProps } = getTagProps({ index });
@@ -230,29 +244,21 @@ const Createroadmap = () => {
           }
         />
 
-        <RoadmapTiles tiles={tiles} setTiles={setTiles} />
+        <RoadmapTiles
+          tiles={tiles}
+          setTiles={setTiles}
+          errors={errors.tiles}
+          setErrors={(newTileErrors) =>
+            setErrors((prev) => ({ ...prev, tiles: newTileErrors }))
+          }
+        />
       </Stack>
       <Divider sx={{ mt: 2 }} />
-      <Box sx={{ textAlign: "end" }}>
-        <Button
-          sx={{
-            fontSize: 14,
-            backgroundColor: COLORS.PRIMARY,
-            color: COLORS.WHITE,
-            fontFamily: roboto.style,
-            mt: 2,
-            width: 120,
-          }}
-          onClick={submitHandler}
-          disabled={loading}
-        >
-          {loading ? (
-            <Loading type="bars" width={20} height={20} color={COLORS.BLACK} />
-          ) : (
-            "Proceed"
-          )}
-        </Button>
-      </Box>
+      <SubmitButton
+        loading={loading}
+        onClick={submitHandler}
+        disabled={loading}
+      />
     </div>
   );
 };

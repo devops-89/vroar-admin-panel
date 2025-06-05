@@ -70,6 +70,15 @@ export const Authcontrollers = {
       throw error;
     }
   },
+  renewAccessToken: async (data) => {
+    try {
+      let result = await securedApi.securedApi.post(
+        "api/user/renewAccessToken",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
-
-

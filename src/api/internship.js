@@ -155,4 +155,5 @@ export const internshipController = {
       throw error;
     }
   },
+  // getInterestedApplication:async(userId)
 };

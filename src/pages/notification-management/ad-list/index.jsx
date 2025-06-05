@@ -3,7 +3,8 @@ import AdListTable from "@/components/event/adListtable";
 import Wrapper from "@/components/wrapper";
 import withAuth from "@/utils/withAuth";
 import { Box, Card, TablePagination } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { debounce } from "lodash";
 
 const AdList = () => {
   const [page, setPage] = useState(0);
@@ -13,6 +14,7 @@ const AdList = () => {
     page: page,
     pageSize: pageSize,
   };
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const getEventType = (body) => {
     metaDataController
@@ -45,6 +47,22 @@ const AdList = () => {
     getEventType(body);
   };
 
+  const debouncedSearch = useCallback(
+    debounce((body) => getEventType(body), 300),
+    []
+  );
+
+  const searchHandler = (e) => {
+    setSearch(e.target.value);
+    setLoading(true);
+    if (e.target.value) {
+      body.search = e.target.value;
+      debouncedSearch(body);
+    } else {
+      getEventType(body);
+    }
+  };
+
   useEffect(() => {
     getEventType(body);
   }, []);
@@ -58,6 +76,7 @@ const AdList = () => {
             loading={loading}
             setLoading={setLoading}
             getEventType={() => getEventType(body)}
+            searchHandler={searchHandler}
           />
           {!loading && (
             <Box
