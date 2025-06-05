@@ -273,7 +273,7 @@ const EditContent = () => {
 
       <ToastBar />
     </Box>
-  );
+  ); 
 };
 
 export default EditContent;
