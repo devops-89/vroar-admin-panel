@@ -8,22 +8,20 @@ import { FaRegEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 // import { COLORS } from "@/utils/colors";
 
-const SubjectiveQuiz = ({ 
-  subjectiveHandler, 
-  state, 
-  canEdit = false, 
-  getDetails, 
-  errors, 
-  setErrors 
+const SubjectiveQuiz = ({
+  subjectiveHandler,
+  state,
+  canEdit = false,
+  getDetails,
+  errors,
+  setErrors,
 }) => {
   const dispatch = useDispatch();
 
   const handleEditQuestion = (value) => {
-    if (getDetails) {
-      dispatch(
-        showModal(<EditQuizQuestion value={value} getDetails={getDetails} />)
-      );
-    }
+    dispatch(
+      showModal(<EditQuizQuestion value={value} getDetails={getDetails} />)
+    );
   };
 
   return (
