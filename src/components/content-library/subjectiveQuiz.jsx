@@ -1,12 +1,21 @@
 import EditQuizQuestion from "@/assests/modalCalling/metaData/EditQuizQuestion";
 import { showModal } from "@/redux/reducers/modal";
+import { COLORS } from "@/utils/enum";
 import { loginTextField } from "@/utils/styles";
 import { IconButton, Stack, TextField } from "@mui/material";
 import React from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
+// import { COLORS } from "@/utils/colors";
 
-const SubjectiveQuiz = ({ subjectiveHandler, state, canEdit, getDetails }) => {
+const SubjectiveQuiz = ({
+  subjectiveHandler,
+  state,
+  canEdit = false,
+  getDetails,
+  errors,
+  setErrors,
+}) => {
   const dispatch = useDispatch();
 
   const handleEditQuestion = (value) => {
@@ -14,18 +23,29 @@ const SubjectiveQuiz = ({ subjectiveHandler, state, canEdit, getDetails }) => {
       showModal(<EditQuizQuestion value={value} getDetails={getDetails} />)
     );
   };
+
   return (
     <div>
       <Stack spacing={3} sx={{ width: "100%" }} justifyContent={"flex-end"}>
         {canEdit ? (
           <Stack direction={"row"} alignItems={"center"} spacing={2}>
             <TextField
-              sx={{ ...loginTextField }}
+              sx={{
+                ...loginTextField,
+                "& .MuiOutlinedInput-root.Mui-error": {
+                  borderColor: COLORS.ERROR,
+                  "&:hover": {
+                    borderColor: COLORS.ERROR,
+                  },
+                },
+              }}
               fullWidth
               label="Enter Question ?"
               onChange={subjectiveHandler}
-              id="question"
-              value={state?.question}
+              name="question"
+              value={state?.question || ""}
+              error={Boolean(errors?.question)}
+              helperText={errors?.question}
               slotProps={{
                 input: {
                   readOnly: true,
@@ -38,12 +58,22 @@ const SubjectiveQuiz = ({ subjectiveHandler, state, canEdit, getDetails }) => {
           </Stack>
         ) : (
           <TextField
-            sx={{ ...loginTextField }}
+            sx={{
+              ...loginTextField,
+              "& .MuiOutlinedInput-root.Mui-error": {
+                borderColor: COLORS.ERROR,
+                "&:hover": {
+                  borderColor: COLORS.ERROR,
+                },
+              },
+            }}
             fullWidth
             label="Enter Question ?"
             onChange={subjectiveHandler}
-            id="question"
-            value={state?.question}
+            name="question"
+            value={state?.question || ""}
+            error={Boolean(errors?.question)}
+            helperText={errors?.question}
           />
         )}
 
@@ -51,8 +81,8 @@ const SubjectiveQuiz = ({ subjectiveHandler, state, canEdit, getDetails }) => {
           sx={{ ...loginTextField }}
           label="Subtext"
           onChange={subjectiveHandler}
-          id="subText"
-          value={state?.subText}
+          name="subText"
+          value={state?.subText || ""}
           focused={Boolean(state?.subText)}
           slotProps={{
             input: {

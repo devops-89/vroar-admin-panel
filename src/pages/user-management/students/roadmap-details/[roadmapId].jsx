@@ -158,9 +158,9 @@ const UserRoadmapDetails = () => {
                         <Typography
                           sx={{ fontFamily: roboto.style, fontSize: 15 }}
                         >
-                          {val.completionDate
+                          {val.completedDate
                             ? moment
-                                .unix(val.completionDate)
+                                .unix(val.completedDate)
                                 .format("DD-MMM-YYYY")
                             : "--"}
                         </Typography>

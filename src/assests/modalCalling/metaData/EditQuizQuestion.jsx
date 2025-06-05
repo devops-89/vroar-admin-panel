@@ -26,6 +26,9 @@ const EditQuizQuestion = ({ value, getDetails }) => {
   const router = useRouter();
   const { slug } = router.query;
 
+  // console.log("value",value)
+  // console.log("ge",value)
+
   const [state, setState] = useState({
     question: value.question,
     options: value.options,
@@ -175,6 +178,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
                 fontFamily: roboto.style,
                 color: COLORS.WHITE,
                 backgroundColor: COLORS.PRIMARY,
+                width: 150,
               }}
               fullWidth
               onClick={handleSubmit}
@@ -184,8 +188,8 @@ const EditQuizQuestion = ({ value, getDetails }) => {
                 <Loading
                   type="bars"
                   color={COLORS.BLACK}
-                  width={20}
-                  height={20}
+                  width={30}
+                  height={30}
                 />
               ) : (
                 "Submit"
@@ -198,6 +202,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
                 color: COLORS.PRIMARY,
                 border: `1px solid ${COLORS.PRIMARY}`,
                 fontSize: 17,
+                width: 150,
               }}
               fullWidth
               onClick={closeModal}

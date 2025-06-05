@@ -44,7 +44,6 @@ const ViewAssessment = () => {
     }
   }, [assessmentId]);
 
-  console.log("details", details);
   const detailsArray = [
     {
       label: "Assessment Name",
@@ -55,6 +54,12 @@ const ViewAssessment = () => {
       value: details?.role,
     },
   ];
+
+  const handleEditAssessment = () => {
+    router.push(
+      `/roadmap-management/assessment-management/${assessmentId}/edit-assessment`
+    );
+  };
 
   return (
     <div>
@@ -99,7 +104,7 @@ const ViewAssessment = () => {
                 >
                   Assessment Details
                 </Typography>
-                <Button
+                {/* <Button
                   startIcon={<FaRegEdit />}
                   sx={{
                     color: COLORS.PRIMARY,
@@ -108,9 +113,10 @@ const ViewAssessment = () => {
                     fontSize: 16,
                     fontFamily: roboto.style,
                   }}
+                  onClick={handleEditAssessment}
                 >
                   Edit
-                </Button>
+                </Button> */}
               </Stack>
               <Box sx={{ mt: 2 }}>
                 <Stack alignItems={"flex-start"} spacing={4}>

@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import UserAvatar from "../userAvatar";
-
+import parentAvatar from "@/icons/parentAvatar.png";
 const ParentTable = ({ userData, loading }) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -88,7 +88,7 @@ const ParentTable = ({ userData, loading }) => {
                 <TableRow key={i}>
                   <TableCell>
                     <UserAvatar
-                      avatar={val?.avatar}
+                      avatar={val?.avatar ?? parentAvatar}
                       firstName={val.firstName.slice(0, 10)}
                       lastName={val.lastName.slice(0, 10)}
                     />

@@ -8,6 +8,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  FormHelperText,
   IconButton,
   Stack,
   TextField,
@@ -15,253 +16,340 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
+import { Add, Delete } from "@mui/icons-material";
 
-const RoadmapTiles = ({ tiles, setTiles }) => {
+const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
   const [contentList, setContentList] = useState([]);
   const [contentLoading, setContentLoading] = useState(false);
-  const handleInputChange = (id, field, value) => {
-    setTiles((prevTiles) =>
-      prevTiles.map((tile) =>
-        tile.id === id ? { ...tile, [field]: value } : tile
-      )
-    );
-  };
 
-  const contentTypeHandler = (id, e, newValue) => {
-    handleInputChange(id, "contentType", newValue);
-    handleInputChange(id, "contentLibraryId", null);
-
-    if (newValue) {
-      const body = { page: 1, pageSize: 500 };
+  const handleChangeContentType = (e, newValue, id, index) => {
+    if (id === "contentType") {
       setContentLoading(true);
+      const newTiles = [...tiles];
+      newTiles[index].contentType = newValue?.label;
+      newTiles[index].contentLibraryId = null;
+      setTiles(newTiles);
+
+      // Clear errors for this field
+      const newErrors = [...errors];
+      if (newErrors[index]) {
+        newErrors[index] = { ...newErrors[index], contentType: "" };
+        setErrors(newErrors);
+      }
+
       const type = [];
-
       type.push(newValue?.label);
-
-      body.contentType = type;
+      const body = {
+        page: 1,
+        pageSize: 500,
+        contentType: type,
+      };
       getContentList({
         body,
-        setData: (data) => {
-          const filteredData = data.filter(
-            (val) => val.contentType === newValue.label
-          );
-          setContentList(filteredData);
-          setContentLoading(false);
-        },
+        setData: setContentList,
         setLoading: setContentLoading,
       });
     }
+    if (id === "contentLibraryId") {
+      const newTiles = [...tiles];
+      newTiles[index].contentLibraryId = newValue;
+      setTiles(newTiles);
+
+      // Clear errors for this field
+      const newErrors = [...errors];
+      if (newErrors[index]) {
+        newErrors[index] = { ...newErrors[index], contentLibraryId: "" };
+        setErrors(newErrors);
+      }
+    }
   };
 
-  const contentTagHandler = (id, e, newValue) => {
-    handleInputChange(id, "contentLibraryId", newValue);
+  const handleInputChange = (e, index) => {
+    const { id, value } = e.target;
+    const newTiles = [...tiles];
+    newTiles[index][id] = value;
+    setTiles(newTiles);
+
+    // Clear errors for this field
+    const newErrors = [...errors];
+    if (newErrors[index]) {
+      newErrors[index] = { ...newErrors[index], [id]: "" };
+      setErrors(newErrors);
+    }
   };
 
   const addTile = () => {
-    setTiles((prev) => [
-      ...prev,
+    setTiles([
+      ...tiles,
       {
-        id: prev.length + 1,
+        id: tiles.length + 1,
         tileName: "",
-        contentType: null,
-        contentLibraryId: null,
+        contentType: "",
+        contentLibraryId: "",
         time: "",
         points: "",
+        description: "",
       },
     ]);
+    setErrors([...errors, {}]);
   };
 
-  const handleDeleteTiles = (id) => {
-    setTiles((prev) => prev.filter((q) => q.id !== id));
+  const removeTile = (index) => {
+    const newTiles = tiles.filter((_, i) => i !== index);
+    setTiles(newTiles);
+    const newErrors = errors.filter((_, i) => i !== index);
+    setErrors(newErrors);
   };
 
   return (
-    <div>
-      {tiles.map((val, i) => (
-        <Box key={val.id} sx={{ mt: 2 }}>
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-            sx={{ width: "100%" }}
+    <Box>
+      <Stack spacing={2}>
+        {tiles.map((tile, index) => (
+          <Box
+            key={tile.id}
+            sx={{
+              p: 2,
+              border: "1px solid #e0e0e0",
+              borderRadius: 2,
+              position: "relative",
+            }}
           >
-            <Typography sx={{ fontSize: 18, fontFamily: roboto.style }}>
-              Tile {i + 1}
-            </Typography>
-            <Stack direction={"row"} alignItems={"center"} spacing={2}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+            >
+              <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                Tile {index + 1}
+              </Typography>
               {tiles.length > 1 && (
-                <Button
-                  endIcon={<DeleteOutlined />}
+                <IconButton
+                  onClick={() => removeTile(index)}
                   sx={{
-                    color: COLORS.DANGER,
-                    border: `1px solid ${COLORS.DANGER}`,
-                    fontFamily: roboto.style,
+                    position: "absolute",
+                    right: 8,
+                    top: 8,
+                    color: COLORS.ERROR,
                   }}
-                  onClick={() => handleDeleteTiles(val.id)}
                 >
-                  Delete
-                </Button>
+                  <Delete />
+                </IconButton>
               )}
-              {/* <Button
-                endIcon={<FaRegEdit />}
-                sx={{
-                  fontFamily: roboto.style,
-                  color: COLORS.DONE_TEXT,
-                  border: `1px solid ${COLORS.DONE_TEXT}`,
-                }}
-              >
-                Edit
-              </Button> */}
             </Stack>
-          </Stack>
-
-          <Stack alignItems={"center"} spacing={2} sx={{ mt: 2 }}>
-            <TextField
-              label="Enter Tile Name"
-              sx={{
-                ...loginTextField,
-                "& .MuiOutlinedInput-input": {
-                  fontFamily: roboto.style,
-                },
-              }}
-              fullWidth
-              value={val.tileName}
-              onChange={(e) =>
-                handleInputChange(val.id, "tileName", e.target.value)
-              }
-            />
-
-            <Autocomplete
-              renderInput={(params) => (
+            <Stack spacing={2}>
+              <Box>
                 <TextField
-                  {...params}
+                  label="Tile Name"
                   sx={{
                     ...loginTextField,
                     "& .MuiOutlinedInput-input": {
                       fontFamily: roboto.style,
                     },
                   }}
-                  label="Select Content Type"
+                  fullWidth
+                  id="tileName"
+                  value={tile.tileName}
+                  onChange={(e) => handleInputChange(e, index)}
+                  error={Boolean(errors[index]?.tileName)}
                 />
-              )}
-              fullWidth
-              options={contentType}
-              renderOption={(props, option) => (
-                <Box {...props}>
-                  <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                    {option.label}
-                  </Typography>
-                </Box>
-              )}
-              onChange={(e, newValue) =>
-                contentTypeHandler(val.id, e, newValue)
-              }
-              value={val.contentType}
-              filterSelectedOptions
-            />
+                {errors[index]?.tileName && (
+                  <FormHelperText error sx={{ ml: 2 }}>
+                    {errors[index].tileName}
+                  </FormHelperText>
+                )}
+              </Box>
 
-            <Autocomplete
-              renderInput={(params) => (
+              <Box>
+                <Autocomplete
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select Content Type"
+                      sx={{
+                        ...loginTextField,
+                        "& .MuiOutlinedInput-input": {
+                          fontFamily: roboto.style,
+                        },
+                      }}
+                      error={Boolean(errors[index]?.contentType)}
+                    />
+                  )}
+                  options={contentType}
+                  getOptionLabel={(option) => option.label}
+                  renderOption={(props, option) => (
+                    <Box {...props}>
+                      <Typography
+                        sx={{ fontSize: 16, fontFamily: roboto.style }}
+                      >
+                        {option.label}
+                      </Typography>
+                    </Box>
+                  )}
+                  value={
+                    contentType.find((ct) => ct.label === tile.contentType) ||
+                    null
+                  }
+                  onChange={(e, newValue) =>
+                    handleChangeContentType(e, newValue, "contentType", index)
+                  }
+                  loading={contentLoading}
+                />
+                {errors[index]?.contentType && (
+                  <FormHelperText error sx={{ ml: 2 }}>
+                    {errors[index].contentType}
+                  </FormHelperText>
+                )}
+              </Box>
+
+              <Box>
+                <Autocomplete
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select Content"
+                      sx={{
+                        ...loginTextField,
+                        "& .MuiOutlinedInput-input": {
+                          fontFamily: roboto.style,
+                        },
+                      }}
+                      error={Boolean(errors[index]?.contentLibraryId)}
+                    />
+                  )}
+                  options={contentList}
+                  getOptionLabel={(option) => option?.name || ""}
+                  renderOption={(props, option) => (
+                    <Box {...props}>
+                      <Typography
+                        sx={{ fontSize: 16, fontFamily: roboto.style }}
+                      >
+                        {option.name}
+                      </Typography>
+                    </Box>
+                  )}
+                  value={
+                    contentList.find(
+                      (content) => content.id === tile.contentLibraryId?.id
+                    ) || null
+                  }
+                  onChange={(e, newValue) =>
+                    handleChangeContentType(
+                      e,
+                      newValue,
+                      "contentLibraryId",
+                      index
+                    )
+                  }
+                />
+                {errors[index]?.contentLibraryId && (
+                  <FormHelperText error sx={{ ml: 2 }}>
+                    {errors[index].contentLibraryId}
+                  </FormHelperText>
+                )}
+              </Box>
+
+              <Box>
                 <TextField
-                  {...params}
+                  label="Enter Time (in minutes)"
                   sx={{
                     ...loginTextField,
                     "& .MuiOutlinedInput-input": {
                       fontFamily: roboto.style,
                     },
                   }}
-                  label="Select Content"
+                  value={tile.time}
+                  id="time"
+                  onChange={(e) => handleInputChange(e, index)}
+                  error={Boolean(errors[index]?.time)}
+                  fullWidth
+                  type="number"
+                  inputProps={{
+                    min: 1,
+                    max: 180,
+                    step: 1
+                  }}
                 />
-              )}
-              fullWidth
-              options={contentList}
-              renderOption={(props, option) => (
-                <Box {...props}>
-                  <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                    {option.name}
-                  </Typography>
-                </Box>
-              )}
-              onChange={(e, newValue) => contentTagHandler(val.id, e, newValue)}
-              value={val.contentLibraryId || null}
-              loading={contentLoading}
-              getOptionLabel={(option) => option.name}
-              filterSelectedOptions
-            />
+                {errors[index]?.time && (
+                  <FormHelperText error sx={{ ml: 2 }}>
+                    {errors[index].time}
+                  </FormHelperText>
+                )}
+              </Box>
 
-            <TextField
-              label="Enter Time (in minutes)"
-              sx={{
-                ...loginTextField,
-                "& .MuiOutlinedInput-input": {
-                  fontFamily: roboto.style,
-                },
-              }}
-              type="number"
-              fullWidth
-              value={val.time}
-              onChange={(e) =>
-                handleInputChange(val.id, "time", e.target.value)
-              }
-            />
+              <Box>
+                <TextField
+                  label="Coins"
+                  sx={{
+                    ...loginTextField,
+                    "& .MuiOutlinedInput-input": {
+                      fontFamily: roboto.style,
+                    },
+                  }}
+                  value={tile.points}
+                  id="points"
+                  onChange={(e) => handleInputChange(e, index)}
+                  error={Boolean(errors[index]?.points)}
+                  fullWidth
+                  type="number"
+                  inputProps={{
+                    min: 1,
+                    max: 999,
+                    step: 1
+                  }}
+                />
+                {errors[index]?.points && (
+                  <FormHelperText error sx={{ ml: 2 }}>
+                    {errors[index].points}
+                  </FormHelperText>
+                )}
+              </Box>
 
-            <TextField
-              label="Enter Points"
-              sx={{
-                ...loginTextField,
-                "& .MuiOutlinedInput-input": {
-                  fontFamily: roboto.style,
-                },
-              }}
-              fullWidth
-              value={val.points}
-              onChange={(e) =>
-                handleInputChange(val.id, "points", e.target.value)
-              }
-            />
-
-            <TextField
-              label="Enter Tile Description"
-              sx={{
-                ...loginTextField,
-                "& .MuiOutlinedInput-input": {
-                  fontFamily: roboto.style,
-                },
-                "& .MuiOutlinedInput-root": {
-                  height: "200px",
-                },
-                "& textarea": {
-                  height: "170px !important",
-                },
-              }}
-              fullWidth
-              value={val.description}
-              onChange={(e) =>
-                handleInputChange(val.id, "description", e.target.value)
-              }
-              multiline
-            />
-          </Stack>
-        </Box>
-      ))}
-
-      <Box sx={{ textAlign: "end" }}>
-        <Button
-          startIcon={<AddCircleOutline />}
-          sx={{
-            border: "1px solid #000",
-            mt: 2,
-            fontSize: 14,
-            textTransform: "initial",
-            fontFamily: roboto.style,
-            color: COLORS.BLACK,
-          }}
-          onClick={addTile}
-        >
-          Add Another Tile
-        </Button>
-      </Box>
-    </div>
+              <Box>
+                <TextField
+                  label="Enter Tile Description"
+                  sx={{
+                    ...loginTextField,
+                    "& .MuiOutlinedInput-input": {
+                      fontFamily: roboto.style,
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      height: "200px",
+                    },
+                    "& textarea": {
+                      height: "170px !important",
+                    },
+                  }}
+                  fullWidth
+                  value={tile.description}
+                  onChange={(e) => handleInputChange(e, index)}
+                  multiline
+                  id="description"
+                  error={Boolean(errors[index]?.description)}
+                />
+                {errors[index]?.description && (
+                  <FormHelperText error sx={{ ml: 2 }}>
+                    {errors[index].description}
+                  </FormHelperText>
+                )}
+              </Box>
+            </Stack>
+          </Box>
+        ))}
+      </Stack>
+      <Button
+        startIcon={<Add />}
+        onClick={addTile}
+        sx={{
+          mt: 2,
+          color: COLORS.PRIMARY,
+          fontFamily: roboto.style,
+          textTransform: "none",
+        }}
+      >
+        Add Tile
+      </Button>
+    </Box>
   );
 };
 

@@ -107,6 +107,14 @@ const Contentlibrary = () => {
     setAnchorEl(null);
   };
 
+  const resetFilterHandler = () => {
+    setContentTypeData([]);
+    setLoading(true);
+    delete body.contentType;
+    getContentLibrary(body);
+    setAnchorEl(null);
+  };
+
   const pageSizeHandler = (e) => {
     setPageSize(e.target.value);
     if (search) {
@@ -229,8 +237,8 @@ const Contentlibrary = () => {
                     textTransform: "initial",
                     color: COLORS.PRIMARY,
                   }}
+                  onClick={resetFilterHandler}
                 >
-                  {" "}
                   Reset
                 </Button>
                 <Button

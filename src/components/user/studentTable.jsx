@@ -28,7 +28,7 @@ import { useDispatch } from "react-redux";
 import DisableProfile from "@/assests/modalCalling/user/disableProfile";
 import { showModal } from "@/redux/reducers/modal";
 import UserAvatar from "./userAvatar";
-
+import parentAvatar from "@/icons/parentAvatar.png";
 const StudentTable = ({
   userData,
   loading,
@@ -127,7 +127,10 @@ const StudentTable = ({
                   <TableCell>
                     {val.guardian ? (
                       <UserAvatar
-                        avatar={val?.guardian?.avatar}
+                        avatar={
+                          val?.guardian?.avatar ||
+                          "https://vroar-prod.s3.us-west-1.amazonaws.com/images/profile/family.jpg"
+                        }
                         firstName={val?.guardian?.firstName.slice(0, 10)}
                         lastName={val?.guardian?.lastName.slice(0, 10)}
                       />
@@ -154,7 +157,7 @@ const StudentTable = ({
                       {moment.unix(val.createdAt).format("DD-MM-YYYY")}
                     </Typography>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="start">
                     <CustomChip
                       variant={val.roadmapStatus}
                       label={val.roadmapStatus || "Not disclosed"}
