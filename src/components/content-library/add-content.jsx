@@ -40,6 +40,10 @@ import MetaDataAutocomplete from "./metadataAutocomplete";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
 import { isYoutubeUrl } from "@/utils/regex";
+import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
+import { FileUpload } from "./form-components/FileUpload";
+import { ContentForm } from "./form-components/ContentForm";
+
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -136,10 +140,8 @@ const AddContent = () => {
 
   const contentTypeHandler = (e, newValue) => {
     setContent(newValue);
-    const config = contentTypeConfig[newValue?.label] || {};
-    setShowFile(config.showFile);
-    setShowLink(config.showLink);
     setState((prev) => ({ ...prev, contentType: newValue?.label || "" }));
+    setErrors((prev) => ({ ...prev, contentType: "" }));
   };
 
   const quizTypeHandler = (e, newValue) => {
@@ -467,7 +469,7 @@ const AddContent = () => {
       });
 
       // Validate content link
-      if (showLink) {
+      if (state.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
         if (!state.contentLink.trim()) {
           dispatch(
             setToast({
@@ -480,24 +482,7 @@ const AddContent = () => {
           setLoading(false);
           return;
         }
-
-        // Additional validation for YouTube links
-        if (state.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-          const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
-          if (!youtubeRegex.test(state.contentLink)) {
-            dispatch(
-              setToast({
-                open: true,
-                message: "Please enter a valid YouTube video link",
-                severity: ToastStatus.ERROR,
-              })
-            );
-            setErrors(prev => ({ ...prev, contentLink: "Please enter a valid YouTube video link" }));
-            setLoading(false);
-            return;
-          }
-        }
-      } else {
+      } else if (state.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
         if (!state.contentLink) {
           dispatch(
             setToast({
@@ -545,7 +530,7 @@ const AddContent = () => {
       let contentLink = state.contentLink;
       let contentFileName = state.contentFileName;
 
-      if (!showLink) {
+      if (state.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK || state.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
         const { filePath, fileName } = await uploadContentFile();
         contentLink = filePath;
         contentFileName = fileName;
@@ -586,6 +571,20 @@ const AddContent = () => {
     }
   };
 
+  // Helper to determine which field to show
+  const isFileType =
+    state.contentType === CONTENT_TYPE.ARTICLE_PDF ||
+    state.contentType === CONTENT_TYPE.ASSIGNMENT;
+  const isLinkType =
+    state.contentType === CONTENT_TYPE.JOURNAL_LINK ||
+    state.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK ||
+    state.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK;
+
+  // Handler for metadata change
+  const handleMetadataChange = (key, value) => {
+    setState((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => ({ ...prev, [key]: "" }));
+  };
 
   return (
     <Box mt={3} sx={{ width: "100%" }}>
@@ -599,110 +598,34 @@ const AddContent = () => {
           spacing={2}
           width={"100%"}
         >
-          <TextField
-            label="Add Name"
-            fullWidth
-            sx={{
-              ...loginTextField,
-              "& .MuiOutlinedInput-input": {
-                fontFamily: roboto.style,
-              },
-              "& .MuiOutlinedInput-root.Mui-error": {
-                borderColor: COLORS.ERROR,
-                "&:hover": {
-                  borderColor: COLORS.ERROR,
-                },
-              },
-            }}
-            id="contentName"
+          {/* Content Name, Description, and Metadata Fields */}
+          <ContentForm
+            state={state}
+            errors={errors}
             onChange={inputHandler}
-            error={Boolean(errors.contentName)}
-            helperText={errors.contentName}
-            value={state.contentName}
+            onMetadataChange={handleMetadataChange}
+            disabled={loading}
           />
-          <Autocomplete
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Select Content Type"
-                fullWidth
-                sx={{
-                  ...loginTextField,
-                  "& .MuiOutlinedInput-input": {
-                    fontFamily: roboto.style,
-                  },
-                  "& .MuiOutlinedInput-root.Mui-error": {
-                    borderColor: COLORS.ERROR,
-                    "&:hover": {
-                      borderColor: COLORS.ERROR,
-                    },
-                  },
-                }}
-                error={Boolean(errors.contentType)}
-                helperText={errors.contentType}
-              />
-            )}
-            fullWidth
-            options={CONTENT_TYPE_DATA}
-            getOptionLabel={(option) => option.label}
-            renderOption={(props, option) => (
-              <Box {...props}>
-                <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                  {option.label}
-                </Typography>
-              </Box>
-            )}
-            onChange={contentTypeHandler}
-            value={content}
-          />
-          {showFile && (
-            <Box sx={{ width: "100%" }}>
-              <Button
-                fullWidth
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  border: `1px solid ${
-                    errors.contentLink ? COLORS.ERROR : "#d7d7d7"
-                  }`,
-                  p: 1.5,
-                  "&:hover": {
-                    borderColor: errors.contentLink ? COLORS.ERROR : "#d7d7d7",
-                  },
-                }}
-                onClick={() => inputRef.current.click()}
-              >
-                <Typography
-                  sx={{
-                    fontSize: 15,
-                    color: errors.contentLink ? COLORS.ERROR : COLORS.BLACK,
-                    fontFamily: roboto.style,
-                    textTransform: "initial",
-                  }}
-                >
-                  {state.contentFileName ? state.contentFileName : "Upload"}
-                </Typography>
-                <input
-                  type="file"
-                  style={{ display: "none" }}
-                  ref={inputRef}
-                  onChange={handleFileChange}
-                />
-                <AttachFile
-                  htmlColor={errors.contentLink ? COLORS.ERROR : COLORS.BLACK}
-                  sx={{ transform: "rotate(45deg)" }}
-                />
-              </Button>
-              {errors.contentLink && (
-                <FormHelperText error sx={{ mt: 1 }}>
-                  {errors.contentLink}
-                </FormHelperText>
-              )}
-            </Box>
-          )}
 
-          {showLink && (
+          {/* Content Type Select */}
+          <ContentTypeSelect
+            value={content}
+            onChange={contentTypeHandler}
+            error={errors.contentType}
+            disabled={loading}
+          />
+
+          {/* File Upload or Link Field */}
+          {isFileType && (
+            <FileUpload
+              inputRef={inputRef}
+              file={{ fileName: state.contentFileName, filePath: state.contentFileName }}
+              onChange={handleFileChange}
+              error={errors.contentLink}
+              disabled={loading}
+            />
+          )}
+          {isLinkType && (
             <TextField
               label="Insert Link"
               fullWidth
@@ -723,6 +646,7 @@ const AddContent = () => {
               error={Boolean(errors.contentLink)}
               helperText={errors.contentLink}
               value={state.contentLink}
+              disabled={loading}
             />
           )}
 
@@ -749,7 +673,7 @@ const AddContent = () => {
             value={state.description}
           />
 
-          <MetaDataAutocomplete
+          {/* <MetaDataAutocomplete
             label="Career"
             metaDataType={METADATA_TYPE.CAREER}
             value={state.career}
@@ -784,7 +708,7 @@ const AddContent = () => {
             error={errors.softSkills}
             helperText={errors.softSkills}
             colors={{ bg: COLORS.PURPLE, text: COLORS.PURPLE_TEXT }}
-          />
+          /> */}
 
           {content?.label !== CONTENT_TYPE.ASSIGNMENT && (
             <FormControlLabel
