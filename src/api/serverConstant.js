@@ -9,7 +9,7 @@ export const serverApiUrl = {
   user: `${baseUrl}/user`,
   internship: `${baseUrl}/internship`,
   stripeCustomer: `${stripeURL}`,
-  // content: `${baseUrl}/content`,
+  content: `${baseUrl}/content`,
   // content: `${contentUrl}`,
   // user: `${userUrl}`,
   // authentication: `${authenticationUrl}`,
