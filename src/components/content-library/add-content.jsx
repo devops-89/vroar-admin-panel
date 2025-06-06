@@ -30,6 +30,7 @@ import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
 import { FileUpload } from "./form-components/FileUpload";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
+import metadata from "@/pages/roadmap-management/metadata";
 
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
@@ -384,8 +385,31 @@ const AddContent = () => {
         const response = res.data.data;
         contentFileName = response.fileName;
         contentLink = response.filePath;
+        const newBody = {
+          name: state.contentName,
+          contentType: state.contentType,
+          contentLink,
+          description: state.description,
+          ...(contentFileName && { contentFileName }),
+          metadataTags,
+        };
       })
+      .catch((err) => {
+        let errMessage = err?.response?.data?.message || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+      });
+  };
 
+  const addContentHandler = async (body) => {
+    metaDataController
+      .addContentLibrary(body)
+      .then((res) => {})
       .catch((err) => {
         let errMessage = err?.response?.data?.message || err.message;
         dispatch(
@@ -489,13 +513,13 @@ const AddContent = () => {
           dispatch(
             setToast({
               open: true,
-              message: "Please upload a file",
+              message: "Please enter a valid link",
               severity: ToastStatus.ERROR,
             })
           );
           setErrors((prev) => ({
             ...prev,
-            contentLink: "File upload is required",
+            contentLink: "Please enter a valid link",
           }));
           setLoading(false);
           return;
@@ -531,8 +555,6 @@ const AddContent = () => {
         }
       }
 
-      // Rest of your submit handler code...
-
       if (
         state.contentType === CONTENT_TYPE.ARTICLE_PDF ||
         state.contentType === CONTENT_TYPE.ASSIGNMENT
@@ -540,6 +562,16 @@ const AddContent = () => {
         const { filePath, fileName } = await uploadContentFile();
         contentLink = filePath;
         contentFileName = fileName;
+      } else {
+        const body = {
+          name: state.contentName,
+          contentType: state.contentType,
+          contentLink: state.contentLink,
+          description: state.description,
+          ...(contentFileName && { contentFileName }),
+          metadataTags,
+        };
+        await addContentHandler(body);
       }
 
       // if (state.isQuizEnabled) {
