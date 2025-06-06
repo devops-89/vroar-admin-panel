@@ -1,20 +1,11 @@
-import { CONTENT_TYPE_DATA } from "@/assests/roadmapData";
 import { setToast } from "@/redux/reducers/toast";
-import {
-  COLORS,
-  CONTENT_TYPE,
-  METADATA_TYPE,
-  QUIZ_TYPE,
-  ToastStatus,
-} from "@/utils/enum";
+import { COLORS, CONTENT_TYPE, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import {
-  AddContentValidationSchema,
   newAddContentValidationSchema,
   quizValidationSchema,
 } from "@/utils/validationSchema";
-import { AttachFile, ErrorSharp } from "@mui/icons-material";
 import {
   Autocomplete,
   Backdrop,
@@ -23,26 +14,22 @@ import {
   Checkbox,
   CircularProgress,
   FormControlLabel,
-  FormHelperText,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 
 import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
+import { isYoutubeUrl } from "@/utils/regex";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
-import ToastBar from "../toastBar";
-import MetaDataAutocomplete from "./metadataAutocomplete";
-import ObjectiveQuiz from "./objective-quiz";
-import SubjectiveQuiz from "./subjectiveQuiz";
-import { isYoutubeUrl } from "@/utils/regex";
+import { ContentForm } from "./form-components/ContentForm";
 import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
 import { FileUpload } from "./form-components/FileUpload";
-import { ContentForm } from "./form-components/ContentForm";
+import ObjectiveQuiz from "./objective-quiz";
+import SubjectiveQuiz from "./subjectiveQuiz";
 
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
@@ -97,7 +84,8 @@ const AddContent = () => {
     if (id === "contentLink") {
       if (state.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
         // YouTube URL validation
-        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+        const youtubeRegex =
+          /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
         if (!youtubeRegex.test(value)) {
           setErrors((prev) => ({
             ...prev,
@@ -119,22 +107,6 @@ const AddContent = () => {
           [id]: isYoutubeUrl(value) ? "Please Enter Native Video Link" : "",
         }));
       }
-    }
-  };
-
-  const multiSelectHandler = (key, setFunc, errorKey) => (e, newValue) => {
-    setFunc(newValue);
-    if (newValue) {
-      setState((prev) => ({ ...prev, [key]: newValue })); // Store full object
-      setErrors((prev) => ({ ...prev, [errorKey]: "" }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        [errorKey]: `Please Select Valid ${errorKey.replace(
-          /([A-Z])/g,
-          " $1"
-        )}`,
-      }));
     }
   };
 
@@ -161,6 +133,8 @@ const AddContent = () => {
       setErrors((prev) => ({ ...prev, question: false }));
     }
   };
+  let contentLink = state.contentLink;
+  let contentFileName = state.contentFileName;
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -176,7 +150,7 @@ const AddContent = () => {
           })
         );
         // Clear the file input
-        event.target.value = '';
+        event.target.value = "";
         return;
       }
 
@@ -196,7 +170,7 @@ const AddContent = () => {
           })
         );
         // Clear the file input
-        event.target.value = '';
+        event.target.value = "";
       }
     }
   };
@@ -332,11 +306,11 @@ const AddContent = () => {
       }
     } catch (error) {
       const validationErrors = {};
-      if (error.inner) {
+      let allMessages = [];
+      if (error.inner && error.inner.length > 0) {
         error.inner.forEach((err) => {
-          // Handle nested errors for questions and options
           const path = err.path;
-          if (path.includes("questions")) {
+          if (path && path.includes("questions")) {
             const questionIndex = path.match(/questions\[(\d+)\]/)?.[1];
             const field = path.split(".").pop();
 
@@ -346,28 +320,30 @@ const AddContent = () => {
                 validationErrors.questions[questionIndex] = {};
               }
               validationErrors.questions[questionIndex][field] = err.message;
-              dispatch(
-                setToast({
-                  open: true,
-                  message: err.message,
-                  severity: ToastStatus.ERROR,
-                })
-              );
+              allMessages.push(err.message);
             }
-          } else {
+          } else if (path) {
             validationErrors[path] = err.message;
-            dispatch(
-              setToast({
-                open: true,
-                message: err.message,
-                severity: ToastStatus.ERROR,
-              })
-            );
+            allMessages.push(err.message);
           }
         });
+      } else if (error.message) {
+        allMessages.push(error.message);
       }
       setErrors(validationErrors);
-      return false;
+
+      // Show toast with the first error message, or a generic fallback
+      const firstError =
+        allMessages.length > 0
+          ? allMessages[0]
+          : "Please fix the validation errors";
+      dispatch(
+        setToast({
+          open: true,
+          message: firstError,
+          severity: ToastStatus.ERROR,
+        })
+      );
     }
     return true;
   };
@@ -386,7 +362,7 @@ const AddContent = () => {
 
   const uploadContentFile = async () => {
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
-    
+
     if (state.contentLink.size > MAX_FILE_SIZE) {
       dispatch(
         setToast({
@@ -398,11 +374,29 @@ const AddContent = () => {
       throw new Error("File size exceeds limit");
     }
 
-    const res = await metaDataController.getUploadContentFile({
+    const body = {
       type: state.contentType,
       contentFile: state.contentLink,
-    });
-    return res.data.data;
+    };
+    metaDataController
+      .getUploadContentFile(body)
+      .then((res) => {
+        const response = res.data.data;
+        contentFileName = response.fileName;
+        contentLink = response.filePath;
+      })
+    
+
+      .catch((err) => {
+        let errMessage = err?.response?.data?.message || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+      });
   };
 
   const addQuizHandler = async (quizData) => {
@@ -424,10 +418,11 @@ const AddContent = () => {
 
   const handleErrorDisplay = (error) => {
     const validationErrors = {};
-    if (error.inner) {
+    let allMessages = [];
+    if (error.inner && error.inner.length > 0) {
       error.inner.forEach((err) => {
         const path = err.path;
-        if (path.includes("questions")) {
+        if (path && path.includes("questions")) {
           const questionIndex = path.match(/questions\[(\d+)\]/)?.[1];
           const field = path.split(".").pop();
 
@@ -437,17 +432,22 @@ const AddContent = () => {
               validationErrors.questions[questionIndex] = {};
             }
             validationErrors.questions[questionIndex][field] = err.message;
+            allMessages.push(err.message);
           }
-        } else {
+        } else if (path) {
           validationErrors[path] = err.message;
+          allMessages.push(err.message);
         }
       });
+    } else if (error.message) {
+      allMessages.push(error.message);
     }
     setErrors(validationErrors);
 
-    // Show toast with first error message
     const firstError =
-      error.inner?.[0]?.message || "Please fix the validation errors";
+      allMessages.length > 0
+        ? allMessages[0]
+        : "Please fix the validation errors";
     dispatch(
       setToast({
         open: true,
@@ -460,7 +460,7 @@ const AddContent = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrors({}); // Clear previous errors
+    setErrors({});
 
     try {
       // First validate the main form
@@ -478,7 +478,10 @@ const AddContent = () => {
               severity: ToastStatus.ERROR,
             })
           );
-          setErrors(prev => ({ ...prev, contentLink: "Content link is required" }));
+          setErrors((prev) => ({
+            ...prev,
+            contentLink: "Content link is required",
+          }));
           setLoading(false);
           return;
         }
@@ -491,7 +494,10 @@ const AddContent = () => {
               severity: ToastStatus.ERROR,
             })
           );
-          setErrors(prev => ({ ...prev, contentLink: "File upload is required" }));
+          setErrors((prev) => ({
+            ...prev,
+            contentLink: "File upload is required",
+          }));
           setLoading(false);
           return;
         }
@@ -527,44 +533,33 @@ const AddContent = () => {
       }
 
       // Rest of your submit handler code...
-      let contentLink = state.contentLink;
-      let contentFileName = state.contentFileName;
 
-      if (state.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK || state.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
+      if (
+        state.contentType === CONTENT_TYPE.ARTICLE_PDF ||
+        state.contentType === CONTENT_TYPE.ASSIGNMENT
+      ) {
         const { filePath, fileName } = await uploadContentFile();
         contentLink = filePath;
         contentFileName = fileName;
       }
 
-      const body = {
-        name: state.contentName,
-        contentType: state.contentType,
-        contentLink,
-        description: state.description,
-        ...(contentFileName && { contentFileName }),
-        metadataTags,
-      };
-
-      const res = await metaDataController.addContentLibrary(body);
-      const contentLibraryId = res.data.data.id;
-
-      if (state.isQuizEnabled) {
-        await addQuizHandler({
-          contentLibraryId,
-          quizType: state.quizType,
-          quizSet: getQuizData(),
-        });
-      } else {
-        dispatch(
-          setToast({
-            open: true,
-            message: res.data.message,
-            severity: ToastStatus.SUCCESS,
-          })
-        );
-        setLoading(false);
-        router.back();
-      }
+      // if (state.isQuizEnabled) {
+      //   await addQuizHandler({
+      //     contentLibraryId,
+      //     quizType: state.quizType,
+      //     quizSet: getQuizData(),
+      //   });
+      // } else {
+      //   dispatch(
+      //     setToast({
+      //       open: true,
+      //       message: res.data.message,
+      //       severity: ToastStatus.SUCCESS,
+      //     })
+      //   );
+      //   setLoading(false);
+      //   router.back();
+      // }
     } catch (error) {
       handleErrorDisplay(error);
       setLoading(false);
@@ -619,7 +614,10 @@ const AddContent = () => {
           {isFileType && (
             <FileUpload
               inputRef={inputRef}
-              file={{ fileName: state.contentFileName, filePath: state.contentFileName }}
+              file={{
+                fileName: state.contentFileName,
+                filePath: state.contentFileName,
+              }}
               onChange={handleFileChange}
               error={errors.contentLink}
               disabled={loading}
@@ -649,67 +647,6 @@ const AddContent = () => {
               disabled={loading}
             />
           )}
-
-          <TextField
-            sx={{
-              ...loginTextField,
-              "& .MuiOutlinedInput-input": {
-                fontFamily: roboto.style,
-              },
-              "& .MuiOutlinedInput-root.Mui-error": {
-                borderColor: COLORS.ERROR,
-                "&:hover": {
-                  borderColor: COLORS.ERROR,
-                },
-              },
-            }}
-            label="Description"
-            multiline
-            fullWidth
-            id="description"
-            onChange={inputHandler}
-            error={Boolean(errors.description)}
-            helperText={errors.description}
-            value={state.description}
-          />
-
-          {/* <MetaDataAutocomplete
-            label="Career"
-            metaDataType={METADATA_TYPE.CAREER}
-            value={state.career}
-            onChange={multiSelectHandler("career", () => {}, "career")}
-            error={errors.career}
-            helperText={errors.career}
-            colors={{ bg: COLORS.PENDING, text: COLORS.PENDING_TEXT }}
-          />
-          <MetaDataAutocomplete
-            label="Industry"
-            metaDataType={METADATA_TYPE.INDUSTRY}
-            value={state.industry}
-            onChange={multiSelectHandler("industry", () => {}, "industry")}
-            error={errors.industry}
-            helperText={errors.industry}
-            colors={{ bg: COLORS.DONE, text: COLORS.DONE_TEXT }}
-          />
-          <MetaDataAutocomplete
-            label="Strengths"
-            metaDataType={METADATA_TYPE.STRENGTHS}
-            value={state.strengths}
-            onChange={multiSelectHandler("strengths", () => {}, "strengths")}
-            error={errors.strengths}
-            helperText={errors.strengths}
-            colors={{ bg: COLORS.SIGNED_UP, text: COLORS.SIGNED_UP_TEXT }}
-          />
-          <MetaDataAutocomplete
-            label="Soft Skills"
-            metaDataType={METADATA_TYPE.SOFT_SKILLS}
-            value={state.softSkills}
-            onChange={multiSelectHandler("softSkills", () => {}, "softSkills")}
-            error={errors.softSkills}
-            helperText={errors.softSkills}
-            colors={{ bg: COLORS.PURPLE, text: COLORS.PURPLE_TEXT }}
-          /> */}
-
           {content?.label !== CONTENT_TYPE.ASSIGNMENT && (
             <FormControlLabel
               control={

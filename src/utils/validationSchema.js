@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { ASSESSMENTS_TYPE, EVENT_TYPE, QUIZ_TYPE } from "./enum";
+import { ASSESSMENTS_TYPE, CONTENT_TYPE, EVENT_TYPE, QUIZ_TYPE } from "./enum";
 import moment from "moment";
 import { useMemo } from "react";
 export const loginValidationSchema = Yup.object({
@@ -384,8 +384,13 @@ export const newAddContentValidationSchema = Yup.object().shape({
   contentName: Yup.string()
     .required("Please Enter Content Name")
     .test(
+      "no-leading-trailing-whitespace",
+      "Description must not have leading or trailing spaces",
+      (value) => value && value.trim() === value
+    )
+    .test(
       "not-empty",
-      "Content Name cannot be only whitespace",
+      "Description cannot be only whitespace",
       (value) => value && value.trim().length > 0
     )
     .matches(
@@ -398,6 +403,11 @@ export const newAddContentValidationSchema = Yup.object().shape({
   description: Yup.string()
     .required("Please Enter Description")
     .test(
+      "no-leading-trailing-whitespace",
+      "Description must not have leading or trailing spaces",
+      (value) => value && value.trim() === value
+    )
+    .test(
       "not-empty",
       "Description cannot be only whitespace",
       (value) => value && value.trim().length > 0
@@ -407,7 +417,7 @@ export const newAddContentValidationSchema = Yup.object().shape({
       "Description cannot contain special characters except for basic punctuation"
     )
     .max(500, "Only 500 characters allowed")
-    .min(2, "description is too short!"),
+    .min(2, "Description is too short!"),
 
   contentType: Yup.string()
     .required("Please Select Content Type")
@@ -416,6 +426,71 @@ export const newAddContentValidationSchema = Yup.object().shape({
       "Please Select Content Type",
       (value) => value && value.trim().length > 0
     ),
+
+  contentLink: Yup.mixed().when("contentType", {
+    is: (val) => val === CONTENT_TYPE.ARTICLE_PDF || val === CONTENT_TYPE.ASSIGNMENT,
+    then: (schema) =>
+      schema
+        .required("File upload is required")
+        .test(
+          "fileType",
+          "Only PDF files are allowed",
+          (value) => value && value.type === "application/pdf"
+        )
+        .test(
+          "fileSize",
+          "File size must be less than 10MB",
+          (value) => value && value.size <= 10 * 1024 * 1024
+        ),
+    otherwise: (schema) =>
+      schema.when("contentType", {
+        is: (val) =>
+          val === CONTENT_TYPE.JOURNAL_LINK ||
+          val === CONTENT_TYPE.YOUTUBE_VIDEO_LINK ||
+          val === CONTENT_TYPE.NATIVE_VIDEO_LINK,
+        then: (schema) =>
+          schema
+            .required("Content link is required")
+            .test(
+              "no-leading-trailing-whitespace",
+              "Content link must not have leading or trailing spaces",
+              (value) => value && typeof value === "string" && value.trim() === value
+            )
+            .test(
+              "not-empty",
+              "Content link cannot be only whitespace",
+              (value) => value && typeof value === "string" && value.trim().length > 0
+            )
+            .url("Content link must be a valid URL")
+            .test(
+              "youtube-link",
+              "Please enter a valid YouTube video link",
+              function (value) {
+                if (this.parent && this.parent.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
+                  return (
+                    /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i.test(value)
+                  );
+                }
+                return true;
+              }
+            )
+            .test(
+              "s3-link",
+              "Please enter a valid native video link",
+              function (value) {
+                if (this.parent && this.parent.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
+                  // Accepts any valid URL, optionally restrict to S3 if needed
+                  // Example S3 pattern: https://bucket.s3.amazonaws.com/key
+                  // return /^(https?:\/\/)?([\w-]+\.)*s3\.amazonaws\.com\//.test(value);
+                  // For now, just ensure it's a valid URL (already checked above)
+                  return true;
+                }
+                return true;
+              }
+            ),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+  }),
 
   isQuizEnabled: Yup.boolean(),
 });
@@ -444,10 +519,15 @@ export const quizValidationSchema = Yup.object().shape({
                   "Option text cannot be only whitespace",
                   (value) => value && value.trim().length > 0
                 )
-                .matches(/^\S.*\S$/, "Option text cannot start or end with spaces")
+                .matches(
+                  /^\S.*\S$/,
+                  "Option text cannot start or end with spaces"
+                )
                 .min(2, "Option text should be more than 2 characters")
                 .max(255, "Option text is too long!"),
-              isCorrect: Yup.boolean().required("Please select if this option is correct or not"),
+              isCorrect: Yup.boolean().required(
+                "Please select if this option is correct or not"
+              ),
             })
           )
           .min(2, "At least two options are required")
@@ -461,7 +541,9 @@ export const quizValidationSchema = Yup.object().shape({
             "Duplicate options are not allowed",
             (options) => {
               if (!options) return true;
-              const optionTexts = options.map(opt => opt.optionText.trim().toLowerCase());
+              const optionTexts = options.map((opt) =>
+                opt.optionText.trim().toLowerCase()
+              );
               return new Set(optionTexts).size === optionTexts.length;
             }
           ),
@@ -548,7 +630,6 @@ export const parseYupErrors = (yupError) => {
 
   return fieldErrors;
 };
-
 
 export const editRoadmapValidationSchema = Yup.object().shape({
   tileName: Yup.string()
