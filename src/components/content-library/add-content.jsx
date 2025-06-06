@@ -385,7 +385,6 @@ const AddContent = () => {
         contentFileName = response.fileName;
         contentLink = response.filePath;
       })
-    
 
       .catch((err) => {
         let errMessage = err?.response?.data?.message || err.message;
