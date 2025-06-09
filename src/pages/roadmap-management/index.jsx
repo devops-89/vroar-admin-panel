@@ -6,7 +6,8 @@ import CustomChip from "@/components/customChip";
 import CustomTable from "@/components/customTable";
 import Wrapper from "@/components/wrapper";
 import { showModal } from "@/redux/reducers/modal";
-import { COLORS } from "@/utils/enum";
+import { setToast } from "@/redux/reducers/toast";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { METADATA_TAGS_ARRAY } from "@/utils/genericArray";
 import withAuth from "@/utils/withAuth";
@@ -139,10 +140,31 @@ const Roadmap = () => {
 
   const [roadmapMetaData, setRoadmapMetaData] = useState([]);
   const resetFilterHandler = () => {
-    // setContentTypeData([]);
-    // setLoading(true);
-    // delete body.contentType;
-    // getContentLibrary(body);
+    setLoading(true);
+    setRoadmapMetaData([]);
+    setAnchorEl(null);
+    body.metadataType = [];
+    getAllRoadmapJourney(body);
+  };
+  const [filterLoading, setFilterLoading] = useState(false);
+  const applyFilterHandler = () => {
+    // console.log("roadmapMetaData", roadmapMetaData);
+    setFilterLoading(true);
+    if (roadmapMetaData.length === 0) {
+      dispatch(
+        setToast({
+          message: "Please select at least one filter",
+          severity: ToastStatus.ERROR,
+        })
+      );
+      setFilterLoading(false);
+      return;
+    } else {
+      setLoading(true);
+      body.metadataType = roadmapMetaData;
+      setFilterLoading(false);
+    }
+    getAllRoadmapJourney(body);
     setAnchorEl(null);
   };
 
@@ -265,9 +287,18 @@ const Roadmap = () => {
                   fontFamily: roboto.style,
                   textTransform: "initial",
                 }}
-                // onClick={contentTypeFilterApply}
+                onClick={applyFilterHandler}
               >
-                Apply
+                {filterLoading ? (
+                  <Loading
+                    type="bars"
+                    color={COLORS.WHITE}
+                    height={20}
+                    width={20}
+                  />
+                ) : (
+                  "Apply"
+                )}
               </Button>
             </Stack>
           </Popover>
