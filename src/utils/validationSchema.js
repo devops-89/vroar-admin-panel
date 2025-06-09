@@ -385,12 +385,12 @@ export const newAddContentValidationSchema = Yup.object().shape({
     .required("Please Enter Content Name")
     .test(
       "no-leading-trailing-whitespace",
-      "Description must not have leading or trailing spaces",
+      "Name must not have leading or trailing spaces",
       (value) => value && value.trim() === value
     )
     .test(
       "not-empty",
-      "Description cannot be only whitespace",
+      "Name cannot be only whitespace",
       (value) => value && value.trim().length > 0
     )
     .matches(
@@ -443,53 +443,42 @@ export const newAddContentValidationSchema = Yup.object().shape({
           (value) => value && value.size <= 10 * 1024 * 1024
         ),
     otherwise: (schema) =>
-      schema.when("contentType", {
-        is: (val) =>
-          val === CONTENT_TYPE.JOURNAL_LINK ||
-          val === CONTENT_TYPE.YOUTUBE_VIDEO_LINK ||
-          val === CONTENT_TYPE.NATIVE_VIDEO_LINK,
-        then: (schema) =>
-          schema
-            .required("Content link is required")
-            .test(
-              "no-leading-trailing-whitespace",
-              "Content link must not have leading or trailing spaces",
-              (value) => value && typeof value === "string" && value.trim() === value
-            )
-            .test(
-              "not-empty",
-              "Content link cannot be only whitespace",
-              (value) => value && typeof value === "string" && value.trim().length > 0
-            )
-            .url("Content link must be a valid URL")
-            .test(
-              "youtube-link",
-              "Please enter a valid YouTube video link",
-              function (value) {
-                if (this.parent && this.parent.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-                  return (
-                    /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i.test(value)
-                  );
-                }
-                return true;
-              }
-            )
-            .test(
-              "s3-link",
-              "Please enter a valid native video link",
-              function (value) {
-                if (this.parent && this.parent.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
-                  // Accepts any valid URL, optionally restrict to S3 if needed
-                  // Example S3 pattern: https://bucket.s3.amazonaws.com/key
-                  // return /^(https?:\/\/)?([\w-]+\.)*s3\.amazonaws\.com\//.test(value);
-                  // For now, just ensure it's a valid URL (already checked above)
-                  return true;
-                }
-                return true;
-              }
-            ),
-        otherwise: (schema) => schema.notRequired(),
-      }),
+      Yup.string()
+        .required("Content link is required")
+        .test(
+          "no-leading-trailing-whitespace",
+          "Content link must not have leading or trailing spaces",
+          (value) => value && typeof value === "string" && value.trim() === value
+        )
+        .test(
+          "not-empty",
+          "Content link cannot be only whitespace",
+          (value) => value && typeof value === "string" && value.trim().length > 0
+        )
+        .url("Content link must be a valid URL")
+        .test(
+          "youtube-link",
+          "Please enter a valid YouTube video link",
+          function (value) {
+            if (this.parent && this.parent.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
+              return (
+                /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i.test(value)
+              );
+            }
+            return true;
+          }
+        )
+        .test(
+          "s3-link",
+          "Please enter a valid native video link",
+          function (value) {
+            if (this.parent && this.parent.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
+            
+              return true;
+            }
+            return true;
+          }
+        ),
   }),
 
   isQuizEnabled: Yup.boolean(),
