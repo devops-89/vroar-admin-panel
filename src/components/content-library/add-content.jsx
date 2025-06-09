@@ -143,7 +143,6 @@ const AddContent = () => {
           values.contentType === CONTENT_TYPE.ASSIGNMENT
         ) {
           const { filePath, fileName } = await uploadContentFile(values);
-          console.log("first", filePath, fileName);
           values.contentLink = filePath;
           values.contentFileName = fileName;
         } else {
