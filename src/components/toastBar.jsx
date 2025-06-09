@@ -20,7 +20,7 @@ const ToastBar = () => {
           vertical: "top",
           horizontal: "right",
         }}
-        autoHideDuration={2000}
+        autoHideDuration={3000}
         sx={{ zIndex: 99999 }}
       >
         <Alert onClose={handleClose} severity={toast.severity} variant="filled">
