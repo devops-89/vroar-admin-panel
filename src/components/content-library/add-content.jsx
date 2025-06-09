@@ -21,6 +21,7 @@ import {
 import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
 import { isYoutubeUrl } from "@/utils/regex";
+import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import Loading from "react-loading";
@@ -30,8 +31,6 @@ import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
 import { FileUpload } from "./form-components/FileUpload";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
-import metadata from "@/pages/roadmap-management/metadata";
-import { useFormik } from "formik";
 
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
@@ -78,8 +77,6 @@ const AddContent = () => {
     validationSchema: newAddContentValidationSchema,
     onSubmit: async (values, { setErrors }) => {
       setLoading(true);
-      let contentLink = values.contentLink;
-      let contentFileName = values.contentFileName;
       let metadataTags = [
         ...(values.career.map((item) => item.id) || []),
         ...(values.industry.map((item) => item.id) || []),
@@ -146,15 +143,18 @@ const AddContent = () => {
           values.contentType === CONTENT_TYPE.ASSIGNMENT
         ) {
           const { filePath, fileName } = await uploadContentFile(values);
-          contentLink = filePath;
-          contentFileName = fileName;
+          console.log("first", filePath, fileName);
+          values.contentLink = filePath;
+          values.contentFileName = fileName;
         } else {
           const body = {
             name: values.contentName,
             contentType: values.contentType,
             contentLink: values.contentLink,
             description: values.description,
-            ...(contentFileName && { contentFileName }),
+            ...(values.contentFileName && {
+              contentFileName: values.contentFileName,
+            }),
             metadataTags,
           };
           await addContentHandler(body);
@@ -373,7 +373,7 @@ const AddContent = () => {
   let metadataTags = [];
 
   const uploadContentFile = async (values) => {
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     if (values.contentLink.size > MAX_FILE_SIZE) {
       dispatch(
@@ -390,30 +390,38 @@ const AddContent = () => {
       type: values.contentType,
       contentFile: values.contentLink,
     };
-    metaDataController
-      .getUploadContentFile(body)
-      .then((res) => {
-        const response = res.data.data;
-        contentFileName = response.fileName;
-        contentLink = response.filePath;
-        const newBody = {
-          name: values.contentName,
-          contentType: values.contentType,
-          contentLink,
-          description: values.description,
-          ...(contentFileName && { contentFileName }),
-        };
-      })
-      .catch((err) => {
-        let errMessage = err?.response?.data?.message || err.message;
-        dispatch(
-          setToast({
-            open: true,
-            message: errMessage,
-            severity: ToastStatus.ERROR,
-          })
-        );
-      });
+
+    try {
+      const res = await metaDataController.getUploadContentFile(body);
+      const response = res.data.data;
+      values.contentFileName = response.fileName;
+      values.contentLink = response.filePath;
+      const newBody = {
+        name: values.contentName,
+        contentType: values.contentType,
+        contentLink: values.contentLink,
+        description: values.description,
+        ...(values.contentFileName && {
+          contentFileName: values.contentFileName,
+        }),
+      };
+      addContentHandler(newBody);
+      return {
+        filePath: response.filePath,
+        fileName: response.fileName,
+      };
+    } catch (err) {
+      let errMessage = err?.response?.data?.message || err.message;
+      console.log(errMessage);
+      dispatch(
+        setToast({
+          open: true,
+          message: errMessage,
+          severity: ToastStatus.ERROR,
+        })
+      );
+      throw err;
+    }
   };
 
   const addContentHandler = async (body) => {
@@ -428,7 +436,25 @@ const AddContent = () => {
     metaDataController
       .addContentLibrary(body)
       .then((res) => {
-        consol.log("res", res);
+        // Get the new content's ID from the response
+        const contentLibraryId = res.data.data.id || res.data.data._id;
+        if (formik.values.isQuizEnabled) {
+          addQuizHandler({
+            contentLibraryId,
+            quizType: formik.values.quizType,
+            quizSet: getQuizData(),
+          });
+        } else {
+          setLoading(false);
+          dispatch(
+            setToast({
+              open: true,
+              message: "Content added successfully",
+              severity: ToastStatus.SUCCESS,
+            })
+          );
+          router.push("/roadmap-management/content-library");
+        }
       })
       .catch((err) => {
         let errMessage = err?.response?.data?.message || err.message;
@@ -439,6 +465,7 @@ const AddContent = () => {
             severity: ToastStatus.ERROR,
           })
         );
+        setLoading(false);
       });
   };
 
@@ -576,8 +603,12 @@ const AddContent = () => {
               onChange={inputHandler}
               id="contentLink"
               name="contentLink"
-              error={Boolean(formik.errors.contentLink && formik.touched.contentLink)}
-              helperText={formik.touched.contentLink && formik.errors.contentLink}
+              error={Boolean(
+                formik.errors.contentLink && formik.touched.contentLink
+              )}
+              helperText={
+                formik.touched.contentLink && formik.errors.contentLink
+              }
               value={formik.values.contentLink}
               disabled={loading}
             />
@@ -587,7 +618,9 @@ const AddContent = () => {
               control={
                 <Checkbox
                   checked={formik.values.isQuizEnabled}
-                  onChange={(e) => formik.setFieldValue("isQuizEnabled", e.target.checked)}
+                  onChange={(e) =>
+                    formik.setFieldValue("isQuizEnabled", e.target.checked)
+                  }
                 />
               }
               label="Enable Quiz"
