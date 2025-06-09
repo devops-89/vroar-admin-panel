@@ -4,6 +4,7 @@ const {
   ASSESSMENTS_TYPE,
   USER_STATUS,
   EVENT_TYPE,
+  METADATA_TYPE,
 } = require("./enum");
 
 export const profileTabs = [
@@ -93,5 +94,23 @@ export const Event_Type_Array = [
   {
     label: "Free Events",
     value: EVENT_TYPE.FREE,
+  },
+];
+
+export const METADATA_TAGS_ARRAY = [
+  {
+    label: METADATA_TYPE.CAREER,
+  },
+  {
+    label: METADATA_TYPE.INDUSTRY,
+  },
+  {
+    label: METADATA_TYPE.STRENGTHS,
+  },
+  {
+    label: METADATA_TYPE.SOFT_SKILLS,
+  },
+  {
+    label: METADATA_TYPE.MY_TREKS,
   },
 ];

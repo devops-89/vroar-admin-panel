@@ -6,11 +6,16 @@ import {
   Autocomplete,
   Box,
   Grid2,
+  InputAdornment,
   InputLabel,
   TextField,
   Typography,
 } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  CalendarIcon,
+  DatePicker,
+  LocalizationProvider,
+} from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
 import { MuiTelInput } from "mui-tel-input";
@@ -28,7 +33,7 @@ const KidDetails = () => {
         Kid Details
       </Typography>
 
-      {user?.kids.map((val, i) => (
+      {user?.kids && user?.kids?.length > 0 && user?.kids?.map((val, i) => (
         <Grid2 container sx={{ mt: 2 }} spacing={4} key={i}>
           <Grid2 size={6}>
             <TextField
@@ -103,6 +108,7 @@ const KidDetails = () => {
             />
           </Grid2>
           <Grid2 size={6}>
+         
             <InputLabel>
               <Typography
                 sx={{
@@ -115,14 +121,25 @@ const KidDetails = () => {
                 Date Of Birth
               </Typography>
             </InputLabel>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                sx={{ width: "100%", ...loginTextField }}
-                value={moment.unix(val.birthDate)}
-                format="DD-MM-YYYY"
-                readOnly
-              />
-            </LocalizationProvider>
+            <TextField
+              sx={{ ...loginTextField }}
+              fullWidth
+              value={
+                val.birthDate
+                  ? moment.unix(val.birthDate).format("DD-MM-YYYY")
+                  : "--"
+              }
+              slotProps={{
+                input: {
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <CalendarIcon />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
           </Grid2>
           <Grid2 size={6}>
             <InputLabel>
@@ -137,21 +154,16 @@ const KidDetails = () => {
                 Gender
               </Typography>
             </InputLabel>
-            <Autocomplete
-              renderInput={(params) => (
-                <TextField {...params} sx={{ ...loginTextField }} />
-              )}
-              options={data.genderData}
-              getOptionLabel={(option) => option.label}
-              renderOption={(props, option) => (
-                <Box component={"li"} {...props}>
-                  <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                    {option.label}
-                  </Typography>
-                </Box>
-              )}
-              value={{label:val.gender}}
-              readOnly
+
+            <TextField
+              sx={{ ...loginTextField }}
+              fullWidth
+              value={val.gender ?? "--"}
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
             />
           </Grid2>
 

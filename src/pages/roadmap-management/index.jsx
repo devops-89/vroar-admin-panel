@@ -8,14 +8,26 @@ import Wrapper from "@/components/wrapper";
 import { showModal } from "@/redux/reducers/modal";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import { METADATA_TAGS_ARRAY } from "@/utils/genericArray";
 import withAuth from "@/utils/withAuth";
-import { AddCircle, Delete, Remove, Visibility } from "@mui/icons-material";
+import {
+  AddCircle,
+  Close,
+  Delete,
+  Remove,
+  Visibility,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
   Card,
+  Checkbox,
   Collapse,
+  Divider,
+  FormControl,
+  FormControlLabel,
   IconButton,
+  Popover,
   Stack,
   Table,
   TableBody,
@@ -104,7 +116,11 @@ const Roadmap = () => {
   const addRoadmap = () => {
     router.push("/roadmap-management/create-roadmap");
   };
-
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openPopover = Boolean(anchorEl);
+  const handlePopover = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
   const viewRoadmap = (id) => {
     router.push(`/roadmap-management/${id}/view-roadmap`);
   };
@@ -120,6 +136,22 @@ const Roadmap = () => {
       getAllRoadmapJourney(body);
     }
   }, []);
+
+  const [roadmapMetaData, setRoadmapMetaData] = useState([]);
+  const resetFilterHandler = () => {
+    // setContentTypeData([]);
+    // setLoading(true);
+    // delete body.contentType;
+    // getContentLibrary(body);
+    setAnchorEl(null);
+  };
+
+  const checkBoxChangeHandler = (e) => {
+    const { checked, value } = e.target;
+    setRoadmapMetaData((prev) =>
+      checked ? [...prev, value] : prev.filter((item) => item !== value)
+    );
+  };
 
   return (
     <div>
@@ -157,8 +189,88 @@ const Roadmap = () => {
             </Button>
           </Stack>
           <Box sx={{ p: 1 }}>
-            <CustomTable onSearch={searchHandler} />
+            <CustomTable onSearch={searchHandler} onFilter={handlePopover} />
           </Box>
+          <Popover
+            anchorEl={anchorEl}
+            open={openPopover}
+            onClose={() => setAnchorEl(null)}
+            sx={{
+              "& .MuiPopover-paper": {
+                width: 250,
+              },
+            }}
+          >
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+              sx={{ p: 1 }}
+            >
+              <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
+                Filter
+              </Typography>
+              <IconButton onClick={() => setAnchorEl(null)}>
+                <Close sx={{ color: COLORS.PRIMARY, fontSize: 20 }} />
+              </IconButton>
+            </Stack>
+            <Divider />
+            <Stack alignItems={"flex-start"} spacing={0.6} sx={{ mt: 2 }}>
+              {METADATA_TAGS_ARRAY.map((val, i) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      sx={{
+                        "&.Mui-checked": {
+                          color: `${COLORS.PRIMARY} !important`,
+                        },
+                      }}
+                      onChange={checkBoxChangeHandler}
+                      value={val.label}
+                      checked={roadmapMetaData.includes(val.label)}
+                    />
+                  }
+                  label={
+                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                      {val.label}
+                    </Typography>
+                  }
+                  key={i}
+                />
+              ))}
+            </Stack>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+              sx={{ p: 2 }}
+            >
+              <Button
+                sx={{
+                  border: `1px solid ${COLORS.PRIMARY}`,
+                  fontSize: 14,
+                  fontFamily: roboto.style,
+                  textTransform: "initial",
+                  color: COLORS.PRIMARY,
+                }}
+                onClick={resetFilterHandler}
+              >
+                Reset
+              </Button>
+              <Button
+                sx={{
+                  backgroundColor: COLORS.PRIMARY,
+                  color: COLORS.WHITE,
+                  fontSize: 14,
+                  fontFamily: roboto.style,
+                  textTransform: "initial",
+                }}
+                // onClick={contentTypeFilterApply}
+              >
+                Apply
+              </Button>
+            </Stack>
+          </Popover>
           <Box sx={{ mt: 2 }}>
             <TableContainer>
               <Table>
