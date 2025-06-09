@@ -296,8 +296,20 @@ export const editAdListValidataitonSchema = Yup.object({
 // });
 
 export const studentJourneyValidationSchema = Yup.object({
-  name: Yup.string().required("Please Enter Journey Name"),
+  name: Yup.string()
+    .required("Please Enter Journey Name")
+    .test(
+      "no-leading-trailing-whitespace",
+      "Journey name must not have leading or trailing spaces",
+      (value) => value && value.trim() === value
+    )
+    .test(
+      "not-empty-or-spaces",
+      "Journey name cannot be empty or just spaces",
+      (value) => !!value && value.trim().length > 0
+    ),
   roadmapJourneyIds: Yup.array()
+    .of(Yup.string().required())
     .required("Please Select Roadmap")
     .min(1, "Please Select at least one Roadmap"),
   userId: Yup.string().required("Please Select User"),

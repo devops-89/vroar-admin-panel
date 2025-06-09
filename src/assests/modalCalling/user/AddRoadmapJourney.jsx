@@ -131,12 +131,11 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
 
   const getAllRoadmapJourney = async ({ type, setLoading, setData }) => {
     setLoading(true);
-
     try {
       const res = await metaDataController.getRoadmapJourney({
         page: 1,
         pageSize: 100,
-        metadataType: type,
+        metadataType: Array.isArray(type) ? type : [type],
       });
       setData(res.data.data.docs);
     } catch (err) {
@@ -320,7 +319,7 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
           }
           onFocus={() =>
             getAllRoadmapJourney({
-              type: METADATA_TYPE.CAREER,
+              type: [METADATA_TYPE.CAREER],
               setData: setCareerData,
               setLoading: setListLoading,
             })
@@ -378,7 +377,7 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
           filterSelectedOptions
           onFocus={() =>
             getAllRoadmapJourney({
-              type: METADATA_TYPE.INDUSTRY,
+              type: [METADATA_TYPE.INDUSTRY],
               setLoading: setListLoading,
               setData: setIndustryData,
             })
@@ -436,7 +435,7 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
           filterSelectedOptions
           onFocus={() =>
             getAllRoadmapJourney({
-              type: METADATA_TYPE.STRENGTHS,
+              type: [METADATA_TYPE.STRENGTHS],
               setLoading: setListLoading,
               setData: setStrengthData,
             })
@@ -498,13 +497,12 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
           filterSelectedOptions
           onFocus={() =>
             getAllRoadmapJourney({
-              type: METADATA_TYPE.SOFT_SKILLS,
+              type: [METADATA_TYPE.SOFT_SKILLS],
               setLoading: setListLoading,
               setData: setSoftSkillsData,
             })
           }
           loading={listLoading}
-          
         />
         <Button
           sx={{
