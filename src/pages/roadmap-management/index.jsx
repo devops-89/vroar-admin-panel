@@ -51,7 +51,7 @@ const Roadmap = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
   const [roadmapData, setRoadmapData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");

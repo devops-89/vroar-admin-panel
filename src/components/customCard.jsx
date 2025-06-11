@@ -9,7 +9,7 @@ import StudentTable from "./user/studentTable";
 
 const CustomCard = () => {
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");

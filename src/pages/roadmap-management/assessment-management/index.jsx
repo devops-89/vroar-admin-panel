@@ -34,7 +34,7 @@ import Loading from "react-loading";
 const Assessment = () => {
   const router = useRouter();
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
   const [search, setSearch] = useState("");
   let body = {
     page: page,
