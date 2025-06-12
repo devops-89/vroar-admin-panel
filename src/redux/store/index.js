@@ -5,6 +5,7 @@ import modalReducer from "../reducers/modal";
 import sideBarReducer from "../reducers/sidebarCollapse";
 import ADMINREDUCER from "../reducers/user";
 import Content_Details from "../reducers/contentDetails";
+import academicQualificationReducer from "../reducers/academicQualification";
 export default configureStore({
   reducer: {
     Toast: toastReducer,
@@ -13,6 +14,7 @@ export default configureStore({
     sideBarCollapse: sideBarReducer,
     AdminDetails: ADMINREDUCER,
     ContentDetails: Content_Details,
+    academicQualification: academicQualificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

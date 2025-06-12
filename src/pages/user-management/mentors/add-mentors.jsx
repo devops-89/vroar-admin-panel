@@ -1,6 +1,7 @@
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import AcademicQualification from "@/components/user/mentor/AddMentorFormComponents/AcademicQualification";
 import InitialForm from "@/components/user/mentor/AddMentorFormComponents/InitialForm";
+import ProfessionalBackground from "@/components/user/mentor/AddMentorFormComponents/ProfessionalBackground";
 import Wrapper from "@/components/wrapper";
 import { roboto } from "@/utils/fonts";
 import { Box, Card, Stack, Typography } from "@mui/material";
@@ -13,6 +14,15 @@ const AddMentors = () => {
       degree: "",
       fieldOfStudy: "",
       year: "",
+    },
+  ]);
+
+  const [professionalBackground, setProfessionalBackground] = useState([
+    {
+      companyName: "",
+      position: "",
+      duration: "",
+      description: "",
     },
   ]);
   return (
@@ -57,6 +67,25 @@ const AddMentors = () => {
             <AcademicQualification
               academicQualification={academicQualification}
               setAcademicQualification={setAcademicQualification}
+            />
+          </Box>
+          <Box sx={{ mt: 2 }}>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+            >
+              <Typography
+                fontFamily={roboto.style}
+                fontSize={20}
+                sx={{ mt: 5, fontWeight: 600 }}
+              >
+                Add Professional Background
+              </Typography>
+            </Stack>
+            <ProfessionalBackground
+              professionalBackground={professionalBackground}
+              setProfessionalBackground={setProfessionalBackground}
             />
           </Box>
         </form>

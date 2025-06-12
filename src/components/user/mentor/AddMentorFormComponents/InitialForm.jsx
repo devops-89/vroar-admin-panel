@@ -25,10 +25,7 @@ const InitialForm = () => {
           <Card
             sx={{
               p: 2,
-              // height:450,
-              // display: "flex",
-              // alignItems: "center",
-              // justifyContent: "center",
+              height: 290,
             }}
           >
             <Box sx={{ textAlign: "center" }}>
@@ -122,23 +119,24 @@ const InitialForm = () => {
                 multiline
               />
             </Grid2>
-            <Grid2 size={12}>
-              <TextField
-                sx={{
-                  ...loginTextField,
-                  fieldset: {
-                    height: 110,
-                  },
-                  "& .MuiOutlinedInput-input": {
-                    height: "100px !important",
-                  },
-                }}
-                label="Career Summary"
-                fullWidth
-                multiline
-              />
-            </Grid2>
           </Grid2>
+        </Grid2>
+
+        <Grid2 size={12}>
+          <TextField
+            sx={{
+              ...loginTextField,
+              fieldset: {
+                height: 110,
+              },
+              "& .MuiOutlinedInput-input": {
+                height: "100px !important",
+              },
+            }}
+            label="Career Summary"
+            fullWidth
+            multiline
+          />
         </Grid2>
       </Grid2>
     </div>
