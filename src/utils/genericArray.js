@@ -114,3 +114,16 @@ export const METADATA_TAGS_ARRAY = [
     label: METADATA_TYPE.MY_TREKS,
   },
 ];
+
+export const skillsOptions = [
+  "JavaScript",
+  "React",
+  "Node.js",
+  "Python",
+  "CSS",
+  "HTML",
+  "TypeScript",
+  "Redux",
+  "Express.js",
+  "MongoDB",
+];

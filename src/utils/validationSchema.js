@@ -2,6 +2,7 @@ import * as Yup from "yup";
 import { ASSESSMENTS_TYPE, CONTENT_TYPE, EVENT_TYPE, QUIZ_TYPE } from "./enum";
 import moment from "moment";
 import { useMemo } from "react";
+import { matchIsValidTel } from "mui-tel-input";
 export const loginValidationSchema = Yup.object({
   email: Yup.string()
     .email("Please Enter Valid Email")
@@ -440,7 +441,8 @@ export const newAddContentValidationSchema = Yup.object().shape({
     ),
 
   contentLink: Yup.mixed().when("contentType", {
-    is: (val) => val === CONTENT_TYPE.ARTICLE_PDF || val === CONTENT_TYPE.ASSIGNMENT,
+    is: (val) =>
+      val === CONTENT_TYPE.ARTICLE_PDF || val === CONTENT_TYPE.ASSIGNMENT,
     then: (schema) =>
       schema
         .required("File upload is required")
@@ -460,21 +462,26 @@ export const newAddContentValidationSchema = Yup.object().shape({
         .test(
           "no-leading-trailing-whitespace",
           "Content link must not have leading or trailing spaces",
-          (value) => value && typeof value === "string" && value.trim() === value
+          (value) =>
+            value && typeof value === "string" && value.trim() === value
         )
         .test(
           "not-empty",
           "Content link cannot be only whitespace",
-          (value) => value && typeof value === "string" && value.trim().length > 0
+          (value) =>
+            value && typeof value === "string" && value.trim().length > 0
         )
         .url("Content link must be a valid URL")
         .test(
           "youtube-link",
           "Please enter a valid YouTube video link",
           function (value) {
-            if (this.parent && this.parent.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-              return (
-                /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i.test(value)
+            if (
+              this.parent &&
+              this.parent.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK
+            ) {
+              return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i.test(
+                value
               );
             }
             return true;
@@ -484,8 +491,10 @@ export const newAddContentValidationSchema = Yup.object().shape({
           "s3-link",
           "Please enter a valid native video link",
           function (value) {
-            if (this.parent && this.parent.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
-            
+            if (
+              this.parent &&
+              this.parent.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK
+            ) {
               return true;
             }
             return true;
@@ -743,3 +752,35 @@ export const editRoadmapValidationSchema = Yup.object().shape({
 //     otherwise: () => Yup.string(),
 //   }),
 // }), []);
+
+export const addMentorValidationSchema = Yup.object().shape({
+  firstName: Yup.string().required("First Name is required"),
+  lastName: Yup.string().required("Last Name is required"),
+  email: Yup.string()
+    .email("Please Enter Valid Email")
+    .required("Please Enter Valid Email"),
+  phoneNo: Yup.string().required("Please Enter Phone Number"),
+
+  password: Yup.string()
+    .required("Please Enter Password")
+    .min(8, "Password must be at least 8 characters"),
+  avatar: Yup.mixed()
+    .required("Please Upload Avatar")
+    .test("fileType", "Only JPG or PNG files are allowed", (value) => {
+      if (!value) return true;
+      const file = value;
+      return ["image/jpeg", "image/png"].includes(file.type);
+    })
+    .test("fileSize", "File size must be less than 1MB", (value) => {
+      if (!value) return true;
+      const file = value;
+      return file.size <= 1024 * 1024;
+    }),
+  gender: Yup.string().required("Please select gender"),
+  birthDate: Yup.string().required("Please Select birth date"),
+  designation: Yup.string().required("Please Enter Designation"),
+  skills: Yup.array()
+    .min(1, "Please select at least one skill")
+    .required("Please Enter Skills"),
+  careerSummary: Yup.string().required("Please Enter Career Summary"),
+});

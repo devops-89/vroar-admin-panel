@@ -3,8 +3,11 @@ import AcademicQualification from "@/components/user/mentor/AddMentorFormCompone
 import InitialForm from "@/components/user/mentor/AddMentorFormComponents/InitialForm";
 import ProfessionalBackground from "@/components/user/mentor/AddMentorFormComponents/ProfessionalBackground";
 import Wrapper from "@/components/wrapper";
+import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { Box, Card, Stack, Typography } from "@mui/material";
+import { addMentorValidationSchema } from "@/utils/validationSchema";
+import { Box, Button, Card, Stack, Typography } from "@mui/material";
+import { useFormik } from "formik";
 import React, { useState } from "react";
 
 const AddMentors = () => {
@@ -25,6 +28,35 @@ const AddMentors = () => {
       description: "",
     },
   ]);
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: "", // req
+      lastName: "", // req
+      email: "",
+      phoneNo: "", // req
+      countryCode: "", //req
+      password: "", // req
+      avatar: "",
+      coverImage: "",
+      gender: "",
+      birthDate: "",
+      designation: "",
+      skills: [],
+      careerSummary: "",
+      professionalBackground: [],
+      academicQualification: [],
+    },
+    validationSchema: addMentorValidationSchema,
+    onSubmit: (values) => {
+      console.log("values", values);
+    },
+  });
+
+  if (formik.errors) {
+    console.log("formik.errors", formik.errors);
+    console.log("formik.values", formik.values.academicQualification);
+  }
   return (
     <Wrapper>
       <Card sx={{ p: 3 }}>
@@ -48,8 +80,8 @@ const AddMentors = () => {
           ]}
         />
 
-        <form>
-          <InitialForm />
+        <form onSubmit={formik.handleSubmit}>
+          <InitialForm formik={formik} />
           <Box sx={{ mt: 2 }}>
             <Stack
               direction={"row"}
@@ -67,6 +99,7 @@ const AddMentors = () => {
             <AcademicQualification
               academicQualification={academicQualification}
               setAcademicQualification={setAcademicQualification}
+              formik={formik}
             />
           </Box>
           <Box sx={{ mt: 2 }}>
@@ -86,7 +119,21 @@ const AddMentors = () => {
             <ProfessionalBackground
               professionalBackground={professionalBackground}
               setProfessionalBackground={setProfessionalBackground}
+              formik={formik}
             />
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+            <Button
+              type="submit"
+              sx={{
+                background: COLORS.LinearGradient,
+                color: COLORS.WHITE,
+                width: 150,
+                fontFamily: roboto.style,
+              }}
+            >
+              Submit
+            </Button>
           </Box>
         </form>
       </Card>

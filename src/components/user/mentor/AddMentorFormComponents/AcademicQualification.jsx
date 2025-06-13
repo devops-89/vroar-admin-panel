@@ -17,9 +17,10 @@ import React from "react";
 const AcademicQualification = ({
   academicQualification,
   setAcademicQualification,
+  formik,
 }) => {
   return (
-    <Card sx={{ p: 2, mt: 1 }}>
+    <Card sx={{ p: 2 }}>
       <Grid2 container sx={{ mt: 2 }} spacing={2}>
         {academicQualification.map((item, index) => (
           <React.Fragment key={index}>
