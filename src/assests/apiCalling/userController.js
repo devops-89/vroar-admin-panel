@@ -30,3 +30,16 @@ export const getUserRoadMapJourney = ({ userId, setLoading, setData }) => {
       console.log("err", err);
     });
 };
+
+export const getMentorById = async (mentorId, setMentorData) => {
+  userController
+    .getMentorById(mentorId)
+    .then((res) => {
+      // console.log("res", res);
+      const response = res.data.data;
+      setMentorData(response);
+    })
+    .catch((err) => {
+      console.log("err", err);
+    });
+};

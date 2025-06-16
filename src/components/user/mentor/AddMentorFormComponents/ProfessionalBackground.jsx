@@ -12,13 +12,46 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 
 const ProfessionalBackground = ({
   professionalBackground,
   setProfessionalBackground,
+  submitted,
 }) => {
+  const [rowErrors, setRowErrors] = useState([]);
+
+  const isRowComplete = (item) =>
+    !item.companyName || (item.companyName && item.designation && item.duration && item.description);
+
+  const getFieldError = (item, idx, field) => {
+    if (item.companyName && (submitted || rowErrors[idx]) && !item[field]) {
+      if (field === "designation") return "Designation is required";
+      if (field === "duration") return "Duration is required";
+      if (field === "description") return "Description is required";
+    }
+    if (rowErrors[idx] && item.companyName && !item[field]) {
+      if (field === "designation") return "Designation is required";
+      if (field === "duration") return "Duration is required";
+      if (field === "description") return "Description is required";
+    }
+    if (rowErrors[idx] && !item.companyName && (item.designation || item.duration || item.description)) {
+      if (field === "companyName") return "Company Name is required";
+    }
+    return "";
+  };
+
   const addProfessionalBackground = () => {
+    const lastIdx = professionalBackground.length - 1;
+    const last = professionalBackground[lastIdx];
+    if (!isRowComplete(last)) {
+      setRowErrors((prev) => {
+        const next = [...prev];
+        next[lastIdx] = true;
+        return next;
+      });
+      return;
+    }
     setProfessionalBackground([
       ...professionalBackground,
       {
@@ -28,16 +61,18 @@ const ProfessionalBackground = ({
         description: "",
       },
     ]);
+    setRowErrors((prev) => [...prev, false]);
   };
+
   return (
     <Card sx={{ p: 2, mt: 1 }}>
       <Box>
         <Grid2 container spacing={2}>
           {professionalBackground.map((val, i) => (
-            <React.Fragment>
+            <React.Fragment key={i}>
               <Grid2 size={12}>
                 <Stack
-                  direction={"row"}
+                  direction={"row"} 
                   alignItems={"center"}
                   justifyContent={"space-between"}
                 >
@@ -68,6 +103,14 @@ const ProfessionalBackground = ({
                   label="Company Name"
                   fullWidth
                   sx={{ ...loginTextField }}
+                  value={val.companyName || ""}
+                  onChange={(e) => {
+                    const updated = [...professionalBackground];
+                    updated[i] = { ...updated[i], companyName: e.target.value };
+                    setProfessionalBackground(updated);
+                  }}
+                  error={!!getFieldError(val, i, "companyName")}
+                  helperText={getFieldError(val, i, "companyName")}
                 />
               </Grid2>
               <Grid2 size={6}>
@@ -75,6 +118,14 @@ const ProfessionalBackground = ({
                   label="Designation"
                   fullWidth
                   sx={{ ...loginTextField }}
+                  value={val.designation || ""}
+                  onChange={(e) => {
+                    const updated = [...professionalBackground];
+                    updated[i] = { ...updated[i], designation: e.target.value };
+                    setProfessionalBackground(updated);
+                  }}
+                  error={!!getFieldError(val, i, "designation")}
+                  helperText={getFieldError(val, i, "designation")}
                 />
               </Grid2>
               <Grid2 size={6}>
@@ -82,6 +133,14 @@ const ProfessionalBackground = ({
                   label="Duration"
                   fullWidth
                   sx={{ ...loginTextField }}
+                  value={val.duration || ""}
+                  onChange={(e) => {
+                    const updated = [...professionalBackground];
+                    updated[i] = { ...updated[i], duration: e.target.value };
+                    setProfessionalBackground(updated);
+                  }}
+                  error={!!getFieldError(val, i, "duration")}
+                  helperText={getFieldError(val, i, "duration")}
                 />
               </Grid2>
               <Grid2 size={6}>
@@ -90,6 +149,14 @@ const ProfessionalBackground = ({
                   fullWidth
                   sx={{ ...loginTextField }}
                   multiline
+                  value={val.description || ""}
+                  onChange={(e) => {
+                    const updated = [...professionalBackground];
+                    updated[i] = { ...updated[i], description: e.target.value };
+                    setProfessionalBackground(updated);
+                  }}
+                  error={!!getFieldError(val, i, "description")}
+                  helperText={getFieldError(val, i, "description")}
                 />
               </Grid2>
             </React.Fragment>

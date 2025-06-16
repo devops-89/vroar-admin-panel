@@ -15,13 +15,15 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { setToast } from "@/redux/reducers/toast";
 import { ToastStatus } from "@/utils/enum";
 import { useDispatch } from "react-redux";
 import userController from "@/api/user";
+import { useRouter } from "next/router";
+import { getMentorById } from "@/assests/apiCalling/userController";
 
-const AddMentors = () => {
+const EditMentors = () => {
   const dispatch = useDispatch();
   const [academicQualification, setAcademicQualification] = useState([
     {
@@ -144,6 +146,34 @@ const AddMentors = () => {
         setLoading(false);
       });
   };
+  const [mentorData, setMentorData] = useState(null);
+  const router = useRouter();
+  const { mentorId } = router.query;
+
+  // Fetch mentor data when mentorId changes
+  useEffect(() => {
+    const fetchMentor = async () => {
+      if (mentorId) {
+        await getMentorById(mentorId, setMentorData);
+      }
+    };
+    fetchMentor();
+  }, [mentorId]);
+
+  useEffect(() => {
+    if (mentorData) {
+      formik.setValues({
+        ...formik.initialValues,
+        ...mentorData,
+        academicQualification: mentorData.academicQualification || [],
+        professionalBackground: mentorData.professionalBackground || [],
+      });
+      setAcademicQualification(mentorData.academicQualification || []);
+      setProfessionalBackground(mentorData.professionalBackground || []);
+    }
+  }, [mentorData]);
+
+//   console.log("mentorData", mentorData);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -280,4 +310,4 @@ const AddMentors = () => {
   );
 };
 
-export default AddMentors;
+export default EditMentors;

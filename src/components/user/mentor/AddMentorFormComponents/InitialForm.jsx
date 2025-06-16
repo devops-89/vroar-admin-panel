@@ -23,7 +23,7 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
 
 const InitialForm = ({ formik }) => {
-  const [previewImage, setPerviewImage] = useState("");
+  const [previewImage, setPerviewImage] = useState(formik.values.avatar || "");
   const ref = useRef();
 
   // image upload handler
@@ -99,7 +99,6 @@ const InitialForm = ({ formik }) => {
     }
   };
 
- 
   return (
     <div>
       <Grid2 container spacing={2} mt={2}>

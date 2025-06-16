@@ -4,6 +4,7 @@ import { USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
   Button,
+  IconButton,
   Switch,
   Table,
   TableBody,
@@ -18,12 +19,16 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import Loading from "react-loading";
 import UserAvatar from "../userAvatar";
+import { Visibility } from "@mui/icons-material";
+import { FaRegEdit } from "react-icons/fa";
+import { useRouter } from "next/router";
 
 const MentorTable = () => {
   const [mentorList, setMentorList] = useState(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(50);
+  const router = useRouter();
   const getMentorList = () => {
     userController
       .getMentorList(page, pageSize)
@@ -36,6 +41,10 @@ const MentorTable = () => {
       .catch((err) => {
         console.log("err", err);
       });
+  };
+
+  const editMentor = (mentorId) => {
+    router.push(`/user-management/mentors/${mentorId}/edit-mentor`);
   };
 
   useEffect(() => {
@@ -149,11 +158,17 @@ const MentorTable = () => {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       sx={{ fontSize: 13, fontFamily: roboto.style, p: 0 }}
                     >
                       View Profile
-                    </Button>
+                    </Button> */}
+                    <IconButton>
+                      <Visibility />
+                    </IconButton>
+                    <IconButton onClick={() => editMentor(val.id)}>
+                      <FaRegEdit />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
