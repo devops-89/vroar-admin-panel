@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
-const DeleteRoadmap = ({ id }) => {
+const DeleteRoadmap = ({ id, getAllRoadmapJourney }) => {
   const dispatch = useDispatch();
 
   const closeModal = () => {
@@ -29,6 +29,7 @@ const DeleteRoadmap = ({ id }) => {
         );
         setLoading(false);
         closeModal();
+        getAllRoadmapJourney();
       })
       .catch((err) => {
         let errMessage =
