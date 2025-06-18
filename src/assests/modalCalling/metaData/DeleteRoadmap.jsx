@@ -29,7 +29,11 @@ const DeleteRoadmap = ({ id, getAllRoadmapJourney }) => {
         );
         setLoading(false);
         closeModal();
-        getAllRoadmapJourney();
+        const body = {
+          page: 0,
+          pageSize: 500,
+        };
+        getAllRoadmapJourney(body);
       })
       .catch((err) => {
         let errMessage =

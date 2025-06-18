@@ -111,7 +111,11 @@ const Roadmap = () => {
   };
 
   const deleteRoadmap = (id) => {
-    dispatch(showModal(<DeleteRoadmap id={id} />));
+    dispatch(
+      showModal(
+        <DeleteRoadmap id={id} getAllRoadmapJourney={getAllRoadmapJourney} />
+      )
+    );
   };
 
   const addRoadmap = () => {
