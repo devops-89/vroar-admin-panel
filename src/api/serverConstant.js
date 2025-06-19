@@ -1,3 +1,4 @@
+// const baseUrl = "https://devapi.mytreks.ai";
 const baseUrl = "https://uatapi.mytreks.ai";
 
 const stripeURL = "https://api.stripe.com/v1";
@@ -9,4 +10,7 @@ export const serverApiUrl = {
   internship: `${baseUrl}/internship`,
   stripeCustomer: `${stripeURL}`,
   content: `${baseUrl}/content`,
+  // content: `${contentUrl}`,
+  // user: `${userUrl}`,
+  // authentication: `${authenticationUrl}`,
 };

@@ -31,17 +31,16 @@ const AddRoadmap = ({ getJourney }) => {
   // const { userId } = router.query;
   const formik = useFormik({
     initialValues: {
-      journey_name: "",
+      name: "",
       careerRoadmap: [],
       strengthRoadmap: [],
       industryRoadmap: [],
       softSkillsRoadmap: [],
     },
-    // validationSchema: studentJourneyValidationSchema,
     onSubmit: async (values) => {
       setLoading(true);
       const body = {
-        name: values.journey_name,
+        name: values.name,
         roadmapJourneyIds: [
           ...values.careerRoadmap,
           ...values.industryRoadmap,
@@ -135,7 +134,7 @@ const AddRoadmap = ({ getJourney }) => {
       const res = await metaDataController.getRoadmapJourney({
         page: 1,
         pageSize: 100,
-        metadataType: type,
+        metadataType: [type],
       });
       setData(res.data.data.docs);
     } catch (err) {
@@ -196,13 +195,12 @@ const AddRoadmap = ({ getJourney }) => {
           fullWidth
           sx={{ ...loginTextField }}
           label="Enter Journey Name"
-          id="journey_name"
+          id="name"
+          name="name"
           onChange={formik.handleChange}
-          value={formik.values.journey_name}
-          error={
-            formik.touched.journey_name && Boolean(formik.errors.journey_name)
-          }
-          helperText={formik.touched.journey_name && formik.errors.journey_name}
+          value={formik.values.name}
+          error={formik.touched.name && Boolean(formik.errors.name)}
+          helperText={formik.touched.name && formik.errors.name}
         />
 
         {/* career roadmap selectbar */}

@@ -236,5 +236,52 @@ const userController = {
       throw error;
     }
   },
+  getMentorList: async () => {
+    try {
+      const result = await userSecuredApi.userSecuredApi.get(
+        "/api/user/getMentorsList"
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addMentor: async (data) => {
+    try {
+      const result = await userSecuredApi.userSecuredApi.post(
+        "/api/user/addMentor",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  mediaUpload: async (data) => {
+    try {
+      const result = await userSecuredApi.userSecuredApi.post(
+        "api/media/upload",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getMentorById: async (mentorId) => {
+    try {
+      const result = await userSecuredApi.userSecuredApi.get(
+        `api/user/getMentorDetailsById/${mentorId}`
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;

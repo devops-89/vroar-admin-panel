@@ -1,7 +1,10 @@
-import { mentor_data, mentor_table_header } from "@/assests/mentorData";
+import userController from "@/api/user";
+import { mentor_table_header } from "@/assests/mentorData";
+import { USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
   Button,
+  IconButton,
   Switch,
   Table,
   TableBody,
@@ -12,13 +15,42 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import React from "react";
-import UserAvatar from "../userAvatar";
 import moment from "moment";
-import UserRoadmapProgress from "../user-roadmap-progress";
-import { USER_STATUS } from "@/utils/enum";
+import { useEffect, useState } from "react";
+import Loading from "react-loading";
+import UserAvatar from "../userAvatar";
+import { Visibility } from "@mui/icons-material";
+import { FaRegEdit } from "react-icons/fa";
+import { useRouter } from "next/router";
 
 const MentorTable = () => {
+  const [mentorList, setMentorList] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(50);
+  const router = useRouter();
+  const getMentorList = () => {
+    userController
+      .getMentorList(page, pageSize)
+      .then((res) => {
+        // console.log("res", res);
+        const response = res.data.data;
+        setMentorList(response);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  const editMentor = (mentorId) => {
+    router.push(`/user-management/mentors/${mentorId}/edit-mentor`);
+  };
+
+  useEffect(() => {
+    getMentorList();
+  }, []);
+
   return (
     <div>
       <TableContainer>
@@ -55,69 +87,93 @@ const MentorTable = () => {
               )}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {mentor_data.map((val, i) => (
-              <TableRow key={i}>
-                <TableCell>
-                  <UserAvatar avatar={val.avatar} name={val.name} />
-                </TableCell>
-                <TableCell sx={{ width: 100 }}>
-                  <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                    {val.id}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      fontFamily: roboto.style,
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    {val.gender}
-                  </Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      fontFamily: roboto.style,
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    {val.years_of_experience}
-                  </Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      fontFamily: roboto.style,
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    {moment.unix(val.registeredOn).format("DD-MMM-YYYY")}
-                  </Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <UserRoadmapProgress
-                    progress={val.profile_completion_percentage}
+          {loading ? (
+            <TableBody>
+              <TableRow>
+                <TableCell colSpan={10}>
+                  <Loading
+                    type="bars"
+                    color="#000"
+                    className="m-auto"
+                    width={20}
+                    height={20}
                   />
-                </TableCell>
-                <TableCell align="center">
-                  <Switch
-                    checked={val.status === USER_STATUS.ACTIVE}
-                    color="success"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Button sx={{ fontSize: 13, fontFamily: roboto.style, p: 0 }}>
-                    View Profile
-                  </Button>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
+            </TableBody>
+          ) : (
+            <TableBody>
+              {mentorList?.docs?.map((val, i) => (
+                <TableRow key={i}>
+                  <TableCell>
+                    <UserAvatar
+                      avatar={val.avatar}
+                      firstName={val.firstName}
+                      lastName={val.lastName}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ width: 100 }}>
+                    <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                      {val.id}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        fontFamily: roboto.style,
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {val.gender}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        fontFamily: roboto.style,
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {val.years_of_experience ?? "NA"}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        fontFamily: roboto.style,
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {moment.unix(val.createdAt).format("DD-MMM-YYYY")}
+                    </Typography>
+                  </TableCell>
+
+                  <TableCell align="center">
+                    <Switch
+                      checked={val.status === USER_STATUS.ACTIVE}
+                      color="success"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    {/* <Button
+                      sx={{ fontSize: 13, fontFamily: roboto.style, p: 0 }}
+                    >
+                      View Profile
+                    </Button> */}
+                    <IconButton>
+                      <Visibility />
+                    </IconButton>
+                    <IconButton onClick={() => editMentor(val.id)}>
+                      <FaRegEdit />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
         </Table>
       </TableContainer>
     </div>

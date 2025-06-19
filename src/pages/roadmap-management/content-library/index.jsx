@@ -37,7 +37,7 @@ const Contentlibrary = () => {
   };
   const [page, setPage] = useState(0);
 
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
   const [search, setSearch] = useState("");
 
   const debouncedSearch = useCallback(

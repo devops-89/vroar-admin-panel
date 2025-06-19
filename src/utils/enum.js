@@ -406,3 +406,8 @@ export const EVENT_TABLE_DATA = {
   Cancel: "Cancel",
   Completed: "Completed",
 };
+
+export const MEDIA_TYPE = {
+  PROFILE: "PROFILE",
+  GALLUP_RESULT: "GALLUP_RESULT",
+};

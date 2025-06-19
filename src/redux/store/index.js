@@ -13,6 +13,7 @@ export default configureStore({
     sideBarCollapse: sideBarReducer,
     AdminDetails: ADMINREDUCER,
     ContentDetails: Content_Details,
+   
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

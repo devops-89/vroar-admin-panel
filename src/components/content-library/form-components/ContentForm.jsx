@@ -13,6 +13,17 @@ export const ContentForm = ({
   return (
     <>
       <ValidationTextField
+        label="Add Name"
+        fullWidth
+        sx={{ ...loginTextField }}
+        id="contentName"
+        onChange={onChange}
+        value={state.contentName}
+        error={Boolean(errors.contentName)}
+        helperText={errors.contentName}
+        disabled={disabled}
+      />
+      <ValidationTextField
         sx={{ ...loginTextField }}
         label="Description"
         multiline
@@ -73,18 +84,6 @@ export const ContentForm = ({
         required
         disabled={disabled}
       />
-
-      <ValidationTextField
-        label="Add Name"
-        fullWidth
-        sx={{ ...loginTextField }}
-        id="contentName"
-        onChange={onChange}
-        value={state.contentName}
-        error={Boolean(errors.contentName)}
-        helperText={errors.contentName}
-        disabled={disabled}
-      />
     </>
   );
-}; 
+};

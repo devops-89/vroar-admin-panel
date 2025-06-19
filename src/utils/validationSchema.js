@@ -1,7 +1,8 @@
 import * as Yup from "yup";
-import { ASSESSMENTS_TYPE, EVENT_TYPE, QUIZ_TYPE } from "./enum";
+import { ASSESSMENTS_TYPE, CONTENT_TYPE, EVENT_TYPE, QUIZ_TYPE } from "./enum";
 import moment from "moment";
 import { useMemo } from "react";
+import { matchIsValidTel } from "mui-tel-input";
 export const loginValidationSchema = Yup.object({
   email: Yup.string()
     .email("Please Enter Valid Email")
@@ -296,8 +297,20 @@ export const editAdListValidataitonSchema = Yup.object({
 // });
 
 export const studentJourneyValidationSchema = Yup.object({
-  name: Yup.string().required("Please Enter Journey Name"),
+  name: Yup.string()
+    .required("Please Enter Journey Name")
+    .test(
+      "no-leading-trailing-whitespace",
+      "Journey name must not have leading or trailing spaces",
+      (value) => value && value.trim() === value
+    )
+    .test(
+      "not-empty-or-spaces",
+      "Journey name cannot be empty or just spaces",
+      (value) => !!value && value.trim().length > 0
+    ),
   roadmapJourneyIds: Yup.array()
+    .of(Yup.string().required())
     .required("Please Select Roadmap")
     .min(1, "Please Select at least one Roadmap"),
   userId: Yup.string().required("Please Select User"),
@@ -384,8 +397,13 @@ export const newAddContentValidationSchema = Yup.object().shape({
   contentName: Yup.string()
     .required("Please Enter Content Name")
     .test(
+      "no-leading-trailing-whitespace",
+      "Name must not have leading or trailing spaces",
+      (value) => value && value.trim() === value
+    )
+    .test(
       "not-empty",
-      "Content Name cannot be only whitespace",
+      "Name cannot be only whitespace",
       (value) => value && value.trim().length > 0
     )
     .matches(
@@ -398,6 +416,11 @@ export const newAddContentValidationSchema = Yup.object().shape({
   description: Yup.string()
     .required("Please Enter Description")
     .test(
+      "no-leading-trailing-whitespace",
+      "Description must not have leading or trailing spaces",
+      (value) => value && value.trim() === value
+    )
+    .test(
       "not-empty",
       "Description cannot be only whitespace",
       (value) => value && value.trim().length > 0
@@ -407,7 +430,7 @@ export const newAddContentValidationSchema = Yup.object().shape({
       "Description cannot contain special characters except for basic punctuation"
     )
     .max(500, "Only 500 characters allowed")
-    .min(2, "description is too short!"),
+    .min(2, "Description is too short!"),
 
   contentType: Yup.string()
     .required("Please Select Content Type")
@@ -416,6 +439,68 @@ export const newAddContentValidationSchema = Yup.object().shape({
       "Please Select Content Type",
       (value) => value && value.trim().length > 0
     ),
+
+  contentLink: Yup.mixed().when("contentType", {
+    is: (val) =>
+      val === CONTENT_TYPE.ARTICLE_PDF || val === CONTENT_TYPE.ASSIGNMENT,
+    then: (schema) =>
+      schema
+        .required("File upload is required")
+        .test(
+          "fileType",
+          "Only PDF files are allowed",
+          (value) => value && value.type === "application/pdf"
+        )
+        .test(
+          "fileSize",
+          "File size must be less than 10MB",
+          (value) => value && value.size <= 10 * 1024 * 1024
+        ),
+    otherwise: (schema) =>
+      Yup.string()
+        .required("Content link is required")
+        .test(
+          "no-leading-trailing-whitespace",
+          "Content link must not have leading or trailing spaces",
+          (value) =>
+            value && typeof value === "string" && value.trim() === value
+        )
+        .test(
+          "not-empty",
+          "Content link cannot be only whitespace",
+          (value) =>
+            value && typeof value === "string" && value.trim().length > 0
+        )
+        .url("Content link must be a valid URL")
+        .test(
+          "youtube-link",
+          "Please enter a valid YouTube video link",
+          function (value) {
+            if (
+              this.parent &&
+              this.parent.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK
+            ) {
+              return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i.test(
+                value
+              );
+            }
+            return true;
+          }
+        )
+        .test(
+          "s3-link",
+          "Please enter a valid native video link",
+          function (value) {
+            if (
+              this.parent &&
+              this.parent.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK
+            ) {
+              return true;
+            }
+            return true;
+          }
+        ),
+  }),
 
   isQuizEnabled: Yup.boolean(),
 });
@@ -667,3 +752,35 @@ export const editRoadmapValidationSchema = Yup.object().shape({
 //     otherwise: () => Yup.string(),
 //   }),
 // }), []);
+
+export const addMentorValidationSchema = Yup.object().shape({
+  firstName: Yup.string().required("First Name is required"),
+  lastName: Yup.string().required("Last Name is required"),
+  email: Yup.string()
+    .email("Please Enter Valid Email")
+    .required("Please Enter Valid Email"),
+  phoneNo: Yup.string().required("Please Enter Phone Number"),
+
+  password: Yup.string()
+    .required("Please Enter Password")
+    .min(8, "Password must be at least 8 characters"),
+  avatar: Yup.mixed()
+    .required("Please Upload Avatar")
+    .test("fileType", "Only JPG or PNG files are allowed", (value) => {
+      if (!value) return true;
+      const file = value;
+      return ["image/jpeg", "image/png"].includes(file.type);
+    })
+    .test("fileSize", "File size must be less than 1MB", (value) => {
+      if (!value) return true;
+      const file = value;
+      return file.size <= 1024 * 1024;
+    }),
+  gender: Yup.string().required("Please select gender"),
+  birthDate: Yup.string().required("Please Select birth date"),
+  designation: Yup.string().required("Please Enter Designation"),
+  skills: Yup.array()
+    .min(1, "Please select at least one skill")
+    .required("Please Enter Skills"),
+  careerSummary: Yup.string().required("Please Enter Career Summary"),
+});
