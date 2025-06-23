@@ -19,9 +19,9 @@ export const mentor_table_header = [
     label: "Registered On",
     sort: true,
   },
-  {
-    label: "Profile Completion Percentage",
-  },
+  // {
+  //   label: "Profile Completion Percentage",
+  // },
   {
     label: "Status",
   },

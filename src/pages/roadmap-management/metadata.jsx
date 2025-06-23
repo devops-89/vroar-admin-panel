@@ -38,7 +38,7 @@ const Metadata = () => {
   const [metaData, setMetaData] = useState(null);
   const [metaDataType, setMetaDataType] = useState(METADATA_TYPE.CAREER);
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   let body = {

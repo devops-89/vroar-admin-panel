@@ -43,7 +43,7 @@ const Curriculum = () => {
 
   const router = useRouter();
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
   const [search, setSearch] = useState("");
   const [curriculumStatus, setCurriculumStatus] = useState("");
   const [listLoading, setListLoading] = useState(true);

@@ -8,7 +8,7 @@ import { debounce } from "lodash";
 
 const AdList = () => {
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
   const [adListData, setAdListData] = useState(null);
   let body = {
     page: page,

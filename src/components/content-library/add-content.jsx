@@ -1,20 +1,11 @@
-import { CONTENT_TYPE_DATA } from "@/assests/roadmapData";
 import { setToast } from "@/redux/reducers/toast";
-import {
-  COLORS,
-  CONTENT_TYPE,
-  METADATA_TYPE,
-  QUIZ_TYPE,
-  ToastStatus,
-} from "@/utils/enum";
+import { COLORS, CONTENT_TYPE, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import {
-  AddContentValidationSchema,
   newAddContentValidationSchema,
   quizValidationSchema,
 } from "@/utils/validationSchema";
-import { AttachFile, ErrorSharp } from "@mui/icons-material";
 import {
   Autocomplete,
   Backdrop,
@@ -23,23 +14,24 @@ import {
   Checkbox,
   CircularProgress,
   FormControlLabel,
-  FormHelperText,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 
 import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
+import { isYoutubeUrl } from "@/utils/regex";
+import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
-import ToastBar from "../toastBar";
-import MetaDataAutocomplete from "./metadataAutocomplete";
+import { ContentForm } from "./form-components/ContentForm";
+import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
+import { FileUpload } from "./form-components/FileUpload";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
-import { isYoutubeUrl } from "@/utils/regex";
+
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
   [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
@@ -53,20 +45,6 @@ const AddContent = () => {
   const dispatch = useDispatch();
   const inputRef = useRef();
 
-  const [state, setState] = useState({
-    contentType: "",
-    career: [],
-    industry: [],
-    strengths: [],
-    softSkills: [],
-    contentName: "",
-    isQuizEnabled: false,
-    contentLink: "",
-    quizType: "",
-    contentFileName: "",
-    description: "",
-  });
-
   const [sia, setSia] = useState({ question: "", subText: "" });
   const [questions, setQuestions] = useState([
     {
@@ -77,28 +55,125 @@ const AddContent = () => {
         .map((_, i) => ({ id: i + 1, optionText: "", isCorrect: false })),
     },
   ]);
-
-  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [showFile, setShowFile] = useState(false);
-  const [showLink, setShowLink] = useState(false);
   const [content, setContent] = useState(null);
   const [quizType, setQuizType] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  const formik = useFormik({
+    initialValues: {
+      contentType: "",
+      career: [],
+      industry: [],
+      strengths: [],
+      softSkills: [],
+      contentName: "",
+      isQuizEnabled: false,
+      contentLink: "",
+      quizType: "",
+      contentFileName: "",
+      description: "",
+    },
+    validationSchema: newAddContentValidationSchema,
+    onSubmit: async (values, { setErrors }) => {
+      setLoading(true);
+      let metadataTags = [
+        ...(values.career.map((item) => item.id) || []),
+        ...(values.industry.map((item) => item.id) || []),
+        ...(values.strengths.map((item) => item.id) || []),
+        ...(values.softSkills.map((item) => item.id) || []),
+      ];
+      try {
+        if (values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
+          if (!values.contentLink.trim()) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a content link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Content link is required",
+            }));
+            setLoading(false);
+            return;
+          }
+        } else if (values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
+          if (!values.contentLink) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a valid link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a valid link",
+            }));
+            setLoading(false);
+            return;
+          }
+        }
+
+        if (metadataTags.length === 0) {
+          dispatch(
+            setToast({
+              open: true,
+              message: "Please select at least one metadata tag",
+              severity: ToastStatus.ERROR,
+            })
+          );
+          setLoading(false);
+          return;
+        }
+
+        if (values.isQuizEnabled) {
+          const isQuizValid = await validateQuizSection(values);
+          if (!isQuizValid) {
+            setLoading(false);
+            return;
+          }
+        }
+
+        if (
+          values.contentType === CONTENT_TYPE.ARTICLE_PDF ||
+          values.contentType === CONTENT_TYPE.ASSIGNMENT
+        ) {
+          const { filePath, fileName } = await uploadContentFile(values);
+          values.contentLink = filePath;
+          values.contentFileName = fileName;
+        } else {
+          const body = {
+            name: values.contentName,
+            contentType: values.contentType,
+            contentLink: values.contentLink,
+            description: values.description,
+            ...(values.contentFileName && {
+              contentFileName: values.contentFileName,
+            }),
+            metadataTags,
+          };
+          await addContentHandler(body);
+        }
+      } catch (error) {
+        handleErrorDisplay(error);
+        setLoading(false);
+      }
+    },
+  });
+
   const inputHandler = (e) => {
     const { id, value } = e.target;
-    setState((prev) => ({ ...prev, [id]: value }));
-
+    formik.handleChange(e);
     if (id === "contentLink") {
-      if (state.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-        // YouTube URL validation
-        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+      if (formik.values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
+        const youtubeRegex =
+          /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
         if (!youtubeRegex.test(value)) {
-          setErrors((prev) => ({
-            ...prev,
-            [id]: "Please enter a valid YouTube video link",
-          }));
+          formik.setFieldError(id, "Please enter a valid YouTube video link");
           dispatch(
             setToast({
               open: true,
@@ -107,56 +182,34 @@ const AddContent = () => {
             })
           );
         } else {
-          setErrors((prev) => ({ ...prev, [id]: "" }));
+          formik.setFieldError(id, "");
         }
-      } else if (state.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
-        setErrors((prev) => ({
-          ...prev,
-          [id]: isYoutubeUrl(value) ? "Please Enter Native Video Link" : "",
-        }));
+      } else if (formik.values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
+        formik.setFieldError(
+          id,
+          isYoutubeUrl(value) ? "Please Enter Native Video Link" : ""
+        );
       }
-    }
-  };
-
-  const multiSelectHandler = (key, setFunc, errorKey) => (e, newValue) => {
-    setFunc(newValue);
-    if (newValue) {
-      setState((prev) => ({ ...prev, [key]: newValue })); // Store full object
-      setErrors((prev) => ({ ...prev, [errorKey]: "" }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        [errorKey]: `Please Select Valid ${errorKey.replace(
-          /([A-Z])/g,
-          " $1"
-        )}`,
-      }));
     }
   };
 
   const contentTypeHandler = (e, newValue) => {
     setContent(newValue);
-    const config = contentTypeConfig[newValue?.label] || {};
-    setShowFile(config.showFile);
-    setShowLink(config.showLink);
-    setState((prev) => ({ ...prev, contentType: newValue?.label || "" }));
+    formik.setFieldValue("contentType", newValue?.label || "");
+    formik.setFieldError("contentType", "");
   };
 
   const quizTypeHandler = (e, newValue) => {
     setQuizType(newValue);
-    setState((prev) => ({ ...prev, quizType: newValue?.label || "" }));
-    setErrors((prev) => ({
-      ...prev,
-      quizType: newValue ? "" : "Please Select Quiz Type",
-    }));
+    formik.setFieldValue("quizType", newValue?.label || "");
+    formik.setFieldError("quizType", newValue ? "" : "Please Select Quiz Type");
   };
 
   const subjectiveHandler = (e) => {
     const { name, value } = e.target;
     setSia((prev) => ({ ...prev, [name]: value }));
-    // Clear error when question has value
     if (name === "question" && value.trim()) {
-      setErrors((prev) => ({ ...prev, question: false }));
+      // subjective errors are handled locally
     }
   };
 
@@ -173,18 +226,14 @@ const AddContent = () => {
             message: "File size must be less than 10MB",
           })
         );
-        // Clear the file input
-        event.target.value = '';
+        event.target.value = "";
         return;
       }
 
       if (selectedFile.type === "application/pdf") {
-        setState((prev) => ({
-          ...prev,
-          contentLink: selectedFile,
-          contentFileName: selectedFile.name,
-        }));
-        setErrors((prev) => ({ ...prev, contentLink: "" }));
+        formik.setFieldValue("contentLink", selectedFile);
+        formik.setFieldValue("contentFileName", selectedFile.name);
+        formik.setFieldError("contentLink", "");
       } else {
         dispatch(
           setToast({
@@ -193,20 +242,16 @@ const AddContent = () => {
             message: "Please Select Valid PDF File",
           })
         );
-        // Clear the file input
-        event.target.value = '';
+        event.target.value = "";
       }
     }
   };
 
-  const validateQuizSection = async () => {
-    // First check if quiz is enabled
-    if (!state.isQuizEnabled) {
+  const validateQuizSection = async (values) => {
+    if (!values.isQuizEnabled) {
       return true;
     }
-
-    // If quiz is enabled, validate quiz type
-    if (!state.quizType) {
+    if (!values.quizType) {
       dispatch(
         setToast({
           open: true,
@@ -216,17 +261,13 @@ const AddContent = () => {
       );
       return false;
     }
-
     try {
-      if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
-        // Validate objective quiz
+      if (values.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
         const validationErrors = {
           questions: {},
           options: {},
           correctOption: {},
         };
-
-        // Check each question and its options
         questions.forEach((q, qIndex) => {
           if (!q.question.trim()) {
             validationErrors.questions[qIndex] = "Question cannot be empty";
@@ -238,7 +279,6 @@ const AddContent = () => {
               })
             );
           }
-
           q.options.forEach((opt, optIndex) => {
             if (!opt.optionText.trim()) {
               if (!validationErrors.options[qIndex]) {
@@ -257,8 +297,6 @@ const AddContent = () => {
               );
             }
           });
-
-          // Check if at least one option is marked as correct
           if (!q.options.some((opt) => opt.isCorrect)) {
             validationErrors.correctOption[qIndex] =
               "Select at least one correct option";
@@ -273,31 +311,21 @@ const AddContent = () => {
             );
           }
         });
-
-        // If there are any validation errors, set them and return false
         if (
           Object.keys(validationErrors.questions).length > 0 ||
           Object.keys(validationErrors.options).length > 0 ||
           Object.keys(validationErrors.correctOption).length > 0
         ) {
-          setErrors((prev) => ({
-            ...prev,
-            ...validationErrors,
-          }));
           return false;
         }
-
         await quizValidationSchema.validate(
           { quizQuestions: questions },
           { abortEarly: false }
         );
         return true;
       }
-
-      if (state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
-        // Validate subjective quiz
+      if (values.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
         const validationErrors = {};
-
         if (!sia.question.trim()) {
           validationErrors.question = "Question cannot be empty";
           dispatch(
@@ -318,60 +346,19 @@ const AddContent = () => {
             })
           );
         }
-
         if (Object.keys(validationErrors).length > 0) {
-          setErrors((prev) => ({
-            ...prev,
-            ...validationErrors,
-          }));
           return false;
         }
         return true;
       }
     } catch (error) {
-      const validationErrors = {};
-      if (error.inner) {
-        error.inner.forEach((err) => {
-          // Handle nested errors for questions and options
-          const path = err.path;
-          if (path.includes("questions")) {
-            const questionIndex = path.match(/questions\[(\d+)\]/)?.[1];
-            const field = path.split(".").pop();
-
-            if (questionIndex !== undefined) {
-              if (!validationErrors.questions) validationErrors.questions = {};
-              if (!validationErrors.questions[questionIndex]) {
-                validationErrors.questions[questionIndex] = {};
-              }
-              validationErrors.questions[questionIndex][field] = err.message;
-              dispatch(
-                setToast({
-                  open: true,
-                  message: err.message,
-                  severity: ToastStatus.ERROR,
-                })
-              );
-            }
-          } else {
-            validationErrors[path] = err.message;
-            dispatch(
-              setToast({
-                open: true,
-                message: err.message,
-                severity: ToastStatus.ERROR,
-              })
-            );
-          }
-        });
-      }
-      setErrors(validationErrors);
-      return false;
+      handleErrorDisplay(error);
     }
     return true;
   };
 
   const getQuizData = () => {
-    if (state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+    if (formik.values.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
       return questions.map(({ id, options, ...rest }) => ({
         ...rest,
         options: options.map(({ id, ...opt }) => opt),
@@ -382,10 +369,12 @@ const AddContent = () => {
     return quiz;
   };
 
-  const uploadContentFile = async () => {
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
-    
-    if (state.contentLink.size > MAX_FILE_SIZE) {
+  let metadataTags = [];
+
+  const uploadContentFile = async (values) => {
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+    if (values.contentLink.size > MAX_FILE_SIZE) {
       dispatch(
         setToast({
           open: true,
@@ -396,11 +385,87 @@ const AddContent = () => {
       throw new Error("File size exceeds limit");
     }
 
-    const res = await metaDataController.getUploadContentFile({
-      type: state.contentType,
-      contentFile: state.contentLink,
-    });
-    return res.data.data;
+    const body = {
+      type: values.contentType,
+      contentFile: values.contentLink,
+    };
+
+    try {
+      const res = await metaDataController.getUploadContentFile(body);
+      const response = res.data.data;
+      values.contentFileName = response.fileName;
+      values.contentLink = response.filePath;
+      const newBody = {
+        name: values.contentName,
+        contentType: values.contentType,
+        contentLink: values.contentLink,
+        description: values.description,
+        ...(values.contentFileName && {
+          contentFileName: values.contentFileName,
+        }),
+      };
+      addContentHandler(newBody);
+      return {
+        filePath: response.filePath,
+        fileName: response.fileName,
+      };
+    } catch (err) {
+      let errMessage = err?.response?.data?.message || err.message;
+      console.log(errMessage);
+      dispatch(
+        setToast({
+          open: true,
+          message: errMessage,
+          severity: ToastStatus.ERROR,
+        })
+      );
+      throw err;
+    }
+  };
+
+  const addContentHandler = async (body) => {
+    metadataTags = [
+      ...(formik.values.career.map((item) => item.id) || []),
+      ...(formik.values.industry.map((item) => item.id) || []),
+      ...(formik.values.strengths.map((item) => item.id) || []),
+      ...(formik.values.softSkills.map((item) => item.id) || []),
+    ];
+
+    body.metadataTags = metadataTags;
+    metaDataController
+      .addContentLibrary(body)
+      .then((res) => {
+        // Get the new content's ID from the response
+        const contentLibraryId = res.data.data.id || res.data.data._id;
+        if (formik.values.isQuizEnabled) {
+          addQuizHandler({
+            contentLibraryId,
+            quizType: formik.values.quizType,
+            quizSet: getQuizData(),
+          });
+        } else {
+          setLoading(false);
+          dispatch(
+            setToast({
+              open: true,
+              message: "Content added successfully",
+              severity: ToastStatus.SUCCESS,
+            })
+          );
+          router.push("/roadmap-management/content-library");
+        }
+      })
+      .catch((err) => {
+        let errMessage = err?.response?.data?.message || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
+      });
   };
 
   const addQuizHandler = async (quizData) => {
@@ -422,10 +487,11 @@ const AddContent = () => {
 
   const handleErrorDisplay = (error) => {
     const validationErrors = {};
-    if (error.inner) {
+    let allMessages = [];
+    if (error.inner && error.inner.length > 0) {
       error.inner.forEach((err) => {
         const path = err.path;
-        if (path.includes("questions")) {
+        if (path && path.includes("questions")) {
           const questionIndex = path.match(/questions\[(\d+)\]/)?.[1];
           const field = path.split(".").pop();
 
@@ -435,17 +501,22 @@ const AddContent = () => {
               validationErrors.questions[questionIndex] = {};
             }
             validationErrors.questions[questionIndex][field] = err.message;
+            allMessages.push(err.message);
           }
-        } else {
+        } else if (path) {
           validationErrors[path] = err.message;
+          allMessages.push(err.message);
         }
       });
+    } else if (error.message) {
+      allMessages.push(error.message);
     }
-    setErrors(validationErrors);
+    formik.setErrors(validationErrors);
 
-    // Show toast with first error message
     const firstError =
-      error.inner?.[0]?.message || "Please fix the validation errors";
+      allMessages.length > 0
+        ? allMessages[0]
+        : "Please fix the validation errors";
     dispatch(
       setToast({
         open: true,
@@ -455,254 +526,64 @@ const AddContent = () => {
     );
   };
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrors({}); // Clear previous errors
-
-    try {
-      // First validate the main form
-      await newAddContentValidationSchema.validate(state, {
-        abortEarly: false,
-      });
-
-      // Validate content link
-      if (showLink) {
-        if (!state.contentLink.trim()) {
-          dispatch(
-            setToast({
-              open: true,
-              message: "Please enter a content link",
-              severity: ToastStatus.ERROR,
-            })
-          );
-          setErrors(prev => ({ ...prev, contentLink: "Content link is required" }));
-          setLoading(false);
-          return;
-        }
-
-        // Additional validation for YouTube links
-        if (state.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-          const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
-          if (!youtubeRegex.test(state.contentLink)) {
-            dispatch(
-              setToast({
-                open: true,
-                message: "Please enter a valid YouTube video link",
-                severity: ToastStatus.ERROR,
-              })
-            );
-            setErrors(prev => ({ ...prev, contentLink: "Please enter a valid YouTube video link" }));
-            setLoading(false);
-            return;
-          }
-        }
-      } else {
-        if (!state.contentLink) {
-          dispatch(
-            setToast({
-              open: true,
-              message: "Please upload a file",
-              severity: ToastStatus.ERROR,
-            })
-          );
-          setErrors(prev => ({ ...prev, contentLink: "File upload is required" }));
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Validate metadata tags
-      const metadataTags = [
-        ...(state.career.map((item) => item.id) || []),
-        ...(state.industry.map((item) => item.id) || []),
-        ...(state.strengths.map((item) => item.id) || []),
-        ...(state.softSkills.map((item) => item.id) || []),
-      ];
-
-      if (metadataTags.length === 0) {
-        dispatch(
-          setToast({
-            open: true,
-            message: "Please select at least one metadata tag",
-            severity: ToastStatus.ERROR,
-          })
-        );
-        setLoading(false);
-        return;
-      }
-
-      // Then validate quiz section if quiz is enabled
-      if (state.isQuizEnabled) {
-        const isQuizValid = await validateQuizSection();
-        if (!isQuizValid) {
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Rest of your submit handler code...
-      let contentLink = state.contentLink;
-      let contentFileName = state.contentFileName;
-
-      if (!showLink) {
-        const { filePath, fileName } = await uploadContentFile();
-        contentLink = filePath;
-        contentFileName = fileName;
-      }
-
-      const body = {
-        name: state.contentName,
-        contentType: state.contentType,
-        contentLink,
-        description: state.description,
-        ...(contentFileName && { contentFileName }),
-        metadataTags,
-      };
-
-      const res = await metaDataController.addContentLibrary(body);
-      const contentLibraryId = res.data.data.id;
-
-      if (state.isQuizEnabled) {
-        await addQuizHandler({
-          contentLibraryId,
-          quizType: state.quizType,
-          quizSet: getQuizData(),
-        });
-      } else {
-        dispatch(
-          setToast({
-            open: true,
-            message: res.data.message,
-            severity: ToastStatus.SUCCESS,
-          })
-        );
-        setLoading(false);
-        router.back();
-      }
-    } catch (error) {
-      handleErrorDisplay(error);
-      setLoading(false);
-    }
+  // Handler for metadata change
+  const handleMetadataChange = (key, value) => {
+    formik.setFieldValue(key, value);
+    formik.setFieldError(key, "");
   };
 
+  // Helper to determine which field to show
+  const isFileType =
+    formik.values.contentType === CONTENT_TYPE.ARTICLE_PDF ||
+    formik.values.contentType === CONTENT_TYPE.ASSIGNMENT;
+  const isLinkType =
+    formik.values.contentType === CONTENT_TYPE.JOURNAL_LINK ||
+    formik.values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK ||
+    formik.values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK;
 
   return (
     <Box mt={3} sx={{ width: "100%" }}>
       <Backdrop open={isUploading}>
         <CircularProgress />
       </Backdrop>
-      <form action="" onSubmit={submitHandler}>
+      <form onSubmit={formik.handleSubmit}>
         <Stack
           alignItems={"start"}
           justifyContent={"flex-end"}
           spacing={2}
           width={"100%"}
         >
-          <TextField
-            label="Add Name"
-            fullWidth
-            sx={{
-              ...loginTextField,
-              "& .MuiOutlinedInput-input": {
-                fontFamily: roboto.style,
-              },
-              "& .MuiOutlinedInput-root.Mui-error": {
-                borderColor: COLORS.ERROR,
-                "&:hover": {
-                  borderColor: COLORS.ERROR,
-                },
-              },
-            }}
-            id="contentName"
+          {/* Content Name, Description, and Metadata Fields */}
+          <ContentForm
+            state={formik.values}
+            errors={formik.errors}
             onChange={inputHandler}
-            error={Boolean(errors.contentName)}
-            helperText={errors.contentName}
-            value={state.contentName}
+            onMetadataChange={handleMetadataChange}
+            disabled={loading}
           />
-          <Autocomplete
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Select Content Type"
-                fullWidth
-                sx={{
-                  ...loginTextField,
-                  "& .MuiOutlinedInput-input": {
-                    fontFamily: roboto.style,
-                  },
-                  "& .MuiOutlinedInput-root.Mui-error": {
-                    borderColor: COLORS.ERROR,
-                    "&:hover": {
-                      borderColor: COLORS.ERROR,
-                    },
-                  },
-                }}
-                error={Boolean(errors.contentType)}
-                helperText={errors.contentType}
-              />
-            )}
-            fullWidth
-            options={CONTENT_TYPE_DATA}
-            getOptionLabel={(option) => option.label}
-            renderOption={(props, option) => (
-              <Box {...props}>
-                <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                  {option.label}
-                </Typography>
-              </Box>
-            )}
-            onChange={contentTypeHandler}
-            value={content}
-          />
-          {showFile && (
-            <Box sx={{ width: "100%" }}>
-              <Button
-                fullWidth
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  border: `1px solid ${
-                    errors.contentLink ? COLORS.ERROR : "#d7d7d7"
-                  }`,
-                  p: 1.5,
-                  "&:hover": {
-                    borderColor: errors.contentLink ? COLORS.ERROR : "#d7d7d7",
-                  },
-                }}
-                onClick={() => inputRef.current.click()}
-              >
-                <Typography
-                  sx={{
-                    fontSize: 15,
-                    color: errors.contentLink ? COLORS.ERROR : COLORS.BLACK,
-                    fontFamily: roboto.style,
-                    textTransform: "initial",
-                  }}
-                >
-                  {state.contentFileName ? state.contentFileName : "Upload"}
-                </Typography>
-                <input
-                  type="file"
-                  style={{ display: "none" }}
-                  ref={inputRef}
-                  onChange={handleFileChange}
-                />
-                <AttachFile
-                  htmlColor={errors.contentLink ? COLORS.ERROR : COLORS.BLACK}
-                  sx={{ transform: "rotate(45deg)" }}
-                />
-              </Button>
-              {errors.contentLink && (
-                <FormHelperText error sx={{ mt: 1 }}>
-                  {errors.contentLink}
-                </FormHelperText>
-              )}
-            </Box>
-          )}
 
-          {showLink && (
+          {/* Content Type Select */}
+          <ContentTypeSelect
+            value={content}
+            onChange={contentTypeHandler}
+            error={formik.errors.contentType}
+            disabled={loading}
+          />
+
+          {/* File Upload or Link Field */}
+          {isFileType && (
+            <FileUpload
+              inputRef={inputRef}
+              file={{
+                fileName: formik.values.contentFileName,
+                filePath: formik.values.contentFileName,
+              }}
+              onChange={handleFileChange}
+              error={formik.errors.contentLink}
+              disabled={loading}
+            />
+          )}
+          {isLinkType && (
             <TextField
               label="Insert Link"
               fullWidth
@@ -720,89 +601,31 @@ const AddContent = () => {
               }}
               onChange={inputHandler}
               id="contentLink"
-              error={Boolean(errors.contentLink)}
-              helperText={errors.contentLink}
-              value={state.contentLink}
+              name="contentLink"
+              error={Boolean(
+                formik.errors.contentLink && formik.touched.contentLink
+              )}
+              helperText={
+                formik.touched.contentLink && formik.errors.contentLink
+              }
+              value={formik.values.contentLink}
+              disabled={loading}
             />
           )}
-
-          <TextField
-            sx={{
-              ...loginTextField,
-              "& .MuiOutlinedInput-input": {
-                fontFamily: roboto.style,
-              },
-              "& .MuiOutlinedInput-root.Mui-error": {
-                borderColor: COLORS.ERROR,
-                "&:hover": {
-                  borderColor: COLORS.ERROR,
-                },
-              },
-            }}
-            label="Description"
-            multiline
-            fullWidth
-            id="description"
-            onChange={inputHandler}
-            error={Boolean(errors.description)}
-            helperText={errors.description}
-            value={state.description}
-          />
-
-          <MetaDataAutocomplete
-            label="Career"
-            metaDataType={METADATA_TYPE.CAREER}
-            value={state.career}
-            onChange={multiSelectHandler("career", () => {}, "career")}
-            error={errors.career}
-            helperText={errors.career}
-            colors={{ bg: COLORS.PENDING, text: COLORS.PENDING_TEXT }}
-          />
-          <MetaDataAutocomplete
-            label="Industry"
-            metaDataType={METADATA_TYPE.INDUSTRY}
-            value={state.industry}
-            onChange={multiSelectHandler("industry", () => {}, "industry")}
-            error={errors.industry}
-            helperText={errors.industry}
-            colors={{ bg: COLORS.DONE, text: COLORS.DONE_TEXT }}
-          />
-          <MetaDataAutocomplete
-            label="Strengths"
-            metaDataType={METADATA_TYPE.STRENGTHS}
-            value={state.strengths}
-            onChange={multiSelectHandler("strengths", () => {}, "strengths")}
-            error={errors.strengths}
-            helperText={errors.strengths}
-            colors={{ bg: COLORS.SIGNED_UP, text: COLORS.SIGNED_UP_TEXT }}
-          />
-          <MetaDataAutocomplete
-            label="Soft Skills"
-            metaDataType={METADATA_TYPE.SOFT_SKILLS}
-            value={state.softSkills}
-            onChange={multiSelectHandler("softSkills", () => {}, "softSkills")}
-            error={errors.softSkills}
-            helperText={errors.softSkills}
-            colors={{ bg: COLORS.PURPLE, text: COLORS.PURPLE_TEXT }}
-          />
-
           {content?.label !== CONTENT_TYPE.ASSIGNMENT && (
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={state.isQuizEnabled}
+                  checked={formik.values.isQuizEnabled}
                   onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      isQuizEnabled: e.target.checked,
-                    }))
+                    formik.setFieldValue("isQuizEnabled", e.target.checked)
                   }
                 />
               }
               label="Enable Quiz"
             />
           )}
-          {state.isQuizEnabled && (
+          {formik.values.isQuizEnabled && (
             <Autocomplete
               options={data.QUIZ_TYPE_DATA}
               value={quizType}
@@ -812,8 +635,8 @@ const AddContent = () => {
                 <TextField
                   {...params}
                   label="Quiz Type"
-                  error={Boolean(errors.quizType)}
-                  helperText={errors.quizType}
+                  error={Boolean(formik.errors.quizType)}
+                  helperText={formik.errors.quizType}
                   sx={{
                     ...loginTextField,
                     "& .MuiOutlinedInput-root.Mui-error": {
@@ -829,24 +652,24 @@ const AddContent = () => {
             />
           )}
 
-          {state.isQuizEnabled &&
-            state.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && (
+          {formik.values.isQuizEnabled &&
+            formik.values.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && (
               <Box sx={{ width: "100%" }}>
                 <ObjectiveQuiz
                   questions={questions}
                   setQuestions={setQuestions}
-                  errors={errors}
+                  errors={formik.errors}
                 />
               </Box>
             )}
-          {state.isQuizEnabled &&
-            state.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
+          {formik.values.isQuizEnabled &&
+            formik.values.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
               <Box sx={{ width: "100%" }}>
                 <SubjectiveQuiz
                   state={sia}
                   subjectiveHandler={subjectiveHandler}
-                  errors={errors}
-                  setErrors={setErrors}
+                  errors={formik.errors}
+                  setErrors={formik.setErrors}
                 />
               </Box>
             )}

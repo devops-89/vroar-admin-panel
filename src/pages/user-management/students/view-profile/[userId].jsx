@@ -61,7 +61,7 @@ const UserProfile = () => {
   const [rewardData, setRewardData] = useState(null);
   const [coinsLoading, setCoinsLoading] = useState(true);
   const [rewardPage, setRewardPage] = useState(0);
-  const [rewardPageSize, setRewardPageSize] = useState(10);
+  const [rewardPageSize, setRewardPageSize] = useState(50);
   const getRewardCoins = () => {
     // const userID = id ? id : userId;
     const body = {

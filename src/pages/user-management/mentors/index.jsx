@@ -12,12 +12,18 @@ import { mentor_tab_array } from "@/utils/genericArray";
 import withAuth from "@/utils/withAuth";
 import { AddCircleOutline, AddOutlined } from "@mui/icons-material";
 import { Box, Card, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 const Mentor = () => {
   const [value, setValue] = useState(0);
   const tabChangeHandler = (e, newValue) => {
     setValue(newValue);
+  };
+
+  const router = useRouter();
+  const handlePageChange = () => {
+    router.push(`/user-management/mentors/add-mentors`);
   };
   return (
     <div>
@@ -40,7 +46,7 @@ const Mentor = () => {
                 },
               ]}
             />
-            <CustomButton>
+            <CustomButton onClick={handlePageChange}>
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <AddCircleOutline sx={{ fontSize: 20 }} />
                 <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
@@ -49,7 +55,7 @@ const Mentor = () => {
               </Stack>
             </CustomButton>
           </Stack>
-          <Box sx={{ borderBottom: "2px solid #d7d7d7" }}>
+          {/* <Box sx={{ borderBottom: "2px solid #d7d7d7" }}>
             <Tabs
               onChange={tabChangeHandler}
               value={value}
@@ -79,9 +85,11 @@ const Mentor = () => {
                 />
               ))}
             </Tabs>
-          </Box>
-
+          </Box> */}
           <Box sx={{ mt: 2 }}>
+            <CustomTable button={true} />
+          </Box>
+          {/* <Box sx={{ mt: 2 }}>
             <TabPanel value={value} index={0}>
               <CustomTable button={true} />
               <Box sx={{ mt: 1 }}>
@@ -100,6 +108,9 @@ const Mentor = () => {
                 <RejectedMentorTable />
               </Box>
             </TabPanel>
+          </Box> */}
+          <Box sx={{ mt: 2 }}>
+            <MentorTable />
           </Box>
         </Card>
       </Wrapper>

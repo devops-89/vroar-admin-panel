@@ -19,18 +19,22 @@ import { FaRegEdit } from "react-icons/fa";
 import { Add, Delete } from "@mui/icons-material";
 
 const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
-  const [contentList, setContentList] = useState([]);
-  const [contentLoading, setContentLoading] = useState(false);
+  const [contentLists, setContentLists] = useState([]);
+  const [contentLoading, setContentLoading] = useState([]);
 
   const handleChangeContentType = (e, newValue, id, index) => {
     if (id === "contentType") {
-      setContentLoading(true);
+      setContentLoading((prev) => {
+        const arr = [...prev];
+        arr[index] = true;
+        return arr;
+      });
+
       const newTiles = [...tiles];
       newTiles[index].contentType = newValue?.label;
       newTiles[index].contentLibraryId = null;
       setTiles(newTiles);
 
-      // Clear errors for this field
       const newErrors = [...errors];
       if (newErrors[index]) {
         newErrors[index] = { ...newErrors[index], contentType: "" };
@@ -46,8 +50,19 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
       };
       getContentList({
         body,
-        setData: setContentList,
-        setLoading: setContentLoading,
+        setData: (data) => {
+          setContentLists((prev) => {
+            const arr = [...prev];
+            arr[index] = data;
+            return arr;
+          });
+          setContentLoading((prev) => {
+            const arr = [...prev];
+            arr[index] = false;
+            return arr;
+          });
+        },
+        setLoading: () => {},
       });
     }
     if (id === "contentLibraryId") {
@@ -55,7 +70,6 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
       newTiles[index].contentLibraryId = newValue;
       setTiles(newTiles);
 
-      // Clear errors for this field
       const newErrors = [...errors];
       if (newErrors[index]) {
         newErrors[index] = { ...newErrors[index], contentLibraryId: "" };
@@ -70,7 +84,6 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
     newTiles[index][id] = value;
     setTiles(newTiles);
 
-    // Clear errors for this field
     const newErrors = [...errors];
     if (newErrors[index]) {
       newErrors[index] = { ...newErrors[index], [id]: "" };
@@ -92,6 +105,8 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
       },
     ]);
     setErrors([...errors, {}]);
+    setContentLists([...contentLists, []]);
+    setContentLoading([...contentLoading, false]);
   };
 
   const removeTile = (index) => {
@@ -99,6 +114,8 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
     setTiles(newTiles);
     const newErrors = errors.filter((_, i) => i !== index);
     setErrors(newErrors);
+    setContentLists(contentLists.filter((_, i) => i !== index));
+    setContentLoading(contentLoading.filter((_, i) => i !== index));
   };
 
   return (
@@ -193,7 +210,7 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
                   onChange={(e, newValue) =>
                     handleChangeContentType(e, newValue, "contentType", index)
                   }
-                  loading={contentLoading}
+                  loading={contentLoading[index] || false}
                 />
                 {errors[index]?.contentType && (
                   <FormHelperText error sx={{ ml: 2 }}>
@@ -217,7 +234,7 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
                       error={Boolean(errors[index]?.contentLibraryId)}
                     />
                   )}
-                  options={contentList}
+                  options={contentLists[index] || []}
                   getOptionLabel={(option) => option?.name || ""}
                   renderOption={(props, option) => (
                     <Box {...props}>
@@ -229,7 +246,7 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
                     </Box>
                   )}
                   value={
-                    contentList.find(
+                    (contentLists[index] || []).find(
                       (content) => content.id === tile.contentLibraryId?.id
                     ) || null
                   }
@@ -241,6 +258,7 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
                       index
                     )
                   }
+                  loading={contentLoading[index] || false}
                 />
                 {errors[index]?.contentLibraryId && (
                   <FormHelperText error sx={{ ml: 2 }}>
