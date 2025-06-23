@@ -24,11 +24,9 @@ import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
 const AddRoadmap = ({ getJourney }) => {
-  // console.log("jounser",getJourney)
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { userId } = router.query;
-  // const { userId } = router.query;
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -36,6 +34,7 @@ const AddRoadmap = ({ getJourney }) => {
       strengthRoadmap: [],
       industryRoadmap: [],
       softSkillsRoadmap: [],
+      treksRoadmap: [],
     },
     onSubmit: async (values) => {
       setLoading(true);
@@ -46,6 +45,7 @@ const AddRoadmap = ({ getJourney }) => {
           ...values.industryRoadmap,
           ...values.softSkillsRoadmap,
           ...values.strengthRoadmap,
+          ...values.treksRoadmap,
         ],
         userId: userId,
       };
@@ -102,11 +102,13 @@ const AddRoadmap = ({ getJourney }) => {
   const [strengthData, setStrengthData] = useState([]);
   const [industryData, setIndustryData] = useState([]);
   const [softSkillsData, setSoftSkillsData] = useState([]);
+  const [treksRoadmap, setTreksRoadmap] = useState([]);
 
   const [career, setCareer] = useState([]);
   const [strength, setStrength] = useState([]);
   const [industry, setIndustry] = useState([]);
   const [softSkills, setSoftSkills] = useState([]);
+  const [treks, setTreks] = useState([]);
   const careerSelectorHandler = (e, value) => {
     setCareer(value);
     if (value) {
@@ -125,6 +127,17 @@ const AddRoadmap = ({ getJourney }) => {
       );
     }
   };
+
+  const treksSelectHandler = (e, newValue) => {
+    setTreks(newValue);
+    if (newValue) {
+      formik.setFieldValue(
+        "treksRoadmap",
+        newValue.map((val) => val.id)
+      );
+    }
+  };
+
   const [listLoading, setListLoading] = useState(false);
 
   const getAllRoadmapJourney = async ({ type, setLoading, setData }) => {
@@ -431,6 +444,66 @@ const AddRoadmap = ({ getJourney }) => {
           onFocus={() =>
             getAllRoadmapJourney({
               type: METADATA_TYPE.SOFT_SKILLS,
+              setLoading: setListLoading,
+              setData: setSoftSkillsData,
+            })
+          }
+          loading={listLoading}
+        />
+        {/* mytreks roadmap selectbar */}
+        <Autocomplete
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Tag Mytreks Roadmap"
+              sx={{ ...loginTextField }}
+              error={
+                formik.touched.treksRoadmap &&
+                Boolean(formik.errors.treksRoadmap)
+              }
+              helperText={
+                formik.touched.treksRoadmap &&
+                formik.errors.treksRoadmap
+              }
+            />
+          )}
+          options={treksRoadmap}
+          getOptionLabel={(option) => option.name}
+          renderOption={(props, option) => (
+            <Box component={"li"} {...props}>
+              <Typography sx={{ fontFamily: roboto.style, fontSize: 14 }}>
+                {option.name}
+              </Typography>
+            </Box>
+          )}
+          onChange={treksSelectHandler}
+          value={treks}
+          multiple
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => {
+              const { key, ...tagProps } = getTagProps({ index });
+              return (
+                <CustomChip
+                  label={option.name}
+                  variant={METADATA_TYPE.MY_TREKS}
+                  {...tagProps}
+                  key={key}
+                  removable={true}
+                  onDelete={() => {
+                    const myTreks = treks.filter(
+                      (_, i) => i !== index
+                    );
+                    setTreksRoadmap(myTreks);
+                  }}
+                />
+              );
+            })
+          }
+          limitTags={1}
+          filterSelectedOptions
+          onFocus={() =>
+            getAllRoadmapJourney({
+              type: METADATA_TYPE.MY_TREKS,
               setLoading: setListLoading,
               setData: setSoftSkillsData,
             })

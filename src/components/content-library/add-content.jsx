@@ -60,6 +60,10 @@ const AddContent = () => {
   const [quizType, setQuizType] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  const videoExtensionRegex = /\.(mp4|mov|avi|wmv|flv|webm|mkv|m3u8)$/i;
+  const videoHostingRegex = /(vimeo\.com|dailymotion\.com|player\.vimeo\.com|\.mp4|\.webm|cloudfront\.net|\.m3u8|videos\/)/i;
+
   const formik = useFormik({
     initialValues: {
       contentType: "",
@@ -73,19 +77,27 @@ const AddContent = () => {
       quizType: "",
       contentFileName: "",
       description: "",
+      treks: [],
     },
     validationSchema: newAddContentValidationSchema,
     onSubmit: async (values, { setErrors }) => {
+      if (
+        values.contentType === CONTENT_TYPE.ARTICLE_PDF &&
+        (!values.contentLink || !values.contentLink.name)
+      ) {
+        formik.setFieldTouched("contentLink", true, true);
+      }
       setLoading(true);
       let metadataTags = [
         ...(values.career.map((item) => item.id) || []),
         ...(values.industry.map((item) => item.id) || []),
         ...(values.strengths.map((item) => item.id) || []),
         ...(values.softSkills.map((item) => item.id) || []),
+        ...(values.treks.map((item) => item.id) || []),
       ];
       try {
         if (values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-          if (!values.contentLink.trim()) {
+          if (!values.contentLink || !values.contentLink.trim()) {
             dispatch(
               setToast({
                 open: true,
@@ -100,8 +112,23 @@ const AddContent = () => {
             setLoading(false);
             return;
           }
+          if (!youtubeRegex.test(values.contentLink)) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a valid YouTube video link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a valid YouTube video link",
+            }));
+            setLoading(false);
+            return;
+          }
         } else if (values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
-          if (!values.contentLink) {
+          if (!values.contentLink || !values.contentLink.trim()) {
             dispatch(
               setToast({
                 open: true,
@@ -112,6 +139,70 @@ const AddContent = () => {
             setErrors((prev) => ({
               ...prev,
               contentLink: "Please enter a valid link",
+            }));
+            setLoading(false);
+            return;
+          }
+          if (youtubeRegex.test(values.contentLink)) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a native video link, not a YouTube link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a native video link, not a YouTube link",
+            }));
+            setLoading(false);
+            return;
+          }
+          if (!videoExtensionRegex.test(values.contentLink) && !videoHostingRegex.test(values.contentLink)) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a valid video link (must be a video URL or from a video hosting service)",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a valid video link",
+            }));
+            setLoading(false);
+            return;
+          }
+        } else if (values.contentType === CONTENT_TYPE.JOURNAL_LINK) {
+          if (!values.contentLink || !values.contentLink.trim()) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Link is required",
+            }));
+            setLoading(false);
+            return;
+          }
+          // URL validation
+          try {
+            new URL(values.contentLink);
+          } catch (e) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a valid URL",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a valid URL",
             }));
             setLoading(false);
             return;
@@ -138,13 +229,42 @@ const AddContent = () => {
           }
         }
 
-        if (
-          values.contentType === CONTENT_TYPE.ARTICLE_PDF ||
-          values.contentType === CONTENT_TYPE.ASSIGNMENT
-        ) {
+        if (values.contentType === CONTENT_TYPE.ARTICLE_PDF) {
+          if (!values.contentFileName || !values.contentLink) {
+            dispatch(
+              setToast({
+                open: true,
+                severity: ToastStatus.ERROR,
+                message: "Please Select Valid Pdf File",
+              })
+            );
+            setLoading(false);
+            return;
+          }
+
           const { filePath, fileName } = await uploadContentFile(values);
           values.contentLink = filePath;
           values.contentFileName = fileName;
+        } else if (values.contentType === CONTENT_TYPE.ASSIGNMENT) {
+          if (values.contentLink && values.contentLink.size) {
+            const { filePath, fileName } = await uploadContentFile(values);
+            values.contentLink = filePath;
+            values.contentFileName = fileName;
+          } else {
+            const body = {
+              name: values.contentName,
+              contentType: values.contentType,
+              ...(values.contentLink && {
+                contentLink: values.contentLink,
+              }),
+              description: values.description,
+              ...(values.contentFileName && {
+                contentFileName: values.contentFileName,
+              }),
+              metadataTags,
+            };
+            await addContentHandler(body);
+          }
         } else {
           const body = {
             name: values.contentName,
@@ -170,8 +290,6 @@ const AddContent = () => {
     formik.handleChange(e);
     if (id === "contentLink") {
       if (formik.values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-        const youtubeRegex =
-          /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
         if (!youtubeRegex.test(value)) {
           formik.setFieldError(id, "Please enter a valid YouTube video link");
           dispatch(
@@ -185,10 +303,27 @@ const AddContent = () => {
           formik.setFieldError(id, "");
         }
       } else if (formik.values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
-        formik.setFieldError(
-          id,
-          isYoutubeUrl(value) ? "Please Enter Native Video Link" : ""
-        );
+        if (youtubeRegex.test(value)) {
+          formik.setFieldError(id, "Please enter a native video link, not a YouTube link");
+          dispatch(
+            setToast({
+              open: true,
+              message: "Please enter a native video link, not a YouTube link",
+              severity: ToastStatus.ERROR,
+            })
+          );
+        } else if (!videoExtensionRegex.test(value) && !videoHostingRegex.test(value)) {
+          formik.setFieldError(id, "Please enter a valid video link");
+          dispatch(
+            setToast({
+              open: true,
+              message: "Please enter a valid video link (must be a video URL or from a video hosting service)",
+              severity: ToastStatus.ERROR,
+            })
+          );
+        } else {
+          formik.setFieldError(id, "");
+        }
       }
     }
   };
@@ -374,6 +509,17 @@ const AddContent = () => {
   const uploadContentFile = async (values) => {
     const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
+    if (!values.contentLink) {
+      dispatch(
+        setToast({
+          open: true,
+          severity: ToastStatus.ERROR,
+          message: "Please Select PDF for upload",
+        })
+      );
+      return;
+    }
+
     if (values.contentLink.size > MAX_FILE_SIZE) {
       dispatch(
         setToast({
@@ -429,6 +575,7 @@ const AddContent = () => {
       ...(formik.values.industry.map((item) => item.id) || []),
       ...(formik.values.strengths.map((item) => item.id) || []),
       ...(formik.values.softSkills.map((item) => item.id) || []),
+      ...(formik.values.treks.map((item) => item.id) || []),
     ];
 
     body.metadataTags = metadataTags;
