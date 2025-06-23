@@ -63,6 +63,7 @@ const AddContent = () => {
   const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
   const videoExtensionRegex = /\.(mp4|mov|avi|wmv|flv|webm|mkv|m3u8)$/i;
   const videoHostingRegex = /(vimeo\.com|dailymotion\.com|player\.vimeo\.com|\.mp4|\.webm|cloudfront\.net|\.m3u8|videos\/)/i;
+  const imageExtensionRegex = /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i;
 
   const formik = useFormik({
     initialValues: {
@@ -202,6 +203,26 @@ const AddContent = () => {
             setErrors((prev) => ({
               ...prev,
               contentLink: "Please enter a valid URL",
+            }));
+            setLoading(false);
+            return;
+          }
+          if (
+            youtubeRegex.test(values.contentLink) ||
+            videoExtensionRegex.test(values.contentLink) ||
+            videoHostingRegex.test(values.contentLink) ||
+            imageExtensionRegex.test(values.contentLink)
+          ) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Article link must not be a YouTube, video, or image link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Article link must not be a YouTube, video, or image link",
             }));
             setLoading(false);
             return;

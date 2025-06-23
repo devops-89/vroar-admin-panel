@@ -34,6 +34,7 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
       strengthRoadmap: [],
       industryRoadmap: [],
       softSkillsRoadmap: [],
+      treksRoadmap: [],
     },
     onSubmit: async (values) => {
       setLoading(true);
@@ -44,6 +45,7 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
           ...values.industryRoadmap,
           ...values.softSkillsRoadmap,
           ...values.strengthRoadmap,
+          ...values.treksRoadmap,
         ],
         userId: userId,
       };
@@ -104,11 +106,13 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
   const [strengthData, setStrengthData] = useState([]);
   const [industryData, setIndustryData] = useState([]);
   const [softSkillsData, setSoftSkillsData] = useState([]);
+  const [treksRoadmapData, setTreksRoadmapData] = useState([]);
 
   const [career, setCareer] = useState([]);
   const [strength, setStrength] = useState([]);
   const [industry, setIndustry] = useState([]);
   const [softSkills, setSoftSkills] = useState([]);
+  const [treks, setTreks] = useState([]);
   const careerSelectorHandler = (e, value) => {
     setCareer(value);
     if (value) {
@@ -127,6 +131,17 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
       );
     }
   };
+
+  const treksChangeHandler = (e, newValue) => {
+    setTreks(newValue);
+    if (newValue) {
+      formik.setFieldValue(
+        "treksRoadmap",
+        newValue.map((val) => val.id)
+      );
+    }
+  };
+
   const [listLoading, setListLoading] = useState(false);
 
   const getAllRoadmapJourney = async ({ type, setLoading, setData }) => {
@@ -176,17 +191,20 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
       const strengthJourneyNames = [];
       const industryJourneyNames = [];
       const softSkillJourneyNames = [];
+      const treksJourneysName = [];
 
       const careerTags = [];
       const strengthTags = [];
       const industryTags = [];
       const softSkillTags = [];
+      const treksTags = [];
 
       journeyData.roadmapJourneys.forEach((journey) => {
         let hasCareer = false;
         let hasStrength = false;
         let hasIndustry = false;
         let hasSoftSkill = false;
+        let hasTreks = false;
 
         journey.metadataTags?.forEach((tag) => {
           switch (tag.type) {
@@ -210,6 +228,10 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
                 softSkillTags.push(tag);
               hasSoftSkill = true;
               break;
+            case METADATA_TYPE.MY_TREKS:
+              if (!treksTags.find((t) => t.id === tag.id)) treksTags.push(tag);
+              hasTreks = true;
+              break;
           }
         });
 
@@ -225,12 +247,16 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
         if (hasSoftSkill && !softSkillJourneyNames.includes(journey.name)) {
           softSkillJourneyNames.push({ id: journey.id, name: journey.name });
         }
+        if (hasTreks && !treksJourneysName.includes(journey.name)) {
+          treksJourneysName.push({ id: journey.id, name: journey.name });
+        }
       });
 
       setCareer(careerJourneyNames);
       setStrength(strengthJourneyNames);
       setIndustry(industryJourneyNames);
       setSoftSkills(softSkillJourneyNames);
+      setTreks(treksJourneysName);
     }
   }, [journeyData]);
 
@@ -500,6 +526,64 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
               type: [METADATA_TYPE.SOFT_SKILLS],
               setLoading: setListLoading,
               setData: setSoftSkillsData,
+            })
+          }
+          loading={listLoading}
+        />
+        {/* treks skills roadmap selectbar */}
+        <Autocomplete
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Tag My treks Roadmap"
+              sx={{ ...loginTextField }}
+              error={
+                formik.touched.treksRoadmap &&
+                Boolean(formik.errors.treksRoadmap)
+              }
+              helperText={
+                formik.touched.treksRoadmap && formik.errors.treksRoadmap
+              }
+              fullWidth
+            />
+          )}
+          options={treksRoadmapData}
+          getOptionLabel={(option) => option.name}
+          renderOption={(props, option) => (
+            <Box component={"li"} {...props}>
+              <Typography sx={{ fontFamily: roboto.style, fontSize: 14 }}>
+                {option.name}
+              </Typography>
+            </Box>
+          )}
+          onChange={treksChangeHandler}
+          value={treks}
+          multiple
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => {
+              const { key, ...tagProps } = getTagProps({ index });
+              return (
+                <CustomChip
+                  label={option.name}
+                  variant={METADATA_TYPE.MY_TREKS}
+                  {...tagProps}
+                  key={key}
+                  removable={true}
+                  onDelete={() => {
+                    const newSoftSkills = treks.filter((_, i) => i !== index);
+                    setTreks(newSoftSkills);
+                  }}
+                />
+              );
+            })
+          }
+          limitTags={1}
+          filterSelectedOptions
+          onFocus={() =>
+            getAllRoadmapJourney({
+              type: [METADATA_TYPE.MY_TREKS],
+              setLoading: setListLoading,
+              setData: setTreksRoadmapData,
             })
           }
           loading={listLoading}

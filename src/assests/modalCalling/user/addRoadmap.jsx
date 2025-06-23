@@ -104,6 +104,8 @@ const AddRoadmap = ({ getJourney }) => {
   const [softSkillsData, setSoftSkillsData] = useState([]);
   const [treksRoadmap, setTreksRoadmap] = useState([]);
 
+  console.log("data", treksRoadmap);
+
   const [career, setCareer] = useState([]);
   const [strength, setStrength] = useState([]);
   const [industry, setIndustry] = useState([]);
@@ -462,8 +464,7 @@ const AddRoadmap = ({ getJourney }) => {
                 Boolean(formik.errors.treksRoadmap)
               }
               helperText={
-                formik.touched.treksRoadmap &&
-                formik.errors.treksRoadmap
+                formik.touched.treksRoadmap && formik.errors.treksRoadmap
               }
             />
           )}
@@ -490,9 +491,7 @@ const AddRoadmap = ({ getJourney }) => {
                   key={key}
                   removable={true}
                   onDelete={() => {
-                    const myTreks = treks.filter(
-                      (_, i) => i !== index
-                    );
+                    const myTreks = treks.filter((_, i) => i !== index);
                     setTreksRoadmap(myTreks);
                   }}
                 />
@@ -505,7 +504,7 @@ const AddRoadmap = ({ getJourney }) => {
             getAllRoadmapJourney({
               type: METADATA_TYPE.MY_TREKS,
               setLoading: setListLoading,
-              setData: setSoftSkillsData,
+              setData: setTreksRoadmap,
             })
           }
           loading={listLoading}
