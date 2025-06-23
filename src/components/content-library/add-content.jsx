@@ -189,7 +189,6 @@ const AddContent = () => {
             setLoading(false);
             return;
           }
-          // URL validation
           try {
             new URL(values.contentLink);
           } catch (e) {
