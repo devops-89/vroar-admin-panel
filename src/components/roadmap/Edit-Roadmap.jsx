@@ -2,7 +2,7 @@ import { metaDataController } from "@/api/metaDataController";
 import { getMetaDataType } from "@/assests/apiCalling/metaDataController";
 import { data } from "@/assests/data";
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS, ToastStatus } from "@/utils/enum";
+import { COLORS, ROADMAP_STATUS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { roadmapValidationSchema } from "@/utils/validationSchema";
@@ -100,7 +100,6 @@ const EditRoadmapTiles = () => {
       });
   };
 
-
   const metaTagTypeHandler = (e, newValue) => {
     setSelectedMetaDataType(newValue);
     if (newValue) {
@@ -129,17 +128,18 @@ const EditRoadmapTiles = () => {
   };
   const dispatch = useDispatch();
 
+  console.log("test", roadmapData);
   const inputHandler = (e) => {
     let { id, value } = e.target;
     setState({ ...state, [id]: value });
   };
   const [loading, setLoading] = useState(false);
-  const createRoadmap = (body) => {
+  const editRoadmap = (body) => {
     setLoading(true);
     metaDataController
-      .createRoadmapJourney(body)
+      .editRoadmapJourney(body)
       .then((res) => {
-        setLoading(false);
+        // console.log("res", res);
         dispatch(
           setToast({
             open: true,
@@ -147,10 +147,12 @@ const EditRoadmapTiles = () => {
             severity: ToastStatus.SUCCESS,
           })
         );
+
         setLoading(false);
         router.back();
       })
       .catch((err) => {
+        // console.log("err", err);
         let errMessage =
           (err.response && err.response.data.message) || err.message;
         dispatch(
@@ -165,37 +167,15 @@ const EditRoadmapTiles = () => {
   };
 
   const submitHandler = () => {
-    // const transformedData = tiles.map(
-    //   ({ id, contentType, contentLibraryId, ...rest }) => ({
-    //     ...rest,
-
-    //     contentLibraryId: contentLibraryId?.id || null,
-    //   })
-    // );
-
-    // const body = {
-    //   roadmapName: state.roadmapName,
-
-    //   metadataIds: state.metaDataTag,
-    //   tiles: transformedData,
-    // };
-
-    // roadmapValidationSchema
-    //   .validate(body, { abortEarly: false })
-    //   .then(() => {
-    //     createRoadmap(body);
-    //   })
-    //   .catch((err) => {
-    //     const errorMessages = err.inner.map((e) => e.message).join("\n");
-    //     dispatch(
-    //       setToast({
-    //         open: true,
-    //         message: errorMessages,
-    //         severity: ToastStatus.ERROR,
-    //       })
-    //     );
-    //   });
-    router.back();
+    if (roadmapData?.status === ROADMAP_STATUS.DRAFT) {
+      let body = {
+        id: roadmapId,
+        status: ROADMAP_STATUS.PUBLISHED,
+      };
+      editRoadmap(body);
+    } else {
+      router.back();
+    }
   };
 
   useEffect(() => {
@@ -305,7 +285,9 @@ const EditRoadmapTiles = () => {
           getRoadmapDetails={getRoadmapDetails}
         />
 
-        {["YOUTUBE_VIDEO_LINK", "JOURNAL_LINK", "NATIVE_VIDEO_LINK"].includes(state.contentType) && (
+        {["YOUTUBE_VIDEO_LINK", "JOURNAL_LINK", "NATIVE_VIDEO_LINK"].includes(
+          state.contentType
+        ) && (
           <TextField
             label={
               <Typography sx={{ fontFamily: roboto.style }}>
@@ -331,7 +313,9 @@ const EditRoadmapTiles = () => {
             value={state.contentLink}
             onChange={inputHandler}
             onBlur={inputHandler}
-            error={state.touched.contentLink && Boolean(state.errors.contentLink)}
+            error={
+              state.touched.contentLink && Boolean(state.errors.contentLink)
+            }
             helperText={state.touched.contentLink && state.errors.contentLink}
             fullWidth
           />
@@ -353,6 +337,8 @@ const EditRoadmapTiles = () => {
         >
           {loading ? (
             <Loading type="bars" width={20} height={20} color={COLORS.BLACK} />
+          ) : roadmapData?.status === ROADMAP_STATUS.DRAFT ? (
+            "Publish"
           ) : (
             "Proceed"
           )}

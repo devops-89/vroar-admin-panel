@@ -1,6 +1,8 @@
 import Axios from "axios";
 import { serverApiUrl } from "./serverConstant";
-import { stripekey } from "../utils/enum";
+import { stripekey, ToastStatus } from "../utils/enum";
+import store from "@/redux/store";
+import { setToast } from "@/redux/reducers/toast";
 
 const securedApi = Axios.create({ baseURL: `${serverApiUrl.admin}` });
 const authenticationpublicApi = Axios.create({
@@ -47,6 +49,18 @@ const refreshToken = async () => {
   try {
     const refresh_token = localStorage.getItem("refreshToken");
     const access_token = localStorage.getItem("accessToken");
+    
+    if (!refresh_token || !access_token) {
+      localStorage.clear();
+      window.location.href = "/";
+      store.dispatch(setToast({
+        open: true,
+        message: "Please login",
+        severity: ToastStatus.WARNING
+      }));
+      throw new Error("Please login");
+    }
+
     const response = await Axios.post(
       `${serverApiUrl.authentication}/api/user/renewAccessToken`,
       {
@@ -59,8 +73,13 @@ const refreshToken = async () => {
     localStorage.setItem("refreshToken", response.data.refreshToken);
     return newAccessToken;
   } catch (error) {
-    localStorage.clear(); 
-    window.location.href = "/"; 
+    localStorage.clear();
+    window.location.href = "/";
+    store.dispatch(setToast({
+      open: true,
+      message: "Please login",
+      severity: ToastStatus.WARNING
+    }));
     throw error;
   }
 };
