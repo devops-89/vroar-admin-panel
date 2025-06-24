@@ -3,7 +3,12 @@ import userController from "@/api/user";
 import CustomChip from "@/components/customChip";
 import { hideModal } from "@/redux/reducers/modal";
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS, METADATA_TYPE, ToastStatus } from "@/utils/enum";
+import {
+  COLORS,
+  METADATA_TYPE,
+  ROADMAP_STATUS,
+  ToastStatus,
+} from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { studentJourneyValidationSchema } from "@/utils/validationSchema";
@@ -150,6 +155,7 @@ const AddRoadmap = ({ getJourney }) => {
         page: 1,
         pageSize: 100,
         metadataType: [type],
+        status: ROADMAP_STATUS.PUBLISHED,
       });
       setData(res.data.data.docs);
     } catch (err) {
