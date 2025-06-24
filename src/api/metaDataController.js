@@ -356,4 +356,15 @@ export const metaDataController = {
       throw error;
     }
   },
+  editRoadmapJourney: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        "api/roadmapJourney/editRoadmapJourney",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

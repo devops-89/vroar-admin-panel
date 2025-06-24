@@ -205,6 +205,7 @@ export const ROADMAP_STATUS = {
   In_PROGRESS: "In Progress",
   COMPLETED: "COMPLETED",
   CANCELLED: "CANCELLED",
+  DRAFT: "DRAFT",
 };
 
 export const RELATIONSHIP_DATA = {
@@ -411,3 +412,4 @@ export const MEDIA_TYPE = {
   PROFILE: "PROFILE",
   GALLUP_RESULT: "GALLUP_RESULT",
 };
+

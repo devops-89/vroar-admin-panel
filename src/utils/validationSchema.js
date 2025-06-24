@@ -3,6 +3,11 @@ import { ASSESSMENTS_TYPE, CONTENT_TYPE, EVENT_TYPE, QUIZ_TYPE } from "./enum";
 import moment from "moment";
 import { useMemo } from "react";
 import { matchIsValidTel } from "mui-tel-input";
+
+export const youtubeRegex =
+  /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i;
+export const videoExtensions = /\.(mp4|mov|avi|wmv|flv|webm|mkv)$/i;
+export const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i;
 export const loginValidationSchema = Yup.object({
   email: Yup.string()
     .email("Please Enter Valid Email")
@@ -440,66 +445,55 @@ export const newAddContentValidationSchema = Yup.object().shape({
       (value) => value && value.trim().length > 0
     ),
 
-  contentLink: Yup.mixed().when("contentType", {
-    is: (val) =>
-      val === CONTENT_TYPE.ARTICLE_PDF || val === CONTENT_TYPE.ASSIGNMENT,
-    then: (schema) =>
-      schema
-        .required("File upload is required")
+  contentLink: Yup.mixed().when("contentType", (contentType, schema) => {
+    if (contentType === CONTENT_TYPE.ARTICLE_PDF) {
+      return schema.required("File is required for PDF");
+    }
+    if (contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
+      return schema
+        .required("YouTube video link is required")
+        .url("Must be a valid URL")
         .test(
-          "fileType",
-          "Only PDF files are allowed",
-          (value) => value && value.type === "application/pdf"
-        )
-        .test(
-          "fileSize",
-          "File size must be less than 10MB",
-          (value) => value && value.size <= 10 * 1024 * 1024
-        ),
-    otherwise: (schema) =>
-      Yup.string()
-        .required("Content link is required")
-        .test(
-          "no-leading-trailing-whitespace",
-          "Content link must not have leading or trailing spaces",
-          (value) =>
-            value && typeof value === "string" && value.trim() === value
-        )
-        .test(
-          "not-empty",
-          "Content link cannot be only whitespace",
-          (value) =>
-            value && typeof value === "string" && value.trim().length > 0
-        )
-        .url("Content link must be a valid URL")
-        .test(
-          "youtube-link",
+          "is-youtube-link",
           "Please enter a valid YouTube video link",
-          function (value) {
-            if (
-              this.parent &&
-              this.parent.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK
-            ) {
-              return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i.test(
-                value
-              );
-            }
-            return true;
-          }
+          (value) => typeof value === "string" && youtubeRegex.test(value)
+        );
+    }
+    if (contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
+      return schema
+        .required("Video link is required")
+        .url("Must be a valid URL")
+        .test(
+          "is-not-youtube",
+          "Native video link cannot be a YouTube link",
+          (value) => typeof value === "string" && !youtubeRegex.test(value)
         )
         .test(
-          "s3-link",
-          "Please enter a valid native video link",
-          function (value) {
-            if (
-              this.parent &&
-              this.parent.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK
-            ) {
-              return true;
-            }
-            return true;
-          }
-        ),
+          "is-video-link",
+          "Must be a valid video link (e.g., ending with .mp4, .mov, etc. or s3/video in URL)",
+          (value) =>
+            typeof value === "string" &&
+            (videoExtensions.test(value) ||
+              value.includes("s3") ||
+              value.includes("video"))
+        );
+    }
+    if (contentType === CONTENT_TYPE.JOURNAL_LINK) {
+      return schema
+        .required("Journal link is required")
+        .url("Must be a valid URL")
+        .test(
+          "not-video-or-image",
+          "Journal link must not be a video or image link",
+          (value) =>
+            typeof value === "string" &&
+            !videoExtensions.test(value) &&
+            !imageExtensions.test(value) &&
+            !youtubeRegex.test(value)
+        );
+    }
+    // For ASSIGNMENT and other types, not required
+    return schema.notRequired();
   }),
 
   isQuizEnabled: Yup.boolean(),

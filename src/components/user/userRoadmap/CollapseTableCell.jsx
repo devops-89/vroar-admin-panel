@@ -23,7 +23,7 @@ import { useDispatch } from "react-redux";
 import { showModal } from "@/redux/reducers/modal";
 import DeleteAssignRoadmap from "@/assests/modalCalling/user/DeleteAssignRoadmap";
 
-const CollapseTableCell = ({ data, journey,getJourney }) => {
+const CollapseTableCell = ({ data, journey, getJourney }) => {
   console.log("data", journey);
   const [open, setOpen] = useState(null);
   const handleToggle = (index) => {
@@ -43,7 +43,9 @@ const CollapseTableCell = ({ data, journey,getJourney }) => {
       roadmapId: id,
       journeyId: journey?.id,
     };
-    dispatch(showModal(<DeleteAssignRoadmap value={body} getJourney={getJourney} />));
+    dispatch(
+      showModal(<DeleteAssignRoadmap value={body} getJourney={getJourney} />)
+    );
   };
   return (
     <Table>
@@ -134,7 +136,7 @@ const CollapseTableCell = ({ data, journey,getJourney }) => {
                     sx={{ fontSize: 20, color: COLORS.BLACK }}
                   />
                 </IconButton>
-                {(val.completedSteps / val.totalSteps) * 100 === 0 && (
+                {(val.completedSteps / val.totalSteps) * 100 !== 100 && (
                   <IconButton onClick={() => handleDelete(val.id)}>
                     <Delete />
                   </IconButton>
