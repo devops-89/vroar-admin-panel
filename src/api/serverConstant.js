@@ -1,4 +1,3 @@
-// const baseUrl = "https://devapi.mytreks.ai";
 const baseUrl = "https://uatapi.mytreks.ai";
 
 const stripeURL = "https://api.stripe.com/v1";
