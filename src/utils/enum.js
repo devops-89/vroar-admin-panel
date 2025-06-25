@@ -45,7 +45,6 @@ export const USER_GROUP = {
   COMPANY: "COMPANY",
   COMPANY_STAFF: "COMPANY_STAFF",
   VROAR_STAFF: "VROAR_STAFF",
-  // SYSTEM:"System"
 };
 export const USER_PERMISSION = {
   READ: "READ",
