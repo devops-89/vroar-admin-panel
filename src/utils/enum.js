@@ -324,6 +324,8 @@ export const CONTENT_TYPE = {
   YOUTUBE_VIDEO_LINK: "Youtube video link",
   JOURNAL_LINK: "Article Link",
   ASSIGNMENT: "Assignment",
+  SESSION: "Session",
+  READ_REFLECT: "Read Reflect",
 };
 
 export const QUIZ_TYPE = {
@@ -412,4 +414,3 @@ export const MEDIA_TYPE = {
   PROFILE: "PROFILE",
   GALLUP_RESULT: "GALLUP_RESULT",
 };
-
