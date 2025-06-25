@@ -9,5 +9,5 @@ export const serverApiUrl = {
   internship: `${baseUrl}/internship`,
   stripeCustomer: `${stripeURL}`,
   content: `${baseUrl}/content`,
-
+// production
 };
