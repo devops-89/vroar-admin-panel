@@ -45,7 +45,6 @@ export const USER_GROUP = {
   COMPANY: "COMPANY",
   COMPANY_STAFF: "COMPANY_STAFF",
   VROAR_STAFF: "VROAR_STAFF",
-  // SYSTEM:"System"
 };
 export const USER_PERMISSION = {
   READ: "READ",
@@ -205,6 +204,7 @@ export const ROADMAP_STATUS = {
   In_PROGRESS: "In Progress",
   COMPLETED: "COMPLETED",
   CANCELLED: "CANCELLED",
+  DRAFT: "DRAFT",
 };
 
 export const RELATIONSHIP_DATA = {
@@ -323,6 +323,8 @@ export const CONTENT_TYPE = {
   YOUTUBE_VIDEO_LINK: "Youtube video link",
   JOURNAL_LINK: "Article Link",
   ASSIGNMENT: "Assignment",
+  SESSION: "Session",
+  READ_REFLECT: "Read & Reflect",
 };
 
 export const QUIZ_TYPE = {

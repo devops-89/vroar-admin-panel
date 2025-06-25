@@ -2,7 +2,7 @@ import { metaDataController } from "@/api/metaDataController";
 import { getMetaDataType } from "@/assests/apiCalling/metaDataController";
 import { data } from "@/assests/data";
 import { setToast } from "@/redux/reducers/toast";
-import { ToastStatus } from "@/utils/enum";
+import { ROADMAP_STATUS, ToastStatus } from "@/utils/enum";
 import { Divider, Stack } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -113,13 +113,18 @@ const Createroadmap = () => {
   };
 
   const [loading, setLoading] = useState(false);
-
+  const [draftLoading, setDraftLoading] = useState(false);
   const createRoadmap = (body) => {
-    setLoading(true);
+    if (body.status === ROADMAP_STATUS.DRAFT) {
+      setDraftLoading(true);
+    } else {
+      setLoading(true);
+    }
     metaDataController
       .createRoadmapJourney(body)
       .then((res) => {
         setLoading(false);
+        setDraftLoading(false);
         dispatch(
           setToast({
             open: true,
@@ -141,6 +146,7 @@ const Createroadmap = () => {
           })
         );
         setLoading(false);
+        setDraftLoading(false);
       });
   };
 
@@ -164,7 +170,7 @@ const Createroadmap = () => {
     return !hasErrors;
   };
 
-  const submitHandler = () => {
+  const submitHandler = (status) => {
     if (!validateAllFields()) {
       dispatch(
         setToast({
@@ -187,6 +193,7 @@ const Createroadmap = () => {
       roadmapName: state.roadmapName,
       metadataIds: state.metaDataTag,
       tiles: transformedData,
+      status: status,
     };
 
     createRoadmap(body);
@@ -254,10 +261,12 @@ const Createroadmap = () => {
         />
       </Stack>
       <Divider sx={{ mt: 2 }} />
+
       <SubmitButton
         loading={loading}
         onClick={submitHandler}
         disabled={loading}
+        draftLoading={draftLoading}
       />
     </div>
   );

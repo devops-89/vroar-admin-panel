@@ -10,7 +10,7 @@ import { CloseOutlined } from "@mui/icons-material";
 import { Chip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
-const CustomChip = ({ label, variant, removable, onDelete }) => {
+const CustomChip = ({ label, variant, removable, onDelete, width }) => {
   const [bgColor, setBgColor] = useState("");
   const [color, setColor] = useState("");
 
@@ -62,7 +62,7 @@ const CustomChip = ({ label, variant, removable, onDelete }) => {
             color: `${color} !important`,
             fontSize: 15,
           },
-         
+          width: width ?? "100%",
         }}
         label={
           <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>

@@ -84,6 +84,17 @@ export const ContentForm = ({
         required
         disabled={disabled}
       />
+      <MetaDataAutocomplete
+        label="My Treks"
+        metaDataType={METADATA_TYPE.MY_TREKS}
+        value={state.treks}
+        onChange={(e, value) => onMetadataChange("treks", value)}
+        error={Boolean(errors.treks)}
+        helperText={errors.treks}
+        colors={{ bg: COLORS.DANGER_BOX, text: COLORS.DANGER }}
+        required
+        disabled={disabled}
+      />
     </>
   );
 };

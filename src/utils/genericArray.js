@@ -52,6 +52,12 @@ export const contentType = [
   {
     label: CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
   },
+  {
+    label: CONTENT_TYPE.SESSION,
+  },
+  {
+    label: CONTENT_TYPE.READ_REFLECT,
+  },
 ];
 
 export const assessmentTypeArray = [

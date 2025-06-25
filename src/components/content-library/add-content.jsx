@@ -20,7 +20,7 @@ import {
 
 import { metaDataController } from "@/api/metaDataController";
 import { data } from "@/assests/data";
-import { isYoutubeUrl } from "@/utils/regex";
+import { isYoutubeUrl, isValidURL } from "@/utils/regex";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
@@ -31,6 +31,9 @@ import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
 import { FileUpload } from "./form-components/FileUpload";
 import ObjectiveQuiz from "./objective-quiz";
 import SubjectiveQuiz from "./subjectiveQuiz";
+import { useQuizValidation } from "@/utils/useQuizValidation";
+import { useFileUpload } from "@/utils/useFileUpload";
+import { displayFormikErrors } from "@/utils/displayFormikErrors";
 
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
@@ -60,6 +63,11 @@ const AddContent = () => {
   const [quizType, setQuizType] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  const videoExtensionRegex = /\.(mp4|mov|avi|wmv|flv|webm|mkv|m3u8)$/i;
+  const videoHostingRegex = /(vimeo\.com|dailymotion\.com|player\.vimeo\.com|\.mp4|\.webm|cloudfront\.net|\.m3u8|videos\/)/i;
+  const imageExtensionRegex = /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i;
+
   const formik = useFormik({
     initialValues: {
       contentType: "",
@@ -73,19 +81,27 @@ const AddContent = () => {
       quizType: "",
       contentFileName: "",
       description: "",
+      treks: [],
     },
     validationSchema: newAddContentValidationSchema,
     onSubmit: async (values, { setErrors }) => {
+      if (
+        values.contentType === CONTENT_TYPE.ARTICLE_PDF &&
+        (!values.contentLink || !values.contentLink.name)
+      ) {
+        formik.setFieldTouched("contentLink", true, true);
+      }
       setLoading(true);
       let metadataTags = [
         ...(values.career.map((item) => item.id) || []),
         ...(values.industry.map((item) => item.id) || []),
         ...(values.strengths.map((item) => item.id) || []),
         ...(values.softSkills.map((item) => item.id) || []),
+        ...(values.treks.map((item) => item.id) || []),
       ];
       try {
         if (values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-          if (!values.contentLink.trim()) {
+          if (!values.contentLink || !values.contentLink.trim()) {
             dispatch(
               setToast({
                 open: true,
@@ -100,8 +116,23 @@ const AddContent = () => {
             setLoading(false);
             return;
           }
+          if (!youtubeRegex.test(values.contentLink)) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a valid YouTube video link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a valid YouTube video link",
+            }));
+            setLoading(false);
+            return;
+          }
         } else if (values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
-          if (!values.contentLink) {
+          if (!values.contentLink || !values.contentLink.trim()) {
             dispatch(
               setToast({
                 open: true,
@@ -112,6 +143,138 @@ const AddContent = () => {
             setErrors((prev) => ({
               ...prev,
               contentLink: "Please enter a valid link",
+            }));
+            setLoading(false);
+            return;
+          }
+          if (youtubeRegex.test(values.contentLink)) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a native video link, not a YouTube link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a native video link, not a YouTube link",
+            }));
+            setLoading(false);
+            return;
+          }
+          if (!videoExtensionRegex.test(values.contentLink) && !videoHostingRegex.test(values.contentLink)) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a valid video link (must be a video URL or from a video hosting service)",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a valid video link",
+            }));
+            setLoading(false);
+            return;
+          }
+        } else if (values.contentType === CONTENT_TYPE.JOURNAL_LINK) {
+          if (!values.contentLink || !values.contentLink.trim()) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Link is required",
+            }));
+            setLoading(false);
+            return;
+          }
+          try {
+            new URL(values.contentLink);
+          } catch (e) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a valid URL",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a valid URL",
+            }));
+            setLoading(false);
+            return;
+          }
+          if (
+            youtubeRegex.test(values.contentLink) ||
+            videoExtensionRegex.test(values.contentLink) ||
+            videoHostingRegex.test(values.contentLink) ||
+            imageExtensionRegex.test(values.contentLink)
+          ) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Article link must not be a YouTube, video, or image link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Article link must not be a YouTube, video, or image link",
+            }));
+            setLoading(false);
+            return;
+          }
+        } else if (
+          values.contentType === CONTENT_TYPE.SESSION ||
+          values.contentType === CONTENT_TYPE.READ_REFLECT
+        ) {
+          if (!values.contentLink || !values.contentLink.trim()) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a link",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Link is required",
+            }));
+            setLoading(false);
+            return;
+          }
+          if (values.contentLink.trim() !== values.contentLink) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Link must not have leading or trailing spaces",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Link must not have leading or trailing spaces",
+            }));
+            setLoading(false);
+            return;
+          }
+          if (!isValidURL(values.contentLink)) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Please enter a valid URL",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setErrors((prev) => ({
+              ...prev,
+              contentLink: "Please enter a valid URL",
             }));
             setLoading(false);
             return;
@@ -131,20 +294,58 @@ const AddContent = () => {
         }
 
         if (values.isQuizEnabled) {
-          const isQuizValid = await validateQuizSection(values);
+          const isQuizValid = await validateQuizSection();
           if (!isQuizValid) {
             setLoading(false);
             return;
           }
         }
 
-        if (
-          values.contentType === CONTENT_TYPE.ARTICLE_PDF ||
-          values.contentType === CONTENT_TYPE.ASSIGNMENT
-        ) {
-          const { filePath, fileName } = await uploadContentFile(values);
-          values.contentLink = filePath;
-          values.contentFileName = fileName;
+        if (values.contentType === CONTENT_TYPE.ARTICLE_PDF) {
+          if (!values.contentFileName || !values.contentLink) {
+            dispatch(
+              setToast({
+                open: true,
+                severity: ToastStatus.ERROR,
+                message: "Please Select Valid Pdf File",
+              })
+            );
+            setLoading(false);
+            return;
+          }
+          try {
+            const { filePath, fileName } = await uploadContentFile(values);
+            values.contentLink = filePath;
+            values.contentFileName = fileName;
+          } catch (error) {
+            setLoading(false);
+            return;
+          }
+        } else if (values.contentType === CONTENT_TYPE.ASSIGNMENT) {
+          if (values.contentLink && values.contentLink.size) {
+            try {
+              const { filePath, fileName } = await uploadContentFile(values);
+              values.contentLink = filePath;
+              values.contentFileName = fileName;
+            } catch (error) {
+              setLoading(false);
+              return;
+            }
+          } else {
+            const body = {
+              name: values.contentName,
+              contentType: values.contentType,
+              ...(values.contentLink && {
+                contentLink: values.contentLink,
+              }),
+              description: values.description,
+              ...(values.contentFileName && {
+                contentFileName: values.contentFileName,
+              }),
+              metadataTags,
+            };
+            await addContentHandler(body);
+          }
         } else {
           const body = {
             name: values.contentName,
@@ -159,7 +360,7 @@ const AddContent = () => {
           await addContentHandler(body);
         }
       } catch (error) {
-        handleErrorDisplay(error);
+        displayFormikErrors(error, formik, dispatch);
         setLoading(false);
       }
     },
@@ -170,8 +371,6 @@ const AddContent = () => {
     formik.handleChange(e);
     if (id === "contentLink") {
       if (formik.values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
-        const youtubeRegex =
-          /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
         if (!youtubeRegex.test(value)) {
           formik.setFieldError(id, "Please enter a valid YouTube video link");
           dispatch(
@@ -185,10 +384,61 @@ const AddContent = () => {
           formik.setFieldError(id, "");
         }
       } else if (formik.values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
-        formik.setFieldError(
-          id,
-          isYoutubeUrl(value) ? "Please Enter Native Video Link" : ""
-        );
+        if (youtubeRegex.test(value)) {
+          formik.setFieldError(id, "Please enter a native video link, not a YouTube link");
+          dispatch(
+            setToast({
+              open: true,
+              message: "Please enter a native video link, not a YouTube link",
+              severity: ToastStatus.ERROR,
+            })
+          );
+        } else if (!videoExtensionRegex.test(value) && !videoHostingRegex.test(value)) {
+          formik.setFieldError(id, "Please enter a valid video link");
+          dispatch(
+            setToast({
+              open: true,
+              message: "Please enter a valid video link (must be a video URL or from a video hosting service)",
+              severity: ToastStatus.ERROR,
+            })
+          );
+        } else {
+          formik.setFieldError(id, "");
+        }
+      } else if (
+        formik.values.contentType === CONTENT_TYPE.SESSION ||
+        formik.values.contentType === CONTENT_TYPE.READ_REFLECT
+      ) {
+        if (!value.trim()) {
+          formik.setFieldError(id, "Link is required");
+          dispatch(
+            setToast({
+              open: true,
+              message: "Link is required",
+              severity: ToastStatus.ERROR,
+            })
+          );
+        } else if (value.trim() !== value) {
+          formik.setFieldError(id, "Link must not have leading or trailing spaces");
+          dispatch(
+            setToast({
+              open: true,
+              message: "Link must not have leading or trailing spaces",
+              severity: ToastStatus.ERROR,
+            })
+          );
+        } else if (!isValidURL(value)) {
+          formik.setFieldError(id, "Please enter a valid URL");
+          dispatch(
+            setToast({
+              open: true,
+              message: "Please enter a valid URL",
+              severity: ToastStatus.ERROR,
+            })
+          );
+        } else {
+          formik.setFieldError(id, "");
+        }
       }
     }
   };
@@ -247,116 +497,6 @@ const AddContent = () => {
     }
   };
 
-  const validateQuizSection = async (values) => {
-    if (!values.isQuizEnabled) {
-      return true;
-    }
-    if (!values.quizType) {
-      dispatch(
-        setToast({
-          open: true,
-          message: "Please select a quiz type",
-          severity: ToastStatus.ERROR,
-        })
-      );
-      return false;
-    }
-    try {
-      if (values.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
-        const validationErrors = {
-          questions: {},
-          options: {},
-          correctOption: {},
-        };
-        questions.forEach((q, qIndex) => {
-          if (!q.question.trim()) {
-            validationErrors.questions[qIndex] = "Question cannot be empty";
-            dispatch(
-              setToast({
-                open: true,
-                message: `Question ${qIndex + 1} cannot be empty`,
-                severity: ToastStatus.ERROR,
-              })
-            );
-          }
-          q.options.forEach((opt, optIndex) => {
-            if (!opt.optionText.trim()) {
-              if (!validationErrors.options[qIndex]) {
-                validationErrors.options[qIndex] = {};
-              }
-              validationErrors.options[qIndex][optIndex] =
-                "Option cannot be empty";
-              dispatch(
-                setToast({
-                  open: true,
-                  message: `Option ${optIndex + 1} for Question ${
-                    qIndex + 1
-                  } cannot be empty`,
-                  severity: ToastStatus.ERROR,
-                })
-              );
-            }
-          });
-          if (!q.options.some((opt) => opt.isCorrect)) {
-            validationErrors.correctOption[qIndex] =
-              "Select at least one correct option";
-            dispatch(
-              setToast({
-                open: true,
-                message: `Please select at least one correct option for Question ${
-                  qIndex + 1
-                }`,
-                severity: ToastStatus.ERROR,
-              })
-            );
-          }
-        });
-        if (
-          Object.keys(validationErrors.questions).length > 0 ||
-          Object.keys(validationErrors.options).length > 0 ||
-          Object.keys(validationErrors.correctOption).length > 0
-        ) {
-          return false;
-        }
-        await quizValidationSchema.validate(
-          { quizQuestions: questions },
-          { abortEarly: false }
-        );
-        return true;
-      }
-      if (values.quizType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
-        const validationErrors = {};
-        if (!sia.question.trim()) {
-          validationErrors.question = "Question cannot be empty";
-          dispatch(
-            setToast({
-              open: true,
-              message: "Question cannot be empty",
-              severity: ToastStatus.ERROR,
-            })
-          );
-        } else if (sia.question.trim().length < 2) {
-          validationErrors.question =
-            "Question should be more than 2 characters";
-          dispatch(
-            setToast({
-              open: true,
-              message: "Question should be more than 2 characters",
-              severity: ToastStatus.ERROR,
-            })
-          );
-        }
-        if (Object.keys(validationErrors).length > 0) {
-          return false;
-        }
-        return true;
-      }
-    } catch (error) {
-      handleErrorDisplay(error);
-    }
-    return true;
-  };
-
   const getQuizData = () => {
     if (formik.values.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
       return questions.map(({ id, options, ...rest }) => ({
@@ -371,71 +511,19 @@ const AddContent = () => {
 
   let metadataTags = [];
 
-  const uploadContentFile = async (values) => {
-    const MAX_FILE_SIZE = 10 * 1024 * 1024;
-
-    if (values.contentLink.size > MAX_FILE_SIZE) {
-      dispatch(
-        setToast({
-          open: true,
-          severity: ToastStatus.ERROR,
-          message: "File size must be less than 10MB",
-        })
-      );
-      throw new Error("File size exceeds limit");
-    }
-
-    const body = {
-      type: values.contentType,
-      contentFile: values.contentLink,
-    };
-
-    try {
-      const res = await metaDataController.getUploadContentFile(body);
-      const response = res.data.data;
-      values.contentFileName = response.fileName;
-      values.contentLink = response.filePath;
-      const newBody = {
-        name: values.contentName,
-        contentType: values.contentType,
-        contentLink: values.contentLink,
-        description: values.description,
-        ...(values.contentFileName && {
-          contentFileName: values.contentFileName,
-        }),
-      };
-      addContentHandler(newBody);
-      return {
-        filePath: response.filePath,
-        fileName: response.fileName,
-      };
-    } catch (err) {
-      let errMessage = err?.response?.data?.message || err.message;
-      console.log(errMessage);
-      dispatch(
-        setToast({
-          open: true,
-          message: errMessage,
-          severity: ToastStatus.ERROR,
-        })
-      );
-      throw err;
-    }
-  };
-
   const addContentHandler = async (body) => {
     metadataTags = [
       ...(formik.values.career.map((item) => item.id) || []),
       ...(formik.values.industry.map((item) => item.id) || []),
       ...(formik.values.strengths.map((item) => item.id) || []),
       ...(formik.values.softSkills.map((item) => item.id) || []),
+      ...(formik.values.treks.map((item) => item.id) || []),
     ];
 
     body.metadataTags = metadataTags;
     metaDataController
       .addContentLibrary(body)
       .then((res) => {
-        // Get the new content's ID from the response
         const contentLibraryId = res.data.data.id || res.data.data._id;
         if (formik.values.isQuizEnabled) {
           addQuizHandler({
@@ -485,46 +573,15 @@ const AddContent = () => {
     }
   };
 
-  const handleErrorDisplay = (error) => {
-    const validationErrors = {};
-    let allMessages = [];
-    if (error.inner && error.inner.length > 0) {
-      error.inner.forEach((err) => {
-        const path = err.path;
-        if (path && path.includes("questions")) {
-          const questionIndex = path.match(/questions\[(\d+)\]/)?.[1];
-          const field = path.split(".").pop();
-
-          if (questionIndex !== undefined) {
-            if (!validationErrors.questions) validationErrors.questions = {};
-            if (!validationErrors.questions[questionIndex]) {
-              validationErrors.questions[questionIndex] = {};
-            }
-            validationErrors.questions[questionIndex][field] = err.message;
-            allMessages.push(err.message);
-          }
-        } else if (path) {
-          validationErrors[path] = err.message;
-          allMessages.push(err.message);
-        }
-      });
-    } else if (error.message) {
-      allMessages.push(error.message);
-    }
-    formik.setErrors(validationErrors);
-
-    const firstError =
-      allMessages.length > 0
-        ? allMessages[0]
-        : "Please fix the validation errors";
-    dispatch(
-      setToast({
-        open: true,
-        message: firstError,
-        severity: ToastStatus.ERROR,
-      })
-    );
-  };
+  // Custom hooks for quiz validation and file upload
+  const { validateQuizSection } = useQuizValidation(
+    formik.values.quizType,
+    questions,
+    sia,
+    QUIZ_TYPE,
+    dispatch
+  );
+  const { uploadContentFile } = useFileUpload(metaDataController, dispatch);
 
   // Handler for metadata change
   const handleMetadataChange = (key, value) => {
@@ -539,7 +596,9 @@ const AddContent = () => {
   const isLinkType =
     formik.values.contentType === CONTENT_TYPE.JOURNAL_LINK ||
     formik.values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK ||
-    formik.values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK;
+    formik.values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK ||
+    formik.values.contentType === CONTENT_TYPE.SESSION ||
+    formik.values.contentType === CONTENT_TYPE.READ_REFLECT;
 
   return (
     <Box mt={3} sx={{ width: "100%" }}>
