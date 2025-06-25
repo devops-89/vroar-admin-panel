@@ -325,7 +325,7 @@ export const CONTENT_TYPE = {
   JOURNAL_LINK: "Article Link",
   ASSIGNMENT: "Assignment",
   SESSION: "Session",
-  READ_REFLECT: "Read Reflect",
+  READ_REFLECT: "Read & Reflect",
 };
 
 export const QUIZ_TYPE = {
