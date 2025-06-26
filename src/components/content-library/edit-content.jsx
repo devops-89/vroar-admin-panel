@@ -47,6 +47,7 @@ const EditContent = () => {
     setIsDetailsLoading,
   } = useContentForm();
 
+
   const inputRef = useRef();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -101,6 +102,9 @@ const EditContent = () => {
     const softSkills = response.metadataTags.filter(
       (val) => val.type === METADATA_TYPE.SOFT_SKILLS
     );
+    const my_Treks = response.metadataTags.filter(
+      (val) => val.type === METADATA_TYPE.MY_TREKS
+    );
 
     setState({
       contentType: { label: response.contentType },
@@ -123,6 +127,12 @@ const EditContent = () => {
         id: val.id,
         name: val.name,
       })),
+
+      treks: my_Treks.map((val) => ({
+        id: val.id,
+        name: val.name,
+      })),
+
       file: {
         fileName: response.contentFileName,
         filePath: response.contentLink,
@@ -170,7 +180,7 @@ const EditContent = () => {
   }, [id]);
 
   useEffect(() => {
-    // Set form to disabled by default
+    
     setIsFormDisabled(true);
   }, []);
 
@@ -183,7 +193,6 @@ const EditContent = () => {
       : {};
   };
 
-  // console.log("state.contentType", state.contentType, CONTENT_TYPE);
 
   return (
     <Box mt={3}>
@@ -199,8 +208,6 @@ const EditContent = () => {
             error={errors.contentType}
             disabled={true}
           />
-
-          
 
           {contentTypeConfig[state.contentType.label]?.showLink && (
             <TextField
@@ -241,6 +248,7 @@ const EditContent = () => {
             onAddQuiz={() => addQuiz(id)}
             onQuizUpdate={handleQuizUpdate}
             disabled={loading || isDetailsLoading}
+            contentType={state.contentType}
           />
 
           <Button
@@ -273,7 +281,7 @@ const EditContent = () => {
 
       <ToastBar />
     </Box>
-  ); 
+  );
 };
 
 export default EditContent;

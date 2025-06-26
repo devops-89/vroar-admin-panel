@@ -477,6 +477,7 @@ const AddContent = () => {
           })
         );
         event.target.value = "";
+        formik.setFieldValue("contentLink", "");
         return;
       }
 
@@ -493,7 +494,10 @@ const AddContent = () => {
           })
         );
         event.target.value = "";
+        formik.setFieldValue("contentLink", "");
       }
+    } else {
+      formik.setFieldValue("contentLink", "");
     }
   };
 
