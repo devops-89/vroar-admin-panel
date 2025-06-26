@@ -82,10 +82,10 @@ const EditContent = () => {
     },
   ]);
 
-  const [sia, setSia] = useState({
-    question: "",
-    subText: "",
-  });
+  // const [sia, setSia] = useState({
+  //   question: "",
+  //   subText: "",
+  // });
 
   const id = router.query.slug;
 
