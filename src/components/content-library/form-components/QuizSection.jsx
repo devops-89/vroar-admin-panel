@@ -1,4 +1,4 @@
-import { COLORS, QUIZ_TYPE } from "@/utils/enum";
+import { COLORS, CONTENT_TYPE, QUIZ_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { Box, Button, Typography } from "@mui/material";
@@ -15,14 +15,18 @@ export const QuizSection = ({
   onAddQuiz,
   disabled,
   onQuizUpdate,
+  contentType,
 }) => {
   const subjectiveQuizData = useMemo(() => {
-    if (quizType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ && questions?.length > 0) {
+    if (
+      quizType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ &&
+      questions?.length > 0
+    ) {
       const question = questions[0];
       return {
         question: question.questionText,
         subText: question.subText,
-        id: question.id
+        id: question.id,
       };
     }
     return { question: "", subText: "", id: null };
@@ -30,29 +34,31 @@ export const QuizSection = ({
 
   const objectiveQuizData = useMemo(() => {
     if (quizType?.label === QUIZ_TYPE.OBJECTIVE_QUIZ && questions?.length > 0) {
-      return questions.map(question => ({
+      return questions.map((question) => ({
         id: question.id,
         question: question.questionText,
-        options: question.options.map(option => ({
+        options: question.options.map((option) => ({
           id: option.id,
           optionText: option.optionText,
-          isCorrect: option.isCorrect
-        }))
+          isCorrect: option.isCorrect,
+        })),
       }));
     }
-    return [{
-      id: 1,
-      question: "",
-      options: [
-        { id: 1, optionText: "", isCorrect: false },
-        { id: 2, optionText: "", isCorrect: false },
-        { id: 3, optionText: "", isCorrect: false },
-        { id: 4, optionText: "", isCorrect: false },
-      ],
-    }];
+    return [
+      {
+        id: 1,
+        question: "",
+        options: [
+          { id: 1, optionText: "", isCorrect: false },
+          { id: 2, optionText: "", isCorrect: false },
+          { id: 3, optionText: "", isCorrect: false },
+          { id: 4, optionText: "", isCorrect: false },
+        ],
+      },
+    ];
   }, [quizType, questions]);
 
-  if (!isQuizEnabled) {
+  if (!isQuizEnabled && contentType.label !== CONTENT_TYPE.ASSIGNMENT) {
     return (
       <Button
         sx={{
@@ -79,39 +85,41 @@ export const QuizSection = ({
 
   return (
     <>
-      <CustomAutocomplete
-        renderInput={(params) => (
-          <ValidationTextField
-            {...params}
-            label="Select Quiz Type"
-            sx={{ ...loginTextField }}
-            fullWidth
-          />
-        )}
-        renderOption={(props, options) => (
-          <Box {...props}>
-            <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-              {options.label}
-            </Typography>
-          </Box>
-        )}
-        options={data.QUIZ_TYPE_DATA}
-        getOptionLabel={(option) => option.label}
-        value={quizType}
-        fullWidth
-        disabled={true}
-        sx={{
-          "& .MuiInputBase-root": {
-            backgroundColor: "#f5f5f5",
-            "& fieldset": {
-              borderColor: "#e0e0e0",
+      {contentType.label !== CONTENT_TYPE.ASSIGNMENT && (
+        <CustomAutocomplete
+          renderInput={(params) => (
+            <ValidationTextField
+              {...params}
+              label="Select Quiz Type"
+              sx={{ ...loginTextField }}
+              fullWidth
+            />
+          )}
+          renderOption={(props, options) => (
+            <Box {...props}>
+              <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
+                {options.label}
+              </Typography>
+            </Box>
+          )}
+          options={data.QUIZ_TYPE_DATA}
+          getOptionLabel={(option) => option.label}
+          value={quizType}
+          fullWidth
+          disabled={true}
+          sx={{
+            "& .MuiInputBase-root": {
+              backgroundColor: "#f5f5f5",
+              "& fieldset": {
+                borderColor: "#e0e0e0",
+              },
+              "& input": {
+                color: "rgba(0, 0, 0, 0.38)",
+              },
             },
-            "& input": {
-              color: "rgba(0, 0, 0, 0.38)",
-            },
-          },
-        }}
-      />
+          }}
+        />
+      )}
 
       {quizType?.label === QUIZ_TYPE.OBJECTIVE_QUIZ && (
         <ObjectiveQuiz
@@ -132,4 +140,4 @@ export const QuizSection = ({
       )}
     </>
   );
-}; 
+};

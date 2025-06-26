@@ -13,14 +13,8 @@ export function useFileUpload(metaDataController, dispatch) {
     async (values) => {
       const MAX_FILE_SIZE = 10 * 1024 * 1024;
       if (!values.contentLink) {
-        dispatch(
-          setToast({
-            open: true,
-            severity: ToastStatus.ERROR,
-            message: "Please Select PDF for upload",
-          })
-        );
-        throw new Error("No file selected");
+        // No file selected, treat as optional, do nothing
+        return null;
       }
       if (values.contentLink.size > MAX_FILE_SIZE) {
         dispatch(

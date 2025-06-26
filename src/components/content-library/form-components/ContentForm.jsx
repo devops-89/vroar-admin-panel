@@ -10,6 +10,7 @@ export const ContentForm = ({
   onMetadataChange,
   disabled,
 }) => {
+  console.log("stte", state);
   return (
     <>
       <ValidationTextField

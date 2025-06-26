@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { metaDataController } from "@/api/metaDataController";
 import { setToast } from "@/redux/reducers/toast";
-import { ToastStatus } from "@/utils/enum";
+import { CONTENT_TYPE, ToastStatus } from "@/utils/enum";
 import { isValidURL } from "@/utils/regex";
 import { validationSchema } from "../validation";
 import { useRouter } from "next/router";
+import { contentType } from "@/utils/genericArray";
 
 const initialState = {
   contentType: "",
@@ -20,6 +21,7 @@ const initialState = {
   isQuizEnabled: false,
   quizType: "",
   questions: [],
+  treks: [],
 };
 
 export const useContentForm = () => {
@@ -51,14 +53,21 @@ export const useContentForm = () => {
   const handleMetadataChange = (field, value) => {
     setState((prev) => ({
       ...prev,
-      [field]: value?.map((item) => item.id) || [],
+      [field]: value || [],
     }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (!file) return;
+    if (!file) {
+      setState((prev) => ({
+        ...prev,
+        contentLink: "",
+        file: { fileName: "", filePath: "" },
+      }));
+      return;
+    }
 
     if (file.type !== "application/pdf") {
       dispatch(
@@ -68,6 +77,11 @@ export const useContentForm = () => {
           message: "Please Select Valid PDF File",
         })
       );
+      setState((prev) => ({
+        ...prev,
+        contentLink: "",
+        file: { fileName: "", filePath: "" },
+      }));
       return;
     }
 
@@ -97,6 +111,7 @@ export const useContentForm = () => {
           ...state.industry,
           ...state.strengths,
           ...state.softSkills,
+          ...state.treks,
         ],
       };
 
@@ -120,9 +135,17 @@ export const useContentForm = () => {
     setLoading(true);
     try {
       let contentLink = state.contentLink;
-      if (!isValidURL(contentLink)) {
+      const contentTypeString = state.contentType?.label || state.contentType;
+
+
+      if (
+        contentTypeString === CONTENT_TYPE.ASSIGNMENT &&
+        !state.file?.fileName
+      ) {
+        contentLink = "";
+      } else if (!isValidURL(contentLink)) {
         const uploadResponse = await metaDataController.getUploadContentFile({
-          type: state.contentType?.label || state.contentType,
+          type: contentTypeString,
           contentFile: state.contentLink,
         });
         contentLink = uploadResponse.data.data.filePath;
@@ -131,22 +154,26 @@ export const useContentForm = () => {
       const id = router.query.slug || state.id;
 
       const fileTypes = ["ARTICLE_PDF", "ARTICLE_WRITEUP", "ASSIGNMENT"];
-      const contentTypeString = state.contentType?.label || state.contentType;
       const payload = {
         id: id,
         name: state.contentName.trim(),
         contentType: contentTypeString,
-        contentLink,
         description: state.description.trim(),
         metadataTags: [
           ...state.career.map((item) => item.id || item),
           ...state.industry.map((item) => item.id || item),
           ...state.strengths.map((item) => item.id || item),
           ...state.softSkills.map((item) => item.id || item),
+          ...state.treks.map((item) => item.id || item),
         ],
       };
-      if (fileTypes.includes(contentTypeString)) {
-        payload.contentFileName = state.file?.fileName || "";
+
+      if (contentLink) {
+        payload.contentLink = contentLink;
+      }
+
+      if (fileTypes.includes(contentTypeString) && state.file?.fileName) {
+        payload.contentFileName = state.file.fileName;
       }
 
       await metaDataController.editContent(payload);
