@@ -137,13 +137,11 @@ export const useContentForm = () => {
       let contentLink = state.contentLink;
       const contentTypeString = state.contentType?.label || state.contentType;
 
-      console.log("ccc", contentTypeString);
 
       if (
         contentTypeString === CONTENT_TYPE.ASSIGNMENT &&
         !state.file?.fileName
       ) {
-        // No file uploaded for ASSIGNMENT, skip upload API
         contentLink = "";
       } else if (!isValidURL(contentLink)) {
         const uploadResponse = await metaDataController.getUploadContentFile({
