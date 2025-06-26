@@ -16,6 +16,8 @@ const MetaDataAutocomplete = ({
   colors,
 }) => {
   const [data, setData] = useState([]);
+
+  // console.log("values", value);
   const [loading, setLoading] = useState(false);
   const getMetaData = async (metaDataType, setData, setLoading) => {
     setLoading(true);
@@ -24,7 +26,7 @@ const MetaDataAutocomplete = ({
         page: 1,
         pageSize: 100,
         type: metaDataType,
-        status: USER_STATUS.ACTIVE
+        status: USER_STATUS.ACTIVE,
       });
       setData(res.data.data.docs);
     } catch (err) {
@@ -55,6 +57,7 @@ const MetaDataAutocomplete = ({
       options={data}
       loading={loading}
       getOptionLabel={(option) => option.name}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderOption={(props, option) => (
         <Box {...props}>
           <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>

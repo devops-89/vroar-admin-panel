@@ -21,12 +21,15 @@ export const validationSchema = Yup.object().shape({
       (value) => !value || value.trim() === value
     ),
   contentLink: Yup.string().when("contentType", {
-    is: (type) =>
-      [
+    is: (type) => {
+      // Support both string and object (label)
+      const t = typeof type === "object" && type !== null ? type.label : type;
+      return [
         CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
         CONTENT_TYPE.JOURNAL_LINK,
         CONTENT_TYPE.NATIVE_VIDEO_LINK,
-      ].includes(type),
+      ].includes(t);
+    },
     then: () =>
       Yup.string()
         .required("Content link is required")
@@ -36,7 +39,7 @@ export const validationSchema = Yup.object().shape({
           "Content link cannot start or end with spaces",
           (value) => !value || value.trim() === value
         ),
-    otherwise: () => Yup.string(),
+    otherwise: () => Yup.string().notRequired(),
   }),
   metadataTags: Yup.array()
     .test("has-metadata", "At least one metadata tag is required", (value) => {
