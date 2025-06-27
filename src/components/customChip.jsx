@@ -40,7 +40,8 @@ const CustomChip = ({ label, variant, removable, onDelete, width }) => {
     if (
       variant === METADATA_TYPE.STRENGTHS ||
       variant === ROADMAP_STATUS.SIGNED_UP ||
-      variant === USER_ROADMAP_REVIEW_STATUS.IN_PROGRESS
+      variant === USER_ROADMAP_REVIEW_STATUS.IN_PROGRESS ||
+      variant === "IN_PROGRESS"
     ) {
       setBgColor(COLORS.SIGNED_UP);
       setColor(COLORS.SIGNED_UP_TEXT);
