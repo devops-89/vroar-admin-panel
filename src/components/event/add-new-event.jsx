@@ -55,6 +55,12 @@ const AddEvent = () => {
         delete submitValues.coins;
       }
 
+      Object.keys(submitValues).forEach((key) => {
+        if (submitValues[key] === "") {
+          delete submitValues[key];
+        }
+      });
+
       addNewEvent(submitValues);
     },
   });

@@ -317,6 +317,16 @@ const AddContent = () => {
             const { filePath, fileName } = await uploadContentFile(values);
             values.contentLink = filePath;
             values.contentFileName = fileName;
+            const body = {
+              name: values.contentName,
+              contentType: values.contentType,
+              contentLink: values.contentLink,
+              description: values.description,
+              contentFileName: values.contentFileName,
+              metadataTags,
+            };
+            await addContentHandler(body);
+            return;
           } catch (error) {
             setLoading(false);
             return;
@@ -327,6 +337,16 @@ const AddContent = () => {
               const { filePath, fileName } = await uploadContentFile(values);
               values.contentLink = filePath;
               values.contentFileName = fileName;
+              const body = {
+                name: values.contentName,
+                contentType: values.contentType,
+                contentLink: values.contentLink,
+                description: values.description,
+                contentFileName: values.contentFileName,
+                metadataTags,
+              };
+              await addContentHandler(body);
+              return;
             } catch (error) {
               setLoading(false);
               return;
@@ -345,6 +365,7 @@ const AddContent = () => {
               metadataTags,
             };
             await addContentHandler(body);
+            return;
           }
         } else {
           const body = {
@@ -465,7 +486,7 @@ const AddContent = () => {
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; 
 
     if (selectedFile) {
       if (selectedFile.size > MAX_FILE_SIZE) {
@@ -577,7 +598,6 @@ const AddContent = () => {
     }
   };
 
-  // Custom hooks for quiz validation and file upload
   const { validateQuizSection } = useQuizValidation(
     formik.values.quizType,
     questions,
@@ -587,13 +607,11 @@ const AddContent = () => {
   );
   const { uploadContentFile } = useFileUpload(metaDataController, dispatch);
 
-  // Handler for metadata change
   const handleMetadataChange = (key, value) => {
     formik.setFieldValue(key, value);
     formik.setFieldError(key, "");
   };
 
-  // Helper to determine which field to show
   const isFileType =
     formik.values.contentType === CONTENT_TYPE.ARTICLE_PDF ||
     formik.values.contentType === CONTENT_TYPE.ASSIGNMENT;
