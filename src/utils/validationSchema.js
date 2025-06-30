@@ -492,67 +492,6 @@ export const newAddContentValidationSchema = Yup.object().shape({
   isQuizEnabled: Yup.boolean(),
 });
 
-export const quizValidationSchema = Yup.object().shape({
-  quizQuestions: Yup.array()
-    .of(
-      Yup.object().shape({
-        question: Yup.string()
-          .required("Question cannot be empty")
-          .test(
-            "not-empty",
-            "Question cannot be only whitespace",
-            (value) => value && value.trim().length > 0
-          )
-          .matches(/^\S.*\S$/, "Question cannot start or end with spaces")
-          .min(2, "Question should be more than 2 characters")
-          .max(255, "Question is too long!"),
-        options: Yup.array()
-          .of(
-            Yup.object().shape({
-              optionText: Yup.string()
-                .required("Option text cannot be empty")
-                .test(
-                  "not-empty",
-                  "Option text cannot be only whitespace",
-                  (value) => value && value.trim().length > 0
-                )
-                .matches(
-                  /^\S.*\S$/,
-                  "Option text cannot start or end with spaces"
-                )
-                .min(2, "Option text should be more than 2 characters")
-                .max(255, "Option text is too long!"),
-              isCorrect: Yup.boolean().required(
-                "Please select if this option is correct or not"
-              ),
-            })
-          )
-          .min(2, "At least two options are required")
-          .test(
-            "at-least-one-correct",
-            "At least one option must be marked as correct",
-            (options) => options?.some((option) => option.isCorrect === true)
-          )
-          .test(
-            "no-duplicate-options",
-            "Duplicate options are not allowed",
-            (options) => {
-              if (!options) return true;
-              const optionTexts = options.map((opt) =>
-                opt.optionText.trim().toLowerCase()
-              );
-              return new Set(optionTexts).size === optionTexts.length;
-            }
-          ),
-      })
-    )
-    .when("isQuizEnabled", {
-      is: true,
-      then: (schema) => schema.min(1, "At least one question is required"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
-});
-
 export const manualNotesValidationSchema = Yup.object().shape({
   notes: Yup.string()
     .required("Please Enter Notes")
@@ -770,4 +709,65 @@ export const addMentorValidationSchema = Yup.object().shape({
     .min(1, "Please select at least one skill")
     .required("Please Enter Skills"),
   careerSummary: Yup.string().required("Please Enter Career Summary"),
+});
+
+export const quizValidationSchema = Yup.object().shape({
+  quizQuestions: Yup.array()
+    .of(
+      Yup.object().shape({
+        question: Yup.string()
+          .required("Question cannot be empty")
+          .test(
+            "not-empty",
+            "Question cannot be only whitespace",
+            (value) => value && value.trim().length > 0
+          )
+          .matches(/^\S.*\S$/, "Question cannot start or end with spaces")
+          .min(2, "Question should be more than 2 characters")
+          .max(255, "Question is too long!"),
+        options: Yup.array()
+          .of(
+            Yup.object().shape({
+              optionText: Yup.string()
+                .required("Option text cannot be empty")
+                .test(
+                  "not-empty",
+                  "Option text cannot be only whitespace",
+                  (value) => value && value.trim().length > 0
+                )
+                .matches(
+                  /^\S.*\S$/,
+                  "Option text cannot start or end with spaces"
+                )
+                .min(2, "Option text should be more than 2 characters")
+                .max(255, "Option text is too long!"),
+              isCorrect: Yup.boolean().required(
+                "Please select if this option is correct or not"
+              ),
+            })
+          )
+          .min(2, "At least two options are required")
+          .test(
+            "at-least-one-correct",
+            "At least one option must be marked as correct",
+            (options) => options?.some((option) => option.isCorrect === true)
+          )
+          .test(
+            "no-duplicate-options",
+            "Duplicate options are not allowed",
+            (options) => {
+              if (!options) return true;
+              const optionTexts = options.map((opt) =>
+                opt.optionText.trim().toLowerCase()
+              );
+              return new Set(optionTexts).size === optionTexts.length;
+            }
+          ),
+      })
+    )
+    .when("isQuizEnabled", {
+      is: true,
+      then: (schema) => schema.min(1, "At least one question is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
 });

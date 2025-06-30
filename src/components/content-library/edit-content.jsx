@@ -1,10 +1,21 @@
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS, CONTENT_TYPE, ToastStatus, METADATA_TYPE } from "@/utils/enum";
 import {
+  COLORS,
+  CONTENT_TYPE,
+  METADATA_TYPE,
+  QUIZ_TYPE,
+  ToastStatus,
+} from "@/utils/enum";
+import { Delete, DragIndicator } from "@mui/icons-material";
+import {
+  Autocomplete,
   Backdrop,
   Box,
   Button,
+  Checkbox,
   CircularProgress,
+  FormControlLabel,
+  IconButton,
   Stack,
   TextField,
   Typography,
@@ -12,17 +23,19 @@ import {
 
 import { metaDataController } from "@/api/metaDataController";
 import { setContentDetails } from "@/redux/reducers/contentDetails";
+import { loginTextField } from "@/utils/styles";
+import { PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import ToastBar from "../toastBar";
 import { ContentForm } from "./form-components/ContentForm";
 import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
 import { FileUpload } from "./form-components/FileUpload";
-import { QuizSection } from "./form-components/QuizSection";
 import { useContentForm } from "./hooks/useContentForm";
-import { loginTextField } from "@/utils/styles";
+// import QuizBuilder from "./QuizBuilder";
+import QuizBuilder from "./QuizBuilder";
 
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
@@ -32,6 +45,8 @@ const contentTypeConfig = {
   [CONTENT_TYPE.NATIVE_VIDEO_LINK]: { showFile: false, showLink: true },
   [CONTENT_TYPE.YOUTUBE_VIDEO_LINK]: { showFile: false, showLink: true },
 };
+
+// DraggableQuestionBox for quiz questions
 
 const EditContent = () => {
   const {
@@ -46,7 +61,6 @@ const EditContent = () => {
     setState,
     setIsDetailsLoading,
   } = useContentForm();
-
 
   const inputRef = useRef();
   const router = useRouter();
@@ -69,25 +83,20 @@ const EditContent = () => {
     quizId: "",
   };
 
-  const [questions, setQuestions] = useState([
-    {
-      id: 1,
-      question: "",
-      options: [
-        { id: 1, optionText: "", isCorrect: false },
-        { id: 2, optionText: "", isCorrect: false },
-        { id: 3, optionText: "", isCorrect: false },
-        { id: 4, optionText: "", isCorrect: false },
-      ],
-    },
-  ]);
-
-  const [sia, setSia] = useState({
-    question: "",
-    subText: "",
-  });
+  const [questions, setQuestions] = useState([]);
+  const didInit = useRef(false);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
 
   const id = router.query.slug;
+
+  // Helper to ensure every question has a unique id
+  const addIdsToQuestions = (questions) =>
+    questions.map(q => ({
+      ...q,
+      id: q.id || `${Date.now()}_${Math.random()}`,
+    }));
 
   const initializeFormData = (response) => {
     const career = response.metadataTags.filter(
@@ -139,10 +148,12 @@ const EditContent = () => {
       },
       isQuizEnabled: response.quiz !== null,
       quizType: response.quiz ? { label: response.quiz.quizType } : null,
-      questions: response.quiz?.quizQuestions || [],
+      questions: addIdsToQuestions(response.quiz?.quizQuestions || []),
     });
     setIsDetailsLoading(false);
   };
+
+  console.log("state", state);
 
   const getContentDetails = async (id) => {
     try {
@@ -175,14 +186,31 @@ const EditContent = () => {
 
   useEffect(() => {
     if (id) {
+      didInit.current = false; 
       getContentDetails(id);
     }
   }, [id]);
 
   useEffect(() => {
-    
     setIsFormDisabled(true);
   }, []);
+
+  useEffect(() => {
+    if (Array.isArray(state.questions) && !didInit.current) {
+      setQuestions(state.questions);
+      didInit.current = true;
+      // console.log("[Quiz Sync] state.questions:", state.questions);
+    }
+  }, [state.questions,state.quizType]);
+
+  // Update state.questions when questions state changes (but not on initial load)
+  useEffect(() => {
+    if (didInit.current && questions !== state.questions) {
+      setState((prev) => ({ ...prev, questions }));
+      console.log("[Quiz Sync] questions:", questions);
+    }
+    // eslint-disable-next-line
+  }, [questions,didInit]);
 
   const getFieldError = (fieldName) => {
     return errors[fieldName]
@@ -193,6 +221,196 @@ const EditContent = () => {
       : {};
   };
 
+  const getQuizData = (questions) => {
+    console.log("questions", questions);
+    const errors = [];
+    const cleanedQuestions = questions.map((q, idx) => {
+      const { id, ...questionWithoutId } = q;
+      let question = { ...questionWithoutId };
+
+      if (
+        typeof question.subText === "string" &&
+        question.subText.trim() === ""
+      ) {
+        delete question.subText;
+      }
+
+      if (question.questionType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
+        if (!question.question || question.question.trim() === "") {
+          errors.push(`Subjective Question ${idx + 1} must have a question.`);
+        }
+        if (question.options) {
+          delete question.options;
+        }
+      }
+
+      if (
+        question.questionType === QUIZ_TYPE.OBJECTIVE_QUIZ &&
+        Array.isArray(question.options)
+      ) {
+        const validOptions = question.options
+          .map(({ id, ...opt }) => opt)
+          .filter((opt) => opt.optionText && opt.optionText.trim() !== "");
+
+        if (validOptions.length < 4) {
+          errors.push(
+            `Objective Question ${
+              idx + 1
+            } must have at least 4 options with text.`
+          );
+        }
+        if (!validOptions.some((opt) => opt.isCorrect)) {
+          errors.push(
+            `Objective Question ${
+              idx + 1
+            } must have at least one correct option.`
+          );
+        }
+
+        question.options = validOptions;
+      }
+
+      return question;
+    });
+    return { cleanedQuestions, errors };
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setIsDetailsLoading(true);
+    try {
+      // Validate quiz if enabled
+      let cleanedQuestions = [];
+      if (state.isQuizEnabled) {
+        const { cleanedQuestions: cq, errors } = getQuizData(state.questions);
+        if (errors.length > 0) {
+          dispatch(
+            setToast({
+              open: true,
+              message: errors.join("\n"),
+              severity: ToastStatus.ERROR,
+            })
+          );
+          setIsDetailsLoading(false);
+          return;
+        }
+        cleanedQuestions = cq;
+      }
+
+      // File upload logic (if needed)
+      let contentLink = state.contentLink;
+      let contentFileName = state.file?.fileName;
+      if (
+        state.contentType.label === CONTENT_TYPE.ARTICLE_PDF &&
+        state.file &&
+        state.file.fileName &&
+        state.file.filePath instanceof File
+      ) {
+        // Only upload if a new file is selected
+        try {
+          const { filePath, fileName } =
+            await metaDataController.getUploadContentFile(state.file.filePath);
+          contentLink = filePath;
+          contentFileName = fileName;
+        } catch (error) {
+          dispatch(
+            setToast({
+              open: true,
+              message: "File upload failed",
+              severity: ToastStatus.ERROR,
+            })
+          );
+          setIsDetailsLoading(false);
+          return;
+        }
+      }
+
+      // Prepare body for updateContentLibrary
+      const body = {
+        id: router.query.slug,
+        name: state.contentName,
+        contentType: state.contentType.label,
+        ...(contentLink && { contentLink }),
+        description: state.description,
+        ...(contentFileName && { contentFileName }),
+        metadataTags: [
+          ...(state.career?.map((item) => item.id) || []),
+          ...(state.industry?.map((item) => item.id) || []),
+          ...(state.strengths?.map((item) => item.id) || []),
+          ...(state.softSkills?.map((item) => item.id) || []),
+          ...(state.treks?.map((item) => item.id) || []),
+        ],
+      };
+
+      // Update content
+      let contentLibraryId = router.query.slug;
+      try {
+        if (metaDataController.updateContentLibrary) {
+          await metaDataController.updateContentLibrary(body);
+        } else {
+          // fallback to addContentLibrary if update not available
+          const res = await metaDataController.addContentLibrary(body);
+          contentLibraryId = res.data.data.id || res.data.data._id;
+        }
+      } catch (err) {
+        dispatch(
+          setToast({
+            open: true,
+            message: "Content update failed",
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setIsDetailsLoading(false);
+        return;
+      }
+
+      // If quiz is enabled, update quiz after content
+      if (state.isQuizEnabled) {
+        try {
+          if (metaDataController.updateQuiz) {
+            await metaDataController.updateQuiz({
+              contentLibraryId,
+              quizSet: cleanedQuestions,
+            });
+          } else {
+            await metaDataController.addQuiz({
+              contentLibraryId,
+              quizSet: cleanedQuestions,
+            });
+          }
+        } catch (err) {
+          dispatch(
+            setToast({
+              open: true,
+              message: "Quiz update failed",
+              severity: ToastStatus.ERROR,
+            })
+          );
+          setIsDetailsLoading(false);
+          return;
+        }
+      }
+
+      setIsDetailsLoading(false);
+      dispatch(
+        setToast({
+          open: true,
+          message: "Content updated successfully",
+          severity: ToastStatus.SUCCESS,
+        })
+      );
+      router.push("/roadmap-management/content-library");
+    } catch (error) {
+      dispatch(
+        setToast({
+          open: true,
+          message: error.message || "Unknown error",
+          severity: ToastStatus.ERROR,
+        })
+      );
+      setIsDetailsLoading(false);
+    }
+  };
 
   return (
     <Box mt={3}>
@@ -200,7 +418,7 @@ const EditContent = () => {
         <CircularProgress sx={{ color: COLORS.PRIMARY }} />
       </Backdrop>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleEditSubmit}>
         <Stack spacing={2} width="100%">
           <ContentTypeSelect
             value={state.contentType}
@@ -241,15 +459,20 @@ const EditContent = () => {
             disabled={loading || isDetailsLoading}
           />
 
-          <QuizSection
-            isQuizEnabled={state.isQuizEnabled}
-            quizType={state.quizType}
-            questions={state.questions}
-            onAddQuiz={() => addQuiz(id)}
-            onQuizUpdate={handleQuizUpdate}
-            disabled={loading || isDetailsLoading}
-            contentType={state.contentType}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={state.isQuizEnabled}
+                onChange={e => setState(prev => ({ ...prev, isQuizEnabled: e.target.checked }))}
+              />
+            }
+            label="Enable Quiz"
           />
+
+          {console.log("isQuizEnabled:", state.isQuizEnabled, "questions:", questions)}
+          {state.isQuizEnabled && (
+            <QuizBuilder questions={questions} setQuestions={setQuestions} />
+          )}
 
           <Button
             sx={{
