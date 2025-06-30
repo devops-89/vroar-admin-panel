@@ -222,7 +222,7 @@ const EditContent = () => {
   };
 
   const getQuizData = (questions) => {
-    console.log("questions", questions);
+    // console.log("questions", questions);
     const errors = [];
     const cleanedQuestions = questions.map((q, idx) => {
       const { id, ...questionWithoutId } = q;
