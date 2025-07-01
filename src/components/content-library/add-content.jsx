@@ -4,7 +4,6 @@ import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { newAddContentValidationSchema } from "@/utils/validationSchema";
 import {
-  Autocomplete,
   Backdrop,
   Box,
   Button,
@@ -16,31 +15,19 @@ import {
 } from "@mui/material";
 
 import { metaDataController } from "@/api/metaDataController";
-import { data } from "@/assests/data";
-import { isYoutubeUrl, isValidURL } from "@/utils/regex";
+import { displayFormikErrors } from "@/utils/displayFormikErrors";
+import { isValidURL } from "@/utils/regex";
+import { useFileUpload } from "@/utils/useFileUpload";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
+import AddQuiz from "./Add-Quiz";
 import { ContentForm } from "./form-components/ContentForm";
 import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
 import { FileUpload } from "./form-components/FileUpload";
-import ObjectiveQuiz from "./objective-quiz";
-import SubjectiveQuiz from "./subjectiveQuiz";
-import { useQuizValidation } from "@/utils/useQuizValidation";
-import { useFileUpload } from "@/utils/useFileUpload";
-import { displayFormikErrors } from "@/utils/displayFormikErrors";
-import AddQuiz from "./Add-Quiz";
 
-const contentTypeConfig = {
-  [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
-  [CONTENT_TYPE.ARTICLE_WRITEUP]: { showFile: true, showLink: false },
-  [CONTENT_TYPE.ASSIGNMENT]: { showFile: true, showLink: false },
-  [CONTENT_TYPE.JOURNAL_LINK]: { showFile: false, showLink: true },
-  [CONTENT_TYPE.NATIVE_VIDEO_LINK]: { showFile: false, showLink: true },
-  [CONTENT_TYPE.YOUTUBE_VIDEO_LINK]: { showFile: false, showLink: true },
-};
 const AddContent = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -55,7 +42,6 @@ const AddContent = () => {
   const videoExtensionRegex = /\.(mp4|mov|avi|wmv|flv|webm|mkv|m3u8)$/i;
   const videoHostingRegex =
     /(vimeo\.com|dailymotion\.com|player\.vimeo\.com|\.mp4|\.webm|cloudfront\.net|\.m3u8|videos\/)/i;
-  const imageExtensionRegex = /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i;
 
   const formik = useFormik({
     initialValues: {
@@ -81,6 +67,72 @@ const AddContent = () => {
         ...(values.softSkills.map((item) => item.id) || []),
         ...(values.treks.map((item) => item.id) || []),
       ];
+
+      if (metadataTags.length === 0) {
+        dispatch(
+          setToast({
+            open: true,
+            message: "Please Select at least one metadata",
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
+        return;
+      }
+
+      // youtube validation
+      if (values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
+        if (!youtubeRegex.test(values?.contentLink)) {
+          dispatch(
+            setToast({
+              message: "Please Enter Valid Youtube Link",
+              severity: ToastStatus.ERROR,
+              open: true,
+            })
+          );
+          setLoading(false);
+          return;
+        }
+      }
+
+      //native video url
+      if (values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) {
+        if (
+          youtubeRegex.test(values.contentLink) ||
+          values.contentLink === ""
+        ) {
+          dispatch(
+            setToast({
+              message: "Please Enter Valid Native Video Link",
+              severity: ToastStatus.ERROR,
+              open: true,
+            })
+          );
+          setLoading(false);
+          return;
+        }
+      }
+
+      // empty content link
+      if (
+        values.contentType === CONTENT_TYPE.JOURNAL_LINK ||
+        values.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK ||
+        values.contentType === CONTENT_TYPE.READ_REFLECT ||
+        values.contentType === CONTENT_TYPE.SESSION ||
+        values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK
+      )
+        if (values.contentLink === "") {
+          dispatch(
+            setToast({
+              message: "Please Enter Valid Link",
+              severity: ToastStatus.ERROR,
+              open: true,
+            })
+          );
+          setLoading(false);
+          return;
+        }
+
       try {
         // Validate quiz if enabled
         let cleanedQuestions = [];
@@ -134,7 +186,6 @@ const AddContent = () => {
           }
         }
 
-        // Prepare body for addContentHandler
         const body = {
           name: values.contentName,
           contentType: values.contentType,
@@ -146,11 +197,9 @@ const AddContent = () => {
           metadataTags,
         };
 
-        // Add content
         const res = await metaDataController.addContentLibrary(body);
         const contentLibraryId = res.data.data.id || res.data.data._id;
 
-        // If quiz is enabled, add quiz after content
         if (values.isQuizEnabled) {
           await addQuizHandler({
             contentLibraryId,
@@ -357,45 +406,6 @@ const AddContent = () => {
       return question;
     });
     return { cleanedQuestions, errors };
-  };
-
-  let metadataTags = [];
-
-  const addContentHandler = async (body) => {
-    metadataTags = [
-      ...(formik.values.career.map((item) => item.id) || []),
-      ...(formik.values.industry.map((item) => item.id) || []),
-      ...(formik.values.strengths.map((item) => item.id) || []),
-      ...(formik.values.softSkills.map((item) => item.id) || []),
-      ...(formik.values.treks.map((item) => item.id) || []),
-    ];
-
-    body.metadataTags = metadataTags;
-    metaDataController
-      .addContentLibrary(body)
-      .then((res) => {
-        const contentLibraryId = res.data.data.id || res.data.data._id;
-        setLoading(false);
-        dispatch(
-          setToast({
-            open: true,
-            message: "Content added successfully",
-            severity: ToastStatus.SUCCESS,
-          })
-        );
-        router.push("/roadmap-management/content-library");
-      })
-      .catch((err) => {
-        let errMessage = err?.response?.data?.message || err.message;
-        dispatch(
-          setToast({
-            open: true,
-            message: errMessage,
-            severity: ToastStatus.ERROR,
-          })
-        );
-        setLoading(false);
-      });
   };
 
   const addQuizHandler = async (quizData) => {
