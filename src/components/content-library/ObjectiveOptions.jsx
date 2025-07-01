@@ -5,19 +5,35 @@ import { loginTextField } from "@/utils/styles";
 const ObjectiveOptions = ({ options, onOptionChange, onCorrectOption }) => {
   return (
     <>
-      <Typography variant="body2" sx={{ mb: 1 }}>Options</Typography>
+      <Typography variant="body2" sx={{ mb: 1 }}>
+        Options
+      </Typography>
       {options.map((opt, optIdx) => (
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }} key={opt.id || optIdx}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={2}
+          sx={{ mb: 1 }}
+          key={opt.id || optIdx}
+        >
           <Checkbox
             checked={opt.isCorrect}
             onChange={() => onCorrectOption(optIdx)}
+            disabled
           />
           <TextField
             label={`Option ${optIdx + 1}`}
             value={opt.optionText}
-            onChange={(e) => onOptionChange(optIdx, "optionText", e.target.value)}
+            onChange={(e) =>
+              onOptionChange(optIdx, "optionText", e.target.value)
+            }
             sx={{ flex: 1, ...loginTextField }}
             fullWidth
+            slotProps={{
+              input: {
+                readOnly: true,
+              },
+            }}
           />
         </Stack>
       ))}
@@ -25,4 +41,4 @@ const ObjectiveOptions = ({ options, onOptionChange, onCorrectOption }) => {
   );
 };
 
-export default ObjectiveOptions; 
+export default ObjectiveOptions;

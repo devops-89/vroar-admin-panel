@@ -8,11 +8,15 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { DragIndicator, Delete } from "@mui/icons-material";
-import { QUIZ_TYPE } from "@/utils/enum";
+import { COLORS, QUIZ_TYPE } from "@/utils/enum";
 import ObjectiveOptions from "./ObjectiveOptions";
 import { loginTextField } from "@/utils/styles";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { FaRegEdit } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { showModal } from "@/redux/reducers/modal";
+import EditQuizQuestion from "@/assests/modalCalling/metaData/EditQuizQuestion";
 
 const DraggableQuestionBox = ({
   id,
@@ -41,15 +45,23 @@ const DraggableQuestionBox = ({
     border: "1px solid #e0e0e0",
     borderRadius: 2,
     background: isDragging ? "#f0f0f0" : "#fafbfc",
-    boxShadow: isDragging ? "0px 4px 12px rgba(0,0,0,0.10)" : "0px 2px 4px rgba(0,0,0,0.04)",
+    boxShadow: isDragging
+      ? "0px 4px 12px rgba(0,0,0,0.10)"
+      : "0px 2px 4px rgba(0,0,0,0.04)",
     boxSizing: "border-box",
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.85 : 1,
   };
 
+  const dispatch = useDispatch();
+
+  const editQuestion = (value) => {
+    dispatch(showModal(<EditQuizQuestion value={value} />));
+  };
+
   return (
-    <Box ref={setNodeRef} sx={{...style}}>
+    <Box ref={setNodeRef} sx={{ ...style }}>
       <Stack
         direction="row"
         alignItems="center"
@@ -62,29 +74,43 @@ const DraggableQuestionBox = ({
           </IconButton>
           <Typography>{`Question ${index + 1}`}</Typography>
         </Stack>
-
-        {questionsLength > 1 && (
-          <IconButton onClick={onDelete} color="error">
-            <Delete />
+        <Stack direction={"row"} alignItems={"center"} spacing={2}>
+          {questionsLength > 1 && (
+            <IconButton onClick={onDelete} color="error">
+              <Delete />
+            </IconButton>
+          )}
+          <IconButton onClick={() => editQuestion(q)}>
+            <FaRegEdit style={{ color: COLORS.DONE_TEXT }} />
           </IconButton>
-        )}
+        </Stack>
       </Stack>
       <Autocomplete
         value={
           q.questionType === QUIZ_TYPE.OBJECTIVE_QUIZ
-            ? { value: QUIZ_TYPE.OBJECTIVE_QUIZ, label: QUIZ_TYPE.OBJECTIVE_QUIZ }
-            : { value: QUIZ_TYPE.SUBJECTIVE_QUIZ, label: QUIZ_TYPE.SUBJECTIVE_QUIZ }
+            ? {
+                value: QUIZ_TYPE.OBJECTIVE_QUIZ,
+                label: QUIZ_TYPE.OBJECTIVE_QUIZ,
+              }
+            : {
+                value: QUIZ_TYPE.SUBJECTIVE_QUIZ,
+                label: QUIZ_TYPE.SUBJECTIVE_QUIZ,
+              }
         }
         onChange={(_, newValue) => onTypeChange(newValue.value)}
         options={[
           { value: QUIZ_TYPE.OBJECTIVE_QUIZ, label: QUIZ_TYPE.OBJECTIVE_QUIZ },
-          { value: QUIZ_TYPE.SUBJECTIVE_QUIZ, label: QUIZ_TYPE.SUBJECTIVE_QUIZ },
+          {
+            value: QUIZ_TYPE.SUBJECTIVE_QUIZ,
+            label: QUIZ_TYPE.SUBJECTIVE_QUIZ,
+          },
         ]}
         getOptionLabel={(option) => option.label}
         renderInput={(params) => (
           <TextField {...params} label="Quiz Type" sx={{ ...loginTextField }} />
         )}
         sx={{ minWidth: 140, mb: 2 }}
+        disabled
       />
       <TextField
         label="Enter Question"
@@ -92,6 +118,11 @@ const DraggableQuestionBox = ({
         value={q.questionText}
         onChange={(e) => onQuestionChange(e.target.value)}
         sx={{ mb: 2, ...loginTextField }}
+        slotProps={{
+          input: {
+            disabled: true,
+          },
+        }}
       />
 
       {q.questionType === QUIZ_TYPE.OBJECTIVE_QUIZ && (

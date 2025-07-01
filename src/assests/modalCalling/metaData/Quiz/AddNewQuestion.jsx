@@ -10,6 +10,7 @@ import {
   Button,
   Alert,
   CircularProgress,
+  Autocomplete,
 } from "@mui/material";
 import React, { useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,6 +19,7 @@ import { loginTextField } from "@/utils/styles";
 import { COLORS, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { metaDataController } from "@/api/metaDataController";
 import { setToast } from "@/redux/reducers/toast";
+import { quizType } from "@/utils/genericArray";
 
 const INITIAL_OPTIONS = Array(4)
   .fill(null)
@@ -37,7 +39,8 @@ const AddNewQuestion = ({ getDetails }) => {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(INITIAL_OPTIONS);
   const [errors, setErrors] = useState(INITIAL_ERRORS);
-
+  const [questionType, setQuestionType] = useState("");
+  const [answer, setAnswer] = useState("");
   const handleQuestionChange = useCallback(
     (e) => {
       setQuestion(e.target.value);
@@ -47,6 +50,10 @@ const AddNewQuestion = ({ getDetails }) => {
     },
     [errors.question]
   );
+
+  const handleAnswerChange = (e) => {
+    setAnswer(e.target.value);
+  };
 
   const handleOptionChange = useCallback(
     (index, value) => {
@@ -62,6 +69,15 @@ const AddNewQuestion = ({ getDetails }) => {
     },
     [errors.options]
   );
+  const [quizQuestionType, setQuizQuestionType] = useState({
+    label: QUIZ_TYPE.OBJECTIVE_QUIZ,
+  });
+  const quizTypeChangeHandler = (e, newValue) => {
+    setQuizQuestionType(newValue);
+    if (newValue) {
+      setQuestionType(newValue?.label);
+    }
+  };
 
   const handleCheckboxChange = useCallback(
     (index) => {
@@ -172,6 +188,19 @@ const AddNewQuestion = ({ getDetails }) => {
         </IconButton>
       </Stack>
       <Box sx={{ mt: 2 }}>
+        <Autocomplete
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Question Type"
+              sx={{ ...loginTextField }}
+            />
+          )}
+          options={quizType}
+          onChange={quizTypeChangeHandler}
+          value={quizQuestionType}
+          sx={{ mb: 2 }}
+        />
         <TextField
           sx={{ ...loginTextField }}
           label="Question"
@@ -182,7 +211,7 @@ const AddNewQuestion = ({ getDetails }) => {
           helperText={errors.question ? "Question is required" : ""}
         />
         <Box sx={{ mt: 2 }}>
-          {content.quiz.quizType === QUIZ_TYPE.OBJECTIVE_QUIZ && (
+          {quizQuestionType?.label === QUIZ_TYPE.OBJECTIVE_QUIZ && (
             <>
               {renderOptions}
               {errors.correctOption && (
@@ -192,7 +221,7 @@ const AddNewQuestion = ({ getDetails }) => {
               )}
             </>
           )}
-          {content.quiz.QUIZ_TYPE === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
+          {quizQuestionType?.label === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
             <TextField
               sx={{ ...loginTextField }}
               label="subText"

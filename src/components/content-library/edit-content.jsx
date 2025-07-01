@@ -199,17 +199,14 @@ const EditContent = () => {
     if (Array.isArray(state.questions) && !didInit.current) {
       setQuestions(state.questions);
       didInit.current = true;
-      // console.log("[Quiz Sync] state.questions:", state.questions);
     }
   }, [state.questions,state.quizType]);
 
-  // Update state.questions when questions state changes (but not on initial load)
   useEffect(() => {
     if (didInit.current && questions !== state.questions) {
       setState((prev) => ({ ...prev, questions }));
       console.log("[Quiz Sync] questions:", questions);
     }
-    // eslint-disable-next-line
   }, [questions,didInit]);
 
   const getFieldError = (fieldName) => {
@@ -222,7 +219,6 @@ const EditContent = () => {
   };
 
   const getQuizData = (questions) => {
-    // console.log("questions", questions);
     const errors = [];
     const cleanedQuestions = questions.map((q, idx) => {
       const { id, ...questionWithoutId } = q;
@@ -469,7 +465,6 @@ const EditContent = () => {
             label="Enable Quiz"
           />
 
-          {console.log("isQuizEnabled:", state.isQuizEnabled, "questions:", questions)}
           {state.isQuizEnabled && (
             <QuizBuilder questions={questions} setQuestions={setQuestions} />
           )}

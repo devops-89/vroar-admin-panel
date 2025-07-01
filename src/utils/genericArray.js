@@ -5,6 +5,7 @@ const {
   USER_STATUS,
   EVENT_TYPE,
   METADATA_TYPE,
+  QUIZ_TYPE,
 } = require("./enum");
 
 export const profileTabs = [
@@ -132,4 +133,13 @@ export const skillsOptions = [
   "Redux",
   "Express.js",
   "MongoDB",
+];
+
+export const quizType = [
+  {
+    label: QUIZ_TYPE.OBJECTIVE_QUIZ,
+  },
+  {
+    label: QUIZ_TYPE.SUBJECTIVE_QUIZ,
+  },
 ];
