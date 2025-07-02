@@ -204,7 +204,6 @@ const EditContent = () => {
   useEffect(() => {
     if (didInit.current && questions !== state.questions) {
       setState((prev) => ({ ...prev, questions }));
-      console.log("[Quiz Sync] questions:", questions);
     }
   }, [questions, didInit]);
 
@@ -472,7 +471,11 @@ const EditContent = () => {
           )}
 
           {state.isQuizEnabled && (
-            <QuizBuilder questions={questions} setQuestions={setQuestions} />
+            <QuizBuilder
+              questions={questions}
+              setQuestions={setQuestions}
+              getDetails={() => getContentDetails(id)}
+            />
           )}
 
           <Button

@@ -24,7 +24,7 @@ const defaultObjectiveOptions = () => [
   { id: 4, optionText: "", isCorrect: false },
 ];
 
-const QuizBuilder = ({ questions, setQuestions }) => {
+const QuizBuilder = ({ questions, setQuestions, getDetails }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
@@ -54,7 +54,7 @@ const QuizBuilder = ({ questions, setQuestions }) => {
     //     subText: "",
     //   },
     // ]);
-    dispatch(showModal(<AddNewQuestion />));
+    dispatch(showModal(<AddNewQuestion getDetails={getDetails} />));
   };
 
   const handleDeleteQuestion = (idx) => {
@@ -147,6 +147,7 @@ const QuizBuilder = ({ questions, setQuestions }) => {
                 handleOptionChange(index, optIdx, key, value)
               }
               onCorrectOption={(optIdx) => handleCorrectOption(index, optIdx)}
+              getDetails={getDetails}
             />
           ))}
         </SortableContext>

@@ -29,6 +29,7 @@ const DraggableQuestionBox = ({
   onSubTextChange,
   onOptionChange,
   onCorrectOption,
+  getDetails,
 }) => {
   const {
     setNodeRef,
@@ -57,7 +58,9 @@ const DraggableQuestionBox = ({
   const dispatch = useDispatch();
 
   const editQuestion = (value) => {
-    dispatch(showModal(<EditQuizQuestion value={value} />));
+    dispatch(
+      showModal(<EditQuizQuestion value={value} getDetails={getDetails} />)
+    );
   };
 
   return (
@@ -139,6 +142,7 @@ const DraggableQuestionBox = ({
           value={q.subText || ""}
           onChange={(e) => onSubTextChange(e.target.value)}
           sx={{ mb: 2, ...loginTextField }}
+          disabled
         />
       )}
     </Box>
