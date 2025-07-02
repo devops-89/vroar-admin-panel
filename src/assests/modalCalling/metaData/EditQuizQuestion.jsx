@@ -40,20 +40,19 @@ const EditQuizQuestion = ({ value, getDetails }) => {
     subText: value.subText,
     questionType: null,
   });
-  console.log("first", value);
   useEffect(() => {
     setState({
       question: value.question,
       options:
         value.questionType === QUIZ_TYPE.OBJECTIVE_QUIZ
-          ? (Array.isArray(value.options) && value.options.length > 0
-              ? value.options
-              : [
-                  { id: 1, optionText: "", isCorrect: false },
-                  { id: 2, optionText: "", isCorrect: false },
-                  { id: 3, optionText: "", isCorrect: false },
-                  { id: 4, optionText: "", isCorrect: false },
-                ])
+          ? Array.isArray(value.options) && value.options.length > 0
+            ? value.options
+            : [
+                { id: 1, optionText: "", isCorrect: false },
+                { id: 2, optionText: "", isCorrect: false },
+                { id: 3, optionText: "", isCorrect: false },
+                { id: 4, optionText: "", isCorrect: false },
+              ]
           : [],
       subText: value.subText,
       questionType: value.questionType,
@@ -90,7 +89,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
   const handleChangeQuestionType = (e, newValue) => {
     setQuestionType(newValue);
     if (newValue) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         questionType: newValue.label,
         options:
@@ -102,12 +101,11 @@ const EditQuizQuestion = ({ value, getDetails }) => {
                 { id: 4, optionText: "", isCorrect: false },
               ]
             : [],
-        subText: newValue.label === QUIZ_TYPE.SUBJECTIVE_QUIZ ? "" : prev.subText,
+        subText:
+          newValue.label === QUIZ_TYPE.SUBJECTIVE_QUIZ ? "" : prev.subText,
       }));
     }
   };
-
- 
 
   const [loading, setLoading] = useState(false);
 
@@ -176,6 +174,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
           options={quizType}
           value={questionType}
           onChange={handleChangeQuestionType}
+          disabled
         />
         <TextField
           sx={{ ...loginTextField }}
