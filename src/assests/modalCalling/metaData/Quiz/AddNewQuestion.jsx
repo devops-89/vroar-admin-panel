@@ -39,7 +39,7 @@ const AddNewQuestion = ({ getDetails }) => {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(INITIAL_OPTIONS);
   const [errors, setErrors] = useState(INITIAL_ERRORS);
-  const [questionType, setQuestionType] = useState("");
+  const [questionType, setQuestionType] = useState(QUIZ_TYPE.OBJECTIVE_QUIZ);
   const [answer, setAnswer] = useState("");
   const handleQuestionChange = useCallback(
     (e) => {
@@ -115,6 +115,7 @@ const AddNewQuestion = ({ getDetails }) => {
         quizId: content.quiz.id,
         question: question,
         options: options,
+        questionType: questionType,
       };
       metaDataController
         .addQuizQuestion(body)
@@ -123,6 +124,7 @@ const AddNewQuestion = ({ getDetails }) => {
             setToast({
               message: res.data.message,
               severity: ToastStatus.SUCCESS,
+              open: true,
             })
           );
           dispatch(hideModal());
@@ -135,6 +137,7 @@ const AddNewQuestion = ({ getDetails }) => {
               message:
                 (err.response && err.response.data.message) || err.message,
               severity: ToastStatus.ERROR,
+              open: true,
             })
           );
           setLoading(false);
@@ -241,6 +244,7 @@ const AddNewQuestion = ({ getDetails }) => {
               fontFamily: roboto.style,
               px: 3,
               background: COLORS.LinearGradient,
+              width: 150,
             }}
           >
             {loading ? (

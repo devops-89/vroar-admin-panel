@@ -35,6 +35,20 @@ import React, { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
+function removeEmptyKeys(obj) {
+  return Object.fromEntries(
+    Object.entries(obj).filter(
+      ([, value]) =>
+        value !== "" &&
+        value !== null &&
+        value !== undefined &&
+        // If you want to skip empty arrays/objects too, add:
+        (!(Array.isArray(value)) || value.length > 0) &&
+        (!(typeof value === "object" && !Array.isArray(value)) || Object.keys(value).length > 0)
+    )
+  );
+}
+
 const EditEventForm = ({ details }) => {
   const router = useRouter();
   const formik = useFormik({
@@ -52,14 +66,18 @@ const EditEventForm = ({ details }) => {
       coins: "",
       eventType: "",
     },
-    validationSchema: editAdListValidataitonSchema,
+    // validationSchema: editAdListValidataitonSchema,
     onSubmit: (values) => {
       const newValues = { ...values };
 
       if (newValues.eventType !== EVENT_TYPE.PAID) {
         delete newValues.coins;
       }
-      addNewEvent(newValues);
+
+      // Remove empty keys
+      const filteredValues = removeEmptyKeys(newValues);
+
+      addNewEvent(filteredValues);
     },
   });
 
@@ -67,7 +85,6 @@ const EditEventForm = ({ details }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const addNewEvent = (values) => {
-    console.log("values", values);
     setLoading(true);
     if (router.query.event) {
       metaDataController

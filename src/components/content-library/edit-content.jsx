@@ -196,9 +196,8 @@ const EditContent = () => {
   }, []);
 
   useEffect(() => {
-    if (Array.isArray(state.questions) && !didInit.current) {
+    if (Array.isArray(state.questions)) {
       setQuestions(state.questions);
-      didInit.current = true;
     }
   }, [state.questions,state.quizType]);
 
