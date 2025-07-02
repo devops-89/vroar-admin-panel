@@ -30,7 +30,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
 
   const [questionType, setQuestionType] = useState(null);
   const [state, setState] = useState({
-    question: value.questionText,
+    questionText: value.questionText,
     options: [
       { id: 1, optionText: "", isCorrect: false },
       { id: 2, optionText: "", isCorrect: false },
@@ -42,7 +42,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
   });
   useEffect(() => {
     setState({
-      question: value.question,
+      questionText: value.questionText,
       options:
         value.questionType === QUIZ_TYPE.OBJECTIVE_QUIZ
           ? Array.isArray(value.options) && value.options.length > 0
@@ -116,7 +116,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
 
     const body = {
       questionId: value.id,
-      question: state.question,
+      question: state.questionText,
       ...(cleanedOptions.length && { options: cleanedOptions }),
       ...(state.subText && { subText: state.subText }),
     };
@@ -179,7 +179,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
         <TextField
           sx={{ ...loginTextField }}
           // label="Question"
-          value={state.question}
+          value={state.questionText}
           onChange={changeHandler}
           id="questionText"
           // focused={Boolean(state.question)}
@@ -218,6 +218,7 @@ const EditQuizQuestion = ({ value, getDetails }) => {
               value={state.subText}
               onChange={changeHandler}
               id="subText"
+              
             />
           )}
         </Box>
