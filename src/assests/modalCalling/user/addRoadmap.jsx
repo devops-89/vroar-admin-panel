@@ -109,7 +109,6 @@ const AddRoadmap = ({ getJourney }) => {
   const [softSkillsData, setSoftSkillsData] = useState([]);
   const [treksRoadmap, setTreksRoadmap] = useState([]);
 
-  console.log("data", treksRoadmap);
 
   const [career, setCareer] = useState([]);
   const [strength, setStrength] = useState([]);

@@ -94,7 +94,7 @@ export const AddAdListValidationSchema = Yup.object({
     .max(1000, "Session Details is too Long!")
     .optional(),
   // .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
-  sessionStartDate: Yup.string().optional(),
+  sessionStartDate: Yup.mixed().optional(),
   // .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   sessionStartTime: Yup.string().optional(),
   // .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
@@ -108,9 +108,7 @@ export const AddAdListValidationSchema = Yup.object({
   //     return value && sessionStartTime && value !== sessionStartTime;
   //   }
   // ),
-  sessionEndDate: Yup.string()
-    .optional()
-    .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
+  sessionEndDate: Yup.mixed().optional(),
   zoomLink: Yup.string().optional().url("Please Enter Valid Url"),
   // .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   // .test("is-zoom-link", "Please enter a valid Zoom meeting link", (value) => {
@@ -150,60 +148,57 @@ export const editAdListValidataitonSchema = Yup.object({
 
   speakerSummary: Yup.string()
     .max(1000, "Speaker Summary is too Long!")
-    .required("Please Enter Speaker Summary"),
+    .optional(),
 
   sessionDetails: Yup.string()
     .max(1000, "Session Details is too Long!")
-    .required("Please Enter Session Details"),
+    .optional(),
 
-  sessionStartDate: Yup.number()
-    .required("Please Enter Session Start Date")
-    .test(
-      "is-future-start-date",
-      "Start date must be today or in the future",
-      function (value) {
-        if (!value) return false;
-        const today = moment().startOf("day").unix();
-        return value >= today;
-      }
-    ),
+  sessionStartDate: Yup.mixed().optional(),
+  // .test(
+  //   "is-future-start-date",
+  //   "Start date must be today or in the future",
+  //   function (value) {
+  //     if (!value) return false;
+  //     const today = moment().startOf("day").unix();
+  //     return value >= today;
+  //   }
+  // ),
 
-  sessionEndDate: Yup.number()
-    .required("Please Enter Session End Date")
-    .test(
-      "is-future-end-date",
-      "End date must be today or in the future",
-      function (value) {
-        if (!value) return false;
-        const today = moment().startOf("day").unix();
-        return value >= today;
-      }
-    )
-    .test(
-      "is-after-start-date",
-      "End date must be after or same as start date",
-      function (value) {
-        const { sessionStartDate } = this.parent;
-        if (!value || !sessionStartDate) return false;
-        return value >= sessionStartDate;
-      }
-    ),
+  sessionEndDate: Yup.mixed().optional(),
+  // .test(
+  //   "is-future-end-date",
+  //   "End date must be today or in the future",
+  //   function (value) {
+  //     if (!value) return false;
+  //     const today = moment().startOf("day").unix();
+  //     return value >= today;
+  //   }
+  // )
+  // .test(
+  //   "is-after-start-date",
+  //   "End date must be after or same as start date",
+  //   function (value) {
+  //     const { sessionStartDate } = this.parent;
+  //     if (!value || !sessionStartDate) return false;
+  //     return value >= sessionStartDate;
+  //   }
+  // ),
 
-  sessionStartTime: Yup.string().required("Please Enter Session Start Time"),
+  sessionStartTime: Yup.string().optional(),
 
-  sessionEndTime: Yup.string()
-    .required("Please Enter Session End Time")
-    .test(
-      "is-different-time",
-      "End time must be different from start time",
-      function (value) {
-        const { sessionStartTime } = this.parent;
-        return value && sessionStartTime && value !== sessionStartTime;
-      }
-    ),
+  sessionEndTime: Yup.string().optional(),
+  // .test(
+  //   "is-different-time",
+  //   "End time must be different from start time",
+  //   function (value) {
+  //     const { sessionStartTime } = this.parent;
+  //     return value && sessionStartTime && value !== sessionStartTime;
+  //   }
+  // ),
 
   zoomLink: Yup.string()
-    .required("Please Enter Zoom Link")
+    .optional()
     .url("Please Enter Valid Url"),
 
   eventType: Yup.string().required("Please Select Event Type"),
@@ -492,67 +487,6 @@ export const newAddContentValidationSchema = Yup.object().shape({
   isQuizEnabled: Yup.boolean(),
 });
 
-export const quizValidationSchema = Yup.object().shape({
-  quizQuestions: Yup.array()
-    .of(
-      Yup.object().shape({
-        question: Yup.string()
-          .required("Question cannot be empty")
-          .test(
-            "not-empty",
-            "Question cannot be only whitespace",
-            (value) => value && value.trim().length > 0
-          )
-          .matches(/^\S.*\S$/, "Question cannot start or end with spaces")
-          .min(2, "Question should be more than 2 characters")
-          .max(255, "Question is too long!"),
-        options: Yup.array()
-          .of(
-            Yup.object().shape({
-              optionText: Yup.string()
-                .required("Option text cannot be empty")
-                .test(
-                  "not-empty",
-                  "Option text cannot be only whitespace",
-                  (value) => value && value.trim().length > 0
-                )
-                .matches(
-                  /^\S.*\S$/,
-                  "Option text cannot start or end with spaces"
-                )
-                .min(2, "Option text should be more than 2 characters")
-                .max(255, "Option text is too long!"),
-              isCorrect: Yup.boolean().required(
-                "Please select if this option is correct or not"
-              ),
-            })
-          )
-          .min(2, "At least two options are required")
-          .test(
-            "at-least-one-correct",
-            "At least one option must be marked as correct",
-            (options) => options?.some((option) => option.isCorrect === true)
-          )
-          .test(
-            "no-duplicate-options",
-            "Duplicate options are not allowed",
-            (options) => {
-              if (!options) return true;
-              const optionTexts = options.map((opt) =>
-                opt.optionText.trim().toLowerCase()
-              );
-              return new Set(optionTexts).size === optionTexts.length;
-            }
-          ),
-      })
-    )
-    .when("isQuizEnabled", {
-      is: true,
-      then: (schema) => schema.min(1, "At least one question is required"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
-});
-
 export const manualNotesValidationSchema = Yup.object().shape({
   notes: Yup.string()
     .required("Please Enter Notes")
@@ -770,4 +704,65 @@ export const addMentorValidationSchema = Yup.object().shape({
     .min(1, "Please select at least one skill")
     .required("Please Enter Skills"),
   careerSummary: Yup.string().required("Please Enter Career Summary"),
+});
+
+export const quizValidationSchema = Yup.object().shape({
+  quizQuestions: Yup.array()
+    .of(
+      Yup.object().shape({
+        question: Yup.string()
+          .required("Question cannot be empty")
+          .test(
+            "not-empty",
+            "Question cannot be only whitespace",
+            (value) => value && value.trim().length > 0
+          )
+          .matches(/^\S.*\S$/, "Question cannot start or end with spaces")
+          .min(2, "Question should be more than 2 characters")
+          .max(255, "Question is too long!"),
+        options: Yup.array()
+          .of(
+            Yup.object().shape({
+              optionText: Yup.string()
+                .required("Option text cannot be empty")
+                .test(
+                  "not-empty",
+                  "Option text cannot be only whitespace",
+                  (value) => value && value.trim().length > 0
+                )
+                .matches(
+                  /^\S.*\S$/,
+                  "Option text cannot start or end with spaces"
+                )
+                .min(2, "Option text should be more than 2 characters")
+                .max(255, "Option text is too long!"),
+              isCorrect: Yup.boolean().required(
+                "Please select if this option is correct or not"
+              ),
+            })
+          )
+          .min(2, "At least two options are required")
+          .test(
+            "at-least-one-correct",
+            "At least one option must be marked as correct",
+            (options) => options?.some((option) => option.isCorrect === true)
+          )
+          .test(
+            "no-duplicate-options",
+            "Duplicate options are not allowed",
+            (options) => {
+              if (!options) return true;
+              const optionTexts = options.map((opt) =>
+                opt.optionText.trim().toLowerCase()
+              );
+              return new Set(optionTexts).size === optionTexts.length;
+            }
+          ),
+      })
+    )
+    .when("isQuizEnabled", {
+      is: true,
+      then: (schema) => schema.min(1, "At least one question is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
 });
