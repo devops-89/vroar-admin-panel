@@ -221,14 +221,20 @@ const AdListTable = ({
                       <Typography
                         sx={{ fontSize: 14, fontFamily: roboto.style }}
                       >
-                        {moment.unix(val.sessionStartDate).format("DD-MM-YYYY")}
+                        {val.sessionStartDate
+                          ? moment
+                              .unix(val.sessionStartDate)
+                              .format("DD-MM-YYYY")
+                          : "--"}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Typography
                         sx={{ fontSize: 14, fontFamily: roboto.style }}
                       >
-                        {moment.unix(val.sessionEndDate).format("DD-MM-YYYY")}
+                        {val.sessionEndDate
+                          ? moment.unix(val.sessionEndDate).format("DD-MM-YYYY")
+                          : "--"}
                       </Typography>
                     </TableCell>
                     <TableCell>

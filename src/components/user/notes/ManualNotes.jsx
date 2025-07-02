@@ -132,9 +132,9 @@ const ManualNotes = () => {
           >
             <Box
               sx={{
-                borderRadius: 18,
+                borderRadius: 5,
                 backgroundColor: "#EEEFF3",
-                px: open === i ? 4 : 3,
+                px: open === i ? 4 : 4,
                 py: open === i ? 3 : 2,
                 mt: 1,
                 width: "95%",
@@ -143,7 +143,7 @@ const ManualNotes = () => {
               <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: open === i ? val.note : val.note.slice(0, 100),
+                    __html: val.note,
                   }}
                 ></div>
                 <Typography
@@ -155,7 +155,7 @@ const ManualNotes = () => {
                     cursor: "pointer",
                   }}
                 >
-                  {notes.length === 100 && open !== i && (
+                  {/* {notes.length === 20 && open !== i && (
                     <Button
                       sx={{
                         fontFamily: roboto.style,
@@ -168,10 +168,10 @@ const ManualNotes = () => {
                     >
                       Read More
                     </Button>
-                  )}
+                  )} */}
                 </Typography>
               </Typography>
-              {open === i && (
+              {/* {open === i && (
                 <Button
                   sx={{
                     fontFamily: roboto.style,
@@ -184,7 +184,7 @@ const ManualNotes = () => {
                 >
                   Read Less
                 </Button>
-              )}
+              )} */}
             </Box>
             <Stack
               direction={"row"}
