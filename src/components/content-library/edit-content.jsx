@@ -93,7 +93,7 @@ const EditContent = () => {
 
   // Helper to ensure every question has a unique id
   const addIdsToQuestions = (questions) =>
-    questions.map(q => ({
+    questions.map((q) => ({
       ...q,
       id: q.id || `${Date.now()}_${Math.random()}`,
     }));
@@ -186,7 +186,7 @@ const EditContent = () => {
 
   useEffect(() => {
     if (id) {
-      didInit.current = false; 
+      didInit.current = false;
       getContentDetails(id);
     }
   }, [id]);
@@ -199,14 +199,14 @@ const EditContent = () => {
     if (Array.isArray(state.questions)) {
       setQuestions(state.questions);
     }
-  }, [state.questions,state.quizType]);
+  }, [state.questions, state.quizType]);
 
   useEffect(() => {
     if (didInit.current && questions !== state.questions) {
       setState((prev) => ({ ...prev, questions }));
       console.log("[Quiz Sync] questions:", questions);
     }
-  }, [questions,didInit]);
+  }, [questions, didInit]);
 
   const getFieldError = (fieldName) => {
     return errors[fieldName]
@@ -340,8 +340,8 @@ const EditContent = () => {
       // Update content
       let contentLibraryId = router.query.slug;
       try {
-        if (metaDataController.updateContentLibrary) {
-          await metaDataController.updateContentLibrary(body);
+        if (metaDataController.editContent) {
+          await metaDataController.editContent(body);
         } else {
           // fallback to addContentLibrary if update not available
           const res = await metaDataController.addContentLibrary(body);
@@ -454,15 +454,22 @@ const EditContent = () => {
             disabled={loading || isDetailsLoading}
           />
 
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={state.isQuizEnabled}
-                onChange={e => setState(prev => ({ ...prev, isQuizEnabled: e.target.checked }))}
-              />
-            }
-            label="Enable Quiz"
-          />
+          {state.contentType.label !== CONTENT_TYPE.ASSIGNMENT && (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={state.isQuizEnabled}
+                  onChange={(e) =>
+                    setState((prev) => ({
+                      ...prev,
+                      isQuizEnabled: e.target.checked,
+                    }))
+                  }
+                />
+              }
+              label="Enable Quiz"
+            />
+          )}
 
           {state.isQuizEnabled && (
             <QuizBuilder questions={questions} setQuestions={setQuestions} />
