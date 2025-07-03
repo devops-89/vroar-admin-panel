@@ -95,7 +95,6 @@ const EditRoadmapTilesData = ({ tiles, setTiles, getRoadmapDetails }) => {
   };
 
   const handleDeleteTiles = (id) => {
-    // console.log("first", id);
     // setTiles((prev) => prev.filter((q) => q.id !== id));
     dispatch(showModal(<DeleteRoadmapTile tileId={id} />));
   };

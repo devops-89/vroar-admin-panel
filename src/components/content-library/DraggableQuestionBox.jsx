@@ -78,7 +78,7 @@ const DraggableQuestionBox = ({
           <Typography>{`Question ${index + 1}`}</Typography>
         </Stack>
         <Stack direction={"row"} alignItems={"center"} spacing={2}>
-          {questionsLength > 1 && (
+          {questionsLength > 0 && (
             <IconButton onClick={onDelete} color="error">
               <Delete />
             </IconButton>

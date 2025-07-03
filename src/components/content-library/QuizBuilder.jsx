@@ -16,6 +16,7 @@ import { COLORS } from "@/utils/enum";
 import { showModal } from "@/redux/reducers/modal";
 import AddNewQuestion from "@/assests/modalCalling/metaData/Quiz/AddNewQuestion";
 import { useDispatch } from "react-redux";
+import { metaDataController } from "@/api/metaDataController";
 
 const defaultObjectiveOptions = () => [
   { id: 1, optionText: "", isCorrect: false },
@@ -44,21 +45,20 @@ const QuizBuilder = ({ questions, setQuestions, getDetails }) => {
 
   const dispatch = useDispatch();
   const handleAddQuestion = () => {
-    // setQuestions((prev) => [
-    //   ...prev,
-    //   {
-    //     id: Date.now(),
-    //     questionType: QUIZ_TYPE.OBJECTIVE_QUIZ,
-    //     question: "",
-    //     options: defaultObjectiveOptions(),
-    //     subText: "",
-    //   },
-    // ]);
     dispatch(showModal(<AddNewQuestion getDetails={getDetails} />));
   };
 
   const handleDeleteQuestion = (idx) => {
-    setQuestions((prev) => prev.filter((_, i) => i !== idx));
+    metaDataController
+      .deleteQuestion(idx)
+      .then((res) => {
+        console.log("res", res);
+        getDetails();
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+    // setQuestions((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleTypeChange = (idx, type) => {
@@ -139,7 +139,7 @@ const QuizBuilder = ({ questions, setQuestions, getDetails }) => {
               q={q}
               index={index}
               questionsLength={questions.length}
-              onDelete={() => handleDeleteQuestion(index)}
+              onDelete={() => handleDeleteQuestion(q.id)}
               onTypeChange={(type) => handleTypeChange(index, type)}
               onQuestionChange={(value) => handleQuestionChange(index, value)}
               onSubTextChange={(value) => handleSubTextChange(index, value)}

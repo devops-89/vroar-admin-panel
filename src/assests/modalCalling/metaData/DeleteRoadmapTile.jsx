@@ -1,7 +1,7 @@
 import { metaDataController } from "@/api/metaDataController";
 import { hideModal } from "@/redux/reducers/modal";
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS } from "@/utils/enum";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Close } from "@mui/icons-material";
 import {
@@ -18,7 +18,7 @@ import { useDispatch } from "react-redux";
 
 const DeleteRoadmapTile = ({ tileId }) => {
   const dispatch = useDispatch();
-  //   console.log("test", tileId);
+  console.log("tile id", tileId);
   const router = useRouter();
   const { roadmapId } = router.query;
   const closeModal = () => {
@@ -30,7 +30,7 @@ const DeleteRoadmapTile = ({ tileId }) => {
       tileId: tileId,
       roadmapId: roadmapId,
     };
-    // console.log("erer", body);
+    console.log("erer", body);
     metaDataController
       .deleteRoadmapTile(body)
       .then((res) => {
@@ -38,7 +38,8 @@ const DeleteRoadmapTile = ({ tileId }) => {
         dispatch(
           setToast({
             message: res.data.message,
-            severity: "success",
+            severity: ToastStatus.SUCCESS,
+            open: true,
           })
         );
         dispatch(hideModal());
@@ -50,7 +51,8 @@ const DeleteRoadmapTile = ({ tileId }) => {
         dispatch(
           setToast({
             message: errMessge,
-            severity: "error",
+            severity: ToastStatus.ERROR,
+            open: true,
           })
         );
       });

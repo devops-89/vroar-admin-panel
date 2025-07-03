@@ -29,13 +29,15 @@ import { IoClose } from "react-icons/io5";
 // ContentViewer component to handle different content types
 const ContentViewer = ({ content, onClose }) => {
   const dispatch = useDispatch();
-  
+
   if (!content) return null;
 
   // Handle PDF content types using the existing ViewPdf component
-  if (content.contentType === CONTENT_TYPE.ARTICLE_PDF || 
-      content.contentType === CONTENT_TYPE.ARTICLE_WRITEUP || 
-      content.contentType === CONTENT_TYPE.ASSIGNMENT) {
+  if (
+    content.contentType === CONTENT_TYPE.ARTICLE_PDF ||
+    content.contentType === CONTENT_TYPE.ARTICLE_WRITEUP ||
+    content.contentType === CONTENT_TYPE.ASSIGNMENT
+  ) {
     dispatch(showModal(<ViewPdf fileUrl={content.contentLink} />));
     onClose();
     return null;
@@ -43,7 +45,7 @@ const ContentViewer = ({ content, onClose }) => {
 
   // Handle external article links by opening in new tab
   if (content.contentType === CONTENT_TYPE.JOURNAL_LINK) {
-    window.open(content.contentLink, '_blank', 'noopener,noreferrer');
+    window.open(content.contentLink, "_blank", "noopener,noreferrer");
     onClose();
     return null;
   }
@@ -52,21 +54,23 @@ const ContentViewer = ({ content, onClose }) => {
     if (content.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
       try {
         // Handle different YouTube URL formats
-        let videoId = '';
-        
+        let videoId = "";
+
         // Handle youtu.be format
-        if (url.includes('youtu.be')) {
-          videoId = url.split('youtu.be/')[1]?.split('?')[0];
-        } 
+        if (url.includes("youtu.be")) {
+          videoId = url.split("youtu.be/")[1]?.split("?")[0];
+        }
         // Handle youtube.com format
-        else if (url.includes('youtube.com')) {
+        else if (url.includes("youtube.com")) {
           // Try to get ID from v parameter
-          const urlParams = new URLSearchParams(url.split('?')[1]);
-          videoId = urlParams.get('v');
-          
+          const urlParams = new URLSearchParams(url.split("?")[1]);
+          videoId = urlParams.get("v");
+
           // If no v parameter, try to get from /embed/ or /v/ format
           if (!videoId) {
-            const matches = url.match(/(?:embed\/|v\/|watch\?v=|watch\?.+&v=)([^&?/]+)/);
+            const matches = url.match(
+              /(?:embed\/|v\/|watch\?v=|watch\?.+&v=)([^&?/]+)/
+            );
             videoId = matches?.[1];
           }
         }
@@ -76,9 +80,9 @@ const ContentViewer = ({ content, onClose }) => {
           return `https://www.youtube.com/embed/${videoId}`;
         }
       } catch (error) {
-        console.error('Error parsing YouTube URL:', error);
+        console.error("Error parsing YouTube URL:", error);
       }
-      
+
       // Return original URL if parsing fails
       return url;
     }
@@ -86,14 +90,13 @@ const ContentViewer = ({ content, onClose }) => {
   };
 
   return (
-    <Dialog 
-      open={true} 
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-    >
+    <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Typography sx={{ fontFamily: roboto.style, fontWeight: 500 }}>
             {content.contentFileName || "Content Preview"}
           </Typography>
@@ -103,17 +106,19 @@ const ContentViewer = ({ content, onClose }) => {
         </Stack>
       </DialogTitle>
       <DialogContent>
-        {(content.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK || 
+        {(content.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK ||
           content.contentType === CONTENT_TYPE.NATIVE_VIDEO_LINK) && (
-          <Box sx={{ position: 'relative', paddingTop: '56.25%', width: '100%' }}>
+          <Box
+            sx={{ position: "relative", paddingTop: "56.25%", width: "100%" }}
+          >
             <iframe
               style={{
-                position: 'absolute',
+                position: "absolute",
                 top: 0,
                 left: 0,
-                width: '100%',
-                height: '100%',
-                border: 'none'
+                width: "100%",
+                height: "100%",
+                border: "none",
               }}
               src={getEmbedUrl(content.contentLink)}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -296,13 +301,15 @@ const ViewRoadmap = () => {
                         label: "Content Type",
                         value: data.content?.contentType,
                       },
-                      {
-                        label: "Content",
-                        value: data.content?.contentFileName || data.content?.contentLink,
-                        url: data.content?.contentLink,
-                        type: data.content?.contentType,
-                        content: data.content,
-                      },
+                      ...(data.content?.contentLink
+                        ? [{
+                            label: "Content",
+                            value: data.content?.contentFileName || data.content?.contentLink,
+                            url: data.content?.contentLink,
+                            type: data.content?.contentType,
+                            content: data.content,
+                          }]
+                        : []),
                       {
                         label: "Time Required",
                         value: data.time,
@@ -358,7 +365,9 @@ const ViewRoadmap = () => {
                                     textDecoration: "underline",
                                     color: COLORS.DARKBLUE,
                                   }}
-                                  onClick={() => handleContentClick(val.content)}
+                                  onClick={() =>
+                                    handleContentClick(val.content)
+                                  }
                                 >
                                   {val.value || "View Content"}
                                 </Typography>
