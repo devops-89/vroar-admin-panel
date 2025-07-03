@@ -23,7 +23,6 @@ import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 
-// Enhanced validation schema
 const editRoadmapValidationSchema = Yup.object().shape({
   tileName: Yup.string()
     .required("Tile name is required")
@@ -82,55 +81,7 @@ const editRoadmapValidationSchema = Yup.object().shape({
         return !value.includes("  ");
       }
     ),
-  contentLink: Yup.string().when("contentType", {
-    is: (type) => type === CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
-    then: () =>
-      Yup.string()
-        .required("YouTube link is required")
-        .test("is-youtube", "Please enter a valid YouTube URL", (value) => {
-          if (!value) return false;
-          const youtubeRegex =
-            /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]{11}$/;
-          return youtubeRegex.test(value.trim());
-        })
-        .test(
-          "no-leading-trailing-spaces",
-          "YouTube link cannot have leading or trailing spaces",
-          (value) => {
-            if (!value) return true;
-            return value.trim() === value;
-          }
-        ),
-    otherwise: () =>
-      Yup.string().when("contentType", {
-        is: (type) =>
-          type === CONTENT_TYPE.JOURNAL_LINK ||
-          type === CONTENT_TYPE.NATIVE_VIDEO_LINK,
-        then: () =>
-          Yup.string()
-            .required("Content link is required")
-            .url("Please enter a valid URL")
-            .test(
-              "not-youtube",
-              "YouTube links are not allowed for this content type",
-              (value) => {
-                if (!value) return true;
-                const youtubeRegex =
-                  /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]{11}$/;
-                return !youtubeRegex.test(value.trim());
-              }
-            )
-            .test(
-              "no-leading-trailing-spaces",
-              "Content link cannot have leading or trailing spaces",
-              (value) => {
-                if (!value) return true;
-                return value.trim() === value;
-              }
-            ),
-        otherwise: () => Yup.string(),
-      }),
-  }),
+  
 });
 
 const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
@@ -143,10 +94,9 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
   const [contentLoading, setContentLoading] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  // Helper function to trim spaces in real-time
+
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    // Remove multiple consecutive spaces in real-time
     const processedValue = value.replace(/\s+/g, " ");
 
     formik.setFieldValue(id, processedValue);
@@ -166,7 +116,6 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
     },
     validationSchema: editRoadmapValidationSchema,
     onSubmit: (values) => {
-      // Trim all string values before submitting
       const trimmedValues = {
         ...values,
         tileName: values.tileName.trim(),
@@ -187,12 +136,13 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
     },
   });
 
+  
+
   const submitHandler = (body) => {
     setLoading(true);
     metaDataController
       .editRoadmapTile(body)
       .then((res) => {
-        // console.log("res", res);
         dispatch(
           setToast({
             open: true,
@@ -205,7 +155,6 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
         setLoading(false);
       })
       .catch((err) => {
-        // console.log("err", err);
         let errMessage =
           (err.response && err.response.data.message) || err.message;
         dispatch(
