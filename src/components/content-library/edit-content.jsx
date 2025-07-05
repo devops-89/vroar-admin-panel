@@ -151,8 +151,8 @@ const EditContent = () => {
       isQuizEnabled: response.quiz !== null,
       quizType: response.quiz ? { label: response.quiz.quizType } : null,
       questions: addIdsToQuestions(response.quiz?.quizQuestions || []),
-      quizId: response.quiz.id,
-      isQuizActive: response.quiz.isQuizActive,
+      quizId: response.quiz?.id,
+      isQuizActive: response.quiz?.isQuizActive,
     });
     setIsDetailsLoading(false);
   };
