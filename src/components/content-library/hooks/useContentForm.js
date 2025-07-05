@@ -22,6 +22,8 @@ const initialState = {
   quizType: "",
   questions: [],
   treks: [],
+  quizId: "",
+  isQuizActive: false,
 };
 
 export const useContentForm = () => {
@@ -136,7 +138,6 @@ export const useContentForm = () => {
     try {
       let contentLink = state.contentLink;
       const contentTypeString = state.contentType?.label || state.contentType;
-
 
       if (
         contentTypeString === CONTENT_TYPE.ASSIGNMENT &&

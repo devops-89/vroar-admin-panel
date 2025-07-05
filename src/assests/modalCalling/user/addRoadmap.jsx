@@ -109,7 +109,6 @@ const AddRoadmap = ({ getJourney }) => {
   const [softSkillsData, setSoftSkillsData] = useState([]);
   const [treksRoadmap, setTreksRoadmap] = useState([]);
 
-
   const [career, setCareer] = useState([]);
   const [strength, setStrength] = useState([]);
   const [industry, setIndustry] = useState([]);
@@ -497,7 +496,7 @@ const AddRoadmap = ({ getJourney }) => {
                   removable={true}
                   onDelete={() => {
                     const myTreks = treks.filter((_, i) => i !== index);
-                    setTreksRoadmap(myTreks);
+                    setTreks(myTreks);
                   }}
                 />
               );

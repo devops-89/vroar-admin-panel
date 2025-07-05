@@ -205,6 +205,7 @@ const AddContent = () => {
             contentLibraryId,
             quizSet: cleanedQuestions,
             quizType: QUIZ_TYPE.BOTH,
+            isQuizActive: true,
           });
         } else {
           setLoading(false);

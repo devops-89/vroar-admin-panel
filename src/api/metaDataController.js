@@ -367,4 +367,15 @@ export const metaDataController = {
       throw error;
     }
   },
+  editQuizStatus: async (data) => {
+    try {
+      let result = await contentSecuredApi.contentSecuredApi.put(
+        "/api/quiz/editQuiz",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

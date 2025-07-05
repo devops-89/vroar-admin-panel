@@ -17,6 +17,7 @@ import {
   FormControlLabel,
   IconButton,
   Stack,
+  Switch,
   TextField,
   Typography,
 } from "@mui/material";
@@ -36,6 +37,7 @@ import { FileUpload } from "./form-components/FileUpload";
 import { useContentForm } from "./hooks/useContentForm";
 // import QuizBuilder from "./QuizBuilder";
 import QuizBuilder from "./QuizBuilder";
+import { roboto } from "@/utils/fonts";
 
 const contentTypeConfig = {
   [CONTENT_TYPE.ARTICLE_PDF]: { showFile: true, showLink: false },
@@ -149,11 +151,11 @@ const EditContent = () => {
       isQuizEnabled: response.quiz !== null,
       quizType: response.quiz ? { label: response.quiz.quizType } : null,
       questions: addIdsToQuestions(response.quiz?.quizQuestions || []),
+      quizId: response.quiz.id,
+      isQuizActive: response.quiz.isQuizActive,
     });
     setIsDetailsLoading(false);
   };
-
-  console.log("state", state);
 
   const getContentDetails = async (id) => {
     try {
@@ -172,6 +174,39 @@ const EditContent = () => {
       );
       setIsDetailsLoading(false);
     }
+  };
+
+  const handleEditQuizStatus = (e) => {
+    let body = {
+      isQuizActive: e.target.checked,
+      quizId: state.quizId,
+    };
+    setIsDetailsLoading(true);
+    metaDataController
+      .editQuizStatus(body)
+      .then((res) => {
+        // console.log("reee", res);
+        dispatch(
+          setToast({
+            open: true,
+            message: res.data.message,
+            severity: ToastStatus.SUCCESS,
+          })
+        );
+        getContentDetails(id);
+      })
+      .catch((err) => {
+        // console.log("err", err);
+        let errMessage =
+          (err.response && err.response.data.message) || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+      });
   };
 
   const handleQuizUpdate = useCallback(() => {
@@ -454,20 +489,38 @@ const EditContent = () => {
           />
 
           {state.contentType.label !== CONTENT_TYPE.ASSIGNMENT && (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={state.isQuizEnabled}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      isQuizEnabled: e.target.checked,
-                    }))
-                  }
-                />
-              }
-              label="Enable Quiz"
-            />
+            <Stack direction={"row"} justifyContent={"space-between"}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={state.isQuizEnabled}
+                    onChange={(e) =>
+                      setState({ ...state, isQuizEnabled: e.target.checked })
+                    }
+                  />
+                }
+                label={
+                  <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                    Enable Quiz
+                  </Typography>
+                }
+              />
+              <FormControlLabel
+                label={
+                  <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                    Quiz {state.isQuizActive ? "Active" : "InActive"}
+                  </Typography>
+                }
+                control={
+                  <Switch
+                    onChange={handleEditQuizStatus}
+                    color="success"
+                    checked={state.isQuizActive}
+                  />
+                }
+              />
+              {/* <Switch color="success"  /> */}
+            </Stack>
           )}
 
           {state.isQuizEnabled && (
