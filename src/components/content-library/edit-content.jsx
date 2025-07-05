@@ -505,21 +505,23 @@ const EditContent = () => {
                   </Typography>
                 }
               />
-              <FormControlLabel
-                label={
-                  <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
-                    Quiz {state.isQuizActive ? "Active" : "InActive"}
-                  </Typography>
-                }
-                control={
-                  <Switch
-                    onChange={handleEditQuizStatus}
-                    color="success"
-                    checked={state.isQuizActive}
-                  />
-                }
-              />
             </Stack>
+          )}
+          {state.quizId && (
+            <FormControlLabel
+              label={
+                <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                  Quiz {state.isQuizActive ? "Active" : "InActive"}
+                </Typography>
+              }
+              control={
+                <Switch
+                  onChange={handleEditQuizStatus}
+                  color="success"
+                  checked={state.isQuizActive}
+                />
+              }
+            />
           )}
 
           {state.isQuizEnabled && (
