@@ -1,8 +1,10 @@
 import React from "react";
 import { Stack, Checkbox, TextField, Typography } from "@mui/material";
 import { loginTextField } from "@/utils/styles";
+import { useSelector } from "react-redux";
 
 const ObjectiveOptions = ({ options, onOptionChange, onCorrectOption }) => {
+  const content = useSelector((state) => state.ContentDetails);
   return (
     <>
       <Typography variant="body2" sx={{ mb: 1 }}>
@@ -19,7 +21,7 @@ const ObjectiveOptions = ({ options, onOptionChange, onCorrectOption }) => {
           <Checkbox
             checked={opt.isCorrect}
             onChange={() => onCorrectOption(optIdx)}
-            disabled
+            disabled={content.quiz}
           />
           <TextField
             label={`Option ${optIdx + 1}`}
@@ -31,7 +33,7 @@ const ObjectiveOptions = ({ options, onOptionChange, onCorrectOption }) => {
             fullWidth
             slotProps={{
               input: {
-                readOnly: true,
+                readOnly: content.quiz,
               },
             }}
           />

@@ -11,12 +11,13 @@ import {
 import { SortableContext, arrayMove, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import DraggableQuestionBox from "./DraggableQuestionBox";
-import { QUIZ_TYPE } from "@/utils/enum";
+import { QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { COLORS } from "@/utils/enum";
 import { showModal } from "@/redux/reducers/modal";
 import AddNewQuestion from "@/assests/modalCalling/metaData/Quiz/AddNewQuestion";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { metaDataController } from "@/api/metaDataController";
+import { setToast } from "@/redux/reducers/toast";
 
 const defaultObjectiveOptions = () => [
   { id: 1, optionText: "", isCorrect: false },
@@ -29,6 +30,8 @@ const QuizBuilder = ({ questions, setQuestions, getDetails }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
+
+  const content = useSelector((state) => state.ContentDetails);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -45,18 +48,40 @@ const QuizBuilder = ({ questions, setQuestions, getDetails }) => {
 
   const dispatch = useDispatch();
   const handleAddQuestion = () => {
-    dispatch(showModal(<AddNewQuestion getDetails={getDetails} />));
+    if (content?.quiz) {
+      dispatch(showModal(<AddNewQuestion getDetails={getDetails} />));
+    } else {
+      setQuestions((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          questionType: QUIZ_TYPE.OBJECTIVE_QUIZ,
+          question: "",
+          options: defaultObjectiveOptions(),
+          subText: "",
+        },
+      ]);
+    }
   };
 
   const handleDeleteQuestion = (idx) => {
     metaDataController
       .deleteQuestion(idx)
       .then((res) => {
-        console.log("res", res);
+        // console.log("res", res);
         getDetails();
       })
       .catch((err) => {
-        console.log("err", err);
+        let errMessage =
+          (err.response && err.response.data.message) || err.message;
+        dispatch(
+          setToast({
+            open: true,
+            message: errMessage,
+            severity: ToastStatus.ERROR,
+          })
+        );
+        // console.log("err", err);
       });
     // setQuestions((prev) => prev.filter((_, i) => i !== idx));
   };

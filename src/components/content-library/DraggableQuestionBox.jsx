@@ -14,7 +14,7 @@ import { loginTextField } from "@/utils/styles";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { FaRegEdit } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { showModal } from "@/redux/reducers/modal";
 import EditQuizQuestion from "@/assests/modalCalling/metaData/EditQuizQuestion";
 
@@ -39,6 +39,10 @@ const DraggableQuestionBox = ({
     transition,
     isDragging,
   } = useSortable({ id });
+
+  const content = useSelector((state) => state.ContentDetails);
+
+  
 
   const style = {
     mb: 3,
@@ -78,14 +82,16 @@ const DraggableQuestionBox = ({
           <Typography>{`Question ${index + 1}`}</Typography>
         </Stack>
         <Stack direction={"row"} alignItems={"center"} spacing={2}>
-          {questionsLength > 0 && (
+          {questionsLength > 1 && (
             <IconButton onClick={onDelete} color="error">
               <Delete />
             </IconButton>
           )}
-          <IconButton onClick={() => editQuestion(q)}>
-            <FaRegEdit style={{ color: COLORS.DONE_TEXT }} />
-          </IconButton>
+          {content.quiz && (
+            <IconButton onClick={() => editQuestion(q)}>
+              <FaRegEdit style={{ color: COLORS.DONE_TEXT }} />
+            </IconButton>
+          )}
         </Stack>
       </Stack>
       <Autocomplete
@@ -113,7 +119,7 @@ const DraggableQuestionBox = ({
           <TextField {...params} label="Quiz Type" sx={{ ...loginTextField }} />
         )}
         sx={{ minWidth: 140, mb: 2 }}
-        disabled
+        disabled={content.quiz}
       />
       <TextField
         label="Enter Question"
@@ -123,7 +129,7 @@ const DraggableQuestionBox = ({
         sx={{ mb: 2, ...loginTextField }}
         slotProps={{
           input: {
-            disabled: true,
+            disabled: content?.quiz,
           },
         }}
       />
@@ -142,7 +148,7 @@ const DraggableQuestionBox = ({
           value={q.subText || ""}
           onChange={(e) => onSubTextChange(e.target.value)}
           sx={{ mb: 2, ...loginTextField }}
-          disabled
+          disabled={content.quiz}
         />
       )}
     </Box>

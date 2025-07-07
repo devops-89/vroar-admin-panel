@@ -98,27 +98,36 @@ const AddNewQuestion = ({ getDetails }) => {
   );
 
   const validateForm = useCallback(() => {
-    const newErrors = {
-      question: !question.trim(),
-      options: options.some((option) => !option.optionText.trim()),
-      correctOption: !options.some((option) => option.isCorrect),
-    };
+    let newErrors;
+    if (questionType === QUIZ_TYPE.SUBJECTIVE_QUIZ) {
+      newErrors = {
+        question: !question.trim(),
+        options: false,
+        correctOption: false,
+      };
+    } else {
+      newErrors = {
+        question: !question.trim(),
+        options: options.some((option) => !option.optionText.trim()),
+        correctOption: !options.some((option) => option.isCorrect),
+      };
+    }
     setErrors(newErrors);
     return !Object.values(newErrors).some((error) => error);
-  }, [question, options]);
+  }, [question, options, questionType]);
   const content = useSelector((state) => state.ContentDetails);
-  // console.log("asda",content)
   const [loading, setLoading] = useState(false);
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
       setLoading(true);
       let body = {
         question: question,
-        options: options,
+        // options: options,
         questionType: questionType,
+        quizId: content.quiz.id,
       };
-      if (content?.quiz) {
-        body.quizId = content.quiz.id;
+      if (questionType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+        body.options = options;
       }
 
       // console.log("body", body);
@@ -137,6 +146,7 @@ const AddNewQuestion = ({ getDetails }) => {
           setLoading(false);
         })
         .catch((err) => {
+          console.log("first", err);
           dispatch(
             setToast({
               message:

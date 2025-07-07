@@ -29,7 +29,7 @@ import { PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Loading from "react-loading";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ToastBar from "../toastBar";
 import { ContentForm } from "./form-components/ContentForm";
 import { ContentTypeSelect } from "./form-components/ContentTypeSelect";
@@ -90,6 +90,8 @@ const EditContent = () => {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
+
+  // conso;
 
   const id = router.query.slug;
 
@@ -176,6 +178,10 @@ const EditContent = () => {
     }
   };
 
+  const content = useSelector((state) => state.ContentDetails);
+
+  // console.log("content", content);
+
   const handleEditQuizStatus = (e) => {
     let body = {
       isQuizActive: e.target.checked,
@@ -209,15 +215,7 @@ const EditContent = () => {
       });
   };
 
-  const handleQuizUpdate = useCallback(() => {
-    if (id) {
-      getContentDetails(id);
-    }
-  }, [id]);
-
-  const addQuiz = (id) => {
-    router.push(`/roadmap-management/content-library/${id}/add-quiz`);
-  };
+  // console.log("questions:::::", questions);
 
   useEffect(() => {
     if (id) {
@@ -241,15 +239,6 @@ const EditContent = () => {
       setState((prev) => ({ ...prev, questions }));
     }
   }, [questions, didInit]);
-
-  const getFieldError = (fieldName) => {
-    return errors[fieldName]
-      ? {
-          error: true,
-          helperText: errors[fieldName],
-        }
-      : {};
-  };
 
   const getQuizData = (questions) => {
     const errors = [];
@@ -311,7 +300,7 @@ const EditContent = () => {
       // Validate quiz if enabled
       let cleanedQuestions = [];
       if (state.isQuizEnabled) {
-        const { cleanedQuestions: cq, errors } = getQuizData(state.questions);
+        const { cleanedQuestions: cq, errors } = getQuizData(questions);
         if (errors.length > 0) {
           dispatch(
             setToast({
@@ -326,7 +315,6 @@ const EditContent = () => {
         cleanedQuestions = cq;
       }
 
-      // File upload logic (if needed)
       let contentLink = state.contentLink;
       let contentFileName = state.file?.fileName;
       if (
@@ -335,7 +323,6 @@ const EditContent = () => {
         state.file.fileName &&
         state.file.filePath instanceof File
       ) {
-        // Only upload if a new file is selected
         try {
           const { filePath, fileName } =
             await metaDataController.getUploadContentFile(state.file.filePath);
@@ -394,31 +381,36 @@ const EditContent = () => {
       }
 
       // If quiz is enabled, update quiz after content
-      // if (state.isQuizEnabled) {
-      //   try {
-      //     if (metaDataController.updateQuiz) {
-      //       await metaDataController.updateQuiz({
-      //         contentLibraryId,
-      //         quizSet: cleanedQuestions,
-      //       });
-      //     } else {
-      //       await metaDataController.addQuiz({
-      //         contentLibraryId,
-      //         quizSet: cleanedQuestions,
-      //       });
-      //     }
-      //   } catch (err) {
-      //     dispatch(
-      //       setToast({
-      //         open: true,
-      //         message: "Quiz update failed",
-      //         severity: ToastStatus.ERROR,
-      //       })
-      //     );
-      //     setIsDetailsLoading(false);
-      //     return;
-      //   }
-      // }
+      if (!content.quiz) {
+        if (state.isQuizEnabled) {
+          try {
+            if (metaDataController.updateQuiz) {
+              await metaDataController.updateQuiz({
+                contentLibraryId,
+                quizSet: cleanedQuestions,
+                quizType: QUIZ_TYPE.BOTH,
+              });
+            } else {
+              await metaDataController.addQuiz({
+                contentLibraryId,
+                quizSet: cleanedQuestions,
+                quizType: QUIZ_TYPE.BOTH,
+              });
+            }
+          } catch (err) {
+            dispatch(
+              setToast({
+                open: true,
+                message: "Quiz update failed",
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setIsDetailsLoading(false);
+            return;
+          }
+        }
+       
+      }
 
       setIsDetailsLoading(false);
       dispatch(
