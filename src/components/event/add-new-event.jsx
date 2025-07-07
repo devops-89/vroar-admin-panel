@@ -150,7 +150,6 @@ const AddEvent = () => {
 
   const sessionEndTimeHandler = (newTime) => {
     setSessionEndTime(newTime);
-    // console.log("eeee", newTime);
     const validTime = moment(newTime).isValid();
     if (validTime) {
       formik.values.sessionEndTime = moment(newTime).format("hh:mm A");

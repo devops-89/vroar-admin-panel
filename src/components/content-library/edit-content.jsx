@@ -394,31 +394,31 @@ const EditContent = () => {
       }
 
       // If quiz is enabled, update quiz after content
-      if (state.isQuizEnabled) {
-        try {
-          if (metaDataController.updateQuiz) {
-            await metaDataController.updateQuiz({
-              contentLibraryId,
-              quizSet: cleanedQuestions,
-            });
-          } else {
-            await metaDataController.addQuiz({
-              contentLibraryId,
-              quizSet: cleanedQuestions,
-            });
-          }
-        } catch (err) {
-          dispatch(
-            setToast({
-              open: true,
-              message: "Quiz update failed",
-              severity: ToastStatus.ERROR,
-            })
-          );
-          setIsDetailsLoading(false);
-          return;
-        }
-      }
+      // if (state.isQuizEnabled) {
+      //   try {
+      //     if (metaDataController.updateQuiz) {
+      //       await metaDataController.updateQuiz({
+      //         contentLibraryId,
+      //         quizSet: cleanedQuestions,
+      //       });
+      //     } else {
+      //       await metaDataController.addQuiz({
+      //         contentLibraryId,
+      //         quizSet: cleanedQuestions,
+      //       });
+      //     }
+      //   } catch (err) {
+      //     dispatch(
+      //       setToast({
+      //         open: true,
+      //         message: "Quiz update failed",
+      //         severity: ToastStatus.ERROR,
+      //       })
+      //     );
+      //     setIsDetailsLoading(false);
+      //     return;
+      //   }
+      // }
 
       setIsDetailsLoading(false);
       dispatch(
@@ -455,7 +455,6 @@ const EditContent = () => {
             error={errors.contentType}
             disabled={true}
           />
-
           {contentTypeConfig[state.contentType.label]?.showLink && (
             <TextField
               fullWidth
@@ -469,7 +468,6 @@ const EditContent = () => {
               sx={{ ...loginTextField }}
             />
           )}
-
           {contentTypeConfig[state.contentType.label]?.showFile && (
             <FileUpload
               inputRef={inputRef}
@@ -479,7 +477,6 @@ const EditContent = () => {
               disabled={loading || isDetailsLoading}
             />
           )}
-
           <ContentForm
             state={state}
             errors={errors}
@@ -487,7 +484,6 @@ const EditContent = () => {
             onMetadataChange={handleMetadataChange}
             disabled={loading || isDetailsLoading}
           />
-
           {state.contentType.label !== CONTENT_TYPE.ASSIGNMENT && (
             <Stack direction={"row"} justifyContent={"space-between"}>
               <FormControlLabel
@@ -497,6 +493,7 @@ const EditContent = () => {
                     onChange={(e) =>
                       setState({ ...state, isQuizEnabled: e.target.checked })
                     }
+                    disabled={Boolean(state.quizId)}
                   />
                 }
                 label={
@@ -523,7 +520,6 @@ const EditContent = () => {
               }
             />
           )}
-
           {state.isQuizEnabled && (
             <QuizBuilder
               questions={questions}
@@ -531,7 +527,6 @@ const EditContent = () => {
               getDetails={() => getContentDetails(id)}
             />
           )}
-
           <Button
             sx={{
               backgroundColor: COLORS.PRIMARY,

@@ -107,16 +107,21 @@ const AddNewQuestion = ({ getDetails }) => {
     return !Object.values(newErrors).some((error) => error);
   }, [question, options]);
   const content = useSelector((state) => state.ContentDetails);
+  // console.log("asda",content)
   const [loading, setLoading] = useState(false);
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
       setLoading(true);
       let body = {
-        quizId: content.quiz.id,
         question: question,
         options: options,
         questionType: questionType,
       };
+      if (content?.quiz) {
+        body.quizId = content.quiz.id;
+      }
+
+      // console.log("body", body);
       metaDataController
         .addQuizQuestion(body)
         .then((res) => {
