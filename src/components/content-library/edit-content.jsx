@@ -423,7 +423,6 @@ const EditContent = () => {
     }
   };
 
-  // console.log(";:::", state.file);
 
   return (
     <Box mt={3}>
