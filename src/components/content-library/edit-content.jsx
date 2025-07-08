@@ -458,7 +458,7 @@ const EditContent = () => {
               file={state.file}
               onChange={handleFileChange}
               error={errors.contentLink}
-              disabled={loading || isDetailsLoading}
+              disabled={true}
             />
           )}
           <ContentForm
