@@ -122,17 +122,18 @@ const EditQuizQuestion = ({ value, getDetails }) => {
     };
 
     const isOptionCorrect = cleanedOptions.some((val) => val.isCorrect);
-
-    if (!isOptionCorrect) {
-      dispatch(
-        setToast({
-          open: true,
-          message: "Please select at least one option",
-          severity: ToastStatus.ERROR,
-        })
-      );
-      return;
-    }
+    // if (questionType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+    //   if (!isOptionCorrect) {
+    //     dispatch(
+    //       setToast({
+    //         open: true,
+    //         message: "Please select at least one option",
+    //         severity: ToastStatus.ERROR,
+    //       })
+    //     );
+    //     return;
+    //   }
+    // }
 
     setLoading(true);
 
