@@ -74,13 +74,6 @@ const EditContent = () => {
 
   const [questions, setQuestions] = useState([]);
   const didInit = useRef(false);
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
-  // );
-
-  
-
-  // console.log("test",state)
 
   const id = router.query.slug;
 
@@ -312,12 +305,19 @@ const EditContent = () => {
         state.contentType.label === CONTENT_TYPE.ARTICLE_PDF &&
         state.file &&
         state.file.fileName &&
-        state.file.filePath instanceof File
+        typeof state.file.filePath === "string" &&
+        state.file.filePath.startsWith("blob:")
       ) {
+        // Only upload if filePath is a blob url
+        const data = {
+          contentFile: state.contentLink,
+          type: state.contentType.label,
+        };
+
         try {
           const { filePath, fileName } =
-            await metaDataController.getUploadContentFile(state.file.filePath);
-          contentLink = filePath;
+            await metaDataController.getUploadContentFile(data);
+          contentLink = filePath; 
           contentFileName = fileName;
         } catch (error) {
           dispatch(
@@ -422,6 +422,8 @@ const EditContent = () => {
       setIsDetailsLoading(false);
     }
   };
+
+  // console.log(";:::", state.file);
 
   return (
     <Box mt={3}>
