@@ -72,26 +72,15 @@ const EditContent = () => {
   // const [isDetailsLoading, setIsDetailsLoading] = useState(true);
   const [isFormDisabled, setIsFormDisabled] = useState(true);
 
-  const initialValues = {
-    contentType: "",
-    career: [],
-    industry: [],
-    strengths: [],
-    softSkills: [],
-    contentName: "",
-    isQuizEnabled: false,
-    contentLink: "",
-    quizType: "",
-    quizId: "",
-  };
-
   const [questions, setQuestions] = useState([]);
   const didInit = useRef(false);
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
-  );
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  // );
 
-  // conso;
+  
+
+  // console.log("test",state)
 
   const id = router.query.slug;
 
@@ -495,24 +484,25 @@ const EditContent = () => {
                   </Typography>
                 }
               />
+              {state.quizId && (
+                <FormControlLabel
+                  label={
+                    <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                      Quiz {state.isQuizActive ? "Active" : "InActive"}
+                    </Typography>
+                  }
+                  control={
+                    <Switch
+                      onChange={handleEditQuizStatus}
+                      color="success"
+                      checked={state.isQuizActive}
+                    />
+                  }
+                />
+              )}
             </Stack>
           )}
-          {state.quizId && (
-            <FormControlLabel
-              label={
-                <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
-                  Quiz {state.isQuizActive ? "Active" : "InActive"}
-                </Typography>
-              }
-              control={
-                <Switch
-                  onChange={handleEditQuizStatus}
-                  color="success"
-                  checked={state.isQuizActive}
-                />
-              }
-            />
-          )}
+
           {state.isQuizEnabled && (
             <QuizBuilder
               questions={questions}

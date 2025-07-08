@@ -121,6 +121,19 @@ const EditQuizQuestion = ({ value, getDetails }) => {
       ...(state.subText && { subText: state.subText }),
     };
 
+    const isOptionCorrect = cleanedOptions.some((val) => val.isCorrect);
+
+    if (!isOptionCorrect) {
+      dispatch(
+        setToast({
+          open: true,
+          message: "Please select at least one option",
+          severity: ToastStatus.ERROR,
+        })
+      );
+      return;
+    }
+
     setLoading(true);
 
     metaDataController
@@ -218,7 +231,6 @@ const EditQuizQuestion = ({ value, getDetails }) => {
               value={state.subText}
               onChange={changeHandler}
               id="subText"
-              
             />
           )}
         </Box>
