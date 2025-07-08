@@ -67,7 +67,6 @@ const EventDetails = () => {
       label: "Event Description",
       value: details?.eventDescription,
     },
-
     {
       label: "Speaker Summary",
       value: details?.speakerSummary,
@@ -78,22 +77,22 @@ const EventDetails = () => {
     },
     {
       label: "Session Dates",
-      value: `${moment
-        .unix(details?.sessionStartDate)
-        .format("Do MMMM YYYY")} - ${moment
-        .unix(details?.sessionEndDate)
-        .format("Do MMMM YYYY")}`,
+      value: details?.sessionStartDate && details?.sessionEndDate
+        ? `${moment.unix(details?.sessionStartDate).format("Do MMMM YYYY")} - ${moment.unix(details?.sessionEndDate).format("Do MMMM YYYY")}`
+        : null,
     },
     {
       label: "Session Timings",
-      value: `${details?.sessionStartTime} - ${details?.sessionEndTime}`,
+      value: details?.sessionStartTime && details?.sessionEndTime
+        ? `${details?.sessionStartTime} - ${details?.sessionEndTime}`
+        : null,
     },
     {
       label: "Zoom Link",
       value: details?.zoomLink,
       url: true,
     },
-  ];
+  ].filter(item => item && item.value != null);
   return (
     <div>
       <Wrapper>
