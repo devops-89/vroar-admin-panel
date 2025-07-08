@@ -146,7 +146,7 @@ const AddNewQuestion = ({ getDetails }) => {
           setLoading(false);
         })
         .catch((err) => {
-          console.log("first", err);
+          // console.log("first", err);
           dispatch(
             setToast({
               message:
