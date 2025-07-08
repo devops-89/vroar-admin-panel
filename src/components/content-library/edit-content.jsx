@@ -443,7 +443,7 @@ const EditContent = () => {
               fullWidth
               value={state.contentLink}
               onChange={handleInputChange}
-              disabled={loading || isDetailsLoading}
+              disabled={true}
               error={errors.contentLink}
               helperText={errors.contentLink}
               label="Content Link"
