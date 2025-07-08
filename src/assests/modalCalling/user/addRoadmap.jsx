@@ -54,6 +54,18 @@ const AddRoadmap = ({ getJourney }) => {
         ],
         userId: userId,
       };
+      // console.log("road", body.roadmapJourneyIds);
+      if (body.roadmapJourneyIds.length === 0) {
+        dispatch(
+          setToast({
+            open: true,
+            message: "Please select at least one roadmap",
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
+        return;
+      }
       try {
         await studentJourneyValidationSchema.validate(body, {
           abortEarly: false,
@@ -121,6 +133,8 @@ const AddRoadmap = ({ getJourney }) => {
         "careerRoadmap",
         value.map((val) => val.id)
       );
+    } else {
+      formik.setFieldValue("careerRoadmap", []);
     }
   };
   const strengthSelectHandler = (e, value) => {
@@ -130,6 +144,8 @@ const AddRoadmap = ({ getJourney }) => {
         "strengthRoadmap",
         value.map((val) => val.id)
       );
+    } else {
+      formik.setFieldValue("strengthRoadmap", []);
     }
   };
 
@@ -140,6 +156,8 @@ const AddRoadmap = ({ getJourney }) => {
         "treksRoadmap",
         newValue.map((val) => val.id)
       );
+    } else {
+      formik.setFieldValue("treksRoadmap", []);
     }
   };
 
@@ -265,6 +283,10 @@ const AddRoadmap = ({ getJourney }) => {
                   onDelete={() => {
                     const newCareer = career.filter((_, i) => i !== index);
                     setCareer(newCareer);
+                    formik.setFieldValue(
+                      "careerRoadmap",
+                      newCareer.map((val) => val.id)
+                    );
                   }}
                 />
               );
@@ -321,6 +343,10 @@ const AddRoadmap = ({ getJourney }) => {
                   onDelete={() => {
                     const newStrengths = strength.filter((_, i) => i !== index);
                     setStrength(newStrengths);
+                    formik.setFieldValue(
+                      "strengthRoadmap",
+                      newStrengths.map((val) => val.id)
+                    );
                   }}
                 />
               );
@@ -379,6 +405,10 @@ const AddRoadmap = ({ getJourney }) => {
                   onDelete={() => {
                     const newIndustry = industry.filter((_, i) => i !== index);
                     setIndustry(newIndustry);
+                    formik.setFieldValue(
+                      "industryRoadmap",
+                      newIndustry.map((val) => val.id)
+                    );
                   }}
                 />
               );
@@ -440,6 +470,10 @@ const AddRoadmap = ({ getJourney }) => {
                       (_, i) => i !== index
                     );
                     setSoftSkills(newSoftSkills);
+                    formik.setFieldValue(
+                      "softSkillsRoadmap",
+                      newSoftSkills.map((val) => val.id)
+                    );
                   }}
                 />
               );
@@ -497,6 +531,10 @@ const AddRoadmap = ({ getJourney }) => {
                   onDelete={() => {
                     const myTreks = treks.filter((_, i) => i !== index);
                     setTreks(myTreks);
+                    formik.setFieldValue(
+                      "treksRoadmap",
+                      myTreks.map((val) => val.id)
+                    );
                   }}
                 />
               );

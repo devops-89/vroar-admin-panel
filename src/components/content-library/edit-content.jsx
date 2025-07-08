@@ -299,20 +299,22 @@ const EditContent = () => {
     try {
       // Validate quiz if enabled
       let cleanedQuestions = [];
-      if (state.isQuizEnabled) {
-        const { cleanedQuestions: cq, errors } = getQuizData(questions);
-        if (errors.length > 0) {
-          dispatch(
-            setToast({
-              open: true,
-              message: errors.join("\n"),
-              severity: ToastStatus.ERROR,
-            })
-          );
-          setIsDetailsLoading(false);
-          return;
+      if (!content.quiz) {
+        if (state.isQuizEnabled) {
+          const { cleanedQuestions: cq, errors } = getQuizData(questions);
+          if (errors.length > 0) {
+            dispatch(
+              setToast({
+                open: true,
+                message: errors.join("\n"),
+                severity: ToastStatus.ERROR,
+              })
+            );
+            setIsDetailsLoading(false);
+            return;
+          }
+          cleanedQuestions = cq;
         }
-        cleanedQuestions = cq;
       }
 
       let contentLink = state.contentLink;
@@ -409,7 +411,6 @@ const EditContent = () => {
             return;
           }
         }
-       
       }
 
       setIsDetailsLoading(false);

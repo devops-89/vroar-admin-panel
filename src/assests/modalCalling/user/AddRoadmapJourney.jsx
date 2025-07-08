@@ -344,6 +344,10 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
                   onDelete={() => {
                     const newCareer = career.filter((_, i) => i !== index);
                     setCareer(newCareer);
+                    formik.setFieldValue(
+                      "careerRoadmap",
+                      newCareer.map((val) => val.id)
+                    );
                   }}
                 />
               );
@@ -400,6 +404,10 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
                   onDelete={() => {
                     const newIndustry = industry.filter((_, i) => i !== index);
                     setIndustry(newIndustry);
+                    formik.setFieldValue(
+                      "industryRoadmap",
+                      newIndustry.map((val) => val.id)
+                    );
                   }}
                 />
               );
@@ -458,6 +466,10 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
                   onDelete={() => {
                     const newStrengths = strength.filter((_, i) => i !== index);
                     setStrength(newStrengths);
+                    formik.setFieldValue(
+                      "strengthRoadmap",
+                      newStrengths.map((val) => val.id)
+                    );
                   }}
                 />
               );
@@ -520,6 +532,10 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
                       (_, i) => i !== index
                     );
                     setSoftSkills(newSoftSkills);
+                    formik.setFieldValue(
+                      "softSkillsRoadmap",
+                      newSoftSkills.map((val) => val.id)
+                    );
                   }}
                 />
               );
@@ -576,8 +592,12 @@ const AddRoadmapJourney = ({ getJourney, journeyData }) => {
                   key={key}
                   removable={true}
                   onDelete={() => {
-                    const newSoftSkills = treks.filter((_, i) => i !== index);
-                    setTreks(newSoftSkills);
+                    const newTreks = treks.filter((_, i) => i !== index);
+                    setTreks(newTreks);
+                    formik.setFieldValue(
+                      "treksRoadmap",
+                      newTreks.map((val) => val.id)
+                    );
                   }}
                 />
               );
