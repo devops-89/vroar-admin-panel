@@ -197,9 +197,7 @@ export const editAdListValidataitonSchema = Yup.object({
   //   }
   // ),
 
-  zoomLink: Yup.string()
-    .optional()
-    .url("Please Enter Valid Url"),
+  zoomLink: Yup.string().optional().url("Please Enter Valid Url"),
 
   eventType: Yup.string().required("Please Select Event Type"),
 
@@ -399,10 +397,10 @@ export const newAddContentValidationSchema = Yup.object().shape({
       "Name cannot be only whitespace",
       (value) => value && value.trim().length > 0
     )
-    .matches(
-      /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
-      "Name cannot contain special characters except for basic punctuation"
-    )
+    // .matches(
+    //   /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
+    //   "Name cannot contain special characters except for basic punctuation"
+    // )
     .min(2, "Name should be more than 2 characters")
     .max(255, "Name is Too Long!"),
 
@@ -418,10 +416,10 @@ export const newAddContentValidationSchema = Yup.object().shape({
       "Description cannot be only whitespace",
       (value) => value && value.trim().length > 0
     )
-    .matches(
-      /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
-      "Description cannot contain special characters except for basic punctuation"
-    )
+    // .matches(
+    //   /^[a-zA-Z0-9\s.,!?()'";\-:]+$/,
+    //   "Description cannot contain special characters except for basic punctuation"
+    // )
     .max(500, "Only 500 characters allowed")
     .min(2, "Description is too short!"),
 
