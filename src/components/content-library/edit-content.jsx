@@ -317,7 +317,7 @@ const EditContent = () => {
         try {
           const { filePath, fileName } =
             await metaDataController.getUploadContentFile(data);
-          contentLink = filePath; 
+          contentLink = filePath;
           contentFileName = fileName;
         } catch (error) {
           dispatch(
@@ -468,8 +468,8 @@ const EditContent = () => {
             onMetadataChange={handleMetadataChange}
             disabled={loading || isDetailsLoading}
           />
-          {state.contentType.label !== CONTENT_TYPE.ASSIGNMENT && (
-            <Stack direction={"row"} justifyContent={"space-between"}>
+          <Stack direction={"row"} justifyContent={"space-between"}>
+            {state.contentType.label !== CONTENT_TYPE.ASSIGNMENT && (
               <FormControlLabel
                 control={
                   <Checkbox
@@ -486,24 +486,24 @@ const EditContent = () => {
                   </Typography>
                 }
               />
-              {state.quizId && (
-                <FormControlLabel
-                  label={
-                    <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
-                      Quiz {state.isQuizActive ? "Active" : "InActive"}
-                    </Typography>
-                  }
-                  control={
-                    <Switch
-                      onChange={handleEditQuizStatus}
-                      color="success"
-                      checked={state.isQuizActive}
-                    />
-                  }
-                />
-              )}
-            </Stack>
-          )}
+            )}
+            {state.quizId && (
+              <FormControlLabel
+                label={
+                  <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                    Quiz {state.isQuizActive ? "Active" : "InActive"}
+                  </Typography>
+                }
+                control={
+                  <Switch
+                    onChange={handleEditQuizStatus}
+                    color="success"
+                    checked={state.isQuizActive}
+                  />
+                }
+              />
+            )}
+          </Stack>
 
           {state.isQuizEnabled && (
             <QuizBuilder
