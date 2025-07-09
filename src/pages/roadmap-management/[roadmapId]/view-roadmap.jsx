@@ -302,13 +302,17 @@ const ViewRoadmap = () => {
                         value: data.content?.contentType,
                       },
                       ...(data.content?.contentLink
-                        ? [{
-                            label: "Content",
-                            value: data.content?.contentFileName || data.content?.contentLink,
-                            url: data.content?.contentLink,
-                            type: data.content?.contentType,
-                            content: data.content,
-                          }]
+                        ? [
+                            {
+                              label: "Content",
+                              value:
+                                data.content?.contentFileName ||
+                                data.content?.contentLink,
+                              url: data.content?.contentLink,
+                              type: data.content?.contentType,
+                              content: data.content,
+                            },
+                          ]
                         : []),
                       {
                         label: "Time Required",
@@ -351,7 +355,8 @@ const ViewRoadmap = () => {
                                 sx={{
                                   fontSize: 14,
                                   fontFamily: roboto.style,
-                                  width: 200,
+                                  minWidth: 300,
+                                  maxWidth: 300,
                                 }}
                               >
                                 {val.label}
@@ -376,6 +381,8 @@ const ViewRoadmap = () => {
                                   sx={{
                                     fontSize: 14,
                                     fontFamily: roboto.style,
+                                    whiteSpace: "pre-wrap",
+                                    maxWidth: 700,
                                   }}
                                 >
                                   {val.value}
