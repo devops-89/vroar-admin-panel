@@ -330,6 +330,7 @@ export const CONTENT_TYPE = {
 export const QUIZ_TYPE = {
   OBJECTIVE_QUIZ: "Objective",
   SUBJECTIVE_QUIZ: "Subjective",
+  BOTH: "Both",
 };
 
 export const ROADMAP_TENURE = {

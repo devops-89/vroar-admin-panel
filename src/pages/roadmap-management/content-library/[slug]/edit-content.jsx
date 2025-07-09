@@ -23,7 +23,7 @@ const EditContentLibrary = () => {
                   url: "/roadmap-management/content-library",
                 },
                 {
-                  label: "Add New Content",
+                  label: "Edit Content",
                   url: "/roadmap-management/content-library/add-new-content",
                 },
               ]}

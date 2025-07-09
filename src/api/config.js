@@ -34,7 +34,7 @@ const attachAccessToken = (instance) => {
     return config;
   });
 };
-
+// new code deployed
 
 [
   securedApi,

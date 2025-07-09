@@ -31,7 +31,7 @@ const SessionTable = ({ sessionData, loading }) => {
           </TableHead>
           {loading ? (
             <TableBody>
-              <TableRow >
+              <TableRow>
                 <TableCell colSpan={12} align="center">
                   <Loading
                     type="bars"
@@ -54,12 +54,16 @@ const SessionTable = ({ sessionData, loading }) => {
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                      {moment(val.meetingTime).format("YYYY-MMM-DD")}
+                      {val.meetingTime
+                        ? moment(val.meetingTime).format("YYYY-MMM-DD")
+                        : "--"}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                      {moment(val.meetingTime).format("hh:mm A")}
+                      {val.meetingTime
+                        ? moment(val.meetingTime).format("hh:mm A")
+                        : "--"}
                     </Typography>
                   </TableCell>
                   <TableCell>

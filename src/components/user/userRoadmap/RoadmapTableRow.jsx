@@ -19,6 +19,7 @@ import moment from "moment";
 import React from "react";
 import { useDispatch } from "react-redux";
 import CollapseTableCell from "./CollapseTableCell";
+import { ROADMAP_STATUS } from "@/utils/enum";
 
 const RoadmapTableRow = ({ i, val, handleToggle, open, getJourney }) => {
   const dispatch = useDispatch();
@@ -60,7 +61,14 @@ const RoadmapTableRow = ({ i, val, handleToggle, open, getJourney }) => {
           </Typography>
         </TableCell>
         <TableCell align="start">
-          <CustomChip label={val.status} variant={val.status} />
+          <CustomChip
+            label={
+              val.status === "IN_PROGRESS"
+                ? ROADMAP_STATUS.In_PROGRESS
+                : val.status
+            }
+            variant={val.status}
+          />
         </TableCell>
         <TableCell>
           <Button
@@ -85,7 +93,11 @@ const RoadmapTableRow = ({ i, val, handleToggle, open, getJourney }) => {
           colSpan={6}
         >
           <Collapse in={open === i} timeout="auto" unmountOnExit>
-            <CollapseTableCell data={val.roadmapJourneys} journey={val} getJourney={getJourney} />
+            <CollapseTableCell
+              data={val.roadmapJourneys}
+              journey={val}
+              getJourney={getJourney}
+            />
           </Collapse>
         </TableCell>
       </TableRow>

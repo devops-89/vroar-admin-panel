@@ -1,11 +1,13 @@
 import { metaDataController } from "@/api/metaDataController";
 import { hideModal } from "@/redux/reducers/modal";
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS, ToastStatus } from "@/utils/enum";
+import { COLORS, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
+import { quizType } from "@/utils/genericArray";
 import { loginTextField } from "@/utils/styles";
 import { Close } from "@mui/icons-material";
 import {
+  Autocomplete,
   Box,
   Button,
   Checkbox,
@@ -26,21 +28,36 @@ const EditQuizQuestion = ({ value, getDetails }) => {
   const router = useRouter();
   const { slug } = router.query;
 
-  // console.log("value",value)
-  // console.log("ge",value)
-
+  const [questionType, setQuestionType] = useState(null);
   const [state, setState] = useState({
-    question: value.question,
-    options: value.options,
+    questionText: value.questionText,
+    options: [
+      { id: 1, optionText: "", isCorrect: false },
+      { id: 2, optionText: "", isCorrect: false },
+      { id: 3, optionText: "", isCorrect: false },
+      { id: 4, optionText: "", isCorrect: false },
+    ],
     subText: value.subText,
+    questionType: null,
   });
-
   useEffect(() => {
     setState({
-      question: value.question,
-      options: value.options,
+      questionText: value.questionText,
+      options:
+        value.questionType === QUIZ_TYPE.OBJECTIVE_QUIZ
+          ? Array.isArray(value.options) && value.options.length > 0
+            ? value.options
+            : [
+                { id: 1, optionText: "", isCorrect: false },
+                { id: 2, optionText: "", isCorrect: false },
+                { id: 3, optionText: "", isCorrect: false },
+                { id: 4, optionText: "", isCorrect: false },
+              ]
+          : [],
       subText: value.subText,
+      questionType: value.questionType,
     });
+    setQuestionType({ value: value.questionType, label: value.questionType });
   }, [value]);
 
   const changeHandler = (e) => {
@@ -69,6 +86,27 @@ const EditQuizQuestion = ({ value, getDetails }) => {
     dispatch(hideModal());
   };
 
+  const handleChangeQuestionType = (e, newValue) => {
+    setQuestionType(newValue);
+    if (newValue) {
+      setState((prev) => ({
+        ...prev,
+        questionType: newValue.label,
+        options:
+          newValue.label === QUIZ_TYPE.OBJECTIVE_QUIZ
+            ? [
+                { id: 1, optionText: "", isCorrect: false },
+                { id: 2, optionText: "", isCorrect: false },
+                { id: 3, optionText: "", isCorrect: false },
+                { id: 4, optionText: "", isCorrect: false },
+              ]
+            : [],
+        subText:
+          newValue.label === QUIZ_TYPE.SUBJECTIVE_QUIZ ? "" : prev.subText,
+      }));
+    }
+  };
+
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
@@ -78,10 +116,24 @@ const EditQuizQuestion = ({ value, getDetails }) => {
 
     const body = {
       questionId: value.id,
-      question: state.question,
+      question: state.questionText,
       ...(cleanedOptions.length && { options: cleanedOptions }),
       ...(state.subText && { subText: state.subText }),
     };
+
+    const isOptionCorrect = cleanedOptions.some((val) => val.isCorrect);
+    // if (questionType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
+    //   if (!isOptionCorrect) {
+    //     dispatch(
+    //       setToast({
+    //         open: true,
+    //         message: "Please select at least one option",
+    //         severity: ToastStatus.ERROR,
+    //       })
+    //     );
+    //     return;
+    //   }
+    // }
 
     setLoading(true);
 
@@ -125,16 +177,30 @@ const EditQuizQuestion = ({ value, getDetails }) => {
       </Stack>
 
       <Stack spacing={2} mt={2}>
+        <Autocomplete
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Quiz Type"
+              sx={{ ...loginTextField }}
+            />
+          )}
+          options={quizType}
+          value={questionType}
+          onChange={handleChangeQuestionType}
+          disabled
+        />
         <TextField
           sx={{ ...loginTextField }}
-          label="Question"
-          value={state.question}
+          // label="Question"
+          value={state.questionText}
           onChange={changeHandler}
-          id="question"
+          id="questionText"
+          // focused={Boolean(state.question)}
         />
 
         <Box mt={1}>
-          {state.options ? (
+          {state.questionType === QUIZ_TYPE.OBJECTIVE_QUIZ ? (
             state.options.map((val, i) => (
               <Stack mt={3} key={val.id || i}>
                 <Stack direction="row" alignItems="center" spacing={2}>
