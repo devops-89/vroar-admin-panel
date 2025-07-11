@@ -27,10 +27,18 @@ authenticationStripeCustomerURL.interceptors.request.use((config) => {
   return config;
 });
 
+const getValidToken = (key) => {
+  const token = localStorage.getItem(key);
+  if (!token || token === "null" || token === "undefined") return null;
+  return token;
+};
+
 const attachAccessToken = (instance) => {
   instance.interceptors.request.use((config) => {
-    const login_token = localStorage.getItem("accessToken");
-    config.headers.accessToken = login_token;
+    const login_token = getValidToken("accessToken");
+    if (login_token) {
+      config.headers.accessToken = login_token;
+    }
     return config;
   });
 };
@@ -47,8 +55,8 @@ const attachAccessToken = (instance) => {
 
 const refreshToken = async () => {
   try {
-    const refresh_token = localStorage.getItem("refreshToken");
-    const access_token = localStorage.getItem("accessToken");
+    const refresh_token = getValidToken("refreshToken");
+    const access_token = getValidToken("accessToken");
     
     if (!refresh_token || !access_token) {
       localStorage.clear();
@@ -69,8 +77,9 @@ const refreshToken = async () => {
       }
     );
     const newAccessToken = response.data.accessToken;
-    localStorage.setItem("accessToken", newAccessToken);
-    localStorage.setItem("refreshToken", response.data.refreshToken);
+    const newRefreshToken = response.data.refreshToken;
+    localStorage.setItem("accessToken", newAccessToken || "");
+    localStorage.setItem("refreshToken", newRefreshToken || "");
     return newAccessToken;
   } catch (error) {
     localStorage.clear();

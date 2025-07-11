@@ -7,6 +7,7 @@ const nextConfig = {
       "vroar-prod.s3.us-west-1.amazonaws.com",
       "vroar-bucket.s3.us-west-1.amazonaws.com",
       "dev.accounts.mytreks.ai",
+      "s3.us-west-1.amazonaws.com",
     ],
   },
 };

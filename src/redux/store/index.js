@@ -5,6 +5,7 @@ import modalReducer from "../reducers/modal";
 import sideBarReducer from "../reducers/sidebarCollapse";
 import ADMINREDUCER from "../reducers/user";
 import Content_Details from "../reducers/contentDetails";
+import tabs_value from "../reducers/profileTabs";
 export default configureStore({
   reducer: {
     Toast: toastReducer,
@@ -13,7 +14,7 @@ export default configureStore({
     sideBarCollapse: sideBarReducer,
     AdminDetails: ADMINREDUCER,
     ContentDetails: Content_Details,
-   
+    TabsValue: tabs_value,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

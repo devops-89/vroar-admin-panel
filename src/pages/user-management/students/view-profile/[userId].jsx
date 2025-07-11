@@ -13,6 +13,7 @@ import StudentProfile from "@/components/user/studentProfile";
 import Roadmap from "@/components/user/userRoadmap/roadmap";
 import Wrapper from "@/components/wrapper";
 import { showModal } from "@/redux/reducers/modal";
+import { setTabs } from "@/redux/reducers/profileTabs";
 import { setUserDetails } from "@/redux/reducers/userInformation";
 import { COLORS, PROFILE_DATA } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
@@ -32,16 +33,23 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const UserProfile = () => {
   const router = useRouter();
   const { userId } = router.query;
-
+  const tabs = useSelector((state) => state.TabsValue);
+  console.log("tabs", tabs.value);
   const [value, setValue] = useState(0);
   const [tabsValue, setTabsValue] = useState("");
+  const dispatch = useDispatch();
   const tabChangeHandler = (e, newValue) => {
-    setValue(newValue);
+    dispatch(
+      setTabs({
+        value: newValue,
+      })
+    );
+
     setTabsValue(e.target.innerText);
   };
   const [roadmapData, setRoadmapData] = useState([]);
@@ -85,7 +93,6 @@ const UserProfile = () => {
     dispatch(showModal(<RewardPoints getPoints={getRewardCoins} />));
   };
 
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
 
   const getUserInformationByUserId = (id) => {
@@ -108,6 +115,11 @@ const UserProfile = () => {
       getUserInformationByUserId(userId);
     }
   }, [userId]);
+
+  useEffect(() => {
+    setValue(tabs?.value);
+  }, [tabs?.value]);
+
 
   return (
     <div>

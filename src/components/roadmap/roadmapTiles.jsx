@@ -237,13 +237,33 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
                   options={contentLists[index] || []}
                   getOptionLabel={(option) => option?.name || ""}
                   renderOption={(props, option) => (
-                    <Box {...props}>
-                      <Typography
-                        sx={{ fontSize: 16, fontFamily: roboto.style }}
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      justifyContent="space-between"
+                    >
+                      <Box {...props} sx={{ width: "100%" }}>
+                        <Typography
+                          sx={{ fontSize: 16, fontFamily: roboto.style }}
+                        >
+                          {option.name}
+                        </Typography>
+                        {/* </Stack> */}
+                      </Box>
+                      <Button
+                        sx={{
+                          width: 150,
+                          fontSize: 12,
+                          color: COLORS.PRIMARY,
+                          fontFamily: roboto.style,
+                        }}
+                        LinkComponent={"a"}
+                        href={`/roadmap-management/content-library/${option.id}/view-content`}
+                        target="_blank"
                       >
-                        {option.name}
-                      </Typography>
-                    </Box>
+                        View Details
+                      </Button>
+                    </Stack>
                   )}
                   value={
                     (contentLists[index] || []).find(
@@ -285,7 +305,7 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
                   inputProps={{
                     min: 1,
                     max: 180,
-                    step: 1
+                    step: 1,
                   }}
                 />
                 {errors[index]?.time && (
@@ -313,7 +333,7 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
                   inputProps={{
                     min: 1,
                     max: 999,
-                    step: 1
+                    step: 1,
                   }}
                 />
                 {errors[index]?.points && (
