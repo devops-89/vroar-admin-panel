@@ -248,7 +248,6 @@ const RoadmapTiles = ({ tiles, setTiles, errors, setErrors }) => {
                         >
                           {option.name}
                         </Typography>
-                        {/* </Stack> */}
                       </Box>
                       <Button
                         sx={{
