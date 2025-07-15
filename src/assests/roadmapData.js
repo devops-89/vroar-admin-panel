@@ -43,6 +43,9 @@ export const CONTENT_HEADER = [
     label: "Type",
   },
   {
+    label: "Quiz Enabled",
+  },
+  {
     label: "Tags",
   },
   {
@@ -327,6 +330,9 @@ export const CONTENT_TYPE_DATA = [
   },
   {
     label: CONTENT_TYPE.READ_REFLECT,
+  },
+  {
+    label: CONTENT_TYPE.FEEDBACK,
   },
 ];
 

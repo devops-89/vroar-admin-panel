@@ -59,6 +59,9 @@ export const contentType = [
   {
     label: CONTENT_TYPE.READ_REFLECT,
   },
+  {
+    label: CONTENT_TYPE.FEEDBACK,
+  },
 ];
 
 export const assessmentTypeArray = [

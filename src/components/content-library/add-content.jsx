@@ -137,7 +137,7 @@ const AddContent = () => {
         // Validate quiz if enabled
         let cleanedQuestions = [];
         if (values.isQuizEnabled) {
-          const { cleanedQuestions: cq, errors } = getQuizData();
+          const { cleanedQuestions: cq, errors } = getQuizData(content);
           if (errors.length > 0) {
             dispatch(
               setToast({
@@ -356,7 +356,7 @@ const AddContent = () => {
     }
   };
 
-  const getQuizData = () => {
+  const getQuizData = (content) => {
     const errors = [];
     const cleanedQuestions = quizData.map((q, idx) => {
       const { id, ...questionWithoutId } = q;
@@ -393,7 +393,8 @@ const AddContent = () => {
             } must have at least 4 options with text.`
           );
         }
-        if (!validOptions.some((opt) => opt.isCorrect)) {
+        // Only require at least one correct option if not Feedback
+        if (content?.label !== "Feedback" && !validOptions.some((opt) => opt.isCorrect)) {
           errors.push(
             `Objective Question ${
               idx + 1
@@ -528,7 +529,7 @@ const AddContent = () => {
             />
           )}
           {formik.values.isQuizEnabled && (
-            <AddQuiz onQuizChange={setQuizData} />
+            <AddQuiz onQuizChange={setQuizData} content={content} />
           )}
 
           <Button

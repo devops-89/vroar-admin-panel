@@ -7,10 +7,14 @@ import { COLORS, CONTENT_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import withAuth from "@/utils/withAuth";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Backdrop,
   Box,
   Button,
   Card,
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -25,6 +29,7 @@ import { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { IoClose } from "react-icons/io5";
+import { ExpandMore } from "@mui/icons-material";
 
 // ContentViewer component to handle different content types
 const ContentViewer = ({ content, onClose }) => {
@@ -277,6 +282,33 @@ const ViewRoadmap = () => {
                       </Typography>
                     </Stack>
                   ))}
+                  <Stack direction={"row"} alignItems={"center"} spacing={4}>
+                    <Typography
+                      sx={{
+                        fontFamily: roboto.style,
+                        fontWeight: 500,
+                        fontSize: 14,
+                        width: 200,
+                      }}
+                    >
+                      Assigned Users
+                    </Typography>
+                    <Stack direction={"row"} alignItems="center" spacing={1}>
+                      {roadmapData?.users.map((val, i) => (
+                        <Button
+                          sx={{
+                            backgroundColor: COLORS.SIGNED_UP,
+                            color: COLORS.SIGNED_UP_TEXT,
+                            borderRadius: 20,
+                            minWidth: 100,
+                          }}
+                          key={i}
+                        >
+                          {val.firstName} {val.lastName}
+                        </Button>
+                      ))}
+                    </Stack>
+                  </Stack>
                 </Stack>
               </Box>
               <Divider sx={{ mt: 2 }} />
@@ -326,6 +358,10 @@ const ViewRoadmap = () => {
                         label: "Description",
                         value: data.description,
                       },
+                      data.content?.quiz && {
+                        label: "Quiz",
+                        value: data.content?.quiz?.quizQuestions,
+                      },
                     ];
 
                     return (
@@ -345,11 +381,12 @@ const ViewRoadmap = () => {
                           Tile {index + 1}
                         </Typography>
                         <Stack alignItems={"flex-start"} spacing={1}>
-                          {newData.map((val, i) => (
+                          {newData.filter(Boolean).map((val, i) => (
                             <Stack
                               direction={"row"}
                               alignItems={"center"}
                               key={i}
+                              sx={{ width: "100%" }}
                             >
                               <Typography
                                 sx={{
@@ -361,33 +398,75 @@ const ViewRoadmap = () => {
                               >
                                 {val.label}
                               </Typography>
-                              {val.content ? (
-                                <Typography
-                                  sx={{
-                                    fontSize: 14,
-                                    fontFamily: roboto.style,
-                                    cursor: "pointer",
-                                    textDecoration: "underline",
-                                    color: COLORS.DARKBLUE,
-                                  }}
-                                  onClick={() =>
-                                    handleContentClick(val.content)
-                                  }
-                                >
-                                  {val.value || "View Content"}
-                                </Typography>
-                              ) : (
-                                <Typography
-                                  sx={{
-                                    fontSize: 14,
-                                    fontFamily: roboto.style,
-                                    whiteSpace: "pre-wrap",
-                                    maxWidth: 700,
-                                  }}
-                                >
-                                  {val.value}
-                                </Typography>
-                              )}
+                              <Box>
+                                {val.content ? (
+                                  <Typography
+                                    sx={{
+                                      fontSize: 14,
+                                      fontFamily: roboto.style,
+                                      cursor: "pointer",
+                                      textDecoration: "underline",
+                                      color: COLORS.DARKBLUE,
+                                    }}
+                                    onClick={() =>
+                                      handleContentClick(val.content)
+                                    }
+                                  >
+                                    {val.value || "View Content"}
+                                  </Typography>
+                                ) : Array.isArray(val.value) ? (
+                                  val.value.map((item, index) => (
+                                    <Stack sx={{ mb: 1 }}>
+                                      <Accordion sx={{ width: "100%" }}>
+                                        <AccordionSummary
+                                          expandIcon={<ExpandMore />}
+                                        >
+                                          <Typography>
+                                            {item.questionText}
+                                          </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                          {item.options ? (
+                                            item.options.map(
+                                              (optionText, indexValue) => (
+                                                <Stack
+                                                  direction={"row"}
+                                                  alignItems={"center"}
+                                                  spacing={2}
+                                                >
+                                                  <Checkbox
+                                                    checked={
+                                                      optionText.isCorrect
+                                                    }
+                                                  />
+                                                  <Typography key={indexValue}>
+                                                    {optionText.optionText}
+                                                  </Typography>
+                                                </Stack>
+                                              )
+                                            )
+                                          ) : (
+                                            <Typography>
+                                              {item.subText}
+                                            </Typography>
+                                          )}
+                                        </AccordionDetails>
+                                      </Accordion>
+                                    </Stack>
+                                  ))
+                                ) : (
+                                  <Typography
+                                    sx={{
+                                      fontSize: 14,
+                                      fontFamily: roboto.style,
+                                      whiteSpace: "pre-wrap",
+                                      maxWidth: 700,
+                                    }}
+                                  >
+                                    {val.value}
+                                  </Typography>
+                                )}
+                              </Box>
                             </Stack>
                           ))}
                         </Stack>
