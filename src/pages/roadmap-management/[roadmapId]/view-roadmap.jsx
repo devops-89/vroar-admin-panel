@@ -332,6 +332,7 @@ const ViewRoadmap = () => {
                       {
                         label: "Content Type",
                         value: data.content?.contentType,
+                        id: data.content?.id,
                       },
                       ...(data.content?.contentLink
                         ? [
@@ -358,10 +359,10 @@ const ViewRoadmap = () => {
                         label: "Description",
                         value: data.description,
                       },
-                      data.content?.quiz && {
-                        label: "Quiz",
-                        value: data.content?.quiz?.quizQuestions,
-                      },
+                      // data.content?.quiz && {
+                      //   label: "Quiz",
+                      //   value: data.content?.quiz?.quizQuestions,
+                      // },
                     ];
 
                     return (
@@ -461,7 +462,12 @@ const ViewRoadmap = () => {
                                       fontFamily: roboto.style,
                                       whiteSpace: "pre-wrap",
                                       maxWidth: 700,
+                                      textDecoration: val.id && "underline",
+                                      cursor: val.id && "pointer",
                                     }}
+                                    component={val.id && "a"}
+                                    href={`/roadmap-management/content-library/${val.id}/view-content`}
+                                    target="_blank"
                                   >
                                     {val.value}
                                   </Typography>

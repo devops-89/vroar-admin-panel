@@ -58,6 +58,9 @@ const UserRoadmapDetails = () => {
       label: "Tile Name",
     },
     {
+      label: "Content Type",
+    },
+    {
       label: "Status",
     },
     {
@@ -149,6 +152,13 @@ const UserRoadmapDetails = () => {
                           sx={{ fontFamily: roboto.style, fontSize: 15 }}
                         >
                           {val.name}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          sx={{ fontFamily: roboto.style, fontSize: 15 }}
+                        >
+                          {val?.content?.contentType}
                         </Typography>
                       </TableCell>
                       <TableCell>
