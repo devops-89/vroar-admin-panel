@@ -44,13 +44,12 @@ const UserProfile = () => {
   const [tabsValue, setTabsValue] = useState("");
   const dispatch = useDispatch();
   const tabChangeHandler = (e, newValue) => {
+    setTabsValue(e.target.innerText);
     dispatch(
       setTabs({
         value: newValue,
       })
     );
-
-    setTabsValue(e.target.innerText);
   };
   const [roadmapData, setRoadmapData] = useState([]);
 
@@ -119,7 +118,6 @@ const UserProfile = () => {
   useEffect(() => {
     setValue(tabs?.value);
   }, [tabs?.value]);
-
 
   return (
     <div>

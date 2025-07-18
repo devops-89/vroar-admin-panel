@@ -27,7 +27,6 @@ const EditQuizQuestion = ({ value, getDetails }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { slug } = router.query;
-  const content = useSelector((state) => state.ContentDetails);
   const [questionType, setQuestionType] = useState(null);
   const [state, setState] = useState({
     questionText: value.questionText,
