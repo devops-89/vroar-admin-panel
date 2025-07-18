@@ -1,4 +1,4 @@
-import userController from "@/api/user";
+import { getUserRoadMapJourney } from "@/assests/apiCalling/userController";
 import AddRoadmap from "@/assests/modalCalling/user/addRoadmap";
 import { RoadmapJourneyHeader } from "@/assests/studentData";
 import { showModal } from "@/redux/reducers/modal";
@@ -6,15 +6,11 @@ import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import {
   AddCircleOutlined,
-  Error,
-  KeyboardArrowDown,
-  KeyboardArrowUp,
-  VisibilityOutlined,
+  Error
 } from "@mui/icons-material";
 import {
   Box,
   Button,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -22,15 +18,13 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Typography,
+  Typography
 } from "@mui/material";
-import moment from "moment";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
 import RoadmapTableRow from "./RoadmapTableRow";
-import { getUserRoadMapJourney } from "@/assests/apiCalling/userController";
 
 const Roadmap = () => {
   const router = useRouter();
@@ -38,6 +32,8 @@ const Roadmap = () => {
   const [open, setOpen] = useState(null);
   // console.log("user", userId);
   const [roadmapData, setRoadmapData] = useState([]);
+
+  console.log("roadmaptdatatad", roadmapData);
   const handletoggle = (index) => {
     setOpen((prev) => (prev === index ? null : index));
   };

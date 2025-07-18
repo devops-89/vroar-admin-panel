@@ -81,7 +81,6 @@ const editRoadmapValidationSchema = Yup.object().shape({
         return !value.includes("  ");
       }
     ),
-  
 });
 
 const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
@@ -93,7 +92,6 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
   const [contentLibraryId, setContentLibraryId] = useState(null);
   const [contentLoading, setContentLoading] = useState(true);
   const [loading, setLoading] = useState(false);
-
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -135,8 +133,6 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
       submitHandler(body);
     },
   });
-
-  
 
   const submitHandler = (body) => {
     setLoading(true);
@@ -380,11 +376,30 @@ const EditRoadmap = ({ value, sequence, getRoadmapDetails }) => {
             options={contentList}
             getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
-              <Box {...props}>
-                <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
-                  {option.name}
-                </Typography>
-              </Box>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                justifyContent="space-between"
+              >
+                <Box {...props} sx={{ width: "100%" }}>
+                  <Typography sx={{ fontSize: 16, fontFamily: roboto.style }}>
+                    {option.name}
+                  </Typography>
+                </Box>
+                <Button
+                  sx={{
+                    width: 150,
+                    fontSize: 12,
+                    color: COLORS.PRIMARY,
+                    fontFamily: roboto.style,
+                  }}
+                  LinkComponent={"a"}
+                  href={`/roadmap-management/content-library/${option.id}/view-content`}
+                  target="_blank"
+                >
+                  View Details
+                </Button>
+              </Stack>
             )}
             value={contentLibraryId}
             onChange={(e, newValue) =>
