@@ -46,6 +46,7 @@ const AddEvent = () => {
       zoomLink: "",
       eventType: "",
       coins: "",
+      calenderLink: "",
     },
     validationSchema: AddAdListValidationSchema,
     onSubmit: (values) => {
@@ -430,13 +431,29 @@ const AddEvent = () => {
                 <TextField
                   sx={{ ...loginTextField }}
                   fullWidth
-                  label="Insert Zoom Meeting link "
+                  label="Insert Meeting link "
                   onChange={formik.handleChange}
                   error={
                     formik.touched.zoomLink && Boolean(formik.errors.zoomLink)
                   }
                   helperText={formik.touched.zoomLink && formik.errors.zoomLink}
                   id="zoomLink"
+                />
+              </Grid2>
+              <Grid2 size={12}>
+                <TextField
+                  sx={{ ...loginTextField }}
+                  fullWidth
+                  label="Insert CRM link "
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.calenderLink &&
+                    Boolean(formik.errors.calenderLink)
+                  }
+                  helperText={
+                    formik.touched.calenderLink && formik.errors.calenderLink
+                  }
+                  id="calenderLink"
                 />
               </Grid2>
               <Grid2 size={12} textAlign={"end"}>

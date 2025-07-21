@@ -80,6 +80,19 @@ const AddContent = () => {
         return;
       }
 
+      // Make Enable Quiz mandatory for Feedback
+      if (values.contentType === CONTENT_TYPE.FEEDBACK && !values.isQuizEnabled) {
+        dispatch(
+          setToast({
+            open: true,
+            message: 'Enable Quiz is mandatory for Feedback content type.',
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
+        return;
+      }
+
       // youtube validation
       if (values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
         if (!youtubeRegex.test(values?.contentLink)) {
@@ -523,6 +536,8 @@ const AddContent = () => {
                   onChange={(e) =>
                     formik.setFieldValue("isQuizEnabled", e.target.checked)
                   }
+                  // Make checkbox required if Feedback
+                  required={formik.values.contentType === CONTENT_TYPE.FEEDBACK}
                 />
               }
               label="Enable Quiz"
