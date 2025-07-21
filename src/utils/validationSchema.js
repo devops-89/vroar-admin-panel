@@ -131,6 +131,7 @@ export const AddAdListValidationSchema = Yup.object({
       otherwise: (schema) => schema.notRequired(),
     })
     .positive(),
+    calenderLink : Yup.string().required("Please Enter Valid Calendar Link"),
 });
 
 export const editAdListValidataitonSchema = Yup.object({
@@ -209,6 +210,7 @@ export const editAdListValidataitonSchema = Yup.object({
       otherwise: (schema) => schema.notRequired(),
     })
     .positive(),
+  calendarLink: Yup.string().required("Please Enter Valid Calendar Link"),
 });
 
 // export const editAdListValidataitonSchema = Yup.object({

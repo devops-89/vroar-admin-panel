@@ -80,6 +80,19 @@ const AddContent = () => {
         return;
       }
 
+      // Make Enable Quiz mandatory for Feedback
+      if (values.contentType === CONTENT_TYPE.FEEDBACK && !values.isQuizEnabled) {
+        dispatch(
+          setToast({
+            open: true,
+            message: 'Enable Quiz is mandatory for Feedback content type.',
+            severity: ToastStatus.ERROR,
+          })
+        );
+        setLoading(false);
+        return;
+      }
+
       // youtube validation
       if (values.contentType === CONTENT_TYPE.YOUTUBE_VIDEO_LINK) {
         if (!youtubeRegex.test(values?.contentLink)) {
@@ -137,7 +150,7 @@ const AddContent = () => {
         // Validate quiz if enabled
         let cleanedQuestions = [];
         if (values.isQuizEnabled) {
-          const { cleanedQuestions: cq, errors } = getQuizData();
+          const { cleanedQuestions: cq, errors } = getQuizData(content);
           if (errors.length > 0) {
             dispatch(
               setToast({
@@ -356,7 +369,7 @@ const AddContent = () => {
     }
   };
 
-  const getQuizData = () => {
+  const getQuizData = (content) => {
     const errors = [];
     const cleanedQuestions = quizData.map((q, idx) => {
       const { id, ...questionWithoutId } = q;
@@ -393,7 +406,8 @@ const AddContent = () => {
             } must have at least 4 options with text.`
           );
         }
-        if (!validOptions.some((opt) => opt.isCorrect)) {
+        // Only require at least one correct option if not Feedback
+        if (content?.label !== "Feedback" && !validOptions.some((opt) => opt.isCorrect)) {
           errors.push(
             `Objective Question ${
               idx + 1
@@ -522,13 +536,15 @@ const AddContent = () => {
                   onChange={(e) =>
                     formik.setFieldValue("isQuizEnabled", e.target.checked)
                   }
+                  // Make checkbox required if Feedback
+                  required={formik.values.contentType === CONTENT_TYPE.FEEDBACK}
                 />
               }
               label="Enable Quiz"
             />
           )}
           {formik.values.isQuizEnabled && (
-            <AddQuiz onQuizChange={setQuizData} />
+            <AddQuiz onQuizChange={setQuizData} content={content} />
           )}
 
           <Button

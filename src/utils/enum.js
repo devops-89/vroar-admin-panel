@@ -325,6 +325,7 @@ export const CONTENT_TYPE = {
   ASSIGNMENT: "Assignment",
   SESSION: "Session",
   READ_REFLECT: "Read & Reflect",
+  FEEDBACK: "Feedback",
 };
 
 export const QUIZ_TYPE = {
@@ -413,4 +414,9 @@ export const EVENT_TABLE_DATA = {
 export const MEDIA_TYPE = {
   PROFILE: "PROFILE",
   GALLUP_RESULT: "GALLUP_RESULT",
+};
+
+export const QUIZ_ENABLED = {
+  YES: "YES",
+  NO: "NO",
 };

@@ -1,17 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Checkbox,
-  IconButton,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { AddCircleOutlined, Delete, DragIndicator } from "@mui/icons-material";
+import { COLORS, QUIZ_TYPE } from "@/utils/enum";
+import { loginTextField } from "@/utils/styles";
 import {
   DndContext,
   PointerSensor,
@@ -21,8 +9,18 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { loginTextField } from "@/utils/styles";
-import { COLORS, QUIZ_TYPE } from "@/utils/enum";
+import { AddCircleOutlined, Delete, DragIndicator } from "@mui/icons-material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Checkbox,
+  IconButton,
+  Stack,
+  TextField,
+  Typography
+} from "@mui/material";
+import { useEffect, useState } from "react";
 
 const QUIZ_TYPES = [
   { value: QUIZ_TYPE.OBJECTIVE_QUIZ, label: QUIZ_TYPE.OBJECTIVE_QUIZ },
@@ -48,6 +46,7 @@ function DraggableQuestionBox({
   QUIZ_TYPES,
   loginTextField,
   COLORS,
+  content,
 }) {
   const {
     attributes,
@@ -146,6 +145,11 @@ function DraggableQuestionBox({
               />
             </Stack>
           ))}
+          {content?.label !== "Feedback" && !q.options.some(opt => opt.isCorrect) && (
+            <Typography color="error" variant="caption">
+              Please mark at least one option as correct.
+            </Typography>
+          )}
         </>
       )}
       {q.questionType === QUIZ_TYPE.SUBJECTIVE_QUIZ && (
@@ -161,7 +165,7 @@ function DraggableQuestionBox({
   );
 }
 
-const AddQuiz = ({ onQuizChange }) => {
+const AddQuiz = ({ onQuizChange,content }) => {
   const [questions, setQuestions] = useState([
     {
       id: 1,
@@ -258,6 +262,9 @@ const AddQuiz = ({ onQuizChange }) => {
     );
   };
 
+
+  
+
   return (
     <Box sx={{ width: "100%", mx: "auto", mt: 4 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
@@ -283,6 +290,7 @@ const AddQuiz = ({ onQuizChange }) => {
               QUIZ_TYPES={QUIZ_TYPES}
               loginTextField={loginTextField}
               COLORS={COLORS}
+              content={content}
             />
           ))}
         </SortableContext>

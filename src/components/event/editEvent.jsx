@@ -43,8 +43,9 @@ function removeEmptyKeys(obj) {
         value !== null &&
         value !== undefined &&
         // If you want to skip empty arrays/objects too, add:
-        (!(Array.isArray(value)) || value.length > 0) &&
-        (!(typeof value === "object" && !Array.isArray(value)) || Object.keys(value).length > 0)
+        (!Array.isArray(value) || value.length > 0) &&
+        (!(typeof value === "object" && !Array.isArray(value)) ||
+          Object.keys(value).length > 0)
     )
   );
 }
@@ -65,6 +66,7 @@ const EditEventForm = ({ details }) => {
       zoomLink: "",
       coins: "",
       eventType: "",
+      calendarLink: "",
     },
     // validationSchema: editAdListValidataitonSchema,
     onSubmit: (values) => {
@@ -236,6 +238,7 @@ const EditEventForm = ({ details }) => {
         zoomLink: details.zoomLink || "",
         eventType: details.eventType || null,
         coins: details?.coins || null,
+        calendarLink: details?.calendarLink || "",
       });
       setSessionStartDate(moment.unix(details?.sessionStartDate));
       setSessionEndDate(moment.unix(details?.sessionEndDate));
@@ -554,6 +557,24 @@ const EditEventForm = ({ details }) => {
                   id="zoomLink"
                   value={formik.values.zoomLink}
                   focused={formik.values.zoomLink}
+                />
+              </Grid2>
+              <Grid2 size={12}>
+                <TextField
+                  sx={{ ...loginTextField }}
+                  fullWidth
+                  label="Insert Calendar link "
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.calendarLink &&
+                    Boolean(formik.errors.calendarLink)
+                  }
+                  helperText={
+                    formik.touched.calendarLink && formik.errors.calendarLink
+                  }
+                  id="calendarLink"
+                  value={formik.values.calendarLink}
+                  focused={formik.values.calendarLink}
                 />
               </Grid2>
               <Grid2 size={12} textAlign={"end"}>

@@ -16,7 +16,7 @@ import React, { useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
-import { COLORS, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
+import { COLORS, CONTENT_TYPE, QUIZ_TYPE, ToastStatus } from "@/utils/enum";
 import { metaDataController } from "@/api/metaDataController";
 import { setToast } from "@/redux/reducers/toast";
 import { quizType } from "@/utils/genericArray";
@@ -41,6 +41,9 @@ const AddNewQuestion = ({ getDetails }) => {
   const [errors, setErrors] = useState(INITIAL_ERRORS);
   const [questionType, setQuestionType] = useState(QUIZ_TYPE.OBJECTIVE_QUIZ);
   const [answer, setAnswer] = useState("");
+
+  const content = useSelector((state) => state.ContentDetails);
+
   const handleQuestionChange = useCallback(
     (e) => {
       setQuestion(e.target.value);
@@ -109,13 +112,14 @@ const AddNewQuestion = ({ getDetails }) => {
       newErrors = {
         question: !question.trim(),
         options: options.some((option) => !option.optionText.trim()),
-        correctOption: !options.some((option) => option.isCorrect),
+        correctOption:
+          content?.contentType !== CONTENT_TYPE.FEEDBACK &&
+          !options.some((option) => option.isCorrect),
       };
     }
     setErrors(newErrors);
     return !Object.values(newErrors).some((error) => error);
-  }, [question, options, questionType]);
-  const content = useSelector((state) => state.ContentDetails);
+  }, [question, options, questionType, content]);
   const [loading, setLoading] = useState(false);
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
@@ -159,6 +163,7 @@ const AddNewQuestion = ({ getDetails }) => {
         });
     }
   }, [validateForm, question, options, dispatch]);
+
 
   const renderOptions = useMemo(
     () =>
@@ -232,7 +237,7 @@ const AddNewQuestion = ({ getDetails }) => {
           {quizQuestionType?.label === QUIZ_TYPE.OBJECTIVE_QUIZ && (
             <>
               {renderOptions}
-              {errors.correctOption && (
+              {errors.correctOption && content?.label !== "Feedback" && (
                 <Alert severity="error" sx={{ mt: 1 }}>
                   Please select at least one correct option
                 </Alert>
