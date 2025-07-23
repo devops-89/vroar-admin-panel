@@ -20,9 +20,11 @@ import { setToast } from "@/redux/reducers/toast";
 import { ToastStatus } from "@/utils/enum";
 import { useDispatch } from "react-redux";
 import userController from "@/api/user";
+import { useRouter } from "next/router";
 
 const AddMentors = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [academicQualification, setAcademicQualification] = useState([
     {
       institution: "",
@@ -34,7 +36,7 @@ const AddMentors = () => {
 
   const [professionalBackground, setProfessionalBackground] = useState([
     {
-      companyName: "",
+      company: "",
       position: "",
       duration: "",
       description: "",
@@ -54,11 +56,11 @@ const AddMentors = () => {
       avatar: "",
       gender: "",
       birthDate: "",
-      designation: "",
       skills: [],
       careerSummary: "",
       professionalBackground: [],
-      academicQualification: [],
+      academicBackground: [],
+      designation: "",
     },
     validationSchema: addMentorValidationSchema,
     onSubmit: async (values) => {
@@ -89,23 +91,20 @@ const AddMentors = () => {
         }
       }
       // Prepare body for addMentor
-      const isAllAcademicEmpty = values.academicQualification.every(
+      const isAllAcademicEmpty = values.academicBackground.every(
         (item) =>
           !item.institution && !item.degree && !item.fieldOfStudy && !item.year
       );
       const isAllProfessionalEmpty = values.professionalBackground.every(
         (item) =>
-          !item.companyName &&
-          !item.designation &&
-          !item.duration &&
-          !item.description
+          !item.company && !item.position && !item.duration && !item.description
       );
       const body = {
         ...values,
         avatar,
       };
       if (isAllAcademicEmpty) {
-        delete body.academicQualification;
+        delete body.academicBackground;
       }
       if (isAllProfessionalEmpty) {
         delete body.professionalBackground;
@@ -129,6 +128,7 @@ const AddMentors = () => {
         formik.resetForm();
         setAcademicQualification([]);
         setProfessionalBackground([]);
+        router.back();
       })
       .catch((err) => {
         console.log("err", err);
@@ -149,7 +149,7 @@ const AddMentors = () => {
     e.preventDefault();
     setSubmitted(true);
     // Check for incomplete academic qualification
-    const hasIncompleteAcademic = academicQualification.some(
+    const hasIncompleteAcademic = academicBackground.some(
       (item) =>
         item.institution && (!item.degree || !item.fieldOfStudy || !item.year)
     );
@@ -167,8 +167,7 @@ const AddMentors = () => {
     // Check for incomplete professional background
     const hasIncompleteProfessional = professionalBackground.some(
       (item) =>
-        item.companyName &&
-        (!item.designation || !item.duration || !item.description)
+        item.company && (!item.position || !item.duration || !item.description)
     );
     if (hasIncompleteProfessional) {
       dispatch(

@@ -20,14 +20,11 @@ const AcademicQualification = ({
   formik,
   submitted,
 }) => {
-  // Add local state to track errors for each row
   const [rowErrors, setRowErrors] = useState([]);
 
-  // Helper to check if a row is complete
   const isRowComplete = (item) =>
     item.institution && item.degree && item.field && item.year;
 
-  // Helper to get error for a field in a row
   const getFieldError = (item, idx, field) => {
    
     if ((submitted || rowErrors[idx]) && item.institution && !item[field]) {
