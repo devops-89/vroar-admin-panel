@@ -131,7 +131,6 @@ const AddMentors = () => {
         router.back();
       })
       .catch((err) => {
-        console.log("err", err);
         let errorMessage =
           (err.response && err.response.data.message) || err.response;
         dispatch(
