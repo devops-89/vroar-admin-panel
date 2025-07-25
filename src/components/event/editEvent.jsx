@@ -68,7 +68,7 @@ const EditEventForm = ({ details }) => {
       eventType: "",
       calendarLink: "",
     },
-    // validationSchema: editAdListValidataitonSchema,
+    validationSchema: editAdListValidataitonSchema,
     onSubmit: (values) => {
       const newValues = { ...values };
 
@@ -231,17 +231,21 @@ const EditEventForm = ({ details }) => {
         sessionDetails: details.sessionDetails || "",
         sessionStartDate: details.sessionStartDate
           ? details.sessionStartDate
-          : null,
+          : "",
         sessionStartTime: details.sessionStartTime || "",
-        sessionEndDate: details.sessionEndDate ? details.sessionEndDate : null,
+        sessionEndDate: details.sessionEndDate ? details.sessionEndDate : "",
         sessionEndTime: details.sessionEndTime || "",
         zoomLink: details.zoomLink || "",
         eventType: details.eventType || null,
         coins: details?.coins || null,
         calendarLink: details?.calendarLink || "",
       });
-      setSessionStartDate(moment.unix(details?.sessionStartDate));
-      setSessionEndDate(moment.unix(details?.sessionEndDate));
+      setSessionStartDate(
+        details.sessionStartDate ? moment.unix(details.sessionStartDate) : null
+      );
+      setSessionEndDate(
+        details.sessionEndDate ? moment.unix(details.sessionEndDate) : null
+      );
       setSessionEndTime(
         details.sessionEndTime
           ? moment(details.sessionEndTime, "hh:mm A")
@@ -473,6 +477,7 @@ const EditEventForm = ({ details }) => {
                         helperText:
                           formik.touched.sessionStartDate &&
                           formik.errors.sessionStartDate,
+                        placeholder: "DD/MM/YYYY",
                       },
                     }}
                     onChange={sessionStartDateHandler}

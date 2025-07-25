@@ -78,8 +78,7 @@ export const AddAdListValidationSchema = Yup.object({
     .min(2, "Event name is too short!")
     .max(50, "Event name is too long!"),
   speakerName: Yup.string()
-    .required("Please Enter Speaker Name")
-    .trim()
+    .optional()
     .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
     .min(2, "Speaker name is too short!")
     .max(50, "Speaker name is too long!"),
@@ -131,7 +130,7 @@ export const AddAdListValidationSchema = Yup.object({
       otherwise: (schema) => schema.notRequired(),
     })
     .positive(),
-    calenderLink : Yup.string().required("Please Enter Valid Calendar Link"),
+  calenderLink: Yup.string().required("Please Enter Valid Calendar Link"),
 });
 
 export const editAdListValidataitonSchema = Yup.object({
@@ -141,7 +140,7 @@ export const editAdListValidataitonSchema = Yup.object({
     .min(2, "Event name is too short!")
     .max(50, "Event name is too long!"),
 
-  speakerName: Yup.string().required("Please Enter Speaker Name"),
+  speakerName: Yup.string().optional(),
 
   eventDescription: Yup.string()
     .max(1000, "Event Description is too Long!")
