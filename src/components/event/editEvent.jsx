@@ -63,7 +63,7 @@ const EditEventForm = ({ details }) => {
       sessionStartTime: "",
       sessionEndDate: "",
       sessionEndTime: "",
-      zoomLink: "",
+      eventURL: "",
       coins: "",
       eventType: "",
       calenderLink: "",
@@ -550,7 +550,7 @@ const EditEventForm = ({ details }) => {
                     formik.touched.zoomLink && Boolean(formik.errors.zoomLink)
                   }
                   helperText={formik.touched.zoomLink && formik.errors.zoomLink}
-                  id="zoomLink"
+                  id="eventURL"
                   value={formik.values.zoomLink}
                   focused={formik.values.zoomLink}
                 />
