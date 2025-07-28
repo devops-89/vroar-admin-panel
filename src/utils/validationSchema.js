@@ -144,7 +144,7 @@ export const editAdListValidataitonSchema = Yup.object({
 
   eventDescription: Yup.string()
     .max(1000, "Event Description is too Long!")
-    .required("Please Enter Event Description"),
+    .optional(),
 
   speakerSummary: Yup.string()
     .max(1000, "Speaker Summary is too Long!")
@@ -209,7 +209,7 @@ export const editAdListValidataitonSchema = Yup.object({
       otherwise: (schema) => schema.notRequired(),
     })
     .positive(),
-  calendarLink: Yup.string().required("Please Enter Valid Calendar Link"),
+  calenderLink: Yup.string().required("Please Enter Valid Calendar Link"),
 });
 
 // export const editAdListValidataitonSchema = Yup.object({

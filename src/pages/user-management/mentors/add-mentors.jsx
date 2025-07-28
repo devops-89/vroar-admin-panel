@@ -148,7 +148,7 @@ const AddMentors = () => {
     e.preventDefault();
     setSubmitted(true);
     // Check for incomplete academic qualification
-    const hasIncompleteAcademic = academicBackground.some(
+    const hasIncompleteAcademic = academicQualification.some(
       (item) =>
         item.institution && (!item.degree || !item.fieldOfStudy || !item.year)
     );

@@ -1,13 +1,22 @@
+import AddEmployee from "@/assests/modalCalling/user/employee/add-employee";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import CustomTable from "@/components/customTable";
 import EmployeeList from "@/components/user/employee/employee-list";
 import Wrapper from "@/components/wrapper";
+import { showModal } from "@/redux/reducers/modal";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Add } from "@mui/icons-material";
 import { Box, Button, Card, Stack } from "@mui/material";
+import { useDispatch } from "react-redux";
 
 const Employee = () => {
+  const dispatch = useDispatch();
+
+  const addEmployee = () => {
+    dispatch(showModal(<AddEmployee />));
+  };
+
   return (
     <Wrapper>
       <Box sx={{ p: 2 }}>
@@ -39,6 +48,7 @@ const Employee = () => {
                 textTransform: "capitalize",
                 fontFamily: roboto.style,
               }}
+              onClick={addEmployee}
             >
               Add Employee
             </Button>

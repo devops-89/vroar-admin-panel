@@ -66,7 +66,7 @@ const EditEventForm = ({ details }) => {
       zoomLink: "",
       coins: "",
       eventType: "",
-      calendarLink: "",
+      calenderLink: "",
     },
     validationSchema: editAdListValidataitonSchema,
     onSubmit: (values) => {
@@ -208,16 +208,7 @@ const EditEventForm = ({ details }) => {
     }
   };
 
-  // const editEvent = (body) => {
-  //   metaDataController
-  //     .editEvent(body, id)
-  //     .then((res) => {
-  //       console.log("res", res);
-  //     })
-  //     .catch((err) => {
-  //       console.log("err", err);
-  //     });
-  // };
+ 
 
   const [detailLoaing, setDetailLoading] = useState(true);
 
@@ -238,7 +229,7 @@ const EditEventForm = ({ details }) => {
         zoomLink: details.zoomLink || "",
         eventType: details.eventType || null,
         coins: details?.coins || null,
-        calendarLink: details?.calendarLink || "",
+        calenderLink: details?.calenderLink || "",
       });
       setSessionStartDate(
         details.sessionStartDate ? moment.unix(details.sessionStartDate) : null
@@ -553,7 +544,7 @@ const EditEventForm = ({ details }) => {
                 <TextField
                   sx={{ ...loginTextField }}
                   fullWidth
-                  label="Insert Zoom Meeting link "
+                  label="Insert  Meeting link "
                   onChange={formik.handleChange}
                   error={
                     formik.touched.zoomLink && Boolean(formik.errors.zoomLink)
@@ -571,15 +562,15 @@ const EditEventForm = ({ details }) => {
                   label="Insert Calendar link "
                   onChange={formik.handleChange}
                   error={
-                    formik.touched.calendarLink &&
-                    Boolean(formik.errors.calendarLink)
+                    formik.touched.calenderLink &&
+                    Boolean(formik.errors.calenderLink)
                   }
                   helperText={
-                    formik.touched.calendarLink && formik.errors.calendarLink
+                    formik.touched.calenderLink && formik.errors.calenderLink
                   }
-                  id="calendarLink"
-                  value={formik.values.calendarLink}
-                  focused={formik.values.calendarLink}
+                  id="calenderLink"
+                  value={formik.values.calenderLink}
+                  focused={formik.values.calenderLink}
                 />
               </Grid2>
               <Grid2 size={12} textAlign={"end"}>
