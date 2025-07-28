@@ -226,7 +226,7 @@ const EditEventForm = ({ details }) => {
         sessionStartTime: details.sessionStartTime || "",
         sessionEndDate: details.sessionEndDate ? details.sessionEndDate : "",
         sessionEndTime: details.sessionEndTime || "",
-        zoomLink: details.zoomLink || "",
+        eventURL: details.eventURL || "",
         eventType: details.eventType || null,
         coins: details?.coins || null,
         calenderLink: details?.calenderLink || "",
@@ -551,8 +551,8 @@ const EditEventForm = ({ details }) => {
                   }
                   helperText={formik.touched.zoomLink && formik.errors.zoomLink}
                   id="eventURL"
-                  value={formik.values.zoomLink}
-                  focused={formik.values.zoomLink}
+                  value={formik.values.eventURL}
+                  focused={formik.values.eventURL}
                 />
               </Grid2>
               <Grid2 size={12}>
