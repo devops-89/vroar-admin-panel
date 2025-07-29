@@ -21,13 +21,12 @@ import {
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "react-loading";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const EditQuizQuestion = ({ value, getDetails }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { slug } = router.query;
-
   const [questionType, setQuestionType] = useState(null);
   const [state, setState] = useState({
     questionText: value.questionText,
@@ -120,20 +119,6 @@ const EditQuizQuestion = ({ value, getDetails }) => {
       ...(cleanedOptions.length && { options: cleanedOptions }),
       ...(state.subText && { subText: state.subText }),
     };
-
-    const isOptionCorrect = cleanedOptions.some((val) => val.isCorrect);
-    // if (questionType === QUIZ_TYPE.OBJECTIVE_QUIZ) {
-    //   if (!isOptionCorrect) {
-    //     dispatch(
-    //       setToast({
-    //         open: true,
-    //         message: "Please select at least one option",
-    //         severity: ToastStatus.ERROR,
-    //       })
-    //     );
-    //     return;
-    //   }
-    // }
 
     setLoading(true);
 

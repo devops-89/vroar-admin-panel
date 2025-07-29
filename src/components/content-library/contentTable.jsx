@@ -1,5 +1,5 @@
 import { CONTENT_HEADER } from "@/assests/roadmapData";
-import { COLORS, METADATA_TYPE } from "@/utils/enum";
+import { COLORS, METADATA_TYPE, QUIZ_ENABLED } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Remove, Visibility } from "@mui/icons-material";
 import {
@@ -114,17 +114,25 @@ const ContentTable = ({
                       {moment.unix(val.createdAt).format("DD-MM-YYYY")}
                     </Typography>
                   </TableCell>
+
                   <TableCell>
                     <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
                       {val.contentType}
                     </Typography>
                   </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={val.quiz !== null ? QUIZ_ENABLED.YES : QUIZ_ENABLED.NO}
+                      color={val.quiz !== null ? "success" : "error"}
+                      sx={{ width: 100, textTransform: "capitalize" }}
+                      variant="outlined"
+                    />
+                  </TableCell>
                   <TableCell sx={{ width: 200 }}>
                     <Stack
                       direction={"row"}
-                      alignItems={"center"} 
+                      alignItems={"center"}
                       spacing={1}
-                      // flexWrap={"wrap"}
                     >
                       {val.metadataTags.slice(0, 1).map((tag, i) => (
                         <CustomChip variant={tag.type} label={tag.name} />

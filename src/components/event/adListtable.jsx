@@ -101,7 +101,6 @@ const AdListTable = ({
             severity: ToastStatus.SUCCESS,
           })
         );
-        // setLoading(false);
         getEventType();
       })
       .catch((err) => {

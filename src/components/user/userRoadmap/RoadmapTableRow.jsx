@@ -23,6 +23,7 @@ import { ROADMAP_STATUS } from "@/utils/enum";
 
 const RoadmapTableRow = ({ i, val, handleToggle, open, getJourney }) => {
   const dispatch = useDispatch();
+  console.log("new roadmap data", val);
   const handleAddRoadmap = (value) => {
     dispatch(
       showModal(

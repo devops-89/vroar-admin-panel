@@ -2,6 +2,7 @@ import {
   COLORS,
   METADATA_TYPE,
   PAYMENT_STATUS,
+  QUIZ_ENABLED,
   ROADMAP_STATUS,
   USER_ROADMAP_REVIEW_STATUS,
 } from "@/utils/enum";
@@ -28,7 +29,8 @@ const CustomChip = ({ label, variant, removable, onDelete, width }) => {
       variant === ROADMAP_STATUS.PAYMENT_DONE ||
       variant === ROADMAP_STATUS.PUBLISHED ||
       variant === PAYMENT_STATUS.PAID ||
-      variant === USER_ROADMAP_REVIEW_STATUS.COMPLETED
+      variant === USER_ROADMAP_REVIEW_STATUS.COMPLETED ||
+      variant === QUIZ_ENABLED.YES
     ) {
       setBgColor(COLORS.DONE);
       setColor(COLORS.DONE_TEXT);
@@ -47,7 +49,7 @@ const CustomChip = ({ label, variant, removable, onDelete, width }) => {
       setColor(COLORS.SIGNED_UP_TEXT);
     }
 
-    if (variant === PAYMENT_STATUS.UNPAID) {
+    if (variant === PAYMENT_STATUS.UNPAID || variant === QUIZ_ENABLED.NO) {
       setBgColor(COLORS.DANGER_BOX);
       setColor(COLORS.DANGER);
     }

@@ -22,21 +22,26 @@ const ProfessionalBackground = ({
   const [rowErrors, setRowErrors] = useState([]);
 
   const isRowComplete = (item) =>
-    !item.companyName || (item.companyName && item.designation && item.duration && item.description);
+    !item.company ||
+    (item.company && item.position && item.duration && item.description);
 
   const getFieldError = (item, idx, field) => {
     if (item.companyName && (submitted || rowErrors[idx]) && !item[field]) {
-      if (field === "designation") return "Designation is required";
+      if (field === "position") return "Designation is required";
       if (field === "duration") return "Duration is required";
       if (field === "description") return "Description is required";
     }
     if (rowErrors[idx] && item.companyName && !item[field]) {
-      if (field === "designation") return "Designation is required";
+      if (field === "position") return "Designation is required";
       if (field === "duration") return "Duration is required";
       if (field === "description") return "Description is required";
     }
-    if (rowErrors[idx] && !item.companyName && (item.designation || item.duration || item.description)) {
-      if (field === "companyName") return "Company Name is required";
+    if (
+      rowErrors[idx] &&
+      !item.company &&
+      (item.position || item.duration || item.description)
+    ) {
+      if (field === "company") return "Company Name is required";
     }
     return "";
   };
@@ -55,8 +60,8 @@ const ProfessionalBackground = ({
     setProfessionalBackground([
       ...professionalBackground,
       {
-        companyName: "",
-        designation: "",
+        company: "",
+        position: "",
         duration: "",
         description: "",
       },
@@ -72,7 +77,7 @@ const ProfessionalBackground = ({
             <React.Fragment key={i}>
               <Grid2 size={12}>
                 <Stack
-                  direction={"row"} 
+                  direction={"row"}
                   alignItems={"center"}
                   justifyContent={"space-between"}
                 >
@@ -89,7 +94,9 @@ const ProfessionalBackground = ({
                     <IconButton
                       onClick={() =>
                         setProfessionalBackground(
-                          professionalBackground.filter((_, index) => i !== index)
+                          professionalBackground.filter(
+                            (_, index) => i !== index
+                          )
                         )
                       }
                     >
@@ -103,14 +110,14 @@ const ProfessionalBackground = ({
                   label="Company Name"
                   fullWidth
                   sx={{ ...loginTextField }}
-                  value={val.companyName || ""}
+                  value={val.company || ""}
                   onChange={(e) => {
                     const updated = [...professionalBackground];
-                    updated[i] = { ...updated[i], companyName: e.target.value };
+                    updated[i] = { ...updated[i], company: e.target.value };
                     setProfessionalBackground(updated);
                   }}
-                  error={!!getFieldError(val, i, "companyName")}
-                  helperText={getFieldError(val, i, "companyName")}
+                  error={!!getFieldError(val, i, "company")}
+                  helperText={getFieldError(val, i, "company")}
                 />
               </Grid2>
               <Grid2 size={6}>
@@ -118,14 +125,14 @@ const ProfessionalBackground = ({
                   label="Designation"
                   fullWidth
                   sx={{ ...loginTextField }}
-                  value={val.designation || ""}
+                  value={val.position || ""}
                   onChange={(e) => {
                     const updated = [...professionalBackground];
-                    updated[i] = { ...updated[i], designation: e.target.value };
+                    updated[i] = { ...updated[i], position: e.target.value };
                     setProfessionalBackground(updated);
                   }}
-                  error={!!getFieldError(val, i, "designation")}
-                  helperText={getFieldError(val, i, "designation")}
+                  error={!!getFieldError(val, i, "position")}
+                  helperText={getFieldError(val, i, "position")}
                 />
               </Grid2>
               <Grid2 size={6}>
