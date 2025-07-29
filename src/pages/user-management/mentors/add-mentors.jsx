@@ -180,7 +180,7 @@ const AddMentors = () => {
       );
       return;
     }
-    formik.setFieldValue("academicQualification", academicQualification, false);
+    formik.setFieldValue("academicBackground", academicQualification, false);
     formik.setFieldValue(
       "professionalBackground",
       professionalBackground,
