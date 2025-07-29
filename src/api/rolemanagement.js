@@ -87,9 +87,21 @@ export const roleController = {
   },
   getAdminList: async (data) => {
     try {
-      let result = await securedApi.securedApi.post("api/admin/getAllAdmin", {
-        data,
-      });
+      let result = await securedApi.authenticationSecuredApi.post(
+        "/api/admin/getAllAdmin",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addAdmin: async (data) => {
+    try {
+      let result = await securedApi.authenticationSecuredApi.post(
+        "/api/admin/registerUser",
+        data
+      );
       return result;
     } catch (error) {
       throw error;

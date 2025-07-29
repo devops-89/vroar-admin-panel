@@ -1,7 +1,5 @@
-import { roleController } from "@/api/rolemanagement";
 import { hideModal } from "@/redux/reducers/modal";
-import { setToast } from "@/redux/reducers/toast";
-import { COLORS, ToastStatus, USER_GROUP } from "@/utils/enum";
+import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddEmployeevalidationSchema } from "@/utils/validationSchema";
@@ -20,59 +18,29 @@ import { matchIsValidTel, MuiTelInput } from "mui-tel-input";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
-const AddEmployee = () => {
+const EditEmployee = ({ value }) => {
   const dispatch = useDispatch();
 
-  const closeModal = () => {
-    dispatch(hideModal());
-  };
-
+  console.log("Edit Employee Value", value);
   const formik = useFormik({
     initialValues: {
       firstName: "",
       lastName: "",
       phoneNo: "",
-      email: "",
       countryCode: "",
+      email: "",
       password: "",
-      role: USER_GROUP.ADMIN,
     },
     validationSchema: AddEmployeevalidationSchema,
     onSubmit: (values) => {
       console.log("Form Values", values);
-      // Handle form submission logic here
-      submitHandler(values);
     },
   });
-  const [phone, setPhone] = useState(null);
-  const submitHandler = (body) => {
-    roleController
-      .addAdmin(body)
-      .then((res) => {
-        // console.log("res", res);
-        dispatch(
-          setToast({
-            open: true,
-            message: res.data.message,
-            severity: ToastStatus.SUCCESS,
-          })
-        );
-      })
-      .catch((err) => {
-        // console.log("error", err);
-        let errMessage =
-          (err.response && err.response.data.message) ||
-          err.message ||
-          "Something went wrong";
-        dispatch(
-          setToast({
-            open: true,
-            message: errMessage,
-            severity: ToastStatus.ERROR,
-          })
-        );
-      });
+  const closeModal = () => {
+    dispatch(hideModal());
   };
+
+  const [phone, setPhone] = useState("");
   return (
     <Box sx={{ width: 600 }}>
       <Stack
@@ -188,4 +156,4 @@ const AddEmployee = () => {
   );
 };
 
-export default AddEmployee;
+export default EditEmployee;

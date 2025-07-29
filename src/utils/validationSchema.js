@@ -765,3 +765,18 @@ export const quizValidationSchema = Yup.object().shape({
       otherwise: (schema) => schema.notRequired(),
     }),
 });
+
+export const AddEmployeevalidationSchema = Yup.object().shape({
+  firstName: Yup.string()
+    .required("First Name is required")
+    .min(2, "First Name must be at least 2 characters")
+    .max(50, "First Name must not exceed 50 characters"),
+  lastName: Yup.string().required("Last Name is required"),
+  email: Yup.string()
+    .email("Please Enter Valid Email")
+    .required("Please Enter Valid Email"),
+  phoneNo: Yup.string().required("Please Enter Phone Number"),
+  password: Yup.string()
+    .required("Please Enter Password")
+    .min(8, "Password must be at least 8 characters"),
+});

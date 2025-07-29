@@ -2255,7 +2255,7 @@ export const sessionTableHead = [
 
 export const EmployeeTableHeader = [
   {
-    label: "Id",
+    label: "User Id",
   },
   {
     label: "Name",
