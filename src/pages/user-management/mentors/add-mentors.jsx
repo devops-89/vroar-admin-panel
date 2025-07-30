@@ -131,7 +131,6 @@ const AddMentors = () => {
         router.back();
       })
       .catch((err) => {
-        console.log("err", err);
         let errorMessage =
           (err.response && err.response.data.message) || err.response;
         dispatch(
@@ -149,7 +148,7 @@ const AddMentors = () => {
     e.preventDefault();
     setSubmitted(true);
     // Check for incomplete academic qualification
-    const hasIncompleteAcademic = academicBackground.some(
+    const hasIncompleteAcademic = academicQualification.some(
       (item) =>
         item.institution && (!item.degree || !item.fieldOfStudy || !item.year)
     );

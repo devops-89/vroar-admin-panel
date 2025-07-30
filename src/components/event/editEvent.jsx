@@ -63,12 +63,12 @@ const EditEventForm = ({ details }) => {
       sessionStartTime: "",
       sessionEndDate: "",
       sessionEndTime: "",
-      zoomLink: "",
+      eventURL: "",
       coins: "",
       eventType: "",
-      calendarLink: "",
+      calenderLink: "",
     },
-    // validationSchema: editAdListValidataitonSchema,
+    validationSchema: editAdListValidataitonSchema,
     onSubmit: (values) => {
       const newValues = { ...values };
 
@@ -208,16 +208,7 @@ const EditEventForm = ({ details }) => {
     }
   };
 
-  // const editEvent = (body) => {
-  //   metaDataController
-  //     .editEvent(body, id)
-  //     .then((res) => {
-  //       console.log("res", res);
-  //     })
-  //     .catch((err) => {
-  //       console.log("err", err);
-  //     });
-  // };
+ 
 
   const [detailLoaing, setDetailLoading] = useState(true);
 
@@ -231,17 +222,21 @@ const EditEventForm = ({ details }) => {
         sessionDetails: details.sessionDetails || "",
         sessionStartDate: details.sessionStartDate
           ? details.sessionStartDate
-          : null,
+          : "",
         sessionStartTime: details.sessionStartTime || "",
-        sessionEndDate: details.sessionEndDate ? details.sessionEndDate : null,
+        sessionEndDate: details.sessionEndDate ? details.sessionEndDate : "",
         sessionEndTime: details.sessionEndTime || "",
-        zoomLink: details.zoomLink || "",
+        eventURL: details.eventURL || "",
         eventType: details.eventType || null,
         coins: details?.coins || null,
-        calendarLink: details?.calendarLink || "",
+        calenderLink: details?.calenderLink || "",
       });
-      setSessionStartDate(moment.unix(details?.sessionStartDate));
-      setSessionEndDate(moment.unix(details?.sessionEndDate));
+      setSessionStartDate(
+        details.sessionStartDate ? moment.unix(details.sessionStartDate) : null
+      );
+      setSessionEndDate(
+        details.sessionEndDate ? moment.unix(details.sessionEndDate) : null
+      );
       setSessionEndTime(
         details.sessionEndTime
           ? moment(details.sessionEndTime, "hh:mm A")
@@ -473,6 +468,7 @@ const EditEventForm = ({ details }) => {
                         helperText:
                           formik.touched.sessionStartDate &&
                           formik.errors.sessionStartDate,
+                        placeholder: "DD/MM/YYYY",
                       },
                     }}
                     onChange={sessionStartDateHandler}
@@ -548,15 +544,15 @@ const EditEventForm = ({ details }) => {
                 <TextField
                   sx={{ ...loginTextField }}
                   fullWidth
-                  label="Insert Zoom Meeting link "
+                  label="Insert  Meeting link "
                   onChange={formik.handleChange}
                   error={
                     formik.touched.zoomLink && Boolean(formik.errors.zoomLink)
                   }
                   helperText={formik.touched.zoomLink && formik.errors.zoomLink}
-                  id="zoomLink"
-                  value={formik.values.zoomLink}
-                  focused={formik.values.zoomLink}
+                  id="eventURL"
+                  value={formik.values.eventURL}
+                  focused={formik.values.eventURL}
                 />
               </Grid2>
               <Grid2 size={12}>
@@ -566,15 +562,15 @@ const EditEventForm = ({ details }) => {
                   label="Insert Calendar link "
                   onChange={formik.handleChange}
                   error={
-                    formik.touched.calendarLink &&
-                    Boolean(formik.errors.calendarLink)
+                    formik.touched.calenderLink &&
+                    Boolean(formik.errors.calenderLink)
                   }
                   helperText={
-                    formik.touched.calendarLink && formik.errors.calendarLink
+                    formik.touched.calenderLink && formik.errors.calenderLink
                   }
-                  id="calendarLink"
-                  value={formik.values.calendarLink}
-                  focused={formik.values.calendarLink}
+                  id="calenderLink"
+                  value={formik.values.calenderLink}
+                  focused={formik.values.calenderLink}
                 />
               </Grid2>
               <Grid2 size={12} textAlign={"end"}>
