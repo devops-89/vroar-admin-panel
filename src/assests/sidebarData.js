@@ -41,6 +41,10 @@ export const SIDEBARADATA = [
         label: "Mentors",
         url: "/user-management/mentors",
       },
+      {
+        label: "Employee",
+        url: "/user-management/employee",
+      },
     ],
   },
   {

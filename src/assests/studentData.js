@@ -2252,3 +2252,24 @@ export const sessionTableHead = [
     label: "Session Agenda",
   },
 ];
+
+export const EmployeeTableHeader = [
+  {
+    label: "User Id",
+  },
+  {
+    label: "Name",
+  },
+  {
+    label: "Email",
+  },
+  {
+    label: "Phone Number",
+  },
+  {
+    label: "Status",
+  },
+  {
+    label: "Action",
+  },
+];

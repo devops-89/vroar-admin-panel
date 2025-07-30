@@ -78,8 +78,7 @@ export const AddAdListValidationSchema = Yup.object({
     .min(2, "Event name is too short!")
     .max(50, "Event name is too long!"),
   speakerName: Yup.string()
-    .required("Please Enter Speaker Name")
-    .trim()
+    .optional()
     .matches(/^\S.*\S$/, "Field cannot start or end with spaces")
     .min(2, "Speaker name is too short!")
     .max(50, "Speaker name is too long!"),
@@ -131,7 +130,7 @@ export const AddAdListValidationSchema = Yup.object({
       otherwise: (schema) => schema.notRequired(),
     })
     .positive(),
-    calenderLink : Yup.string().required("Please Enter Valid Calendar Link"),
+  calenderLink: Yup.string().required("Please Enter Valid Calendar Link"),
 });
 
 export const editAdListValidataitonSchema = Yup.object({
@@ -141,11 +140,11 @@ export const editAdListValidataitonSchema = Yup.object({
     .min(2, "Event name is too short!")
     .max(50, "Event name is too long!"),
 
-  speakerName: Yup.string().required("Please Enter Speaker Name"),
+  speakerName: Yup.string().optional(),
 
   eventDescription: Yup.string()
     .max(1000, "Event Description is too Long!")
-    .required("Please Enter Event Description"),
+    .optional(),
 
   speakerSummary: Yup.string()
     .max(1000, "Speaker Summary is too Long!")
@@ -210,7 +209,7 @@ export const editAdListValidataitonSchema = Yup.object({
       otherwise: (schema) => schema.notRequired(),
     })
     .positive(),
-  calendarLink: Yup.string().required("Please Enter Valid Calendar Link"),
+  calenderLink: Yup.string().required("Please Enter Valid Calendar Link"),
 });
 
 // export const editAdListValidataitonSchema = Yup.object({
@@ -765,4 +764,19 @@ export const quizValidationSchema = Yup.object().shape({
       then: (schema) => schema.min(1, "At least one question is required"),
       otherwise: (schema) => schema.notRequired(),
     }),
+});
+
+export const AddEmployeevalidationSchema = Yup.object().shape({
+  firstName: Yup.string()
+    .required("First Name is required")
+    .min(2, "First Name must be at least 2 characters")
+    .max(50, "First Name must not exceed 50 characters"),
+  lastName: Yup.string().required("Last Name is required"),
+  email: Yup.string()
+    .email("Please Enter Valid Email")
+    .required("Please Enter Valid Email"),
+  phoneNo: Yup.string().required("Please Enter Phone Number"),
+  password: Yup.string()
+    .required("Please Enter Password")
+    .min(8, "Password must be at least 8 characters"),
 });

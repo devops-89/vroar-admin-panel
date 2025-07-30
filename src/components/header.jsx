@@ -2,7 +2,7 @@ import { Authcontrollers } from "@/api/authControllers";
 import { AdminDrawerData } from "@/assests/sidebarData";
 import logo from "../../public/favicon_mytreks.png";
 import { setToast } from "@/redux/reducers/toast";
-import { COLORS, ToastStatus } from "@/utils/enum";
+import { COLORS, ToastStatus, USER_GROUP } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Close } from "@mui/icons-material";
 import {
@@ -24,7 +24,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Loading from "react-loading";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 const Header = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -40,12 +40,13 @@ const Header = () => {
     router.push(path);
     setOpen(false);
   };
+  const user = useSelector((state) => state.AdminDetails);
+  console.log("user", user);
   const dispatch = useDispatch();
   const endCurrentSession = () => {
     setLoading(true);
     Authcontrollers.logout()
       .then((res) => {
-        console.log("res", res);
         dispatch(
           setToast({
             open: true,
@@ -85,7 +86,6 @@ const Header = () => {
           justifyContent: "flex-end",
           boxShadow: "0px 0px 1px 1px rgb(0,0,0,0.2)",
           backdropFilter: "blur(5px)",
-          // backgroundColor: "rgba(255,255,255,0.8)",
           zIndex: 999,
         }}
       >
@@ -101,7 +101,11 @@ const Header = () => {
                   color: COLORS.BLACK,
                 }}
               >
-                Admin
+                {user?.userRole === USER_GROUP.SUPER_ADMIN
+                  ? "Super Admin"
+                  : user?.userRole === USER_GROUP.ADMIN
+                  ? "Admin"
+                  : user?.userRole}
               </Typography>
               <Typography
                 sx={{
@@ -110,7 +114,7 @@ const Header = () => {
                   color: COLORS.BLACK,
                 }}
               >
-                VROAR
+                {user?.firstName} {user?.lastName}
               </Typography>
             </Box>
           </Stack>

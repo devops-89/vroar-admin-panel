@@ -43,7 +43,7 @@ const AddEvent = () => {
       sessionStartTime: "",
       sessionEndDate: "",
       sessionEndTime: "",
-      zoomLink: "",
+      eventURL: "",
       eventType: "",
       coins: "",
       calenderLink: "",
@@ -437,7 +437,7 @@ const AddEvent = () => {
                     formik.touched.zoomLink && Boolean(formik.errors.zoomLink)
                   }
                   helperText={formik.touched.zoomLink && formik.errors.zoomLink}
-                  id="zoomLink"
+                  id="eventURL"
                 />
               </Grid2>
               <Grid2 size={12}>
