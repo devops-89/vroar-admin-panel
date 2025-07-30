@@ -85,7 +85,6 @@ export const AddAdListValidationSchema = Yup.object({
   eventDescription: Yup.string()
     .max(1000, "Event Description is too Long!")
     .required("Please Enter Event Description"),
-  // .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
   speakerSummary: Yup.string().max(1000, "Speaker Summary is too Long!"),
   // .required("Please Enter Speaker Summary"),
   // .matches(/^\S.*\S$/, "Field cannot start or end with spaces"),
