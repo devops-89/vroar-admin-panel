@@ -33,7 +33,7 @@ const Employee = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.log("edrr", err);
+        console.log("error in getAll Admin list ", err);
       });
   };
   const showEditEmployeeModal = (employeeData) => {
