@@ -1,5 +1,6 @@
 import { roleController } from "@/api/rolemanagement";
 import AddEmployee from "@/assests/modalCalling/user/employee/add-employee";
+import EditEmployee from "@/assests/modalCalling/user/employee/edit-employee";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import CustomTable from "@/components/customTable";
 import EmployeeList from "@/components/user/employee/employee-list";
@@ -16,7 +17,7 @@ const Employee = () => {
   const dispatch = useDispatch();
 
   const addEmployee = () => {
-    dispatch(showModal(<AddEmployee />));
+    dispatch(showModal(<AddEmployee getAdminList={getAllAdminsList} />));
   };
 
   const [adminList, setAdminList] = useState(null);
@@ -28,15 +29,15 @@ const Employee = () => {
     roleController
       .getAdminList(body)
       .then((res) => {
-        // console.log("Admin List", res);
         setAdminList(res.data.data);
         setLoading(false);
-        // Handle the response data as needed
       })
       .catch((err) => {
         console.log("edrr", err);
-        
       });
+  };
+  const showEditEmployeeModal = (employeeData) => {
+    dispatch(showModal(<EditEmployee value={employeeData} />));
   };
 
   useEffect(() => {
@@ -82,7 +83,11 @@ const Employee = () => {
           <Box sx={{ mt: 2 }}>
             <CustomTable />
           </Box>
-          <EmployeeList data={adminList} loading={loading} />
+          <EmployeeList
+            data={adminList}
+            loading={loading}
+            onEdit={showEditEmployeeModal}
+          />
         </Card>
       </Box>
     </Wrapper>

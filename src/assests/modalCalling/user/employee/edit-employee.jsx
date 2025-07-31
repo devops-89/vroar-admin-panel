@@ -1,5 +1,7 @@
+import { roleController } from "@/api/rolemanagement";
 import { hideModal } from "@/redux/reducers/modal";
-import { COLORS } from "@/utils/enum";
+import { setToast } from "@/redux/reducers/toast";
+import { COLORS, ToastStatus } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
 import { AddEmployeevalidationSchema } from "@/utils/validationSchema";
@@ -16,31 +18,60 @@ import {
 import { useFormik } from "formik";
 import { matchIsValidTel, MuiTelInput } from "mui-tel-input";
 import React, { useState } from "react";
+import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
 const EditEmployee = ({ value }) => {
   const dispatch = useDispatch();
-
-  console.log("Edit Employee Value", value);
-  const formik = useFormik({
-    initialValues: {
-      firstName: "",
-      lastName: "",
-      phoneNo: "",
-      countryCode: "",
-      email: "",
-      password: "",
-    },
-    validationSchema: AddEmployeevalidationSchema,
-    onSubmit: (values) => {
-      console.log("Form Values", values);
-    },
-  });
   const closeModal = () => {
     dispatch(hideModal());
   };
+  const [loading, setLoading] = useState(false);
+  // console.log("Edit Employee Value", value);
+  const formik = useFormik({
+    initialValues: {
+      firstName: value.firstName,
+      lastName: value.lastName,
+      phoneNo: value.phoneNo,
+      countryCode: value.countryCode,
+      email: value.email,
+      id: value.id,
+    },
+    // validationSchema: AddEmployeevalidationSchema,
+    onSubmit: (values) => {
+      setLoading(true);
+      // console.log("Form Values", values);
+      roleController
+        .updateAdmin(values)
+        .then((res) => {
+          // console.log("update admin", res);
+          dispatch(
+            setToast({
+              open: true,
+              message: res.data.message,
+              severity: ToastStatus.SUCCESS,
+            })
+          );
+          closeModal();
+          setLoading(false);
+        })
+        .catch((err) => {
+          // consolelog("err", err);
+          let errMessage =
+            (err.response && err.response.data.message) || err.message;
+          dispatch(
+            setToast({
+              open: true,
+              message: errMessage,
+              severity: ToastStatus.ERROR,
+            })
+          );
+          setLoading(false);
+        });
+    },
+  });
 
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(`+${value.countryCode} ${value.phoneNo}`);
   return (
     <Box sx={{ width: 600 }}>
       <Stack
@@ -51,7 +82,7 @@ const EditEmployee = ({ value }) => {
         <Typography
           sx={{ fontSize: 20, fontFamily: roboto.style, fontWeight: 600 }}
         >
-          Add Employee
+          Edit Employee
         </Typography>
         <IconButton
           onClick={closeModal}
@@ -124,18 +155,7 @@ const EditEmployee = ({ value }) => {
               helperText={formik.touched.email && formik.errors.email}
             />
           </Grid2>
-          <Grid2 size={12}>
-            <TextField
-              label="Password"
-              sx={{ ...loginTextField }}
-              fullWidth
-              id="password"
-              onChange={formik.handleChange}
-              value={formik.values.password}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-            />
-          </Grid2>
+
           <Grid2 size={12}>
             <Button
               sx={{
@@ -147,7 +167,11 @@ const EditEmployee = ({ value }) => {
               fullWidth
               type="submit"
             >
-              Submit
+              {loading ? (
+                <Loading type="bars" width={20} height={20} color="#000" />
+              ) : (
+                "Submit"
+              )}
             </Button>
           </Grid2>
         </Grid2>

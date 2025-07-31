@@ -148,6 +148,7 @@ const ProfessionalBackground = ({
                   }}
                   error={!!getFieldError(val, i, "duration")}
                   helperText={getFieldError(val, i, "duration")}
+                  type="number"
                 />
               </Grid2>
               <Grid2 size={6}>

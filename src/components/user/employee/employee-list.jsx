@@ -20,13 +20,7 @@ import { useDispatch } from "react-redux";
 import { showModal } from "@/redux/reducers/modal";
 import EditEmployee from "@/assests/modalCalling/user/employee/edit-employee";
 
-const EmployeeList = ({ data, loading }) => {
-  const dispatch = useDispatch();
-
-  const showEditEmployeeModal = (employeeData) => {
-    dispatch(showModal(<EditEmployee value={employeeData} />));
-  };
-
+const EmployeeList = ({ data, loading, onEdit }) => {
   return (
     <Box sx={{ mt: 2 }}>
       <Table>
@@ -100,7 +94,7 @@ const EmployeeList = ({ data, loading }) => {
                       fontFamily: roboto.style,
                     }}
                   >
-                    {val.countryCode} {val.phoneNo}
+                    {val.phoneNo ? `+${val.countryCode} ${val.phoneNo}` : "--"}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -113,7 +107,7 @@ const EmployeeList = ({ data, loading }) => {
                   <IconButton>
                     <Visibility sx={{ fontSize: 20 }} />
                   </IconButton>
-                  <IconButton onClick={() => showEditEmployeeModal(val)}>
+                  <IconButton onClick={() => onEdit(val)}>
                     <FaRegEdit fontSize={20} />
                   </IconButton>
                 </TableCell>

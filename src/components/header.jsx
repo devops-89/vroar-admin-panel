@@ -25,6 +25,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Loading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
+import { RemoveUserDetails } from "@/redux/reducers/user";
 const Header = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -41,7 +42,6 @@ const Header = () => {
     setOpen(false);
   };
   const user = useSelector((state) => state.AdminDetails);
-  console.log("user", user);
   const dispatch = useDispatch();
   const endCurrentSession = () => {
     setLoading(true);
@@ -55,7 +55,8 @@ const Header = () => {
           })
         );
         router.push("/");
-        localStorage.removeItem("accessToken");
+        localStorage.clear();
+        dispatch(RemoveUserDetails());
         setLoading(false);
       })
       .catch((err) => {
@@ -67,7 +68,8 @@ const Header = () => {
           })
         );
         router.push("/");
-        localStorage.removeItem("accessToken");
+        localStorage.clear();
+        dispatch(RemoveUserDetails());
         setLoading(false);
       });
   };
@@ -161,7 +163,7 @@ const Header = () => {
               fontWeight: 550,
             }}
           >
-            Vroar
+            {user?.firstName} {user?.lastName}
           </Typography>
           <Typography
             sx={{
@@ -171,7 +173,7 @@ const Header = () => {
               color: COLORS.grey,
             }}
           >
-            vroar@vroar.ai
+            {user?.email}
           </Typography>
           <Divider sx={{ mt: 2 }} />
 

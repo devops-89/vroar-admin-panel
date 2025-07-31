@@ -1,19 +1,14 @@
 import CustomButton from "@/components/buttons/outlinedButton";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import CustomTable from "@/components/customTable";
-import TabPanel from "@/components/tabPanel";
 import MentorTable from "@/components/user/mentor/mentorTable";
-import PendingMentorTable from "@/components/user/mentor/pendingMentorTables";
-import RejectedMentorTable from "@/components/user/mentor/rejectedMentorTable";
 import Wrapper from "@/components/wrapper";
-import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { mentor_tab_array } from "@/utils/genericArray";
 import withAuth from "@/utils/withAuth";
-import { AddCircleOutline, AddOutlined } from "@mui/icons-material";
-import { Box, Card, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { AddCircleOutline } from "@mui/icons-material";
+import { Box, Card, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const Mentor = () => {
   const [value, setValue] = useState(0);

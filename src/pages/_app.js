@@ -20,7 +20,7 @@ function AuthInitializer() {
       const decoded = jwtDecode(token);
       dispatch(AddUserDetails({ ...decoded, isAuthenticated: true }));
     }
-  }, [dispatch]);
+  });
 
   return null;
 }
@@ -28,8 +28,8 @@ function AuthInitializer() {
 export default function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
-      <AuthInitializer />
       <Layout>
+        <AuthInitializer />
         <Modal />
         <Component {...pageProps} />
         <SpeedInsights />

@@ -18,9 +18,10 @@ import {
 import { useFormik } from "formik";
 import { matchIsValidTel, MuiTelInput } from "mui-tel-input";
 import React, { useState } from "react";
+import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
-const AddEmployee = () => {
+const AddEmployee = ({ getAdminList }) => {
   const dispatch = useDispatch();
 
   const closeModal = () => {
@@ -39,13 +40,14 @@ const AddEmployee = () => {
     },
     validationSchema: AddEmployeevalidationSchema,
     onSubmit: (values) => {
-      console.log("Form Values", values);
       // Handle form submission logic here
       submitHandler(values);
     },
   });
+  const [loading, setLoading] = useState(false);
   const [phone, setPhone] = useState(null);
   const submitHandler = (body) => {
+    setLoading(true);
     roleController
       .addAdmin(body)
       .then((res) => {
@@ -57,6 +59,9 @@ const AddEmployee = () => {
             severity: ToastStatus.SUCCESS,
           })
         );
+        closeModal();
+        setLoading(false);
+        getAdminList();
       })
       .catch((err) => {
         // console.log("error", err);
@@ -71,6 +76,7 @@ const AddEmployee = () => {
             severity: ToastStatus.ERROR,
           })
         );
+        setLoading(false);
       });
   };
   return (
@@ -179,7 +185,16 @@ const AddEmployee = () => {
               fullWidth
               type="submit"
             >
-              Submit
+              {loading ? (
+                <Loading
+                  type="bars"
+                  width={20}
+                  height={20}
+                  color={COLORS.BLACK}
+                />
+              ) : (
+                "Submit"
+              )}
             </Button>
           </Grid2>
         </Grid2>
