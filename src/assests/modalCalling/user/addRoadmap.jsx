@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
@@ -80,6 +80,18 @@ const AddRoadmap = ({ getJourney }) => {
             })
           );
           getJourney();
+          // Reset form and state after successful submission
+          formik.resetForm();
+          setCareer([]);
+          setStrength([]);
+          setIndustry([]);
+          setSoftSkills([]);
+          setTreks([]);
+          setCareerData([]);
+          setStrengthData([]);
+          setIndustryData([]);
+          setSoftSkillsData([]);
+          setTreksRoadmap([]);
           dispatch(hideModal());
         } catch (err) {
           let errMesssage =
@@ -126,6 +138,22 @@ const AddRoadmap = ({ getJourney }) => {
   const [industry, setIndustry] = useState([]);
   const [softSkills, setSoftSkills] = useState([]);
   const [treks, setTreks] = useState([]);
+
+  // Reset form and state when component mounts
+  useEffect(() => {
+    formik.resetForm();
+    setCareer([]);
+    setStrength([]);
+    setIndustry([]);
+    setSoftSkills([]);
+    setTreks([]);
+    setCareerData([]);
+    setStrengthData([]);
+    setIndustryData([]);
+    setSoftSkillsData([]);
+    setTreksRoadmap([]);
+  }, []);
+
   const careerSelectorHandler = (e, value) => {
     setCareer(value);
     if (value) {
@@ -203,6 +231,18 @@ const AddRoadmap = ({ getJourney }) => {
   const dispatch = useDispatch();
 
   const closeModal = () => {
+    // Reset form and state when modal is closed
+    formik.resetForm();
+    setCareer([]);
+    setStrength([]);
+    setIndustry([]);
+    setSoftSkills([]);
+    setTreks([]);
+    setCareerData([]);
+    setStrengthData([]);
+    setIndustryData([]);
+    setSoftSkillsData([]);
+    setTreksRoadmap([]);
     dispatch(hideModal());
   };
 

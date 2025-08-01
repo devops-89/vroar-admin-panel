@@ -4,10 +4,7 @@ import { RoadmapJourneyHeader } from "@/assests/studentData";
 import { showModal } from "@/redux/reducers/modal";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import {
-  AddCircleOutlined,
-  Error
-} from "@mui/icons-material";
+import { AddCircleOutlined, Error } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -18,32 +15,21 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Typography
+  Typography,
 } from "@mui/material";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
 import RoadmapTableRow from "./RoadmapTableRow";
 
-const Roadmap = () => {
-  const router = useRouter();
+const Roadmap = ({roadmapData,setRoadmapData}) => {
   const userId = useSelector((state) => state.USER.id);
   const [open, setOpen] = useState(null);
-  // console.log("user", userId);
-  const [roadmapData, setRoadmapData] = useState([]);
 
-  console.log("roadmaptdatatad", roadmapData);
   const handletoggle = (index) => {
     setOpen((prev) => (prev === index ? null : index));
   };
   const dispatch = useDispatch();
-
-  const handleRouter = (roadmapId) => {
-    router.push(
-      `/user-management/students/roadmap-details/${roadmapId}?userId=${userId}`
-    );
-  };
 
   const [loading, setLoading] = useState(true);
 

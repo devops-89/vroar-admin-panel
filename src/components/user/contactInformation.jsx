@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 const ContactInformation = () => {
   const user = useSelector((state) => state.USER);
 
-  console.log("teste", user);
 
   const phoneNumber = `${user?.countryCode} ${user.phoneNo}`;
 
