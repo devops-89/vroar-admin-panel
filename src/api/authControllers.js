@@ -81,4 +81,26 @@ export const Authcontrollers = {
       throw error;
     }
   },
+  forgotPassword: async (data) => {
+    try {
+      let result = await securedApi.authenticationSecuredApi.post(
+        "/api/forgotPassword",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  verifyOtp: async (data) => {
+    try {
+      let result = await securedApi.authenticationSecuredApi.post(
+        "/api/forgotPassword/verify",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

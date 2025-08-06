@@ -37,14 +37,11 @@ const EditEmployee = ({ value }) => {
       email: value.email,
       id: value.id,
     },
-    // validationSchema: AddEmployeevalidationSchema,
     onSubmit: (values) => {
       setLoading(true);
-      // console.log("Form Values", values);
       roleController
         .updateAdmin(values)
         .then((res) => {
-          // console.log("update admin", res);
           dispatch(
             setToast({
               open: true,
@@ -56,7 +53,6 @@ const EditEmployee = ({ value }) => {
           setLoading(false);
         })
         .catch((err) => {
-          // consolelog("err", err);
           let errMessage =
             (err.response && err.response.data.message) || err.message;
           dispatch(

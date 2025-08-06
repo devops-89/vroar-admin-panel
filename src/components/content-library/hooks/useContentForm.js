@@ -36,19 +36,7 @@ export const useContentForm = () => {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    let processedValue = value;
-
-    if (["contentName", "description", "contentLink"].includes(id)) {
-      if (value.endsWith(" ") || value.startsWith(" ")) {
-        processedValue = value.trim();
-        setErrors((prev) => ({
-          ...prev,
-          [id]: "Cannot start or end with spaces",
-        }));
-      }
-    }
-
-    setState((prev) => ({ ...prev, [id]: processedValue }));
+    setState((prev) => ({ ...prev, [id]: value }));
     setErrors((prev) => ({ ...prev, [id]: "" }));
   };
 

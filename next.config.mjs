@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  transpilePackages: ["mui-tel-input"],
+  transpilePackages: ["mui-tel-input", "mui-one-time-password-input"],
   images: {
     domains: [
       "vroar-prod.s3.us-west-1.amazonaws.com",

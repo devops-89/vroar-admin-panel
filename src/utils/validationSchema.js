@@ -188,14 +188,6 @@ export const editAdListValidataitonSchema = Yup.object({
   sessionStartTime: Yup.string().optional(),
 
   sessionEndTime: Yup.string().optional(),
-  // .test(
-  //   "is-different-time",
-  //   "End time must be different from start time",
-  //   function (value) {
-  //     const { sessionStartTime } = this.parent;
-  //     return value && sessionStartTime && value !== sessionStartTime;
-  //   }
-  // ),
 
   zoomLink: Yup.string().optional().url("Please Enter Valid Url"),
 
@@ -211,82 +203,6 @@ export const editAdListValidataitonSchema = Yup.object({
     .positive(),
   calenderLink: Yup.string().required("Please Enter Valid Calendar Link"),
 });
-
-// export const editAdListValidataitonSchema = Yup.object({
-//   eventName: Yup.string()
-//     .required("Please Enter Event Name")
-//     .trim()
-//     .min(2, "Event name is too short!")
-//     .max(50, "Event name is too long!"),
-
-//   speakerName: Yup.string().required("Please Enter Speaker Name"),
-
-//   eventDescription: Yup.string()
-//     .max(1000, "Event Description is too Long!")
-//     .required("Please Enter Event Description"),
-
-//   speakerSummary: Yup.string()
-//     .max(1000, "Speaker Summary is too Long!")
-//     .required("Please Enter Speaker Summary"),
-
-//   sessionDetails: Yup.string()
-//     .max(1000, "Session Details is too Long!")
-//     .required("Please Enter Session Details"),
-
-//   sessionStartDate: Yup.number()
-//     .required("Please Enter Session Start Date")
-//     .test(
-//       "is-future-start-date",
-//       "Session start date must be in the future",
-//       function (value) {
-//         if (!value) return false;
-//         const today = new Date();
-//         today.setHours(0, 0, 0, 0);
-//         return value > today.getTime();
-//       }
-//     ),
-
-//   sessionEndDate: Yup.number()
-//     .required("Please Enter Session End Date")
-//     .test(
-//       "is-future-end-date",
-//       "Session end date must be in the future",
-//       function (value) {
-//         if (!value) return false;
-//         const today = new Date();
-//         today.setHours(0, 0, 0, 0);
-//         return value > today.getTime();
-//       }
-//     ),
-
-//   sessionStartTime: Yup.string().required("Please Enter Session Start Time"),
-
-//   sessionEndTime: Yup.string()
-//     .required("Please Enter Session End Time")
-//     .test(
-//       "is-different-time",
-//       "End time must be different from start time",
-//       function (value) {
-//         const { sessionStartTime } = this.parent;
-//         return value && sessionStartTime && value !== sessionStartTime;
-//       }
-//     ),
-
-//   zoomLink: Yup.string()
-//     .required("Please Enter Zoom Link")
-//     .url("Please Enter Valid Url"),
-
-//   eventType: Yup.string().required("Please Select Event Type"),
-
-//   coins: Yup.number()
-//     .nullable()
-//     .when("eventType", {
-//       is: "Paid",
-//       then: (schema) => schema.required("Please Enter Coins"),
-//       otherwise: (schema) => schema.notRequired(),
-//     })
-//     .positive("Coins must be a positive number"),
-// });
 
 export const studentJourneyValidationSchema = Yup.object({
   name: Yup.string()
@@ -615,64 +531,6 @@ export const editRoadmapValidationSchema = Yup.object().shape({
     .max(1000, "Description is too long!"),
 });
 
-// export const editContentValidationSchema = useMemo(() => Yup.object().shape({
-//   contentType: Yup.string().required("Content type is required"),
-//   contentName: Yup.string()
-//     .required("Content name is required")
-//     .min(2, "Content name must be at least 2 characters")
-//     .max(100, "Content name must not exceed 100 characters")
-//     .test(
-//       "no-leading-trailing-space",
-//       "Content name cannot start or end with spaces",
-//       (value) => !value || value.trim() === value
-//     ),
-//   description: Yup.string()
-//     .required("Description is required")
-//     .min(10, "Description must be at least 10 characters")
-//     .test(
-//       "no-leading-trailing-space",
-//       "Description cannot start or end with spaces",
-//       (value) => !value || value.trim() === value
-//     ),
-//   contentLink: Yup.string().when("contentType", {
-//     is: (type) =>
-//       [
-//         CONTENT_TYPE.YOUTUBE_VIDEO_LINK,
-//         CONTENT_TYPE.JOURNAL_LINK,
-//         CONTENT_TYPE.NATIVE_VIDEO_LINK,
-//       ].includes(type),
-//     then: () =>
-//       Yup.string()
-//         .required("Content link is required")
-//         .url("Please enter a valid URL")
-//         .test(
-//           "no-leading-trailing-space",
-//           "Content link cannot start or end with spaces",
-//           (value) => !value || value.trim() === value
-//         ),
-//     otherwise: () => Yup.string(),
-//   }),
-//   metadataTags: Yup.array().test(
-//     "has-metadata",
-//     "At least one metadata tag is required",
-//     (value, context) => {
-//       const { career, industry, strengths, softSkills } = context.parent;
-//       return [career, industry, strengths, softSkills].some(
-//         (arr) => Array.isArray(arr) && arr.length > 0
-//       );
-//     }
-//   ),
-//   career: Yup.array(),
-//   industry: Yup.array(),
-//   strengths: Yup.array(),
-//   softSkills: Yup.array(),
-//   quizType: Yup.string().when("isQuizEnabled", {
-//     is: true,
-//     then: () => Yup.string().required("Quiz type is required"),
-//     otherwise: () => Yup.string(),
-//   }),
-// }), []);
-
 export const addMentorValidationSchema = Yup.object().shape({
   firstName: Yup.string().required("First Name is required"),
   lastName: Yup.string().required("Last Name is required"),
@@ -779,4 +637,15 @@ export const AddEmployeevalidationSchema = Yup.object().shape({
   password: Yup.string()
     .required("Please Enter Password")
     .min(8, "Password must be at least 8 characters"),
+});
+
+export const forgotPasswordEmailValidation = Yup.object().shape({
+  email: Yup.string()
+    .email("Please Enter Valid Email")
+    .required("Please Enter Valid Email"),
+});
+
+export const verifyOtpValidationSchema = Yup.object().shape({
+  password: Yup.string().required("Please Enter Password"),
+  otp: Yup.string().required("Please Enter 6 Digit OTP"),
 });
