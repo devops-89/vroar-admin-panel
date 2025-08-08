@@ -33,12 +33,15 @@ const VerifyOtp = () => {
     initialValues: {
       password: "",
       otp: "",
-      referenceId: localStorage.getItem("referenceId"),
     },
     validationSchema: verifyOtpValidationSchema,
     onSubmit: (values) => {
       setLoading(true);
-      Authcontrollers.verifyOtp(values)
+      const body = {
+        ...values,
+        referenceId: localStorage.getItem("referenceId"),
+      };
+      Authcontrollers.verifyOtp(body)
         .then((res) => {
           dispatch(
             setToast({
