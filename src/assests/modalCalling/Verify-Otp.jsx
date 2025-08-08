@@ -17,10 +17,16 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { MuiOtpInput } from "mui-one-time-password-input";
-import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import React, { useState, useEffect } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
+
+// Dynamic import to prevent SSR issues
+const MuiOtpInput = dynamic(() => import("mui-one-time-password-input").then(mod => ({ default: mod.MuiOtpInput })), {
+  ssr: false,
+  loading: () => <Box sx={{ height: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Typography>Loading...</Typography></Box>
+});
 
 const VerifyOtp = () => {
   const dispatch = useDispatch();
