@@ -13,11 +13,10 @@ import {
   IconButton,
   Stack,
   TextField,
-  Typography,
-  useFormControl,
+  Typography
 } from "@mui/material";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import { useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import VerifyOtp from "./Verify-Otp";
