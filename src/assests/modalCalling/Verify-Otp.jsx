@@ -21,28 +21,12 @@ import { MuiOtpInput } from "mui-one-time-password-input";
 import { useState } from "react";
 import Loading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
+import dynamic from "next/dynamic";
 
-// const MuiOtpInput = dynamic(
-//   () =>
-//     import("mui-one-time-password-input").then((mod) => ({
-//       default: mod.MuiOtpInput,
-//     })),
-//   {
-//     ssr: false,
-//     loading: () => (
-//       <Box
-//         sx={{
-//           height: 50,
-//           display: "flex",
-//           justifyContent: "center",
-//           alignItems: "center",
-//         }}
-//       >
-//         <Typography>Loading...</Typography>
-//       </Box>
-//     ),
-//   }
-// );
+const MuiOtpInput = dynamic(
+  () => import("mui-one-time-password-input").then((mod) => mod.MuiOtpInput),
+  { ssr: false }
+);
 
 const VerifyOtp = () => {
   const dispatch = useDispatch();
