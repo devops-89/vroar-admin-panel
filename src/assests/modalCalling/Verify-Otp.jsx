@@ -17,7 +17,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { MuiOtpInput } from "mui-one-time-password-input";
 import { useState } from "react";
 import Loading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
