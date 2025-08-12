@@ -22,7 +22,6 @@ import React, { useState, useEffect } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 
-// Dynamic import to prevent SSR issues
 const MuiOtpInput = dynamic(
   () =>
     import("mui-one-time-password-input").then((mod) => ({
