@@ -1,6 +1,6 @@
-import { SIDEBARADATA } from "@/assests/sidebarData";
+import { ADMINSIDEBARDATA, SIDEBARADATA } from "@/assests/sidebarData";
 import logo from "@/logo/logo_mytreks.png";
-import { COLORS } from "@/utils/enum";
+import { COLORS, USER_GROUP } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import {
@@ -30,6 +30,10 @@ const Sidebar = () => {
   const sidebarCollapse = useSelector(
     (state) => state.sideBarCollapse.isSidebarCollapse
   );
+
+  const user = useSelector((state) => state.AdminDetails);
+  const sidebarData =
+    user.userRole === USER_GROUP.ADMIN ? ADMINSIDEBARDATA : SIDEBARADATA;
 
   // console.log("first", sidebarCollapse);
 
@@ -91,7 +95,7 @@ const Sidebar = () => {
 
         <Box sx={{ height: "90%", overflowY: "auto", pt: 8 }}>
           <List>
-            {SIDEBARADATA.map((val, index) => (
+            {sidebarData.map((val, index) => (
               <div key={index}>
                 {val.modules ? (
                   <>

@@ -14,7 +14,8 @@ import {
   IconButton,
   InputAdornment,
   Stack,
-  TextField
+  TextField,
+  Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
 import Image from "next/image";
@@ -23,6 +24,8 @@ import { useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 import ToastBar from "./toastBar";
+import { showModal } from "@/redux/reducers/modal";
+import ForgotPassword from "@/assests/modalCalling/Forgot-Password";
 const Login = () => {
   const [loading, setLoading] = useState(false);
 
@@ -75,6 +78,10 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  const forgotPasswordModal = () => {
+    dispatch(showModal(<ForgotPassword />));
+  };
+
   return (
     <div>
       <ToastBar />
@@ -100,7 +107,7 @@ const Login = () => {
             <form onSubmit={formik.handleSubmit}>
               <Grid2 container>
                 <Grid2 size={3} margin={"auto"} sx={{ textAlign: "center" }}>
-                  <Stack alignItems={"center"} spacing={3}>
+                  <Stack spacing={2}>
                     <Image src={logo} at="" />
                     <TextField
                       fullWidth
@@ -143,6 +150,19 @@ const Login = () => {
                         formik.touched.password && formik.errors.password
                       }
                     />
+                    <Box sx={{ textAlign: "right" }}>
+                      <Button
+                        sx={{
+                          fontSize: 12,
+                          color: COLORS.PRIMARY,
+                          fontFamily: roboto.style,
+                          textTransform: "initial",
+                        }}
+                        onClick={forgotPasswordModal}
+                      >
+                        Forgot Password?
+                      </Button>
+                    </Box>
                     <Button
                       sx={{
                         width: "100%",

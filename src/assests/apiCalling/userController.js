@@ -22,8 +22,7 @@ export const getUserRoadMapJourney = ({ userId, setLoading, setData }) => {
   userController
     .getUserRoadmapJourney(userId)
     .then((res) => {
-      // console.log("res", res);
-      setData(res.data.data);
+      setData(Array.isArray(res.data.data) ? [...res.data.data] : []);
       setLoading(false);
     })
     .catch((err) => {
@@ -35,7 +34,7 @@ export const getMentorById = async (mentorId, setMentorData) => {
   userController
     .getMentorById(mentorId)
     .then((res) => {
-      // console.log("res", res);
+      console.log("res", res);
       const response = res.data.data;
       setMentorData(response);
     })

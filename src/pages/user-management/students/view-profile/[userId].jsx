@@ -39,7 +39,6 @@ const UserProfile = () => {
   const router = useRouter();
   const { userId } = router.query;
   const tabs = useSelector((state) => state.TabsValue);
-  console.log("tabs", tabs.value);
   const [value, setValue] = useState(0);
   const [tabsValue, setTabsValue] = useState("");
   const dispatch = useDispatch();
@@ -52,6 +51,7 @@ const UserProfile = () => {
     );
   };
   const [roadmapData, setRoadmapData] = useState([]);
+
 
   const addRoadmapModal = () => {
     dispatch(showModal(<AddRoadmap getJourney={getRoadmapData} />));
@@ -218,7 +218,10 @@ const UserProfile = () => {
               </TabPanel>
               <TabPanel value={value} index={1}>
                 <Box sx={{ mt: 2 }}>
-                  <Roadmap />
+                  <Roadmap
+                    roadmapData={roadmapData}
+                    setRoadmapData={setRoadmapData}
+                  />
                 </Box>
               </TabPanel>
               <TabPanel value={value} index={2}>

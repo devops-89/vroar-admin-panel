@@ -145,6 +145,129 @@ export const SIDEBARADATA = [
     url: "/waitlist",
   },
 ];
+export const ADMINSIDEBARDATA = [
+  {
+    avatar: <Image src={home} />,
+    label: "Dashboard",
+    url: "/dashboard",
+  },
+  {
+    avatar: <Image src={userManagement} />,
+    label: "User Management",
+    modules: true,
+    subModules: [
+      {
+        label: "Students",
+        url: "/user-management/students",
+      },
+      {
+        label: "Parents",
+        url: "/user-management/parents",
+      },
+      {
+        label: "Mentors",
+        url: "/user-management/mentors",
+      },
+    ],
+  },
+  {
+    avatar: <Image src={road} />,
+    label: "Roadmap Management",
+    modules: true,
+    subModules: [
+      {
+        label: "Metadata",
+        url: "/roadmap-management/metadata",
+      },
+      {
+        label: "Content Library",
+        url: "/roadmap-management/content-library",
+      },
+      {
+        label: "Create/View Roadmaps",
+        url: "/roadmap-management",
+      },
+      {
+        label: "Assessment Management",
+        url: "/roadmap-management/assessment-management",
+      },
+    ],
+  },
+  {
+    avatar: <Image src={notification} />,
+    label: "Notification Management",
+    modules: true,
+    subModules: [
+      {
+        label: "Ad List",
+        url: "/notification-management/ad-list",
+      },
+      {
+        label: "View Notifications",
+        url: "/notification-management/view-notification",
+      },
+    ],
+  },
+  {
+    avatar: <Image src={coach} />,
+    label: "Coach",
+    url: "/coach",
+  },
+  {
+    avatar: <Image src={curriculum} />,
+    label: "Curriculum Management",
+    // url: "/curriculum-management",
+    modules: true,
+    subModules: [
+      {
+        label: "View Curriculum",
+        url: "/curriculum-management",
+      },
+      {
+        label: "Add Curriculum",
+        url: "/curriculum-management/add-curriculum",
+      },
+      {
+        label: "Edit Curriculum",
+        url: "/curriculum-management/edit-curriculum",
+      },
+    ],
+  },
+  {
+    avatar: <Image src={subscription} />,
+    label: "Subscription Management",
+    url: "/subscription-management",
+  },
+  {
+    avatar: <Image src={coupon} />,
+    label: "Coupon Management",
+    url: "/coupon-management",
+  },
+  {
+    avatar: <Image src={internship} />,
+    label: "Internship Management",
+    modules: true,
+    subModules: [
+      {
+        label: "Companies",
+        url: "/internship-management/companies",
+      },
+      {
+        label: "Job Master",
+        url: "/internship-management/job-master",
+      },
+      {
+        label: "Internship",
+        url: "/internship-management",
+      },
+    ],
+  },
+  {
+    avatar: <Image src={waitlist} />,
+    label: "Waitlist",
+    url: "/waitlist",
+  },
+];
 
 export const AdminDrawerData = [
   // {

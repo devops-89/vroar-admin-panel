@@ -107,4 +107,15 @@ export const roleController = {
       throw error;
     }
   },
+  updateAdmin: async (data) => {
+    try {
+      let result = await securedApi.authenticationSecuredApi.put(
+        "/api/admin/updateAdmin",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
