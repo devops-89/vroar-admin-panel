@@ -18,9 +18,9 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Loading from "react-loading";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const MuiOtpInput = dynamic(
   () =>
@@ -46,12 +46,12 @@ const MuiOtpInput = dynamic(
 
 const VerifyOtp = () => {
   const dispatch = useDispatch();
+  const reference = useSelector((state) => state.ReferenceId);
 
   const closeModal = () => {
     dispatch(hideModal());
   };
   const [loading, setLoading] = useState(false);
-  const [referenceId, setReferenceId] = useState("");
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -62,7 +62,7 @@ const VerifyOtp = () => {
       setLoading(true);
       const body = {
         ...values,
-        referenceId: referenceId,
+        referenceId: reference.referenceId,
       };
       Authcontrollers.verifyOtp(body)
         .then((res) => {
@@ -101,10 +101,6 @@ const VerifyOtp = () => {
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
-  useEffect(() => {
-    setReferenceId(localStorage.getItem("referenceId"));
-  }, []);
 
   return (
     <Box sx={{ width: 500 }}>

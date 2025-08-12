@@ -33,11 +33,11 @@ const Mentor = () => {
               data={[
                 {
                   label: "User Management",
-                  url: "/user-management/mentor",
+                  url: "/user-management/mentors",
                 },
                 {
                   label: "Mentors",
-                  url: "/user-management/mentor",
+                  url: "/user-management/mentors",
                 },
               ]}
             />

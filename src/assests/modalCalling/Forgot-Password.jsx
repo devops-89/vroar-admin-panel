@@ -13,13 +13,14 @@ import {
   IconButton,
   Stack,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { useState } from "react";
 import Loading from "react-loading";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import VerifyOtp from "./Verify-Otp";
+import { setReferenceId } from "@/redux/reducers/referenceId";
 
 const ForgotPassword = () => {
   const dispatch = useDispatch();
@@ -45,11 +46,13 @@ const ForgotPassword = () => {
               severity: ToastStatus.SUCCESS,
             })
           );
-          localStorage.setItem("referenceId", res.data.data.referenceId);
+
+          dispatch(setReferenceId(res.data.data.referenceId));
           dispatch(showModal(<VerifyOtp />));
           setLoading(false);
         })
         .catch((err) => {
+          console.log("err", err);
           let errMessage =
             (err.response && err.response.data.message) || err.response;
           dispatch(
