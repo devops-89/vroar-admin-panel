@@ -61,7 +61,10 @@ const VerifyOtp = () => {
       setLoading(true);
       const body = {
         ...values,
-        referenceId: localStorage.getItem("referenceId"),
+        referenceId:
+          typeof window !== "undefined"
+            ? localStorage.getItem("referenceId")
+            : null,
       };
       Authcontrollers.verifyOtp(body)
         .then((res) => {
