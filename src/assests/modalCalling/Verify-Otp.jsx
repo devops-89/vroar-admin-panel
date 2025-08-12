@@ -17,51 +17,32 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import dynamic from "next/dynamic";
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import Loading from "react-loading";
-import { useDispatch } from "react-redux";
-
-const MuiOtpInput = dynamic(
-  () =>
-    import("mui-one-time-password-input").then((mod) => ({
-      default: mod.MuiOtpInput,
-    })),
-  {
-    ssr: false,
-    loading: () => (
-      <Box
-        sx={{
-          height: 50,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Typography>Loading...</Typography>
-      </Box>
-    ),
-  }
-);
+import OTPInput from "react-otp-input";
+import { useDispatch, useSelector } from "react-redux";
 
 const VerifyOtp = () => {
   const dispatch = useDispatch();
+  const reference = useSelector((state) => state.ReferenceId);
 
   const closeModal = () => {
     dispatch(hideModal());
   };
+  const [otp, setOtp] = useState("");
+
   const [loading, setLoading] = useState(false);
   const formik = useFormik({
     initialValues: {
       password: "",
-      otp: "",
+      otp: parseInt(otp),
     },
     validationSchema: verifyOtpValidationSchema,
     onSubmit: (values) => {
       setLoading(true);
       const body = {
         ...values,
-        referenceId: localStorage.getItem("referenceId"),
+        referenceId: reference.referenceId,
       };
       Authcontrollers.verifyOtp(body)
         .then((res) => {
@@ -89,11 +70,10 @@ const VerifyOtp = () => {
         });
     },
   });
-  const [otp, setOtp] = useState("");
-  const otpHandler = (value) => {
-    setOtp(value);
-    formik.values.otp = value;
-  };
+  // const otpHandler = (value) => {
+  //   setOtp(value);
+  //   formik.values.otp = value;
+  // };
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -118,7 +98,7 @@ const VerifyOtp = () => {
       <Divider />
       <form onSubmit={formik.handleSubmit}>
         <Box sx={{ mt: 3 }}>
-          <MuiOtpInput
+          {/* <MuiOtpInput
             length={6}
             sx={{
               ...loginTextField,
@@ -137,7 +117,27 @@ const VerifyOtp = () => {
             TextFieldsProps={{
               error: formik.touched.otp && Boolean(formik.errors.otp),
             }}
+          /> */}
+          <OTPInput
+            value={otp}
+            onChange={(val) => {
+              setOtp(val);
+              formik.setFieldValue("otp", val);
+            }}
+            numInputs={6}
+            renderSeparator={<span>-</span>}
+            renderInput={(inputProps) => (
+              <TextField
+                sx={{ ...loginTextField, width: 50 }}
+                inputProps={inputProps} // props ko inputProps me pass kar
+              />
+            )}
+            containerStyle={{
+              width: "100%",
+              justifyContent: "space-between",
+            }}
           />
+
           {formik.touched.otp && Boolean(formik.errors.otp) && (
             <Typography
               sx={{
