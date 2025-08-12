@@ -19,13 +19,8 @@ import {
 import { useFormik } from "formik";
 import { useState } from "react";
 import Loading from "react-loading";
+import OTPInput from "react-otp-input";
 import { useDispatch, useSelector } from "react-redux";
-import dynamic from "next/dynamic";
-
-const MuiOtpInput = dynamic(
-  () => import("mui-one-time-password-input").then((mod) => mod.MuiOtpInput),
-  { ssr: false }
-);
 
 const VerifyOtp = () => {
   const dispatch = useDispatch();
@@ -34,11 +29,13 @@ const VerifyOtp = () => {
   const closeModal = () => {
     dispatch(hideModal());
   };
+  const [otp, setOtp] = useState("");
+
   const [loading, setLoading] = useState(false);
   const formik = useFormik({
     initialValues: {
       password: "",
-      otp: "",
+      otp: parseInt(otp),
     },
     validationSchema: verifyOtpValidationSchema,
     onSubmit: (values) => {
@@ -73,11 +70,10 @@ const VerifyOtp = () => {
         });
     },
   });
-  const [otp, setOtp] = useState("");
-  const otpHandler = (value) => {
-    setOtp(value);
-    formik.values.otp = value;
-  };
+  // const otpHandler = (value) => {
+  //   setOtp(value);
+  //   formik.values.otp = value;
+  // };
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -102,7 +98,7 @@ const VerifyOtp = () => {
       <Divider />
       <form onSubmit={formik.handleSubmit}>
         <Box sx={{ mt: 3 }}>
-          <MuiOtpInput
+          {/* <MuiOtpInput
             length={6}
             sx={{
               ...loginTextField,
@@ -121,7 +117,27 @@ const VerifyOtp = () => {
             TextFieldsProps={{
               error: formik.touched.otp && Boolean(formik.errors.otp),
             }}
+          /> */}
+          <OTPInput
+            value={otp}
+            onChange={(val) => {
+              setOtp(val);
+              formik.setFieldValue("otp", val);
+            }}
+            numInputs={6}
+            renderSeparator={<span>-</span>}
+            renderInput={(inputProps) => (
+              <TextField
+                sx={{ ...loginTextField, width: 50 }}
+                inputProps={inputProps} // props ko inputProps me pass kar
+              />
+            )}
+            containerStyle={{
+              width: "100%",
+              justifyContent: "space-between",
+            }}
           />
+
           {formik.touched.otp && Boolean(formik.errors.otp) && (
             <Typography
               sx={{
