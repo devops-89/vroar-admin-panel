@@ -47,7 +47,13 @@ const ForgotPassword = () => {
             })
           );
 
-          dispatch(setReferenceId(res.data.data.referenceId));
+          const refId = res.data?.data?.referenceId;
+          if (refId) {
+            dispatch(setReferenceId(refId));
+            if (typeof window !== "undefined") {
+              localStorage.setItem("referenceId", refId);
+            }
+          }
           dispatch(showModal(<VerifyOtp />));
           setLoading(false);
         })

@@ -10,17 +10,22 @@ import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { AddUserDetails } from "@/redux/reducers/user";
+import { setReferenceId } from "@/redux/reducers/referenceId";
 // import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 function AuthInitializer() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (token) {
       const decoded = jwtDecode(token);
       dispatch(AddUserDetails({ ...decoded, isAuthenticated: true }));
     }
-  });
+    const refId = typeof window !== "undefined" ? localStorage.getItem("referenceId") : null;
+    if (refId) {
+      dispatch(setReferenceId(refId));
+    }
+  }, [dispatch]);
 
   return null;
 }

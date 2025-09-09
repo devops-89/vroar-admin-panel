@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const VerifyOtp = () => {
   const dispatch = useDispatch();
-  const reference = useSelector((state) => state.ReferenceId);
+  const referenceId = useSelector((state) => state.ReferenceId.referenceId);
 
   const closeModal = () => {
     dispatch(hideModal());
@@ -35,14 +35,16 @@ const VerifyOtp = () => {
   const formik = useFormik({
     initialValues: {
       password: "",
-      otp: parseInt(otp),
+      otp: "",
     },
     validationSchema: verifyOtpValidationSchema,
     onSubmit: (values) => {
       setLoading(true);
       const body = {
         ...values,
-        referenceId: reference.referenceId,
+        otp: Number(values.otp),
+        referenceId:
+          referenceId || (typeof window !== "undefined" ? localStorage.getItem("referenceId") : ""),
       };
       Authcontrollers.verifyOtp(body)
         .then((res) => {
@@ -129,7 +131,7 @@ const VerifyOtp = () => {
             renderInput={(inputProps) => (
               <TextField
                 sx={{ ...loginTextField, width: 50 }}
-                inputProps={inputProps} // props ko inputProps me pass kar
+                inputProps={inputProps}
               />
             )}
             containerStyle={{

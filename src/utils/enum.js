@@ -46,7 +46,7 @@ export const USER_GROUP = {
   COMPANY_STAFF: "COMPANY_STAFF",
   VROAR_STAFF: "VROAR_STAFF",
   SUPER_ADMIN: "SUPER_ADMINISTRATOR",
-  ADMIN: "ADMINISTRATOR"
+  ADMIN: "ADMINISTRATOR",
 };
 export const USER_PERMISSION = {
   READ: "READ",
@@ -342,11 +342,11 @@ export const ROADMAP_TENURE = {
   12: "12 Months",
 };
 
-export const NOTIFICATION_TYPE = {
-  NEW_REQUEST: "NEW REQUEST",
-  TICKET: "TICKET",
-  ROADMAP: "ROADMAP",
-};
+// export const NOTIFICATION_TYPE = {
+//   NEW_REQUEST: "NEW REQUEST",
+//   TICKET: "TICKET",
+//   ROADMAP: "ROADMAP",
+// };
 
 export const PROFILE_DATA = {
   PROFILE_DETAILS: "Profile Details",
@@ -421,4 +421,29 @@ export const MEDIA_TYPE = {
 export const QUIZ_ENABLED = {
   YES: "YES",
   NO: "NO",
+};
+
+export const NOTIFICATION_CATEGORY = {
+  INTERNSHIP: "INTERNSHIP",
+  SUBSCRIPTION: "SUBSCRIPTION",
+  ACCOUNT: "ACCOUNT",
+};
+
+export const NOTIFICATION_TYPE = {
+  INFO: "INFO",
+  ALERT: "ALERT",
+  REMINDER: "REMINDER",
+  NEW_MENTOR_REQUEST: "New Mentor Request",
+  NEW_STUDENT_SIGNUP: "New Student Sign Up",
+  NEW_PAID_CUSTOMER: "New Paid Customer",
+  SUPPORT_TICKET_RAISED: "Support Ticket Raised",
+  STUDENT_ROADMAP_REQUEST: "Student Roadmap Request",
+  STUDENT_ROADMAP_50: "Student Roadmap 50%",
+  STUDENT_ROADMAP_75: "Student Roadmap 75%",
+  STUDENT_ROADMAP_100: "Student Roadmap 100%",
+  STUDENT_ROADMAP_ASSIGNED: "Student Roadmap Assigned",
+  NEW_APP_VERSION_RELEASED: "New App Version Released",
+  SESSION_REDEEMABLE: "Session Redeemable",
+  LOW_PROGRESS: "Low Progress",
+  INACTIVITY: "Inactivity",
 };

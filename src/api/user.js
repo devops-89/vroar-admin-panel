@@ -283,5 +283,28 @@ const userController = {
       throw error;
     }
   },
+  getNotificationsList: async (body) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "api/notification/getAllNotifications",
+        body
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  markNotificationRead: async (data) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.put(
+        "api/notification/markNotificationRead",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default userController;
