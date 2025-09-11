@@ -1,7 +1,9 @@
 import userController from "@/api/user";
+import SendGlobalNotification from "@/assests/modalCalling/notification/send-global-notification";
 import PageBreadCrumbs from "@/components/customBreadCrumbs";
 import NotificationList from "@/components/event/notification-list";
 import Wrapper from "@/components/wrapper";
+import { showModal } from "@/redux/reducers/modal";
 import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { loginTextField } from "@/utils/styles";
@@ -20,6 +22,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import Loading from "react-loading";
+import { useDispatch } from "react-redux";
 
 const ViewNotification = () => {
   const tabs_section = [
@@ -32,7 +35,7 @@ const ViewNotification = () => {
   ];
 
   const [selectedTab, setSelectedTab] = useState(0);
-
+  const dispatch = useDispatch();
   const handleSelectedTab = (e, newValue) => {
     setSelectedTab(newValue);
   };
@@ -63,7 +66,6 @@ const ViewNotification = () => {
     userController
       .markNotificationRead(body)
       .then((res) => {
-        
         let body = {
           page: page === 0 ? 1 : page,
           pageSize: pageSize,
@@ -82,6 +84,10 @@ const ViewNotification = () => {
     };
     getNotifications(body);
   }, []);
+
+  const showGlobalNotificationModal = () => {
+    dispatch(showModal(<SendGlobalNotification />));
+  };
 
   // console.log("test", notificationList?.docs);
 
@@ -124,6 +130,7 @@ const ViewNotification = () => {
                   fontFamily: roboto.style,
                   fontWeight: 600,
                 }}
+                onClick={showGlobalNotificationModal}
               >
                 send global notifications
               </Button>

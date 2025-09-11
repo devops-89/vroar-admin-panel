@@ -1,6 +1,4 @@
-import { result } from "lodash";
-import securedApi from "./config";
-import userSecuredApi from "./config";
+import { default as securedApi, default as userSecuredApi } from "./config";
 const userController = {
   csvDownload: async (role) => {
     try {
@@ -299,6 +297,18 @@ const userController = {
     try {
       let result = await userSecuredApi.userSecuredApi.put(
         "api/notification/markNotificationRead",
+        data
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  sendGlobalNotifications: async (data) => {
+    try {
+      let result = await userSecuredApi.userSecuredApi.post(
+        "/api/notification/sendGlobalNotification",
         data
       );
       return result;

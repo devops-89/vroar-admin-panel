@@ -649,3 +649,16 @@ export const verifyOtpValidationSchema = Yup.object().shape({
   password: Yup.string().required("Please Enter Password"),
   otp: Yup.string().required("Please Enter 6 Digit OTP"),
 });
+
+export const globalNotificationSchemaValidation = Yup.object().shape({
+  title: Yup.string()
+    .required("Please Enter Title ")
+    .test(
+      "not-empty",
+      "Title name cannot be only whitespace",
+      (value) => value && value.trim().length > 0
+    ),
+  category: Yup.string().required("Please Select Notification Category"),
+  type: Yup.string().required("Please Select Notification Type"),
+  body: Yup.string().required("Please Enter Notification Message"),
+});
