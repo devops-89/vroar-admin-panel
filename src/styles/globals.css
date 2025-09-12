@@ -12,12 +12,16 @@ body {
 
 ::-webkit-scrollbar {
   width: 0;
+  height: 0;
 }
-::-moz-scrollbar {
-  width: 0;
+
+* {
+  scrollbar-width: none;
 }
+
 ::-ms-scrollbar {
   width: 0;
+  height: 0;
 }
 
 .d-flex {

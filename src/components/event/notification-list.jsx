@@ -1,110 +1,80 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Stack,
-  Step,
-  StepContent,
-  StepLabel,
-  Stepper,
-  Typography,
-} from "@mui/material";
-import React, { useState } from "react";
-import icon1 from "@/icons/notification-1.png";
-import icon2 from "@/icons/notification-2.png";
-import icon3 from "@/icons/notification-3.png";
-import Image from "next/image";
-import { COLORS, NOTIFICATION_TYPE } from "@/utils/enum";
+import { COLORS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { data } from "@/assests/data";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import moment from "moment";
-const NotificationList = () => {
-  const [activeStep, setActiveStep] = useState(0);
+const NotificationList = ({ read, title, body, createdAt, id, onClick }) => {
+  const handleReadNotification = (e, id) => {
+    console.log("qwerty", id);
+  };
+
+  //mark notification  as read api
 
   return (
     <div>
-      <Stepper activeStep={activeStep} orientation="vertical">
-        {data.notificationList.map((val, i) => (
-          <Step sx={{ width: 600 }} active key={i}>
-            <StepLabel
-              icon={
-                <Avatar sx={{ backgroundColor: "#FFEFEB" }}>
-                  <Image
-                    src={
-                      val.notificationType === NOTIFICATION_TYPE.NEW_REQUEST
-                        ? icon1
-                        : val.notificationType === NOTIFICATION_TYPE.ROADMAP
-                        ? icon3
-                        : val.notificationType === NOTIFICATION_TYPE.TICKET
-                        ? icon2
-                        : ""
-                    }
-                  />
-                </Avatar>
-              }
-            >
-              <Stack
-                direction={"row"}
-                alignItems={"center"}
-                justifyContent={"space-between"}
-                // sx={{ ml: 1 }}
-              >
-                <Box>
-                  <Typography sx={{ fontSize: 15, fontFamily: roboto.style }}>
-                    {val.title}
-                  </Typography>
-                  <Stack direction={"row"} spacing={1} alignItems={"center"}>
-                    <Typography
-                      sx={{
-                        fontSize: 12,
-                        fontFamily: roboto.style,
-                        color: COLORS.grey,
-                      }}
-                    >
-                      {val.time}
-                    </Typography>
-                    <Box
-                      sx={{
-                        width: 3,
-                        height: 3,
-                        backgroundColor: COLORS.grey,
-                        borderRadius: "50%",
-                      }}
-                    ></Box>
-                    <Typography
-                      sx={{
-                        fontSize: 12,
-                        fontFamily: roboto.style,
-                        color: COLORS.grey,
-                      }}
-                    >
-                      {moment.unix(val.date).format("DD-MMM-YYYY")}
-                    </Typography>
-                  </Stack>
-                </Box>
-                <Button
+      <Box sx={{}}>
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
+          <Stack direction="row" alignItems="start" spacing={3}>
+            <Box>
+              {!read && (
+                <Box
                   sx={{
-                    textTransform: "capitalize",
-                    textDecoration: "underline",
-                    color: COLORS.PRIMARY,
-                    fontFamily: roboto.style,
-                    fontSize: 15,
+                    width: 5,
+                    height: 5,
+                    borderRadius: 10,
+                    backgroundColor: COLORS.PRIMARY,
+                    ml: 2,
+                    mt: 1,
                   }}
+                ></Box>
+              )}
+            </Box>
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: 15,
+                  fontFamily: roboto.style.fontFamily,
+                  fontWeight: 600,
+                }}
+              >
+                {title}
+              </Typography>
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Typography
+                  sx={{ fontSize: 15, fontFamily: roboto.style.fontFamily }}
                 >
-                  {val.link}
-                </Button>
-              </Stack>
-            </StepLabel>
-            <StepContent sx={{ mt: 1 }}>
-              <Box sx={{ backgroundColor: "#EEEFF3", borderRadius: 3, p: 1 }}>
-                <Typography sx={{ fontSize: 14, fontFamily: roboto.style }}>
-                  {val.messaege}
+                  {body}
                 </Typography>
-              </Box>
-            </StepContent>
-          </Step>
-        ))}
-      </Stepper>
+                <Typography
+                  sx={{ fontSize: 14, fontFamily: roboto.style.fontFamily }}
+                >
+                  {moment.unix(createdAt).fromNow()}
+                </Typography>
+              </Stack>
+            </Box>
+          </Stack>
+          {/* <FormControlLabel
+            control={
+              <Checkbox onChange={(e) => handleReadNotification(e, id)} />
+            }
+          /> */}
+          {!read && (
+            <Button
+              sx={{
+                fontSize: 12,
+                fontFamily: roboto.style.fontFamily,
+                color: COLORS.PRIMARY,
+              }}
+              onClick={onClick}
+            >
+              Mark as read
+            </Button>
+          )}
+        </Stack>
+      </Box>
     </div>
   );
 };
