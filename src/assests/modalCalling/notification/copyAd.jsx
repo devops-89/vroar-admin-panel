@@ -4,18 +4,16 @@ import { COLORS, EVENT_TYPE } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
 import { Close } from "@mui/icons-material";
 import {
-  Backdrop,
   Box,
   Button,
-  CircularProgress,
   Divider,
   IconButton,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
 import moment from "moment";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "react-loading";
 import { useDispatch } from "react-redux";
 

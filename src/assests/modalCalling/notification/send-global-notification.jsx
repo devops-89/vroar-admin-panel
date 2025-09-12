@@ -98,6 +98,7 @@ const SendGlobalNotification = () => {
     },
   });
 
+
   return (
     <Box sx={{ width: 700 }}>
       <Stack
