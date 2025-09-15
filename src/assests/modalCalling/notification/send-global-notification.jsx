@@ -126,27 +126,6 @@ const SendGlobalNotification = () => {
       <form onSubmit={formik.handleSubmit}>
         <Stack sx={{ mt: 2 }} spacing={2}>
           <Autocomplete
-            options={NOTIFICATION_TYPE_ARRAY}
-            renderInput={(params) => (
-              <TextField
-                label="Select Notification Type*"
-                sx={{ ...loginTextField }}
-                {...params}
-                error={formik.touched.type && Boolean(formik.errors.type)}
-                helperText={formik.touched.type && formik.errors.type}
-              />
-            )}
-            renderOption={(props, option) => (
-              <Box {...props}>
-                <Typography sx={{ fontFamily: roboto.style.fontFamily }}>
-                  {option.label}
-                </Typography>
-              </Box>
-            )}
-            onChange={notificationTypeHandler}
-            value={type}
-          />
-          <Autocomplete
             options={NOTIFICATION_CATEGORY_ARRAY}
             renderInput={(params) => (
               <TextField
@@ -169,6 +148,28 @@ const SendGlobalNotification = () => {
             onChange={notificationCategoryHandler}
             value={category}
           />
+          <Autocomplete
+            options={NOTIFICATION_TYPE_ARRAY}
+            renderInput={(params) => (
+              <TextField
+                label="Select Notification Type*"
+                sx={{ ...loginTextField }}
+                {...params}
+                error={formik.touched.type && Boolean(formik.errors.type)}
+                helperText={formik.touched.type && formik.errors.type}
+              />
+            )}
+            renderOption={(props, option) => (
+              <Box {...props}>
+                <Typography sx={{ fontFamily: roboto.style.fontFamily }}>
+                  {option.label}
+                </Typography>
+              </Box>
+            )}
+            onChange={notificationTypeHandler}
+            value={type}
+          />
+
           <TextField
             sx={{ ...loginTextField }}
             label="Title*"
