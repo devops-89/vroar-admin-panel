@@ -599,6 +599,7 @@ const AddRoadmap = ({ getJourney }) => {
             fontFamily: roboto.style,
           }}
           onClick={formik.handleSubmit}
+          disabled={loading}
         >
           {loading ? (
             <Loading type="bars" color={COLORS.BLACK} width={20} height={20} />
