@@ -153,61 +153,61 @@ export const NOTIFICATION_CATEGORY_ARRAY = [
   {
     label: NOTIFICATION_CATEGORY.ACCOUNT,
   },
-  {
-    label: NOTIFICATION_CATEGORY.INTERNSHIP,
-  },
-  {
-    label: NOTIFICATION_CATEGORY.SUBSCRIPTION,
-  },
+  // {
+  //   label: NOTIFICATION_CATEGORY.INTERNSHIP,
+  // },
+  // {
+  //   label: NOTIFICATION_CATEGORY.SUBSCRIPTION,
+  // },
 ];
 
 export const NOTIFICATION_TYPE_ARRAY = [
   {
     label: NOTIFICATION_TYPE.ALERT,
   },
-  {
-    label: NOTIFICATION_TYPE.INACTIVITY,
-  },
+  // {
+  //   label: NOTIFICATION_TYPE.INACTIVITY,
+  // },
   {
     label: NOTIFICATION_TYPE.INFO,
   },
-  {
-    label: NOTIFICATION_TYPE.LOW_PROGRESS,
-  },
+  // {
+  //   label: NOTIFICATION_TYPE.LOW_PROGRESS,
+  // },
   {
     label: NOTIFICATION_TYPE.NEW_APP_VERSION_RELEASED,
   },
-  {
-    label: NOTIFICATION_TYPE.NEW_MENTOR_REQUEST,
-  },
-  {
-    label: NOTIFICATION_TYPE.NEW_PAID_CUSTOMER,
-  },
-  {
-    label: NOTIFICATION_TYPE.NEW_STUDENT_SIGNUP,
-  },
+  // {
+  //   label: NOTIFICATION_TYPE.NEW_MENTOR_REQUEST,
+  // },
+  // {
+  //   label: NOTIFICATION_TYPE.NEW_PAID_CUSTOMER,
+  // },
+  // {
+  //   label: NOTIFICATION_TYPE.NEW_STUDENT_SIGNUP,
+  // },
   {
     label: NOTIFICATION_TYPE.REMINDER,
   },
-  {
-    label: NOTIFICATION_TYPE.SESSION_REDEEMABLE,
-  },
-  {
-    label: NOTIFICATION_TYPE.STUDENT_ROADMAP_100,
-  },
-  {
-    label: NOTIFICATION_TYPE.STUDENT_ROADMAP_50,
-  },
-  {
-    label: NOTIFICATION_TYPE.STUDENT_ROADMAP_75,
-  },
-  {
-    label: NOTIFICATION_TYPE.STUDENT_ROADMAP_ASSIGNED,
-  },
-  {
-    label: NOTIFICATION_TYPE.STUDENT_ROADMAP_REQUEST,
-  },
-  {
-    label: NOTIFICATION_TYPE.SUPPORT_TICKET_RAISED,
-  },
+  // {
+  //   label: NOTIFICATION_TYPE.SESSION_REDEEMABLE,
+  // },
+  // {
+  //   label: NOTIFICATION_TYPE.STUDENT_ROADMAP_100,
+  // },
+  // {
+  //   label: NOTIFICATION_TYPE.STUDENT_ROADMAP_50,
+  // },
+  // {
+  //   label: NOTIFICATION_TYPE.STUDENT_ROADMAP_75,
+  // },
+  // {
+  //   label: NOTIFICATION_TYPE.STUDENT_ROADMAP_ASSIGNED,
+  // },
+  // {
+  //   label: NOTIFICATION_TYPE.STUDENT_ROADMAP_REQUEST,
+  // },
+  // {
+  //   label: NOTIFICATION_TYPE.SUPPORT_TICKET_RAISED,
+  // },
 ];
