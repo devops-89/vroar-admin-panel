@@ -42,9 +42,12 @@ const VerifyOtp = () => {
       setLoading(true);
       const body = {
         ...values,
-        otp: Number(values.otp),
+        otp: values.otp,
         referenceId:
-          referenceId || (typeof window !== "undefined" ? localStorage.getItem("referenceId") : ""),
+          referenceId ||
+          (typeof window !== "undefined"
+            ? localStorage.getItem("referenceId")
+            : ""),
       };
       Authcontrollers.verifyOtp(body)
         .then((res) => {
